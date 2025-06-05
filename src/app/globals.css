@@ -24,3 +24,15 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+.containerClient{
+  display: flex;
+  width: 100%;
+  
+}
+
+.containerClient__content{
+  padding-left: 230px;
+  width: 100%;
+}

@@ -5,6 +5,7 @@
     width: 230px;
     height: 100vh;
     padding-top: 30px;
+    position: fixed;
 }
 
 .Nav__logo{
