@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <div className="containerClient">
 
-                      <Navbar
+            <Navbar
               conTentNavigation = {
                 {
                   logo:'/images/logoWebsite.png',
@@ -46,12 +46,23 @@ export default function RootLayout({
           </Navbar>
 
               <div className="containerClient__content">
-            <Header>
-                  
-            </Header>
+                <Header
+                    conTentHeader = {
+                      {
+                        title : 'Tiếp nhận ',
+                        navItems : {
+                          name : 'Nguyễn Huân',
+                          role : 'Bác Sĩ',
+                          img : 'https://cdnphoto.dantri.com.vn/NLnPj9lv417GsN2xLLMvJoKufrI=/thumb_w/1020/2022/06/24/dr-khaiprdt14-6-20221docx-1656054898918.jpeg'
+                        }
+                      }
+                    }
+                >
+                      
+                </Header>
 
 
-        {children}
+              {children}
               </div>
 
 
