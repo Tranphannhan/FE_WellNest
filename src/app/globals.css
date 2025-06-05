@@ -29,10 +29,10 @@ body {
 .containerClient{
   display: flex;
   width: 100%;
-  
 }
 
 .containerClient__content{
-  padding-left: 230px;
+  padding-left: 250px;
   width: 100%;
+  background-color: white;
 }
