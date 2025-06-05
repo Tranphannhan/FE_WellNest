@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import Navbar from "./components/shared/Navbar/Navbar";
+
 
 
 const geistSans = Geist({
@@ -30,18 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-       <Navbar
-            conTentNavigation = {
-              {
-                logo:'./images/logoWebsite.png',
-                navItems:[
-                  {icon:`bi bi-file-earmark-text-fill`,text:"Trag chủ", link:'https://media-cdn-v2.laodong.vn/storage/newsportal/2024/7/16/1367312/Benh-Vien-Tam-Anh-3.jpeg'}
-                ]
-              }
-            }
-          >
-      
-          </Navbar>
+    
         {children}
       </body>
     </html>
