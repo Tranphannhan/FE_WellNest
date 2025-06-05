@@ -47,8 +47,9 @@ export default function RootLayout({
 
               <div className="containerClient__content">
             <Header>
-
+                  
             </Header>
+
 
         {children}
               </div>
