@@ -1,1 +1,11 @@
 
+
+.Header {
+    /* background-color: white; */
+    display: flex;
+    flex-direction: column;
+    width: 730px;
+    height: 100vh;
+    padding-top: 30px;
+    background-color: tomato;
+}

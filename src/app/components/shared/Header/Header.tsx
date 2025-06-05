@@ -5,9 +5,8 @@ import './Header.css';
 export default function Header (){
     return (
         <>
-            <header>
+            <header className='Header'>
                 <p>Helloo</p>
-
 
             </header>
         </>
