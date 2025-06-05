@@ -53,7 +53,7 @@ export default function RootLayout({
                         navItems : {
                           name : 'Nguyễn Huân',
                           role : 'Bác Sĩ',
-                          img : 'https://cdnphoto.dantri.com.vn/NLnPj9lv417GsN2xLLMvJoKufrI=/thumb_w/1020/2022/06/24/dr-khaiprdt14-6-20221docx-1656054898918.jpeg'
+                          img : '/images/img-bacsi.webp'
                         }
                       }
                     }
