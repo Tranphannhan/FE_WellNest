@@ -1,0 +1,183 @@
+.ExaminationForm {
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    max-width: 100%; /* Giãn full ra */
+    width: 100%; /* Đảm bảo chiếm hết chiều rộng khả dụng */
+    box-sizing: border-box;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between; /* Căn tiêu đề và nút ra hai bên */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Cho phép wrap trên màn hình nhỏ */
+}
+
+.form-header h2 {
+    font-size: 22px;
+    margin: 0; /* Loại bỏ margin mặc định của h2 */
+    color: #333;
+}
+
+.form-grid {
+    display: grid;
+    width: 100%;
+    gap: 20px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+/* Các định nghĩa cột cho grid */
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+.grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+
+.form-group,
+.form-subgroup {
+    display: flex;
+    flex-direction: column;
+}
+
+input,
+textarea {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    color: #808080;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #000000;
+}
+
+.input-unit {
+    display: flex;
+    align-items: center;
+    width: 100%; 
+}
+
+.input-unit input {
+    flex: 1;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+}
+
+.input-unit span {
+    background: #eee;
+    padding: 8.5px 12px;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    display: flex;
+    align-items: center;
+    color: #555;
+}
+
+.gender-btn {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: default;
+    width: 100%; 
+    box-sizing: border-box;
+    text-align: left;
+    font-size: 14px; 
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.accept-btn {
+    padding: 7px 24px;
+    background-color: #fff;
+    color: #3497F9;
+    border: 1px solid #3497F9;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.accept-btn button{
+    border: none;
+}
+
+.print-btn {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.print-btn button {
+    color: white;
+  background-color: #3497F9;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+
+
+
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .grid-4 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .grid-3 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-2 {
+        grid-template-columns: 1fr; 
+    }
+    .form-header {
+        flex-direction: column; 
+        align-items: flex-start;
+        gap: 15px; 
+    }
+    .form-header h2 {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 600px) { /* Cho các màn hình nhỏ hơn 600px */
+    .grid-4, .grid-3 {
+        grid-template-columns: 1fr; /* 1 cột trên điện thoại */
+    }
+    .ExaminationForm {
+        padding: 15px;
+    }
+}
