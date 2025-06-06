@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         <div className="containerClient">
 
-                      <Navbar
+            <Navbar
               conTentNavigation = {
                 {
                   logo:'/images/logoWebsite.png',
@@ -47,9 +47,20 @@ export default function RootLayout({
           </Navbar>
 
               <div className="containerClient__content">
-            <Header>
-
-            </Header>
+                <Header
+                    conTentHeader = {
+                      {
+                        title : 'Tiếp nhận ',
+                        navItems : {
+                          name : 'Nguyễn Huân',
+                          role : 'Bác Sĩ',
+                          img : '/images/img-bacsi.webp'
+                        }
+                      }
+                    }
+                >
+                      
+                </Header>
             {/* <Tabbar>
 
             </Tabbar> */}
