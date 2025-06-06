@@ -1,6 +1,19 @@
+import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
+
 export default function InputForm() {
     return (
         <>
+        <Tabbar
+            tabbarItems={
+                { 
+                    tabbarItems:[
+                    {text: 'Quét mã QR', link: '/Receptionist/Reception'},
+                    {text: 'Nhập thủ công', link: '/Receptionist/Reception/InputForm'}
+                ]
+            }
+               
+            }
+        ></Tabbar>
             <div className="input-form">
                 <h1>Input Form</h1>
                 <form>

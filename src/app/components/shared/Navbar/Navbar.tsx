@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import './Navbar.css'
-import { useState } from 'react';
-import { conTentNavigationType } from '@/app/types/componentTypes/navTypes';
+import { conTentNavigationType } from '@/app/types/componentTypes/NavTypes';
+import { usePathname } from 'next/navigation';
 
 
 export default function Navbar ({conTentNavigation}:{conTentNavigation:conTentNavigationType}){
-    const [active,setActive] = useState <number>(0)
+       const pathname = usePathname(); // thay vì useRouter
 
     return <nav className='Nav'>
         <img
@@ -16,15 +16,22 @@ export default function Navbar ({conTentNavigation}:{conTentNavigation:conTentNa
             alt="Logo"  
             />
         <div className='Nav__content'>
-            {conTentNavigation?.navItems.map((value, index) =>
-                <Link key={index} href={value.link}
-                    onClick={()=>{setActive(index)}}
-                >
-                    <div className={`Nav__item ${index === active ? 'Nav-active':''}`} >
-                        <i className={value.icon}></i>
-                        <span className='Nav__item__text'>{value.text}</span>
-                    </div>
-                </Link>
+            {conTentNavigation?.navItems.map((value, index) =>{
+                const isActive = pathname.startsWith(value.link);
+                    return(
+
+                        <Link key={index} href={value.link}
+                        >
+                            <div className={`Nav__item ${isActive  ? 'Nav-active':''}`} >
+                                <i className={value.icon}></i>
+                                <span className='Nav__item__text'>{value.text}</span>
+                            </div>
+                        </Link>
+                
+                    )
+            }
+            
+               
                 
             )}
             <button style={{width:'100%'}}>

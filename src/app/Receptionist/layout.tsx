@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Navbar from "@/app/components/shared/Navbar/Navbar";
+import '../globals.css'
 import Header from "@/app/components/shared/Header/Header";
-import '../../globals.css'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,13 +32,13 @@ export default function RootLayout({
       >
         <div className="containerClient">
 
-                      <Navbar
+            <Navbar
               conTentNavigation = {
                 {
                   logo:'/images/logoWebsite.png',
                   navItems:[
-                    {icon:`bi bi-file-earmark-text-fill`,text:"Tiếp nhận", link:'https://media-cdn-v2.laodong.vn/storage/newsportal/2024/7/16/1367312/Benh-Vien-Tam-Anh-3.jpeg'},
-                    {icon:`bi bi-search`,text:"Tra cứu thẻ khám", link:'https://media-cdn-v2.laodong.vn/storage/newsportal/2024/7/16/1367312/Benh-Vien-Tam-Anh-3.jpeg'}
+                    {icon:`bi bi-file-earmark-text-fill`,text:"Tiếp nhận", link:'/Receptionist/Reception'},
+                    {icon:`bi bi-search`,text:"Tra cứu thẻ khám", link:'/Receptionist/SearchReception'}
                   ]
                 }
               }
@@ -46,13 +46,27 @@ export default function RootLayout({
           </Navbar>
 
               <div className="containerClient__content">
-            <Header>
 
-            </Header>
+                 <Header
+                    conTentHeader = {
+                      {
+                        title : 'Tiếp nhận ',
+                        navItems : {
+                          name : 'Nguyễn Huân',
+                          role : 'Bác Sĩ',
+                          img : '/images/img-bacsi.webp'
+                        }
+                      }
+                    }
+                >
+                      
+                </Header>
               <div className="containerClient__item">
                     {children}
               </div>
       
+
+               
               </div>
 
 

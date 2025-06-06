@@ -1,22 +1,27 @@
-export default function Tabbar() {
+'use client';
+import './Tabbar.css';
+import { tabbarContentType } from '@/app/types/componentTypes/TabbarTypes';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+
+export default function Tabbar({tabbarItems}:{tabbarItems:tabbarContentType}) {
+        const pathname = usePathname(); // thay vì useRouter
     return (
-        <div className="Tabbar">
-            <div className="Tabbar__item">
-                <i className="bi bi-house"></i>
-                <span className="Tabbar__item__text">Home</span>
-            </div>
-            <div className="Tabbar__item">
-                <i className="bi bi-calendar"></i>
-                <span className="Tabbar__item__text">Schedule</span>
-            </div>
-            <div className="Tabbar__item">
-                <i className="bi bi-person"></i>
-                <span className="Tabbar__item__text">Profile</span>
-            </div>
-            <div className="Tabbar__item">
-                <i className="bi bi-gear"></i>
-                <span className="Tabbar__item__text">Settings</span>
+        <div className="Tabbar__container">
+            <div className="Tabbar__navigation">
+                  {tabbarItems.tabbarItems.map((value, index) => {
+                    const isActive = pathname === value.link;
+                    return (
+                        <Link key={index} href={value.link}>
+                            <div className={`Tabbar__item ${isActive ? 'Tabbar__active' : ''}`}>
+                                {value.text}
+                            </div>
+                        </Link>
+                    );
+                })}
+
             </div>
         </div>
-    )
+    );
 }
