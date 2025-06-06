@@ -1,7 +1,46 @@
-.Tabbar{
-    height: 100px;
-    width: 100%;
-    padding: 10px;
+.Tabbar__container { 
+    padding-top: 20px; 
+    padding-bottom: 0; 
+}
+
+.Tabbar__navigation { 
     display: flex;
-    flex-direction: row;
+    justify-content: flex-start;
+    padding: 0 20px; 
+    gap: 30px;
+    position: relative;
+}
+
+.Tabbar__item {
+    font-size: 16px;
+    color: #CFCFCF;
+    cursor: pointer;
+    position: relative;
+    padding-bottom: 8px;
+    white-space: nowrap;
+}
+
+.Tabbar__item.Tabbar__active {
+    color: #333;
+    font-weight: 500;
+}
+
+.Tabbar__item.Tabbar__active::after {
+    content: '';
+    position: absolute; 
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #3497f9;
+}
+
+.Tabbar__navigation::before { 
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0; 
+    width: 100%; 
+    height: 0.5px; 
+    background-color: #CFCFCF;
 }

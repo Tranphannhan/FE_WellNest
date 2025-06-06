@@ -1,22 +1,26 @@
-export default function Tabbar() {
+'use client';
+import {useState } from 'react';
+import './Tabbar.css';
+import { tabbarContentType } from '@/app/types/componentTypes/TabbarTypes';
+import Link from 'next/link';
+
+export default function Tabbar({tabbarItems}:{tabbarItems:tabbarContentType}) {
+    const [activeTab, setActiveTab] = useState<number>(0);
     return (
-        <div className="Tabbar">
-            <div className="Tabbar__item">
-                <i className="bi bi-house"></i>
-                <span className="Tabbar__item__text">Home</span>
-            </div>
-            <div className="Tabbar__item">
-                <i className="bi bi-calendar"></i>
-                <span className="Tabbar__item__text">Schedule</span>
-            </div>
-            <div className="Tabbar__item">
-                <i className="bi bi-person"></i>
-                <span className="Tabbar__item__text">Profile</span>
-            </div>
-            <div className="Tabbar__item">
-                <i className="bi bi-gear"></i>
-                <span className="Tabbar__item__text">Settings</span>
+        <div className="Tabbar__container">
+            <div className="Tabbar__navigation">
+                {tabbarItems.tabbarItems.map((value, index)=>
+                <Link key={index} href={value.link}>
+                <div
+                    className={`Tabbar__item ${index === activeTab ? 'Tabbar__active' : ''}`}
+                    onClick={() => setActiveTab(index)}
+                >
+                    {value.text}
+                </div></Link>
+                
+                )}
+
             </div>
         </div>
-    )
+    );
 }

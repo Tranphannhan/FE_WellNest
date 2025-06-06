@@ -4,6 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Navbar from "@/app/components/shared/Navbar/Navbar";
 import Header from "@/app/components/shared/Header/Header";
 import '../../globals.css'
+import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,7 +50,9 @@ export default function RootLayout({
             <Header>
 
             </Header>
+            {/* <Tabbar>
 
+            </Tabbar> */}
         {children}
               </div>
 
