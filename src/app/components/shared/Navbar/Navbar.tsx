@@ -1,8 +1,9 @@
 'use client'
-import { conTentNavigationType } from '@/app/types/componentTypes/navTypes';
+
 import Link from 'next/link';
 import './Navbar.css'
 import { useState } from 'react';
+import { conTentNavigationType } from '@/app/types/componentTypes/navTypes';
 
 
 export default function Navbar ({conTentNavigation}:{conTentNavigation:conTentNavigationType}){
@@ -19,7 +20,7 @@ export default function Navbar ({conTentNavigation}:{conTentNavigation:conTentNa
                 <Link key={index} href={value.link}
                     onClick={()=>{setActive(index)}}
                 >
-                    <div className={`Nav__item ${index === active ? 'active':''}`} >
+                    <div className={`Nav__item ${index === active ? 'Nav-active':''}`} >
                         <i className={value.icon}></i>
                         <span className='Nav__item__text'>{value.text}</span>
                     </div>

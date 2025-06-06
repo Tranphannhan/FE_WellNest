@@ -34,5 +34,13 @@ body {
 .containerClient__content{
   padding-left: 250px;
   width: 100%;
-  background-color: white;
+  background-color: #f1f8ff;
+  min-height: 100vh;
+  padding-right: 40px;
+
+}
+
+.containerClient__item{
+  width: 100%;
+  padding-right: 20px;
 }
