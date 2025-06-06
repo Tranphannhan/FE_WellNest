@@ -52,7 +52,7 @@ export default function RootLayout({
                       {
                         title : 'Tiếp nhận ',
                         navItems : {
-                          name : 'Nguyễn Huân',
+                          name : 'Nguyễn Đình Huân',
                           role : 'Bác Sĩ',
                           img : '/images/img-bacsi.webp'
                         }

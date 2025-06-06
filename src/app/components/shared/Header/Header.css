@@ -1,40 +1,42 @@
 
 
 .Header {
-    position: relative;
-    background-color: white;
+    /* background-color: white; */
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
     width: 100%;
     height: 113px;
     padding-top: 30px;
+    padding-left: 20px;
+    align-items: center;
 }
 
 
 .Header_title {
-    position: absolute;
-    left: 2%; font-size: 20px;
-    color: rgb(55,72,88,100);
-    top: 39px;
+    font-size: 20px;
+    color: #374858;
 }
 
-.Header_img img {
-    position: absolute;
-    width: 43px; height: 43px;
+.Header_boxChild {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
+.Header_boxChild__img img {
+    width: 44px; height: 44 px;
     border-radius: 50%;
-    right: 10.2%; top: 30px;
+    object-fit: cover;
+    object-position: center;
 }
 
-.Header_name {
-    position: absolute;
-    right: 3%; font-size: 16px;
-    color: rgb(55,72,88,100);
-    top: 24px;
+.Header_boxChild__name {
+    font-size: 17px;
+    color: #374858;
 }
 
-.Header_role {
-    position: absolute;
-    right: 5.7%; font-size: 16px;
-    color: rgb(55,72,88,100);
-    top: 50px;
+.Header_boxChild_role {
+    font-size: 16px;
+    color: #374858;
 }

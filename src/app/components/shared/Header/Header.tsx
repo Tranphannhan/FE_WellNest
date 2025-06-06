@@ -9,15 +9,23 @@ export default function Header ({conTentHeader} : {conTentHeader : conTenHeaderT
         <>
             <header className='Header'>
                 <div className="Header_title">{conTentHeader.title}</div>
-                <div className="Header_img">
-                    <Image 
-                        src={conTentHeader.navItems.img} 
-                        alt="Hình ảnh bài viết"
-                        width={42} height={42}  
-                    />
+
+
+                <div className='Header_boxChild'>
+                    <div className="Header_boxChild__img">
+                        <Image 
+                            src={conTentHeader.navItems.img} 
+                            alt="Hình ảnh bài viết"
+                            width={42} height={42}  
+                        />
+                    </div>
+
+                    <div className='Header_boxChild__content'>
+                        <div className="Header_boxChild__name">{conTentHeader.navItems.name}</div>
+                        <div className="Header_boxChild_role">{conTentHeader.navItems.role}</div>
+                    </div>
+                      
                 </div>
-                <div className="Header_name">{conTentHeader.navItems.name}</div>
-                <div className="Header_role">{conTentHeader.navItems.role}</div>
             </header>
         </>
     )
