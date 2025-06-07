@@ -1,0 +1,84 @@
+.chooseRoom-container {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.chooseRoom-container__title {
+    font-size: 22px;
+    font-weight: normal;
+}
+
+.chooseRoom-container__title2 {
+    color: #111;
+    font-weight: lighter;
+}
+
+.chooseRoom-container__button {
+    float: right;
+    position: relative;
+    background: none;
+    color: #3497F9;
+    border: none;
+    cursor: pointer;
+    font-size: medium;
+    font-weight: lighter;
+}
+.chooseRoom-container__button::after {
+    width: 100%;
+    position: absolute;
+    bottom: -10px;
+    height: 1px;
+    background-color: #3497F9;
+    content: "";
+    left: 0px;
+    bottom: 2px;
+}
+.chooseRoom-container__table {
+    width: 100%;
+    margin-top: 25px;
+    border-collapse: collapse;
+}
+
+.chooseRoom-container__table th,
+.chooseRoom-container__table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+    color: #595959;
+}
+
+.chooseRoom-container__btn-choose {
+    background: #3497F9;
+    color: white;
+    font-size: 15px;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.chooseRoom-container__pagination {
+    margin-top: 16px;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    gap: 8px;
+}
+
+.chooseRoom-container__pagination-page {
+    padding: 4px 12px;
+    background: #1890ff;
+    color: white;
+    border-radius: 6px;
+}
+
+.chooseRoom-container__pagination-prev,
+.chooseRoom-container__pagination-next {
+    color: #c4bebe;
+    padding: 6px 12px;
+    border-radius: 100px;
+    border: none;
+}
