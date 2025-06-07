@@ -1,0 +1,62 @@
+/* demo.css */
+
+.custom-modal .modal-dialog {
+  max-width: 454px;
+  margin: 2rem auto;
+}
+
+.custom-modal .modal-content {
+  border: 1px solid #E5E5E5;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  height: auto;
+}
+
+/* Header */
+.custom-modal .modal-header {
+  border-bottom: 1px solid #E5E5E5;
+  padding: 1rem 1.5rem 0.5rem 1.5rem;
+}
+
+.modalReception-title {
+  color: #000000;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Body */
+.custom-modal .modal-body {
+  padding: 1rem 1.5rem;
+  font-size: 16px;
+  font-weight: 500;
+  color: #4A4A4A;
+  text-align: left; /* Căn trái toàn bộ nội dung */
+}
+
+.modal-body p {
+  margin-bottom: 1rem;
+}
+
+/* Footer */
+.custom-modal .modal-footer {
+  border-top: 1px solid #E5E5E5;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Nút */
+button.btn-danger {
+  background-color: #FF0000;
+  border: none;
+  padding: 6px 16px;
+  font-weight: 600;
+}
+
+button.btn-primary {
+  background-color: #3497F9;
+  border: none;
+  padding: 6px 16px;
+  font-weight: 600;
+}

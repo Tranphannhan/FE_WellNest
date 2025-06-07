@@ -17,7 +17,6 @@ export default function PatientInformation_component ({callBack} : {callBack : (
             <div className="PatientInformationComponent__Box">
                 <div className='PatientInformationComponent__Box_Title'>Tiếp nhận {'>'} <a href="">Chọn phòng</a></div>
 
-
                 <div className='PatientInformationComponent__Box_Child'>
                     <div className='PatientInformationComponent__Box_Child__contentTop'>
                         <div className='PatientInformationComponent__Box_Child__Input1'>
@@ -26,7 +25,7 @@ export default function PatientInformation_component ({callBack} : {callBack : (
                             <div className='PatientInformationComponent__Box_Child__Input1_Title'>Cm</div>
                         </div>
 
-                          <div className='PatientInformationComponent__Box_Child__Input1'>
+                        <div className='PatientInformationComponent__Box_Child__Input1'>
                             <label htmlFor="">Chiều cao</label><br />
                             <input type="text" />
                             <div className='PatientInformationComponent__Box_Child__Input1_Title'>Cm</div>

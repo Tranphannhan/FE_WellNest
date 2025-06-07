@@ -7,10 +7,8 @@
     top: 0px; left: 0px;
 }
 
-
-/*  */
-
-.PatientInformation {
+/* -- --  */
+.PatientInformation-Box {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -20,54 +18,61 @@
     margin-top: 15px;
 }  
 
-.PatientInformation_Box1 {
+
+.PatientInformation-Box__Box1{
     width: 50%; height: 100%;
 }
 
-.PatientInformation_Box1__title {
+.PatientInformation-Box__Box1__title {
     left: 20px;
     font-size: 20px; color: #000000;
     margin-left: 20px; margin-top: 20px;
 }
 
-.PatientInformation_Box1__title i {
+.PatientInformation-Box__Box1__title i {
     margin-left: 10px;
     font-size: 20px;
     color: #3497F9;
 }
 
-.PatientInformation_Box1__content {
+
+
+.PatientInformation-Box__Box1__content {
     margin-left: 42px;
     margin-top: 20px ;
+    color: #000000;
 }
 
-.PatientInformation_Box1__content__Name {
+.PatientInformation-Box__Box1__content__Name {
     margin: 10px; font-size: 18px;
     color: #595959;
 }
 
-.PatientInformation_Box1__content__Name--Bold {
+.PatientInformation-Box__Box1__content__Bold {
     color: black;
     font-size: 18px;
 }
 
+
+
+
 /* --- */
-.PatientInformation_Box2 {
+.PatientInformation-Box__Box2 {
     width: 50%; height: 100%;
     margin-top: 48px;
 }
 
-.PatientInformation_Box2__content {
+.PatientInformation-Box__Box2__content {
     margin-left: 42px;
     margin-top: 20px ;
 }
 
-.PatientInformation_Box2__content__Name {
+.PatientInformation-Box__Box2__content__Name {
     margin: 10px; font-size: 18px;
     color: #595959;
 }
 
-.PatientInformation_Box2__content__Name--Bold {
+.PatientInformation-Box__Box2__content__Name--Bold {
     color: black;
     font-size: 18px;
 }

@@ -1,10 +1,48 @@
-import React from "react";
+"use client"
+
+import React, { useState }  from "react";
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './ChooseRoom.css'
 import Link from "next/link";
+import Example from './notificationChooseRoom';
+
+
+
 export default function ChooseRoom() {
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const [valueChooseRom , setValueChooseRom] = useState ({
+        name : 'Huân',
+        roomNumber : 3,
+    })
+
+    const handleSetValue = (name : string , roomNumber : number) => {
+        setValueChooseRom ({
+            name : name,
+            roomNumber : roomNumber
+        })
+            setShow(true)
+    }
+
+
+
     return (
         <>
+            <Example 
+                Data_information={
+                    {
+                        name: valueChooseRom.name,
+                        roomNumber: valueChooseRom.roomNumber,
+                        handleClose,
+                        handleShow,
+                        show
+                    }
+                }
+            />
+
+
+
             <Tabbar
                 tabbarItems={
                     {
@@ -67,7 +105,7 @@ export default function ChooseRoom() {
                                     </td>
                                     <td>{formatTime(totalMinutes)}</td>
                                     <td>
-                                        <button className="chooseRoom-container__btn-choose">Chọn phòng</button>
+                                        <button className="chooseRoom-container__btn-choose" onClick={() => handleSetValue (doctor.name , doctor.room) }>Chọn phòng</button>
                                     </td>
                                 </tr>
                             )

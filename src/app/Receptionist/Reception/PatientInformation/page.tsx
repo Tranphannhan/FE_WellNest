@@ -26,77 +26,80 @@ export default function PatientInformation (){
             
             {display && <PatientInformation_component  callBack={() => {setDisplay(false)} }/>}
 
-            <div className='PatientInformation' >
-                <div className='PatientInformation_Box1'>
-                    <div className='PatientInformation_Box1__title'>
+            <div className='PatientInformation-Box'>
+                <div className='PatientInformation-Box__Box1'>
+                    <div className='PatientInformation-Box__Box1__title'>
                         Thông tin bệnh nhân 
                         <i className="bi bi-pencil-square"></i>
                     </div>
 
-                    <div className='PatientInformation_Box1__content'>
-                        <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation_Box1__content__Name--Bold'>Họ và tên: </span>
+
+                    <div className='PatientInformation-Box__Box1__content'>
+                        <div className='PatientInformation-Box__Box1__content__Name'>
+                            <span className='PatientInformation-Box__Box1__content__Bold'>Họ và tên: </span>
                              Nguyễn Đình Huân 
                         </div>
                     </div>
 
-                    <div className='PatientInformation_Box1__content'>
+                    <div className='PatientInformation-Box__Box1__content'>
                         <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation_Box1__content__Name--Bold'>Giới tính: </span>
+                            <span className='PatientInformation-Box__Box1__content__Bold'>Giới tính: </span>
                             Nam 
                         </div>
                     </div>
 
-                    <div className='PatientInformation_Box1__content'>
+                    <div className='PatientInformation-Box__Box1__content'>
                         <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation_Box1__content__Name--Bold'>Số điện thoại: </span>
+                            <span className='PatientInformation-Box__Box1__content__Bold'>Số điện thoại: </span>
                             0369594026 
                         </div>
                     </div>
 
-                    <div className='PatientInformation_Box1__content'>
+                    <div className='PatientInformation-Box__Box1__content'>
                         <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation_Box1__content__Name--Bold'>Số BHYT: </span>
+                            <span className='PatientInformation-Box__Box1__content__Bold'>Số BHYT: </span>
                             BHYT9001999 
                         </div>
                     </div>
 
-                    <div className='PatientInformation_Box1__content'>
+                    <div className='PatientInformation-Box__Box1__content'>
                         <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation_Box1__content__Name--Bold'>Địa chỉ: </span><br />
+                            <span className='PatientInformation-Box__Box1__content__Bold'>Địa chỉ: </span><br />
                             403, ấp Mỹ Điền, xã Long Hựu, huyện Cần Đước,tỉnh Long An 
                         </div>
                     </div>
 
-                    <div className='PatientInformation_Box1__content'>
+                    <div className='PatientInformation-Box__Box1__content'>
                         <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation_Box1__content__Name--Bold'>Lịch sử bệnh: </span><br />
+                            <span className='PatientInformation-Box__Box1__content__Bold'>Lịch sử bệnh: </span><br />
                             Suy tim, ho lao, sỏi thận,suy hô hấp 
                         </div>
                     </div>
-
                 </div>
 
 
-                <div className='PatientInformation_Box2'>
-                    <div className='PatientInformation_Box2__content'>
-                        <div className='PatientInformation_Box2__content__Name'>
-                            <span className='PatientInformation_Box2__content__Name--Bold'>Số CCCD: </span>
+
+
+
+                <div className='PatientInformation-Box__Box2'>
+                    <div className='PatientInformation-Box__Box2__content'>
+                        <div className='PatientInformation-Box__Box2__content__Name'>
+                            <span className='PatientInformation-Box__Box2__content__Name--Bold'>Số CCCD: </span>
                             080205013878
                         </div>
                     </div>
 
-                    <div className='PatientInformation_Box2__content'>
-                        <div className='PatientInformation_Box2__content__Name'>
-                            <span className='PatientInformation_Box2__content__Name--Bold'>Ngày sinh: </span>
+                    <div className='PatientInformation-Box__Box2__content'>
+                        <div className='PatientInformation-Box__Box2__content__Name'>
+                            <span className='PatientInformation-Box__Box2__content__Name--Bold'>Ngày sinh: </span>
                              16/08/1998 
                         </div>
                     </div>
 
 
-                    <div className='PatientInformation_Box2__content'>
-                        <div className='PatientInformation_Box2__content__Name'>
-                            <span className='PatientInformation_Box2__content__Name--Bold'>Số điện thoại người thân:  </span>
+                    <div className='PatientInformation-Box__Box2__content'>
+                        <div className='PatientInformation-Box__Box2__content__Name'>
+                            <span className='PatientInformation-Box__Box2__content__Name--Bold'>Số điện thoại người thân:  </span>
                             0977567891
                         </div>
                     </div>
