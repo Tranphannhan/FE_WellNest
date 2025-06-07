@@ -13,8 +13,8 @@ export default function ChooseRoom() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [valueChooseRom , setValueChooseRom] = useState ({
-        name : 'Huân',
-        roomNumber : 3,
+        name : '',
+        roomNumber : 0,
     })
 
     const handleSetValue = (name : string , roomNumber : number) => {
