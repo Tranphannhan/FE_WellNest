@@ -1,10 +1,19 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import "./SearchReception.css";
 import Link from "next/link";
+import Pagination from "@/app/components/ui/Pagination/Pagination";
 
 export default function SearchReception() {
+        const [currentPage, setCurrentPage] = useState<number>(1);
+        const totalPages = 2;
+
+  useEffect(()=>{
+      console.log(`Đang ở trang: ${currentPage}`)
+
+  },[currentPage])
+
   return (
     <>
       <Tabbar
@@ -64,6 +73,14 @@ export default function SearchReception() {
               </tr>
             </tbody>
           </table>
+            <div className="SearchReception-pagination">
+                   <Pagination
+                      totalPages={totalPages}
+                      currentPage={currentPage}
+                      onPageChange={setCurrentPage}
+                  />
+
+            </div>
         </div>
       </div>
     </>
