@@ -1,4 +1,4 @@
-.ExaminationForm {
+.ExaminationForm-Container {
     margin: 20px auto;
     padding: 20px;
     background-color: #fff;
@@ -8,7 +8,7 @@
     box-sizing: border-box;
 }
 
-.form-header {
+.ExaminationForm-Container__header {
     display: flex;
     justify-content: space-between; /* Căn tiêu đề và nút ra hai bên */
     align-items: center; /* Căn giữa theo chiều dọc */
@@ -16,7 +16,7 @@
     flex-wrap: wrap; /* Cho phép wrap trên màn hình nhỏ */
 }
 
-.form-header h2 {
+.ExaminationForm-Container__header h2 {
     font-size: 22px;
     margin: 0; /* Loại bỏ margin mặc định của h2 */
     color: #333;
@@ -42,17 +42,17 @@
 }
 
 
-.form-group,
+.ExaminationForm-Container__form__group,
 .form-subgroup {
     display: flex;
     flex-direction: column;
 }
-.form-group label{
+.ExaminationForm-Container__form__group label{
     color: #000000;
 }
 
-.ExaminationForm input,
-.ExaminationForm textarea {
+.ExaminationForm-Container input,
+.ExaminationForm-Container textarea {
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 8px;
@@ -63,24 +63,24 @@
     color: #808080;
 }
 
-.ExaminationForm input:focus,
-.ExaminationForm textarea:focus {
+.ExaminationForm-Container input:focus,
+.ExaminationForm-Container textarea:focus {
     border-color: #000000;
 }
 
-.input-unit {
+.ExaminationForm-Container__input__unit {
     display: flex;
     align-items: center;
     width: 100%; 
 }
 
-.input-unit input {
+.ExaminationForm-Container__input__unit input {
     flex: 1;
     border-right: none;
     border-radius: 8px 0 0 8px;
 }
 
-.input-unit span {
+.ExaminationForm-Container__input__unit span {
     background: #eee;
     padding: 8.5px 12px;
     border: 1px solid #ccc;
@@ -102,16 +102,20 @@
     font-size: 14px; 
 }
 
-.ExaminationForm textarea {
+.ExaminationForm-Container textarea {
     resize: vertical;
     min-height: 80px;
 }
 
-.accept-btn {
+.ExaminationForm-Container__accept{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ExaminationForm-Container__accept__btn {
     padding: 7px 24px;
-    background-color: #fff;
-    color: #3497F9;
-    border: 1px solid #3497F9;
+    background-color: #3497F9;
+    color: #ffffff;
     border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
@@ -122,19 +126,20 @@
     transition: background-color 0.2s, box-shadow 0.2s;
 }
 
-.accept-btn button{
+.ExaminationForm-Container__accept__btn button{
     border: none;
 }
 
-.print-btn {
+.ExaminationForm-Container__print__btn {
   width: 100%;
   display: flex;
   justify-content: flex-end;
 }
 
-.print-btn button {
-    color: white;
-  background-color: #3497F9;
+.ExaminationForm-Container__print {
+    color: #3497F9;
+  background-color: #ffffff;
+  border: 1px solid #3497F9;
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 16px;

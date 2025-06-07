@@ -1,4 +1,4 @@
-.InputForm__Container {
+.InputForm-Container {
   background: #eef7fe;
   padding: 20px 0;
   border-radius: 10px;
@@ -8,35 +8,34 @@
   margin: auto;
 }
 
-form .row {
+.InputForm-Container form .InputForm-Container__row {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   margin-bottom: 20px;
 }
 
-.form__group {
+.InputForm-Container__form__group {
   flex: 1;
-  
   display: flex;
   flex-direction: column;
   min-width: 250px;
 }
 
-.address__group {
+.InputForm-Container__address__group {
   flex: 2.05;
 }
 
-.InputForm__Container label {
+.InputForm-Container label {
   margin-bottom: 5px;
   color: #000000;
 }
 
-.InputForm__Container span.text__red{
+.InputForm-Container span.text__red{
   color: red;
 }
 
-.InputForm__Container input,
+.InputForm-Container input,
 textarea {
   background-color: #ffffff;
   padding: 8px;
@@ -45,7 +44,7 @@ textarea {
   font-size: 14px;
 }
 
-.gender {
+.InputForm-Container__gender {
   display: flex;
   gap: 20px;
   margin-top: 6px;
@@ -56,14 +55,14 @@ textarea {
   transform: scale(1.2);
 }
 
-.Form_button{
+.InputForm-Container__form__button{
   display: flex;
   justify-content: flex-end;
   width: 100%;
   padding-top: 20px;
 }
 
-.Form_button button{
+.InputForm-Container__form__button button{
   padding: 7px 20px;
   border-radius: 4px;
   background-color: #3497f9;
