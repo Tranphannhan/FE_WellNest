@@ -51,8 +51,8 @@
     color: #000000;
 }
 
-input,
-textarea {
+.ExaminationForm input,
+.ExaminationForm textarea {
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 8px;
@@ -63,8 +63,8 @@ textarea {
     color: #808080;
 }
 
-input:focus,
-textarea:focus {
+.ExaminationForm input:focus,
+.ExaminationForm textarea:focus {
     border-color: #000000;
 }
 
@@ -102,7 +102,7 @@ textarea:focus {
     font-size: 14px; 
 }
 
-textarea {
+.ExaminationForm textarea {
     resize: vertical;
     min-height: 80px;
 }

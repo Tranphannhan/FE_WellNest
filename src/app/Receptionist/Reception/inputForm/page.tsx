@@ -14,7 +14,7 @@ export default function InputForm() {
                
             }
         ></Tabbar>
-            <div className="form__container">
+            <div className="InputForm__Container">
             <form>
                 <div className="row">
                     <div className="form__group">
