@@ -14,25 +14,27 @@ export default function PatientInformation_component ({callBack} : {callBack : (
         <>
             <div className='PatientInformationComponent-Background' onClick={ callBack }></div>
 
-            <div className="PatientInformationComponent__Box">
-                <div className='PatientInformationComponent__Box_Title'>Tiếp nhận {'>'} <a href="">Chọn phòng</a></div>
+            <div className="PatientInformationComponent-Box">
+                <div className='PatientInformationComponent-Box__Title'>Tiếp nhận {'>'} <a href="">Chọn phòng</a></div>
 
-                <div className='PatientInformationComponent__Box_Child'>
+                <div className='PatientInformationComponent-Box__Child'>
+
+
                     <div className='PatientInformationComponent__Box_Child__contentTop'>
-                        <div className='PatientInformationComponent__Box_Child__Input1'>
+                        <div className='PatientInformationComponent-Box__Child__Input1'>
                             <label htmlFor="">Chiều cao</label><br />
                             <input type="text" />
-                            <div className='PatientInformationComponent__Box_Child__Input1_Title'>Cm</div>
+                            <div className='PatientInformationComponent__Box_Child__contentTop__Title'>Cm</div>
                         </div>
 
-                        <div className='PatientInformationComponent__Box_Child__Input1'>
-                            <label htmlFor="">Chiều cao</label><br />
+                        <div className='PatientInformationComponent-Box__Child__Input1'>
+                            <label htmlFor="">Cân Nặng</label><br />
                             <input type="text" />
-                            <div className='PatientInformationComponent__Box_Child__Input1_Title'>Cm</div>
+                            <div className='PatientInformationComponent__Box_Child__contentTop__Title'>Kg</div>
                         </div>
 
 
-                        <div className='PatientInformationComponent__Box_Child__Input1'>
+                        <div className='PatientInformationComponent-Box__Child__Input1'>
                             <label htmlFor="">Chọn khoa</label><br />
                             <i className="bi bi-chevron-expand"></i>
 
@@ -48,20 +50,16 @@ export default function PatientInformation_component ({callBack} : {callBack : (
 
                     {/*  */}
 
-                    <div className='PatientInformationComponent__Box_Child__contentBottom'>
+                    <div className='PatientInformationComponent-Box_Child__contentBottom'>
                         <label htmlFor="">Lý do đến khám</label><br />
                         <textarea placeholder="Nhập nội dung..."></textarea>
                     </div>
-
-                 
-
                 </div>
 
 
 
-                    <div className='PatientInformationComponent__Box_Child_button'>
+                    <div className='PatientInformationComponent-Box__Child_button '>
                         <button  className='PatientInformation-button__buttonItem'>Tiếp tục</button>
-
                     </div>
 
 

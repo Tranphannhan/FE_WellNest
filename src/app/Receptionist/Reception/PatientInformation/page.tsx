@@ -37,7 +37,7 @@ export default function PatientInformation (){
                     <div className='PatientInformation-Box__Box1__content'>
                         <div className='PatientInformation-Box__Box1__content__Name'>
                             <span className='PatientInformation-Box__Box1__content__Bold'>Họ và tên: </span>
-                             Nguyễn Đình Huân 
+                             Ngô Hoàng Anh
                         </div>
                     </div>
 
