@@ -3,7 +3,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import './receptionResultNotification.css';
+import './PatientInformationNofication.css';
 
 
 interface Type_Data_information {
@@ -14,7 +14,7 @@ interface Type_Data_information {
 }
  
 
-function ReceptionResultNotificationExample ({Data_information } : {Data_information : Type_Data_information} ) {
+function PatientInformationExample ({Data_information } : {Data_information : Type_Data_information} ) {
   return (
     <>
       <Modal
@@ -31,17 +31,17 @@ function ReceptionResultNotificationExample ({Data_information } : {Data_informa
 
         <Modal.Body>
           <p style={{ fontSize: "16px", color: "#333", marginBottom: "0.5rem" }}>
-            Không tìm thấy sổ khám bệnh của bệnh nhân.
+            Bệnh nhân đã có thẻ tạm thời
           </p>
           <p style={{ fontSize: "16px", color: "#333" }}>
-            Bạn có muốn tạo sổ khám bệnh không?
+             Cập nhật thông tin bệnh nhân
           </p>
         </Modal.Body>
 
 
         <Modal.Footer className='receptionResultNotification-Footer'>
           <Button className='receptionResultNotification-Footer__Huy' variant="danger" onClick={Data_information.handleClose}>
-            Quay lại
+            Hủy
           </Button>
 
           <Button  variant="primary" onClick={Data_information.callBack}>
@@ -53,4 +53,4 @@ function ReceptionResultNotificationExample ({Data_information } : {Data_informa
   );
 }
 
-export default ReceptionResultNotificationExample;
+export default PatientInformationExample;

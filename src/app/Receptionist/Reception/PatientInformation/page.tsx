@@ -4,14 +4,38 @@ import './PatientInformation.css';
 import Button from '@/app/components/ui/Button/Button';
 import PatientInformation_component from './PatientInformationComponent';
 import {useState} from 'react';
-
+import { useRouter } from 'next/navigation';
+import PatientInformationExample from './PatientInformationNofication';
 
 
 export default function PatientInformation (){
+    const router = useRouter();
     const [display , setDisplay] = useState <boolean> (false);
+
+    //   --- 
+    function Hadlecreate  () {
+        router.push('/Receptionist/Reception/InputForm?isTheOfficialCard=true');
+    }
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    
 
     return (
         <>
+             <PatientInformationExample
+                Data_information={
+                    {
+                        callBack : Hadlecreate,
+                        handleClose,
+                        handleShow,
+                        show
+                    }
+                }
+            />
+
+
             <Tabbar
                 tabbarItems = {
                         {
