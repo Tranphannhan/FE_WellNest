@@ -3,7 +3,8 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './inputForm.css';
-import { codeScanningInformationType } from "@/app/types/patientTypes/patient";
+import { codeScanningInformationType,medicalCardData } from "@/app/types/patientTypes/patient";
+import { createMedicalExaminationCard } from '@/app/services/ReceptionServices';
 
 export default function InputForm() {
   const searchParams = useSearchParams();
@@ -47,6 +48,27 @@ export default function InputForm() {
     setFormData(prev => ({ ...prev, sex: value }));
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const medicalCardDataToSend: medicalCardData = {
+        name: formData.name,
+        sex: formData.sex,
+        dateOfBirth: formData.dateOfBirth,
+        phone: formData.phone,
+        CCCDNumber: formData.CCCDNumber,
+        address: formData.address,
+        BHYT: formData.BHYT,
+        relativePhone: formData.relativePhone,
+        medicalHistory: formData.medicalHistory,
+    };
+
+    try {
+        const response = await createMedicalExaminationCard(medicalCardDataToSend);
+        console.log("Thẻ khám bệnh đã được tạo thành công:", response);
+    } catch (error) {
+        console.error("Không thể tạo thẻ khám bệnh:", error);
+    }
+  };
   return (
     <>
       {
@@ -70,7 +92,7 @@ export default function InputForm() {
       }
 
       <div className="InputForm-Container">
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="InputForm-Container__row">
             <div className="InputForm-Container__form__group">
               <label><span className="text__red">*</span>Họ và tên:</label>
