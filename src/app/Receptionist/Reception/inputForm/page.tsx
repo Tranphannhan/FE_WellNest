@@ -5,6 +5,7 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './inputForm.css';
 import { codeScanningInformationType,medicalCardData } from "@/app/types/patientTypes/patient";
 import { createMedicalExaminationCard } from '@/app/services/ReceptionServices';
+import { showToast, ToastType } from '@/app/lib/Toast';
 
 export default function InputForm() {
   const searchParams = useSearchParams();
@@ -64,8 +65,16 @@ export default function InputForm() {
 
     try {
         const response = await createMedicalExaminationCard(medicalCardDataToSend);
-        alert("Thẻ khám bệnh đã được tạo thành công:");
-        console.log(response)
+        const data = await response.json()
+        if(data.status === 201){
+          showToast('Tạo sổ khám bệnh thành công',ToastType.success)
+        }else{
+          if(data?.haveATemporaryCard){
+
+          }else{
+            showToast(data?.message,ToastType.error)
+          }
+        }
     } catch (error) {
         console.error("Không thể tạo thẻ khám bệnh:", error);
     }
