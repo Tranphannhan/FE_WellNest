@@ -5,6 +5,10 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './inputForm.css';
 import { codeScanningInformationType,medicalCardData } from "@/app/types/patientTypes/patient";
 import { createMedicalExaminationCard } from '@/app/services/ReceptionServices';
+import ReceptionResultNotificationExample from './InputFormNotification';
+import { useRouter } from 'next/navigation';
+
+
 
 export default function InputForm() {
   const searchParams = useSearchParams();
@@ -17,10 +21,10 @@ export default function InputForm() {
     sex: '',
     address: '',
     BHYT: '',
-    phone: '',
+    phone: '', 
     relativePhone: '',
     medicalHistory: ''
-  });
+  });  
 
   useEffect(() => {
     if (isTheOfficialCard) {
@@ -63,15 +67,43 @@ export default function InputForm() {
     };
 
     try {
-        const response = await createMedicalExaminationCard(medicalCardDataToSend);
-        alert("Thẻ khám bệnh đã được tạo thành công:");
-        console.log(response)
+      const response = await createMedicalExaminationCard(medicalCardDataToSend);
+      alert("Thẻ khám bệnh đã được tạo thành công:");
+      console.log(response);
+       
+        
     } catch (error) {
         console.error("Không thể tạo thẻ khám bệnh:", error);
     }
   };
+
+
+
+    //   --- 
+  const [show, setShow] = useState(true);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const router = useRouter();
+  function Hadlecreate  () {
+    router.push('/Receptionist/Reception/InputForm?isTheOfficialCard=true');
+  }
+
+  
+
   return (
     <>
+       <ReceptionResultNotificationExample
+        Data_information={
+          {
+            callBack : Hadlecreate,
+            handleClose,
+            handleShow,
+            show
+          }
+        }
+      />
+
       {
         isTheOfficialCard ?
           <Tabbar
