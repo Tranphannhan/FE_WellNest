@@ -2,13 +2,13 @@ import { medicalCardData } from '@/app/types/patientTypes/patient';
 
 export async function createMedicalExaminationCard(data:medicalCardData) {
     try {
-        const kq = await fetch('http://localhost:5000/The_Kham_Benh/Add', {
+        const result = await fetch('http://localhost:5000/The_Kham_Benh/Add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                 HoVaTen: data.name,
+                HoVaTen: data.name,
                 GioiTinh: data.sex,
                 NgaySinh: data.dateOfBirth,
                 SoDienThoai: data.phone,
@@ -19,9 +19,20 @@ export async function createMedicalExaminationCard(data:medicalCardData) {
                 LichSuBenh: data.medicalHistory || '',
             }),
         });
-        return kq;
+        return result;
     } catch (error) {
         console.error("Lỗi khi tạo thẻ khám bệnh:", error);
+        throw error; 
+    }
+}
+
+
+export async function getAllDepartments() {
+        try {
+        const result = await fetch('http://localhost:5000/Khoa/Pagination?TrangThaiHoatDong=true');
+        return result;
+    } catch (error) {
+        console.error("Lỗi Khi Lấy Khoa:", error);
         throw error; 
     }
 }

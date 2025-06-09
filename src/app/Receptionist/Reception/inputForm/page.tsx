@@ -66,11 +66,13 @@ export default function InputForm() {
     try {
         const response = await createMedicalExaminationCard(medicalCardDataToSend);
         const data = await response.json()
+       console.log(data)
         if(data.status === 201){
           showToast('Tạo sổ khám bệnh thành công',ToastType.success)
+
         }else{
           if(data?.haveATemporaryCard){
-
+            
           }else{
             showToast(data?.message,ToastType.error)
           }
