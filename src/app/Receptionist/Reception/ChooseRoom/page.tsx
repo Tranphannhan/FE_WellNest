@@ -17,12 +17,13 @@ export default function ChooseRoom() {
         roomNumber : 0,
     })
 
+    
     const handleSetValue = (name : string , roomNumber : number) => {
         setValueChooseRom ({
             name : name,
             roomNumber : roomNumber
         })
-            setShow(true)
+        setShow(true)
     }
 
 

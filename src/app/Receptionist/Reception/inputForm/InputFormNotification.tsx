@@ -3,7 +3,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import './receptionResultNotification.css';
+import './InputFormNotification.css';
 
 
 interface Type_Data_information {
@@ -12,7 +12,7 @@ interface Type_Data_information {
   show : boolean ,
   callBack : () => void
 }
- 
+
 
 function ReceptionResultNotificationExample ({Data_information } : {Data_information : Type_Data_information} ) {
   return (

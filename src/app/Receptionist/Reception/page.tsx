@@ -20,8 +20,7 @@ export default function ScanQRCode() {
 
 
   function Hadlecreate  () {
-  router.push('/Receptionist/Reception/InputForm?isTheOfficialCard=true');
-    
+    router.push('/Receptionist/Reception/InputForm?isTheOfficialCard=true');
   }
 
   
@@ -118,12 +117,14 @@ async function HandleContinue() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  
 
     
   return (
     <>
     {console.log(result)}
+
+
       <ReceptionResultNotificationExample
         Data_information={
           {
@@ -133,7 +134,6 @@ async function HandleContinue() {
             show
           }
         }
-      
       />
 
       <Tabbar
