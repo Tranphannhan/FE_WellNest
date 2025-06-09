@@ -3,12 +3,25 @@ import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import './PatientInformation.css';
 import Button from '@/app/components/ui/Button/Button';
 import PatientInformation_component from './PatientInformationComponent';
-import {useState} from 'react';
+import { useState, useEffect } from 'react';
+import { SoKhamBenhData } from '@/app/types/patientTypes/patient';
 
 
 
-export default function PatientInformation (){
-    const [display , setDisplay] = useState <boolean> (false);
+export default function PatientInformation() {
+  const [display, setDisplay] = useState<boolean>(false);
+  const [patientInfo, setPatientInfo] = useState<SoKhamBenhData | null>(null);
+
+  useEffect(() => {
+    const storedData = sessionStorage.getItem("soKhamBenh");
+    if (storedData) {
+      try {
+        setPatientInfo(JSON.parse(storedData));
+      } catch (err) {
+        console.error("Lỗi khi parse dữ liệu:", err);
+      }
+    }
+  }, []);
 
     return (
         <>
@@ -26,85 +39,81 @@ export default function PatientInformation (){
             
             {display && <PatientInformation_component  callBack={() => {setDisplay(false)} }/>}
 
-            <div className='PatientInformation-Box'>
-                <div className='PatientInformation-Box__Box1'>
-                    <div className='PatientInformation-Box__Box1__title'>
-                        Thông tin bệnh nhân 
-                        <i className="bi bi-pencil-square"></i>
-                    </div>
+           <div className='PatientInformation-Box'>
+    <div className='PatientInformation-Box__Box1'>
+        <div className='PatientInformation-Box__Box1__title'>
+            Thông tin bệnh nhân 
+            <i className="bi bi-pencil-square"></i>
+        </div>
 
-
-                    <div className='PatientInformation-Box__Box1__content'>
-                        <div className='PatientInformation-Box__Box1__content__Name'>
-                            <span className='PatientInformation-Box__Box1__content__Bold'>Họ và tên: </span>
-                             Ngô Hoàng Anh
-                        </div>
-                    </div>
-
-                    <div className='PatientInformation-Box__Box1__content'>
-                        <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation-Box__Box1__content__Bold'>Giới tính: </span>
-                            Nam 
-                        </div>
-                    </div>
-
-                    <div className='PatientInformation-Box__Box1__content'>
-                        <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation-Box__Box1__content__Bold'>Số điện thoại: </span>
-                            0369594026 
-                        </div>
-                    </div>
-
-                    <div className='PatientInformation-Box__Box1__content'>
-                        <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation-Box__Box1__content__Bold'>Số BHYT: </span>
-                            BHYT9001999 
-                        </div>
-                    </div>
-
-                    <div className='PatientInformation-Box__Box1__content'>
-                        <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation-Box__Box1__content__Bold'>Địa chỉ: </span><br />
-                            403, ấp Mỹ Điền, xã Long Hựu, huyện Cần Đước,tỉnh Long An 
-                        </div>
-                    </div>
-
-                    <div className='PatientInformation-Box__Box1__content'>
-                        <div className='PatientInformation_Box1__content__Name'>
-                            <span className='PatientInformation-Box__Box1__content__Bold'>Lịch sử bệnh: </span><br />
-                            Suy tim, ho lao, sỏi thận,suy hô hấp 
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-
-                <div className='PatientInformation-Box__Box2'>
-                    <div className='PatientInformation-Box__Box2__content'>
-                        <div className='PatientInformation-Box__Box2__content__Name'>
-                            <span className='PatientInformation-Box__Box2__content__Name--Bold'>Số CCCD: </span>
-                            080205013878
-                        </div>
-                    </div>
-
-                    <div className='PatientInformation-Box__Box2__content'>
-                        <div className='PatientInformation-Box__Box2__content__Name'>
-                            <span className='PatientInformation-Box__Box2__content__Name--Bold'>Ngày sinh: </span>
-                             16/08/1998 
-                        </div>
-                    </div>
-
-
-                    <div className='PatientInformation-Box__Box2__content'>
-                        <div className='PatientInformation-Box__Box2__content__Name'>
-                            <span className='PatientInformation-Box__Box2__content__Name--Bold'>Số điện thoại người thân:  </span>
-                            0977567891
-                        </div>
-                    </div>
-                </div>
+        <div className='PatientInformation-Box__Box1__content'>
+            <div className='PatientInformation-Box__Box1__content__Name'>
+                <span className='PatientInformation-Box__Box1__content__Bold'>Họ và tên: </span>
+                {patientInfo?.HoVaTen}
             </div>
+        </div>
+
+        <div className='PatientInformation-Box__Box1__content'>
+            <div className='PatientInformation_Box1__content__Name'>
+  <span className='PatientInformation-Box__Box1__content__Bold'>Giới tính: </span>
+  {patientInfo?.GioiTinh || "Chưa có"}
+</div>
+
+        </div>
+
+        <div className='PatientInformation-Box__Box1__content'>
+            <div className='PatientInformation_Box1__content__Name'>
+                <span className='PatientInformation-Box__Box1__content__Bold'>Số điện thoại: </span>
+                {patientInfo?.SoDienThoai}
+            </div>
+        </div>
+
+        <div className='PatientInformation-Box__Box1__content'>
+            <div className='PatientInformation_Box1__content__Name'>
+                <span className='PatientInformation-Box__Box1__content__Bold'>Số BHYT: </span>
+                {patientInfo?.SoBaoHiemYTe || "Không có"}
+            </div>
+        </div>
+
+        <div className='PatientInformation-Box__Box1__content'>
+            <div className='PatientInformation_Box1__content__Name'>
+                <span className='PatientInformation-Box__Box1__content__Bold'>Địa chỉ: </span><br />
+                {patientInfo?.DiaChi}
+            </div>
+        </div>
+
+        <div className='PatientInformation-Box__Box1__content'>
+            <div className='PatientInformation_Box1__content__Name'>
+                <span className='PatientInformation-Box__Box1__content__Bold'>Lịch sử bệnh: </span><br />
+                {patientInfo?.LichSuBenh || "Không có"}
+            </div>
+        </div>
+    </div>
+
+    <div className='PatientInformation-Box__Box2'>
+        <div className='PatientInformation-Box__Box2__content'>
+            <div className='PatientInformation-Box__Box2__content__Name'>
+                <span className='PatientInformation-Box__Box2__content__Name--Bold'>Số CCCD: </span>
+                {patientInfo?.SoCCCD}
+            </div>
+        </div>
+
+        <div className='PatientInformation-Box__Box2__content'>
+            <div className='PatientInformation-Box__Box2__content__Name'>
+                <span className='PatientInformation-Box__Box2__content__Name--Bold'>Ngày sinh: </span>
+                {patientInfo?.NgaySinh}
+            </div>
+        </div>
+
+        <div className='PatientInformation-Box__Box2__content'>
+            <div className='PatientInformation-Box__Box2__content__Name'>
+                <span className='PatientInformation-Box__Box2__content__Name--Bold'>Số điện thoại người thân:  </span>
+                {patientInfo?.SDT_NguoiThan || "Không có"}
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
             {/*  */}
