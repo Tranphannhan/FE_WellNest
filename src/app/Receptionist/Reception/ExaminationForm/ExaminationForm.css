@@ -214,10 +214,15 @@
 
 /* Phiếu Khám bệnh được xem trước và in ra của bệnh nhân */
 
+.pdf-preview-modal h3{
+    color: #000;
+}
+
 .a4-container {
             width: 21cm; /* A4 width */
             min-height: 29.7cm; /* A4 height */
             background-color: white;
+            color: #000;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 2.5cm; /* Equivalent to ~1 inch padding */
             box-sizing: border-box;

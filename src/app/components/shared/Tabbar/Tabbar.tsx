@@ -11,7 +11,8 @@ export default function Tabbar({tabbarItems}:{tabbarItems:tabbarContentType}) {
         <div className="Tabbar__container">
             <div className="Tabbar__navigation">
                   {tabbarItems.tabbarItems.map((value, index) => {
-                    const isActive = pathname === value.link;
+                    const linkPath = value.link.split('?')[0];
+                    const isActive = pathname === linkPath;
                     return (
                         <Link key={index} href={value.link}>
                             <div className={`Tabbar__item ${isActive ? 'Tabbar__active' : ''}`}>

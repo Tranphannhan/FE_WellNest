@@ -5,6 +5,7 @@
   font-family: sans-serif;
   font-size: 14px;
   max-width: 100%;
+  color: #000000;
   margin: auto;
 }
 
@@ -68,4 +69,9 @@ textarea {
   background-color: #3497f9;
   font-size: 14px;
   color: white;
+}
+
+.InputForm-Container .input-disabled {
+  background-color: #f3f3f3;
+  cursor: not-allowed;
 }

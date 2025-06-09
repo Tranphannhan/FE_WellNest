@@ -3,11 +3,61 @@
 import { useState, useEffect, useRef } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
+import { convertDateFormat } from '@/app/lib/Format';
+import { useRouter } from 'next/navigation';
+import PatientInfoResult from './PatientInfoResult';
+import { codeScanningInformationType } from '@/app/types/patientTypes/patient';
+
 
 export default function ScanQRCode() {
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState ('');
+  const [renderScan, setRenderScan] = useState <codeScanningInformationType>({})
   const [isScanning, setIsScanning] = useState(false);
+  const router = useRouter();
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  
+async function HandleContinue() {
+  try {
+    if (!renderScan.CCCDNumber) {
+      alert("Dữ liệu CCCD không hợp lệ.");
+      return;
+    }
+
+    const response = await fetch(
+      `${API_BASE_URL}/The_Kham_Benh/TimKiemSoKhamBenh/Pagination?soCCCD=${renderScan.CCCDNumber}`
+    );
+
+    if (!response.ok) {
+      console.error("Lỗi khi gọi API:", response.status);
+      alert("Không thể truy cập dữ liệu. Vui lòng thử lại.");
+      return;
+    }
+
+    const examination = await response.json();
+
+    // Kiểm tra dữ liệu có tồn tại và có phần tử
+    if (examination?.data?.length > 0) {
+      // Lưu kết quả vào sessionStorage
+      sessionStorage.setItem('soKhamBenh', JSON.stringify(examination.data[0]));
+
+      // Chuyển sang trang hiển thị thông tin
+      router.push('/Receptionist/Reception/PatientInformation');
+    } else {
+      sessionStorage.setItem('thongTinCCCD', JSON.stringify(renderScan))
+
+      // thiếu 1 bước để kiểm tra xem bệnh nhân có từng tạo thẻ tạm thời chưa
+
+      alert('Không tìm thấy sổ khám bệnh cho số CCCD này.');
+      router.push('/Receptionist/Reception/InputForm?isTheOfficialCard=true');
+    }
+  } catch (error) {
+    console.error("Đã xảy ra lỗi:", error);
+    alert("Lỗi kết nối đến máy chủ.");
+  }
+}
+
 
   useEffect(() => {
     if (!isScanning) {
@@ -29,15 +79,23 @@ export default function ScanQRCode() {
     );
 
     scannerRef.current = scanner;
-
     scanner.render(
       (decodedText) => {
         scanner.clear();
-        setResult(decodedText);
-        setIsScanning(false); // dừng quét sau khi có kết quả
+        const data = decodedText.split('|')
+        const value: codeScanningInformationType = {
+          CCCDNumber: data[0],
+          name: data[2],
+          dateOfBirth:convertDateFormat(data[3]),
+          sex: data[4],
+          address: data[5],
+          creationDate:convertDateFormat(data[6]) 
+        };
+        setRenderScan(value)
+        setResult('Đã có dữ liệu');
+        setIsScanning(false);
       },
       (error) => {
-        // Bạn có thể xử lý lỗi quét tại đây
         console.error(error);
       }
     );
@@ -49,6 +107,7 @@ export default function ScanQRCode() {
 
   return (
     <>
+    {console.log(result)}
       <Tabbar
         tabbarItems={{
           tabbarItems: [
@@ -90,25 +149,18 @@ export default function ScanQRCode() {
           </div>
 
           <div className="bg-white p-6 rounded-lg border">
-            <h2 className="text-lg font-medium text-white mb-4">Kết quả quét</h2>
+           
 
             {result ? (
-              <div className="space-y-4">
-                <div className="p-4 bg-gray-800 rounded-md border border-gray-700">
-                  <p className="text-sm text-gray-300">Nội dung:</p>
-                  <p className="mt-1 font-mono text-sm text-white break-all">{result}</p>
-                </div>
-
-                <button
-                  onClick={() => {
-                    setResult('');
-                    setIsScanning(false);
-                  }}
-                  className="inline-flex items-center px-3 py-1.5 border border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-200 bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Xóa kết quả
-                </button>
-              </div>
+              <>
+                <h2 className="text-lg font-bold text-[#595959] mb-4">Thông tin căn cước công dân:</h2>
+                <PatientInfoResult 
+                  data={
+                    renderScan
+                  }
+                  onNext={HandleContinue}
+                ></PatientInfoResult>
+              </>
             ) : (
               <div className="text-center text-gray-400 py-8">
                 <p>Chưa có kết quả quét</p>
