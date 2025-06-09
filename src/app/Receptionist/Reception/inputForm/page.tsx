@@ -64,7 +64,8 @@ export default function InputForm() {
 
     try {
         const response = await createMedicalExaminationCard(medicalCardDataToSend);
-        console.log("Thẻ khám bệnh đã được tạo thành công:", response);
+        alert("Thẻ khám bệnh đã được tạo thành công:");
+        console.log(response)
     } catch (error) {
         console.error("Không thể tạo thẻ khám bệnh:", error);
     }
