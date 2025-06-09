@@ -7,6 +7,7 @@ import { convertDateFormat } from '@/app/lib/Format';
 import { useRouter } from 'next/navigation';
 import PatientInfoResult from './PatientInfoResult';
 import { codeScanningInformationType } from '@/app/types/patientTypes/patient';
+import ReceptionResultNotificationExample from './componentsReception/receptionResultNotification';
 
 
 export default function ScanQRCode() {
@@ -16,6 +17,12 @@ export default function ScanQRCode() {
   const router = useRouter();
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
+  function Hadlecreate  () {
+  router.push('/Receptionist/Reception/InputForm?isTheOfficialCard=true');
+    
+  }
 
   
 async function HandleContinue() {
@@ -49,8 +56,7 @@ async function HandleContinue() {
 
       // thiếu 1 bước để kiểm tra xem bệnh nhân có từng tạo thẻ tạm thời chưa
 
-      alert('Không tìm thấy sổ khám bệnh cho số CCCD này.');
-      router.push('/Receptionist/Reception/InputForm?isTheOfficialCard=true');
+      setShow (true);
     }
   } catch (error) {
     console.error("Đã xảy ra lỗi:", error);
@@ -105,9 +111,31 @@ async function HandleContinue() {
     };
   }, [isScanning]);
 
+
+
+
+  //   --- 
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+
+    
   return (
     <>
     {console.log(result)}
+      <ReceptionResultNotificationExample
+        Data_information={
+          {
+            callBack : Hadlecreate,
+            handleClose,
+            handleShow,
+            show
+          }
+        }
+      
+      />
+
       <Tabbar
         tabbarItems={{
           tabbarItems: [
