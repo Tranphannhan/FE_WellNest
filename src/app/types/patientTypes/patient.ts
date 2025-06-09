@@ -18,3 +18,17 @@ export interface medicalCardData {
     relativePhone?: string;
     medicalHistory?: string;
 }
+
+export interface SoKhamBenhData {
+  _id: string;
+  HoVaTen: string;
+  GioiTinh: string;
+  NgaySinh: string;
+  SoDienThoai: string;
+  SoBaoHiemYTe: string;
+  DiaChi: string;
+  SoCCCD: string;
+  SDT_NguoiThan: string;
+  LichSuBenh: string;
+  __v: number;
+}

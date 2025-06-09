@@ -8,7 +8,7 @@ export async function createMedicalExaminationCard(data:medicalCardData) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                 HoVaTen: data.name,
+                HoVaTen: data.name,
                 GioiTinh: data.sex,
                 NgaySinh: data.dateOfBirth,
                 SoDienThoai: data.phone,
