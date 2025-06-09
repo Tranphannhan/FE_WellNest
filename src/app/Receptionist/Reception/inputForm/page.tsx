@@ -1,38 +1,73 @@
-'use client'
+'use client';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './inputForm.css';
 import { codeScanningInformationType } from "@/app/types/patientTypes/patient";
 
-export default function InputForm({ searchParams = {} }: { searchParams?: { isTheOfficialCard?: string } }) {
-  const isTheOfficialCard = searchParams.isTheOfficialCard === 'true';
-  const patientInformationSession = sessionStorage.getItem('thongTinCCCD');
-  let patientInformation:codeScanningInformationType | null = null;
-  if(patientInformationSession){
-    patientInformation = JSON.parse(patientInformationSession)
-  }
+export default function InputForm() {
+  const searchParams = useSearchParams();
+  const isTheOfficialCard = searchParams.get('isTheOfficialCard') === 'true';
+
+  const [formData, setFormData] = useState({
+    name: '',
+    CCCDNumber: '',
+    dateOfBirth: '',
+    sex: '',
+    address: '',
+    BHYT: '',
+    phone: '',
+    relativePhone: '',
+    medicalHistory: ''
+  });
+
+  useEffect(() => {
+    if (isTheOfficialCard) {
+      const session = sessionStorage.getItem('thongTinCCCD');
+      if (session) {
+        const data: codeScanningInformationType = JSON.parse(session);
+        setFormData({
+          ...formData,
+          name: data.name || '',
+          CCCDNumber: data.CCCDNumber || '',
+          dateOfBirth: data.dateOfBirth || '',
+          sex: data.sex || '',
+          address: data.address || '',
+        });
+      }
+    }
+  }, [isTheOfficialCard]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleRadioChange = (value: string) => {
+    setFormData(prev => ({ ...prev, sex: value }));
+  };
 
   return (
     <>
-    {
+      {
         isTheOfficialCard ?
-                <Tabbar
-                tabbarItems={{
-                tabbarItems: [
-                    { text: 'Tạo sổ khám bệnh', link: '/Receptionist/Reception/InputForm?isTheOfficialCard=true' },
-                ],
-                }}
-            />
-        :
-                <Tabbar
-                tabbarItems={{
-                tabbarItems: [
-                    { text: 'Quét mã QR', link: '/Receptionist/Reception' },
-                    { text: 'Nhập thủ công', link: '/Receptionist/Reception/InputForm' },
-                ],
-                }}
-            />
-    }
-     
+          <Tabbar
+            tabbarItems={{
+              tabbarItems: [
+                { text: 'Tạo sổ khám bệnh', link: '/Receptionist/Reception/InputForm?isTheOfficialCard=true' },
+              ],
+            }}
+          />
+          :
+          <Tabbar
+            tabbarItems={{
+              tabbarItems: [
+                { text: 'Quét mã QR', link: '/Receptionist/Reception' },
+                { text: 'Nhập thủ công', link: '/Receptionist/Reception/InputForm' },
+              ],
+            }}
+          />
+      }
 
       <div className="InputForm-Container">
         <form>
@@ -40,7 +75,9 @@ export default function InputForm({ searchParams = {} }: { searchParams?: { isTh
             <div className="InputForm-Container__form__group">
               <label><span className="text__red">*</span>Họ và tên:</label>
               <input
-                value={isTheOfficialCard && patientInformation ? patientInformation.name : ''}
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 type="text"
                 disabled={isTheOfficialCard}
                 className={isTheOfficialCard ? 'input-disabled' : ''}
@@ -48,14 +85,16 @@ export default function InputForm({ searchParams = {} }: { searchParams?: { isTh
             </div>
 
             <div className="InputForm-Container__form__group">
-                {isTheOfficialCard ? 
-                    <label><span className="text__red">*</span>Số CCCD:</label>:
-                    <label>Số CCCD (Không bắt buộc):</label>
-                }
-    
+              {isTheOfficialCard ?
+                <label><span className="text__red">*</span>Số CCCD:</label> :
+                <label>Số CCCD (Không bắt buộc):</label>
+              }
+
               <input
+                name="CCCDNumber"
+                value={formData.CCCDNumber}
+                onChange={handleChange}
                 type="text"
-                value={isTheOfficialCard && patientInformation ? patientInformation.CCCDNumber : ''}
                 disabled={isTheOfficialCard}
                 className={isTheOfficialCard ? 'input-disabled' : ''}
               />
@@ -64,9 +103,10 @@ export default function InputForm({ searchParams = {} }: { searchParams?: { isTh
             <div className="InputForm-Container__form__group">
               <label><span className="text__red">*</span>Ngày sinh:</label>
               <input
-                value={isTheOfficialCard && patientInformation ? patientInformation.dateOfBirth : ''}
+                name="dateOfBirth"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
                 type="date"
-                style={{ color: '#808080' }}
                 disabled={isTheOfficialCard}
                 className={isTheOfficialCard ? 'input-disabled' : ''}
               />
@@ -76,17 +116,32 @@ export default function InputForm({ searchParams = {} }: { searchParams?: { isTh
           <div className="InputForm-Container__row">
             <div className="InputForm-Container__form__group">
               <label>Số BHYT (Không bắt buộc):</label>
-              <input type="text" />
+              <input
+                name="BHYT"
+                value={formData.BHYT}
+                onChange={handleChange}
+                type="text"
+              />
             </div>
 
             <div className="InputForm-Container__form__group">
               <label>Số điện thoại (Không bắt buộc):</label>
-              <input type="text" />
+              <input
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                type="text"
+              />
             </div>
 
             <div className="InputForm-Container__form__group">
               <label>Số điện thoại người thân (Không bắt buộc):</label>
-              <input type="text" />
+              <input
+                name="relativePhone"
+                value={formData.relativePhone}
+                onChange={handleChange}
+                type="text"
+              />
             </div>
           </div>
 
@@ -96,33 +151,37 @@ export default function InputForm({ searchParams = {} }: { searchParams?: { isTh
               <div className="InputForm-Container__gender">
                 <label>
                   <input
-                    className="gender__input"
                     type="radio"
                     name="gender"
+                    className="gender__input"
+                    checked={formData.sex === 'Nam'}
                     disabled={isTheOfficialCard}
-                    checked={isTheOfficialCard && patientInformation ? patientInformation.sex === 'Nam' : false}
+                    onChange={() => handleRadioChange('Nam')}
                   /> Nam
                 </label>
                 <label>
                   <input
-                    className="gender__input"
                     type="radio"
                     name="gender"
+                    className="gender__input"
+                    checked={formData.sex === 'Nữ'}
                     disabled={isTheOfficialCard}
-                    checked={isTheOfficialCard && patientInformation ? patientInformation.sex === 'Nữ' : false}
+                    onChange={() => handleRadioChange('Nữ')}
                   /> Nữ
                 </label>
               </div>
             </div>
 
             <div className="InputForm-Container__form__group InputForm-Container__address__group">
-                {isTheOfficialCard ? 
-                    <label><span className="text__red">*</span>Địa chỉ:</label>:
-                    <label>Địa chỉ (Không bắt buộc):</label>
-                }
+              {isTheOfficialCard ?
+                <label><span className="text__red">*</span>Địa chỉ:</label> :
+                <label>Địa chỉ (Không bắt buộc):</label>
+              }
 
               <textarea
-                value={isTheOfficialCard && patientInformation ? patientInformation.address : ''}
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
                 rows={3}
                 disabled={isTheOfficialCard}
                 className={isTheOfficialCard ? 'input-disabled' : ''}
@@ -132,11 +191,16 @@ export default function InputForm({ searchParams = {} }: { searchParams?: { isTh
 
           <div className="InputForm-Container__form__group">
             <label>Lịch sử bệnh (Không bắt buộc):</label>
-            <textarea rows={4}></textarea>
+            <textarea
+              name="medicalHistory"
+              value={formData.medicalHistory}
+              onChange={handleChange}
+              rows={4}
+            ></textarea>
           </div>
 
           <div className="InputForm-Container__form__button">
-            <button>
+            <button type="submit">
               {isTheOfficialCard ? 'Tạo sổ khám bệnh chính thức' : 'Tạo sổ khám bệnh tạm thời'}
             </button>
           </div>
