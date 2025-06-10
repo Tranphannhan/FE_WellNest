@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import './notification.css';
+import { showToast, ToastType } from '@/app/lib/Toast';
+
 interface Type_Data_information {
   name: string,
   roomNumber: number,
@@ -12,7 +14,7 @@ interface Type_Data_information {
   show : boolean
 } 
 
-
+ 
 function Example ({Data_information } : {Data_information : Type_Data_information} ) {
   return (
     <>
@@ -44,7 +46,7 @@ function Example ({Data_information } : {Data_information : Type_Data_informatio
           <Button variant="danger" onClick={Data_information.handleClose}>
             Hủy
           </Button>
-          <Button variant="primary" onClick={() => alert('Đã xác nhận')}>
+          <Button variant="primary" onClick={() => showToast('Đã Xác Nhận',ToastType.success)}>
             Xác nhận
           </Button>
         </Modal.Footer>

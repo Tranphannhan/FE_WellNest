@@ -5,8 +5,10 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './inputForm.css';
 import { codeScanningInformationType,medicalCardData } from "@/app/types/patientTypes/patient";
 import { createMedicalExaminationCard } from '@/app/services/ReceptionServices';
+import { showToast, ToastType } from '@/app/lib/Toast';
 import ReceptionResultNotificationExample from './InputFormNotification';
 import { useRouter } from 'next/navigation';
+
 
 
 
@@ -67,11 +69,19 @@ export default function InputForm() {
     };
 
     try {
-      const response = await createMedicalExaminationCard(medicalCardDataToSend);
-      alert("Thẻ khám bệnh đã được tạo thành công:");
-      console.log(response);
-       
-        
+        const response = await createMedicalExaminationCard(medicalCardDataToSend);
+        const data = await response.json()
+       console.log(data)
+        if(data.status === 201){
+          showToast('Tạo sổ khám bệnh thành công',ToastType.success)
+
+        }else{
+          if(data?.haveATemporaryCard){
+            
+          }else{
+            showToast(data?.message,ToastType.error)
+          }
+        }
     } catch (error) {
         console.error("Không thể tạo thẻ khám bệnh:", error);
     }

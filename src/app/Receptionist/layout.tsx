@@ -4,6 +4,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Navbar from "@/app/components/shared/Navbar/Navbar";
 import '../globals.css'
 import Header from "@/app/components/shared/Header/Header";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +33,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="containerClient">
-
+           <ToastContainer />
             <Navbar
               conTentNavigation = {
                 {
