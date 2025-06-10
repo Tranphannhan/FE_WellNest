@@ -148,8 +148,8 @@ export default function Patient(){
         </thead>
         <tbody>
                         {patientRecords.map((record: doctorTemporaryTypes, index: number) => (
-                            <tr key={record._id}> {/* Use _id as a unique key */}
-                                <td>{record.STTKham}</td> {/* STTKham is a string, so display directly */}
+                            <tr key={record._id}>
+                                <td>{record.STTKham}</td>
                                 <td>{record.Id_TheKhamBenh.HoVaTen}</td>
                                 <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
                                 <td>{record.Id_TheKhamBenh.SoBaoHiemYTe}</td>
@@ -157,14 +157,13 @@ export default function Patient(){
                                 <td>{record.Ngay}</td>
                                 <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
                                 <td>
-                                        <button className="btn-primary">Khám</button>
-                                        <button className="btn-danger">Không có mặt</button>
+                                    <button className="btn-primary">Khám</button>
+                                    <button className="btn-danger">Không có mặt</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
     </table>
 </div>
-        </>
-    )
-}
+</>
+    )}
