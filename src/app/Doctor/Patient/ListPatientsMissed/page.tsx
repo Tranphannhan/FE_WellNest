@@ -1,10 +1,10 @@
 'use client'
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
-import './WaitClinicalExamination.css'
+import './ListPatientsMissed.css'
 import { doctorTemporaryTypes } from "@/app/types/doctorTypes/doctorTemporaryTypes";
 import { useEffect, useState } from "react";
 
-export default function WaitClinicalExamination(){
+export default function ListPatientsMissed(){
     const [patientRecords, setPatientRecords] = useState<doctorTemporaryTypes[]>([]);
 
     useEffect(() => {
@@ -100,12 +100,14 @@ export default function WaitClinicalExamination(){
             <Tabbar
             tabbarItems={{
                 tabbarItems: [
-                { text: 'Danh sách chờ xét nghiệm', link: '/Doctor/WaitClinicalExamination' },
+                { text: 'Thông tin bệnh nhân', link: '/Doctor/Patient' },
+                { text: 'Danh sách bệnh nhân bỏ qua', link: '/Doctor/Patient/ListPatientsMissed' },
+                { text: 'Lịch sử khám hôm nay', link: '/Doctor/Patient/MedicalHistory' },
                 ],
             }}
             />
 
-                <div className="WaitClinicalExamination-container">
+                <div className="ListPatientsMissed-container">
                     <div className="search-reception-container">
                         <div className="search-box-wrapper">
                             <div className="search-box">
@@ -130,7 +132,7 @@ export default function WaitClinicalExamination(){
                             </div>
                         </div>
                 </div>
-    <table className="WaitClinicalExamination-container_table">
+    <table className="ListPatientsMissed-container_table">
         <thead>
             <tr>
                 <th>STT</th>

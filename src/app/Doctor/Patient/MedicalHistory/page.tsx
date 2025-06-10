@@ -1,10 +1,10 @@
 'use client'
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
-import './WaitClinicalExamination.css'
+import './MedicalHistory.css'
 import { doctorTemporaryTypes } from "@/app/types/doctorTypes/doctorTemporaryTypes";
 import { useEffect, useState } from "react";
 
-export default function WaitClinicalExamination(){
+export default function MedicalHistory(){
     const [patientRecords, setPatientRecords] = useState<doctorTemporaryTypes[]>([]);
 
     useEffect(() => {
@@ -100,12 +100,14 @@ export default function WaitClinicalExamination(){
             <Tabbar
             tabbarItems={{
                 tabbarItems: [
-                { text: 'Danh sách chờ xét nghiệm', link: '/Doctor/WaitClinicalExamination' },
+                { text: 'Thông tin bệnh nhân', link: '/Doctor/Patient' },
+                { text: 'Danh sách bệnh nhân bỏ qua', link: '/Doctor/Patient/ListPatientsMissed' },
+                { text: 'Lịch sử khám hôm nay', link: '/Doctor/Patient/MedicalHistory' },
                 ],
             }}
             />
 
-                <div className="WaitClinicalExamination-container">
+                <div className="MedicalHistory-container">
                     <div className="search-reception-container">
                         <div className="search-box-wrapper">
                             <div className="search-box">
@@ -130,7 +132,7 @@ export default function WaitClinicalExamination(){
                             </div>
                         </div>
                 </div>
-    <table className="WaitClinicalExamination-container_table">
+    <table className="MedicalHistory-container_table">
         <thead>
             <tr>
                 <th>STT</th>
@@ -154,7 +156,7 @@ export default function WaitClinicalExamination(){
                                 <td>{record.Ngay}</td>
                                 <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
                                 <td>
-                                        <button className="btn-primary">Tiếp tục khám</button>
+                                        <button className="btn-primary">Xem chi tiết</button>
                                 </td>
                             </tr>
                         ))}
