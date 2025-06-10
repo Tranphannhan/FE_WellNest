@@ -1,5 +1,8 @@
 
+import { useEffect, useState } from 'react';
 import './PatientInformation.css';
+import { getAllDepartments } from '@/app/services/ReceptionServices';
+
 // import Link from 'next/link';
 
 <link
@@ -10,6 +13,23 @@ import './PatientInformation.css';
 
 
 export default function PatientInformation_component ({callBack} : {callBack : () => void} ){
+    const [departments, setDepartments] = useState<{ _id: string; TenKhoa: string }[]>([]);
+
+    useEffect(() => {
+    async function fetchDepartments() {
+        try {
+        const response = await getAllDepartments();  
+        const data = await response.json();
+        setDepartments(data.data);
+        } catch (err) {
+        console.error("Lỗi khi lấy khoa:", err);
+        }
+    }
+
+    fetchDepartments();
+    }, []);
+
+
     return (
         <>
             <div className='PatientInformationComponent-Background' onClick={ callBack }></div>
@@ -40,9 +60,9 @@ export default function PatientInformation_component ({callBack} : {callBack : (
 
                             <select name="" id="">
                                 <option value="">---Chọn khoa---</option>
-                                <option value="">Khoa 1</option>
-                                <option value="">Khoa 2</option>
-                                <option value="">Khoa 3</option>
+                                {departments?.map((value) => (
+                                <option key={value._id} value={value._id}>{value.TenKhoa}</option>
+                                ))}
                             </select>
 
                         </div>
