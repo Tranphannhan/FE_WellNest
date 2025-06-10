@@ -194,7 +194,7 @@ export default function PreviewExaminationForm({ isOpen, onClose, patientData,co
                 <div className="prescription-header">
                     <div>
                         <p><strong>Phiếu thu viện phí</strong></p>
-                        <h1>Bệnh viện đa khoa WellNest</h1>
+                        <h1>Phòng khám đa khoa WellNest</h1>
                         <p>171 Đường Trường Chinh Tân Thới Nhất Quận 12 HCM</p>
                         <p>Điện thoại : +84 123456789</p>
                     </div>

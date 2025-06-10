@@ -7,6 +7,7 @@ import ParaclinicalComponent from "./CreateResultsComponent/Paraclinical";
 import DiagnosisResultsComponent from "./CreateResultsComponent/DiagnosisResults";
 import PrescriptionComponent from "./CreateResultsComponent/Prescription";
 import { useState } from 'react';
+// qua bị xung đột file này ***
 
 
 export default function Patient(){
@@ -61,6 +62,8 @@ export default function Patient(){
               <PrescriptionComponent/>
             </div>
           </div>
+
+                
         </>
 
         

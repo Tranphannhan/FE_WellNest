@@ -1,0 +1,84 @@
+.WaitClinicalExamination-container {
+    padding: 20px 0;
+}
+
+.WaitClinicalExamination-container_table {
+    width: 100%;
+    overflow: hidden;
+}
+
+.WaitClinicalExamination-container_table th,
+.WaitClinicalExamination-container_table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.WaitClinicalExamination-container_table th {
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+}
+
+.WaitClinicalExamination-container_table td{
+    color: #595959;
+}
+
+.WaitClinicalExamination-container_table tbody tr:last-child td {
+    border-bottom: none; /* No border for the last row */
+}
+
+.WaitClinicalExamination-container .btn-primary {
+    color: #3497F9;
+    border: 1px solid #3497F9;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 5px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.search-reception-container .search-box-wrapper {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    width: 55%;
+    padding-left:20px;
+}
+
+.search-reception-container .search-box {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 2px solid #d2e9ff;
+    border-radius: 999px;
+    padding: 0px 10px;
+    flex: 1;
+}
+
+.search-reception-container .search-input {
+    border: none;
+    background: transparent;
+    padding: 10px;
+    width: 100%;
+    outline: none;
+    font-size: 16px;
+    color: black;
+}
+
+.search-reception-container .search-btn {
+    background-color: #D1F3FF;
+    border: none;
+    border-radius: 999px;
+    padding: 4px 8px;
+    cursor: pointer;
+    color: #3497F9;
+    font-size: 16px;
+    position: relative;
+    left: 8px;
+}
+
+.search-reception-container .search-btn i {
+    font-size: 18px;
+}

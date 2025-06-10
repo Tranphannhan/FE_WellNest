@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
+    "antd": "^5.26.0",
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.13.1",
     "bwip-js": "^4.6.0",

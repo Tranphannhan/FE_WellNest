@@ -24,7 +24,7 @@ export default function ExaminationForm(){
         reason: "Nứt xương cánh tay"
     };
 
-    const currentCollectorName = "Trần Bình FMVP";
+    const currentCollectorName = "Nguyễn Thị Trà My";
 
     const handleOpenPreview = () => {
         setShowPreviewModal(true);
