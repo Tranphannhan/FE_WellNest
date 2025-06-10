@@ -37,7 +37,7 @@ export default function ChooseRoom() {
     const [dataChooseRoom , setDataChooseRoom] = useState <receptionTemporaryDoctorTypes []> ([]);
     useEffect (() => {
         const HandleLoaddata = async () => {
-            const Data = await getAllChooseRooms ('683560a435719061a17e90ae');
+            const Data = await getAllChooseRooms ('6803ba9870cd96d5cde6d7a9');
             if (Data){
                 setDataChooseRoom (Data.data)
             }
