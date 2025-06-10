@@ -1,0 +1,25 @@
+.diagnosisComponent-navigationBar {
+    width: fit-content;
+    display: flex;
+    background-color: white;
+    border: 1px solid #f3f3f3;
+    border-radius: 4px;
+}
+ 
+
+.diagnosisComponent-navigationBar__childBox {
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 2px;
+    color: black;
+    background-color: #f0f0f0;
+    font-size: 14px;
+}
+
+.diagnosisComponent-navigationBar__childBox.active {
+    color: #1976d2; 
+    background-color: transparent;
+    box-shadow: none;
+    font-size: 14px;
+}
