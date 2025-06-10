@@ -6,7 +6,7 @@ export default function Patient(){
                   <Tabbar
                     tabbarItems={{
                       tabbarItems: [
-                        { text: 'Thông tin bệnh nhân', link: '/Doctor/Patient/ToExamine' },
+                        { text: 'Thông tin bệnh nhân', link: '/Doctor/Patient' },
                         { text: 'Tạo kết quả', link: '/Doctor/Patient/ToExamine/CreateResults' },
                       ],
                     }}
