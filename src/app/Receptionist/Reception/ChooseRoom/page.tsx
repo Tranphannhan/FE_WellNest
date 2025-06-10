@@ -1,13 +1,16 @@
-"use client"
 
-import React, { useState }  from "react";
+"use client"
+import React, { useState , useEffect }  from "react";
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './ChooseRoom.css'
 import Link from "next/link";
 import Example from './notificationChooseRoom';
+import { getAllChooseRooms } from "@/app/services/ReceptionServices";
+import { showToast, ToastType } from '@/app/lib/Toast';
+import { receptionTemporaryDoctorTypes } from "@/app/types/receptionTypes/receptionTemporaryTypes";
+ 
 
-
-
+ 
 export default function ChooseRoom() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -16,7 +19,6 @@ export default function ChooseRoom() {
         name : '',
         roomNumber : 0,
     })
-
     
     const handleSetValue = (name : string , roomNumber : number) => {
         setValueChooseRom ({
@@ -26,6 +28,34 @@ export default function ChooseRoom() {
         setShow(true)
     }
 
+    // --  
+    
+    // Interface 
+    
+
+    
+    const [dataChooseRoom , setDataChooseRoom] = useState <receptionTemporaryDoctorTypes []> ([]);
+    useEffect (() => {
+        const HandleLoaddata = async () => {
+            const Data = await getAllChooseRooms ('683560a435719061a17e90ae');
+            if (Data){
+                setDataChooseRoom (Data.data)
+            }
+        }
+
+        HandleLoaddata ()
+    }, []);
+
+
+
+    console.log(dataChooseRoom);
+    
+
+
+    // interface typeDoctor {
+    //     SoLuongBenhNhan : number,
+    //     TenBacSi : string,
+    // }
 
 
     return (
@@ -41,7 +71,6 @@ export default function ChooseRoom() {
                     }
                 }
             />
-
 
 
             <Tabbar
@@ -76,41 +105,57 @@ export default function ChooseRoom() {
                         </tr>
                     </thead>
                     <tbody>
-                        {[
-                            { name: "Dr. Ngô Dũng", room: 1, patients: 1 },
-                            { name: "Dr. Hà Nhân", room: 2, patients: 2 },
-                            { name: "Dr. Lương Y", room: 3, patients: 4 },
-                            { name: "Dr. Nguyễn Thị Mộng Thi", room: 4, patients: 5 },
-                            { name: "Dr. Lương Tăng", room: 5, patients: 6 },
-                            { name: "Dr. Bảo Trân", room: 6, patients: 8 },
-                            { name: "Dr. Bệnh Nhân", room: 7, patients: 9 },
-                        ].map((doctor, index) => {
-                            const totalMinutes = doctor.patients * 15;
-                            const formatTime = (minutes: number) => {
-                                if (minutes < 60) return `${minutes} phút`;
-                                const hours = Math.floor(minutes / 60);
-                                const mins = minutes % 60;
-                                return mins === 0 ? `${hours} tiếng` : `${hours} tiếng ${mins} phút`;
-                            };
-                            return (
-                                <tr key={index}>
-                                    <td>{doctor.name}</td>
-                                    <td>{doctor.room}</td>
-                                    <td style={{
-                                        color:
-                                            doctor.patients < 4 ? "green" :
-                                                doctor.patients < 8 ? "orange" :
+                        
+
+                        {
+                            dataChooseRoom?.map((doctor : receptionTemporaryDoctorTypes, index : number) => {
+                                 const totalMinutes = doctor.SoNguoiDangKham * 15;
+
+                                const formatTime = (minutes: number) => {
+                                    if (minutes < 60) return `${minutes} phút`;
+                                    const hours = Math.floor(minutes / 60);
+                                    const mins = minutes % 60;
+                                    return mins === 0 ? `${hours} tiếng` : `${hours} tiếng ${mins} phút`;
+                                };
+ 
+                                return (
+                                    <tr key={index}>
+                                        <td>{doctor.TenBacSi}</td>
+                                        <td>{doctor.Id_PhongKham.SoPhongKham}</td>
+                                        <td style={{
+                                            color:
+                                                doctor.SoNguoiDangKham < 4 ? "green" :
+                                                    doctor.SoNguoiDangKham < 8 ? "orange" :
                                                     "red"
-                                    }}>
-                                        {doctor.patients + "/10"} bệnh nhân
-                                    </td>
-                                    <td>{formatTime(totalMinutes)}</td>
-                                    <td>
-                                        <button className="chooseRoom-container__btn-choose" onClick={() => handleSetValue (doctor.name , doctor.room) }>Chọn phòng</button>
-                                    </td>
-                                </tr>
-                            )
-                        })}
+                                        }}>
+                                            {doctor.SoNguoiDangKham + "/10"} bệnh nhân
+                                        </td>
+                                        <td>{formatTime(totalMinutes)}</td>
+                                        <td>
+                                            <button 
+                                                className="chooseRoom-container__btn-choose" 
+                                                onClick={() => 
+                                                    doctor.SoNguoiDangKham === 10 ? showToast('Phòng đã đầy',ToastType.error)
+                                                    : handleSetValue (doctor.TenBacSi , index) 
+                                                }
+
+                                                style={{
+                                                    background: doctor.SoNguoiDangKham === 10 ? '#313131' : '',
+                                                    // pointerEvents: doctor.SoLuongBenhNhan === 10 ? 'none' : 'all',
+                                                    cursor: doctor.SoNguoiDangKham === 10 ? 'not-allowed' : 'pointer',
+                                                }}
+                                            >
+                                                Chọn phòng
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                        }
+
+
+
+
                     </tbody>
                 </table>
 

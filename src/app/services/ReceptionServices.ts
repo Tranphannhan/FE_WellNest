@@ -36,3 +36,17 @@ export async function getAllDepartments() {
         throw error; 
     }
 }
+
+
+export async function getAllChooseRooms (_id : string) {
+    try {
+        const result = await fetch(`${API_BASE_URL}/Bacsi/LayTheoKhoa/Pagination/${_id}`);
+        if (result){
+            return result.json ();
+        }
+    } catch (error) {
+        console.error("Lỗi Khi Lấy Khoa:", error);
+        throw error; 
+    }
+}
+
