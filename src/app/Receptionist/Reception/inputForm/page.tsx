@@ -3,7 +3,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './inputForm.css';
-import { codeScanningInformationType,medicalCardData } from "@/app/types/patientTypes/patient";
+import { codeScanningInformationType,medicalCardData, medicalExaminationBook } from "@/app/types/patientTypes/patient";
 import { createMedicalExaminationCard } from '@/app/services/ReceptionServices';
 import { showToast, ToastType } from '@/app/lib/Toast';
 import ReceptionResultNotificationExample from './InputFormNotification';
@@ -15,6 +15,9 @@ import { useRouter } from 'next/navigation';
 export default function InputForm() {
   const searchParams = useSearchParams();
   const isTheOfficialCard = searchParams.get('isTheOfficialCard') === 'true';
+  const [idUpdateBook, setIdUpdateBook ] = useState <string>('')
+  const [valueUpdate,setValueUpdate] = useState <medicalExaminationBook>({})
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -77,7 +80,19 @@ export default function InputForm() {
 
         }else{
           if(data?.haveATemporaryCard){
-            
+            setValueUpdate({
+                HoVaTen:formData.name,
+                GioiTinh: formData.sex,
+                NgaySinh: formData.dateOfBirth,
+                SoDienThoai: formData.phone,
+                SoBaoHiemYTe: formData.BHYT,
+                DiaChi: formData.address,
+                SoCCCD: formData.CCCDNumber, 
+                SDT_NguoiThan: formData.relativePhone, 
+                LichSuBenh: formData.medicalHistory,
+            })
+            setIdUpdateBook(data.data._id)
+            setShow(true)
           }else{
             showToast(data?.message,ToastType.error)
           }
@@ -90,14 +105,36 @@ export default function InputForm() {
 
 
     //   --- 
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const router = useRouter();
-  function Hadlecreate  () {
-    router.push('/Receptionist/Reception/InputForm?isTheOfficialCard=true');
+async function handleUpdate() {
+  // Lọc bỏ các field rỗng
+  const filteredValueUpdate = Object.fromEntries(
+    Object.entries(valueUpdate).filter(
+      ([, value]) => value !== null && value !== undefined && value !== ''
+    )
+  );
+
+  const response = await fetch(`http://localhost:5000/The_Kham_Benh/Edit/${idUpdateBook}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(filteredValueUpdate),
+  });
+
+  if (response.ok) {
+    showToast('Đã cập nhật thẻ tạm thời thành thẻ chính', ToastType.success);
+    const responseBook = await response.json();
+    sessionStorage.setItem('soKhamBenh', JSON.stringify(responseBook.data));
+    router.push('/Receptionist/Reception/PatientInformation');
+  } else {
+    showToast('Đã cập nhật thất bại', ToastType.error);
   }
+}
+
 
   
 
@@ -106,7 +143,7 @@ export default function InputForm() {
        <ReceptionResultNotificationExample
         Data_information={
           {
-            callBack : Hadlecreate,
+            callBack : handleUpdate,
             handleClose,
             handleShow,
             show

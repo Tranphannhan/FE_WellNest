@@ -31,10 +31,10 @@ function ReceptionResultNotificationExample ({Data_information } : {Data_informa
 
         <Modal.Body>
           <p style={{ fontSize: "16px", color: "#333", marginBottom: "0.5rem" }}>
-            Không tìm thấy sổ khám bệnh của bệnh nhân.
+            Bệnh nhân đã có sổ khám bệnh tạm thời.
           </p>
           <p style={{ fontSize: "16px", color: "#333" }}>
-            Bạn có muốn tạo sổ khám bệnh không?
+            Bạn muốn cập nhật thông tin bệnh nhân không ?
           </p>
         </Modal.Body>
 

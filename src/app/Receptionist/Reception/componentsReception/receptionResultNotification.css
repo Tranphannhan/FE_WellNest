@@ -3,8 +3,12 @@
 
 
 
-a {
+ a {
   text-decoration: none !important;
+}
+
+ tr{
+  border-width: 1px !important;
 }
 
 .receptionResultNotification-custom-modal .modal-body p {

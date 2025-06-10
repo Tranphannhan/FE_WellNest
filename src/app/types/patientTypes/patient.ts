@@ -32,3 +32,18 @@ export interface SoKhamBenhData {
   LichSuBenh: string;
   __v: number;
 }
+
+// sổ khám bệnh
+export interface medicalExaminationBook {
+  _id?: string;
+  HoVaTen?: string;
+  GioiTinh?: string;
+  NgaySinh?: string;
+  SoDienThoai?: string;
+  SoBaoHiemYTe?: string;
+  DiaChi?: string;
+  SoCCCD?: string;
+  SDT_NguoiThan?: string;
+  LichSuBenh?: string;
+  __v?: number;
+}

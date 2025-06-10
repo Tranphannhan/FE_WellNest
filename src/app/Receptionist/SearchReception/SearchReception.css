@@ -5,6 +5,11 @@
     color: black;
 }
 
+.search-reception-container tr{
+    border-width:0 !important;
+}
+
+
 .search-reception-container .search-box-wrapper {
     display: flex;
     gap: 20px;
