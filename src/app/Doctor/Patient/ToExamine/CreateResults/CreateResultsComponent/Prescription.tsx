@@ -2,7 +2,7 @@ import './Prescription.css';
 // import { Trash2 } from 'lucide-react'; 
 
 export default function SelectedMedicineComponent() {
-    const medicines = [
+     const medicines = [
         {
             name: 'Paracetamol 500mg',
             image: 'https://innguyenphong.com/Files/44/trang/h%E1%BB%99p/thi%E1%BA%BFt%20k%E1%BA%BF%20v%E1%BB%8F%20h%E1%BB%99p%20thu%E1%BB%91c/thiet-ke-vo-hop-thuoc%20(14).jpg',
@@ -41,9 +41,12 @@ export default function SelectedMedicineComponent() {
         }
     ];
 
+
+   
+
     return (
         <div>
-            <div className="Prescription-medicine__container">
+           <div className="Prescription-medicine__container">
                 <h3>Thuốc đã chọn</h3>
                 <table className="Prescription-medicine__container__medicineTable">
                     <thead>
@@ -86,6 +89,8 @@ export default function SelectedMedicineComponent() {
                     <button className="Prescription-medicine__container__MedicineActions__completeButton">Hoàn thành</button>
                 </div>
             </div>
+
+
         </div>
     );
 }

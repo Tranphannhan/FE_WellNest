@@ -14,7 +14,7 @@ export default function Diagnosiscomponent({ handlePage }: DiagnosisProps) {
         setActiveTab(index);
         handlePage(tabs[index]);
     };
-
+ 
     return (
         <div className="diagnosisComponent-navigationBar">
             {tabs.map((tab, index) => (
