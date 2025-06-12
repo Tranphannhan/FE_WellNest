@@ -69,7 +69,7 @@ export default function Patient(){
             <div className="CreateResults-bodyFrame__navigationBar">
               <Diagnosiscomponent handlePage={setPage} />
             </div>
-
+ 
 
             <div style={{display : page == 'Chuẩn đoán sơ bộ' ? 'block' : 'none'}}>
               <DiagnosisComponent />
@@ -86,7 +86,7 @@ export default function Patient(){
             <div style={{display : page == 'Đơn thuốc' ? 'block' : 'none'}}>
               <PrescriptionComponent/>
             </div>
-          </div>
+          </div> 
 
           {showResultsPopup && <ViewParaclinicalResults  onClose={handleCloseResultsPopup} />}
                 

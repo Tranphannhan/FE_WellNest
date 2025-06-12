@@ -23,3 +23,32 @@ export interface doctorTemporaryTypes {
     Id_GiaDichVu: string;
     Id_Bacsi: string;
 }
+
+
+
+export interface doctor_PatientTemporaryTypes {
+    _id:  string,
+    Id_TheKhamBenh: {
+        _id: string,
+        HoVaTen: string,
+        GioiTinh: string,
+        NgaySinh: string,
+        SoDienThoai: string,
+        SoBaoHiemYTe: string,
+        DiaChi: string,
+        SoCCCD: string,
+        SDT_NguoiThan: string,
+        LichSuBenh : string,
+    },
+
+    Id_Bacsi: string,
+    Id_NguoiTiepNhan: string,
+    Id_GiaDichVu: string,
+    LyDoDenKham : string,
+    Ngay: string,
+    Gio: string,
+    TrangThaiThanhToan: boolean,
+    STTKham: string,
+    TrangThai: boolean,
+    TrangThaiHoatDong : string
+}

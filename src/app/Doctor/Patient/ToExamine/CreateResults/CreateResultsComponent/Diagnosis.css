@@ -72,12 +72,24 @@
 }
 
 
+.CreateResults-bodyFrame__title2 {
+  font-size: 20px;
+  color: black;
+  margin-left: 18px;
+  margin-top: 10px;
+}
+
 
 /* ----------------------- */
 /* Box - Form  */
 .CreateResults-bodyFrame__formVitalSigns {
     width: 100%; height: auto;
 }
+
+
+
+
+
 
 .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer {
   display: flex;
@@ -97,11 +109,11 @@
   min-width: 300px; /* Đảm bảo mỗi phần không quá nhỏ */
 }
 
-.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection h3 {
-  font-size: 24px;
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection  {
+  font-size: 18px;
   margin-bottom: 15px;
   color: #000;
-  font-weight: 500;
+  /* font-weight: 600; */
 }
 
 .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection label {
@@ -134,10 +146,10 @@
 .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer {
   width: 100%; /* Chiếm toàn bộ chiều rộng */
   display: flex;
-  justify-content: flex-end; /* Căn nút sang phải */
-  position: absolute; /* Vị trí tuyệt đối */
-  bottom: 20px; /* Cách đáy 20px */
-  right: 20px; /* Cách phải 20px */
+  justify-content: flex-end;
+  position: absolute; 
+  bottom: 20px; 
+  right: 20px; 
 }
 
 .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton {
@@ -192,39 +204,38 @@
 }
 
 
-.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput {
-  width: 100%;
-  height: 66px; /* 3 dòng */
-  border: none;
-  resize: none;
-  background: transparent;
-  position: relative;
-  z-index: 2;
-  line-height: 22px;
-  padding: 0 8px;
-  font-family: inherit;
-  font-size: 14px;
-  color: #000;
-  outline: none;
-}
+  .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput {
+    width: 100%;
+    height: 66px; /* 3 dòng */
+    border: none; resize: none;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    line-height: 27px;
+    padding: 0 8px;
+    font-family: inherit;
+    font-size: 16px;
+    color: #000;
+    outline: none;
+  }
 
-.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__::placeholder {
-  color: #aaa;
-}
+  .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__::placeholder {
+    color: #aaa;
+  }
 
-.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  width: calc(100% - 24px);
-  height: 66px;
-  line-height: 22px;
-  z-index: 1;
-  pointer-events: none; /* Cho phép click xuyên qua */
-}
+  .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots {
+    position: absolute;
+    top: 12px; left: 12px;
+    width: calc(100% - 24px);
+    height: 66px;
+    line-height: 22px;
+    z-index: 1;
+    pointer-events: none; /* Cho phép click xuyên qua */
+  }
 
-.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots span {
+  .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots span {
     display: block;
-    border-bottom: 1px dotted #bbb;
-    height: 22px;
-}
+    border-bottom:3px dotted #bbb; /* tăng từ 1px lên 2px để dấu chấm to hơn */
+    height: 25px;
+  }
+

@@ -16,3 +16,87 @@
     margin-left: 20px;
     margin-top: 20px;
 }
+
+.Paraclinical-medicine__container__title {
+    margin-left: 12px;
+    font-size: 20px;
+    color: #000000;
+}
+
+
+.Paraclinical-medicine__container__medicineTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.Paraclinical-medicine__container__medicineTable th,
+.Paraclinical-medicine__container__medicineTable td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 15px;
+    color: #595959;
+}
+
+
+.Paraclinical-medicine__container__medicineTable th {
+    background-color:  white;
+}
+
+.Paraclinical-medicine__container__medicineTable__medicineImage {
+    width: 50px;
+    height: auto;
+}
+
+
+.Paraclinical-medicine__container__MedicineActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 18px;
+    margin-right: 24px;
+}
+
+.Paraclinical-medicine__container__MedicineActions__addButton{
+    background-color: white;
+    color: #3497F9;
+    border: 1px solid #3497F9;
+    padding: 8.2px 27px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.Paraclinical-medicine__container__MedicineActions__addButton:hover {
+    background-color: #f0f8ff;
+}
+
+.Paraclinical-medicine__container__MedicineActions__completeButton {
+    background-color: #3497F9;
+    color: white;
+    border: none;
+    padding: 8px 30px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.Paraclinical-medicine__container__MedicineActions__completeButton:hover {
+    background-color: #0056b3;
+}
+
+.Paraclinical-medicine__container__medicineTable__Bton {
+    color: white;
+    border: 1px solid #FF0000;
+    width: 100px; height: 30px;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+.Paraclinical-medicine__container__medicineTable__Bton  span {
+    position: absolute;
+    width: 100%;
+    left: 64%; top: 50%;
+    transform: translate(-50% , -50%);
+    color: #FF0000;
+    font-size: 14px;
+}
