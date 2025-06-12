@@ -91,7 +91,7 @@ export default function DiagnosisComponent (){
                   <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
                       <div>Triệu chứng</div>
                       <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-                        <textarea class="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows="3" placeholder="Nhập triệu chứng..."></textarea>
+                        <textarea className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập triệu chứng..."></textarea>
                           <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
                               <span></span>
                               <span></span>
@@ -104,7 +104,7 @@ export default function DiagnosisComponent (){
                   <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
                       <div>Chuẩn đoán sơ bộ</div>
                       <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-                        <textarea class="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows="3" placeholder="Nhập chuẩn đoán..."></textarea>
+                        <textarea className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập chuẩn đoán..."></textarea>
                           <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
                               <span></span>
                               <span></span>
