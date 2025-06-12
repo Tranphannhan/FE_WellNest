@@ -1,0 +1,87 @@
+
+
+
+.DiagnosisResults-Body {
+    width: 100%;
+    background-color: white;
+    margin-top: 30px;
+    box-sizing: border-box;
+    height: 500px;
+}
+
+.diagnosisResults-createResultsRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+.DiagnosisResults-Body__Title {
+    font-size: 20px;
+    color: black;
+
+}
+
+
+
+
+/* ----------------------------- */
+/* ---- */
+.diagnosisResults-createResultsRow__create__Column {
+    width: 48%;
+}
+
+.diagnosisResults-createResultsRow__create__Column span {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.input-area {
+    position: relative;
+    background-color: white;
+    border-radius: 8px;
+    padding: 12px;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+
+.text-input {
+    width: 100%;
+    height: 66px; /* 3 dòng */
+    border: none;
+    resize: none;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    line-height: 22px;
+    padding: 0 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #000;
+    outline: none;
+}
+
+.text-input::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.dots {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+    height: 66px;
+    line-height: 22px;
+    z-index: 1;
+    pointer-events: none; /* Cho phép click xuyên qua */
+}
+
+.dots span {
+    display: block;
+    border-bottom: 1px dotted #bbb;
+    height: 22px;
+}

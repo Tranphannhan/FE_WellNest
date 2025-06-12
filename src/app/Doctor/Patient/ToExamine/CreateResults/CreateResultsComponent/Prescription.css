@@ -1,0 +1,65 @@
+
+.Prescription-medicine__container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.Prescription-medicine__container__medicineTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.Prescription-medicine__container__medicineTable th,
+.Prescription-medicine__container__medicineTable td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    font-size: 14px;
+    color: #595959;
+}
+
+
+.Prescription-medicine__container__medicineTable th {
+    background-color:  white;
+}
+
+.Prescription-medicine__container__medicineTable__medicineImage {
+    width: 50px;
+    height: auto;
+}
+
+
+.Prescription-medicine__container__MedicineActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 18px;
+}
+
+.Prescription-medicine__container__MedicineActions__addButton{
+    background-color: white;
+    color: #3497F9;
+    border: 1px solid #3497F9;
+    padding: 8.2px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.Prescription-medicine__container__MedicineActions__addButton:hover {
+    background-color: #f0f8ff;
+}
+
+.Prescription-medicine__container__MedicineActions__completeButton {
+    background-color: #3497F9;
+    color: white;
+    border: none;
+    padding: 8px 30px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.Prescription-medicine__container__MedicineActions__completeButton:hover {
+    background-color: #0056b3;
+}

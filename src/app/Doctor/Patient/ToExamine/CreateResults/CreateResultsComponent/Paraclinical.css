@@ -1,0 +1,18 @@
+.Paraclinical-Body {
+    width: 100%; height: 600px;
+    background-color: white;
+    margin-top: 30px;
+}
+
+.Paraclinical-Body__title {
+    font-size: 20px;
+    color: black;
+    margin-left: 20px;
+}
+
+.Paraclinical-Body__contens {
+     font-size: 18px;
+    color: black;
+    margin-left: 20px;
+    margin-top: 20px;
+}

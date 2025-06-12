@@ -1,34 +1,34 @@
-.Patient-container {
+.ListPatientsMissed-container {
     padding: 20px 0;
 }
 
-.Patient-container_table {
+.ListPatientsMissed-container_table {
     width: 100%;
     overflow: hidden;
 }
 
-.Patient-container_table th,
-.Patient-container_table td {
+.ListPatientsMissed-container_table th,
+.ListPatientsMissed-container_table td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
 }
 
-.Patient-container_table th {
+.ListPatientsMissed-container_table th {
     font-weight: 600;
     color: #333;
     font-size: 16px;
 }
 
-.Patient-container_table td{
+.ListPatientsMissed-container_table td{
     color: #595959;
 }
 
-.Patient-container_table tbody tr:last-child td {
+.ListPatientsMissed-container_table tbody tr:last-child td {
     border-bottom: none; /* No border for the last row */
 }
 
-.Patient-container .btn-primary {
+.ListPatientsMissed-container .btn-primary {
     color: #3497F9;
     border: 1px solid #3497F9;
     padding: 5px 12px;
@@ -36,16 +36,6 @@
     cursor: pointer;
     font-size: 14px;
     margin-right: 5px;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.Patient-container .btn-danger {
-    color: #dc3545;
-    border: 1px solid #dc3545;
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
     transition: background-color 0.2s, color 0.2s;
 }
 

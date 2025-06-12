@@ -1,0 +1,85 @@
+
+.CreateResults-navigationBar {
+    margin-left: 22px;
+    margin-top: 2%;
+}
+
+
+/*  */
+.CreateResults-redirectFrame {
+    width: 100%;
+    height: 50px;
+    background-color: white;
+    margin-top: 20px;
+  
+}
+
+
+.CreateResults-redirectFrame__actionButtonsContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f5faff; /* Màu nền nhạt */
+    padding: 16px;
+    border-radius: 8px;
+}
+
+
+.CreateResults-redirectFrame__actionButtonsContainer__leftButtons, 
+.CreateResults-redirectFrame__actionButtonsContainer__rightButtons {
+    display: flex;
+    gap: 12px;
+}
+
+
+.CreateResults-redirectFrame__actionButtonsContainer__buttonOutline {
+    border: 1px solid #2196f3; /* Màu xanh viền */
+    background-color: white;
+    color: #2196f3;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.CreateResults-redirectFrame__actionButtonsContainer__buttonOutline:hover {
+    background-color: #e3f2fd;
+}
+
+.CreateResults-redirectFrame__actionButtonsContainer__buttonSolid {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.CreateResults-redirectFrame__actionButtonsContainer__buttonSolid:hover {
+    background-color: #1976d2;
+}
+
+
+
+
+
+
+
+
+
+
+/*  -------------------  */
+.CreateResults-bodyFrame {
+    width: 100%; height: auto;
+    margin-top: 40px;
+    background-color: white;
+}
+
+.CreateResults-bodyFrame__navigationBar  {
+    padding-top: 10px;
+    padding-left: 10px;
+}
+

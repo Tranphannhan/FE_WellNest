@@ -7,11 +7,19 @@ import PreviewExaminationForm from './PreviewExaminationForm';
 import type { ExaminationForm } from '@/app/types/receptionTypes/receptionTypes';
 import { checkPay, handlePay } from '@/app/services/ReceptionServices';
 import { showToast, ToastType } from '@/app/lib/Toast';
+import { useRouter } from 'next/navigation';
+import ModalComponent from '@/app/components/shared/Modal/Modal';
 
 export default function ExaminationForm() {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [contentModal,setContentModal] = useState <string>('')
+  const [showModal,setShowModal] = useState <boolean>(false)
+  const [callBackModal,setCallBackModal] = useState <()=>void>(()=>{})
   const [valueRender, setValueRender] = useState<ExaminationForm | null | undefined>(undefined);
   const [statusPay, setStatusPay] =  useState<boolean>(false)
+  const router = useRouter()
+  const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
 
 async function Pay(){
     if(!valueRender?.Id_PhieuKhamBenh){
@@ -26,11 +34,23 @@ async function Pay(){
         });
 
         setStatusPay(true)
+        setShowModal(false)
           return
     }else if(result){
         return showToast(result.message,ToastType.error);
     }    
   }
+
+ function cancelPayment(){
+    showToast('Đã hủy thanh toán',ToastType.warn)
+    router.push('/Receptionist/Reception/PatientInformation')
+ }
+
+  function processingCompleted(){
+    showToast('Đã hoàn thành tiếp nhận',ToastType.success)
+    router.push('/Receptionist/Reception/PatientInformation')
+ }
+
 
 async function checkRender (id:string){
     const stutus = await checkPay(id)
@@ -53,7 +73,7 @@ async function checkRender (id:string){
     }
   }, []);
 
-  const currentCollectorName = "Trần Bình FMVP";
+  const currentCollectorName = "Trần Phan Nhân";
 
   const handleOpenPreview = () => setShowPreviewModal(true);
   const handleClosePreview = () => setShowPreviewModal(false);
@@ -67,6 +87,17 @@ async function checkRender (id:string){
           ]
         }}
       />
+      <ModalComponent
+        Data_information={{
+          show:showModal,
+          content:contentModal,
+          callBack:callBackModal,
+          handleClose: handleClose,
+          handleShow: handleShow,
+
+
+        }}
+      ></ModalComponent>
 
       {/* Hiển thị loading trong khi chờ useEffect chạy */}
       {valueRender === undefined ? (
@@ -158,10 +189,29 @@ async function checkRender (id:string){
 
             <div className="ExaminationForm-Container__accept">
                 {
-                    statusPay?(<button className="ExaminationForm-Container__isPay__btn">Đã thanh toán</button>):(
+                    statusPay?(
+                        <>
+                        <button className="ExaminationForm-Container__isSuss__btn" onClick={()=>{
+                          setContentModal('Bạn chắc chắn xác nhận hoàn tất tiếp nhận?')
+                          setCallBackModal(() => processingCompleted)
+                          setShowModal(true)
+                        }}>Hoàn thành</button>
+                        <button className="ExaminationForm-Container__isPay__btn"><i style={{fontSize:'20px'}} className="bi bi-check-lg"></i>Đã thanh toán</button>
+                        </>
+                      ):(
                             <>
-                            <button className="ExaminationForm-Container__cancel__btn">Không thanh toán</button>
-                        <button className="ExaminationForm-Container__accept__btn" onClick={Pay}>Xác nhận đã thanh toán</button></>
+                            <button className="ExaminationForm-Container__cancel__btn" onClick={()=>{
+                            setContentModal('Bạn chắc chắn xác nhận hủy thanh toán?')
+                            setCallBackModal(() => cancelPayment)
+                            setShowModal(true)
+                            }}>Không thanh toán</button>
+                        <button className="ExaminationForm-Container__accept__btn" 
+                            onClick={()=>{
+                            setContentModal('Bạn chắc chắn xác nhận thanh toán?')
+                            setCallBackModal(() => Pay)
+                            setShowModal(true)
+                            }}
+                        >Xác nhận đã thanh toán</button></>
                         
                     )
                 }

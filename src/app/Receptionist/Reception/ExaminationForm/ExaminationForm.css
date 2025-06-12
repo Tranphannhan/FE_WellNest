@@ -24,6 +24,16 @@
 
 
 
+.ExaminationForm-Container input[readonly],.ExaminationForm-Container textarea[readonly] {
+  background-color: #f9f9f9;
+  color: #333;
+  border: 1px solid #ccc;
+  cursor: default;
+  outline: none;
+}
+
+
+
 .form-grid {
     display: grid;
     width: 100%;
@@ -68,7 +78,8 @@
 
 .ExaminationForm-Container input:focus,
 .ExaminationForm-Container textarea:focus {
-    border-color: #000000;
+      outline: none;
+        box-shadow: none;  
 }
 
 .ExaminationForm-Container__input__unit {
@@ -153,6 +164,20 @@
     cursor: pointer;
     pointer-events: none;
     user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.ExaminationForm-Container__isSuss__btn{
+    padding: 7px 24px;
+    background-color: #3497F9;
+    color: #ffffff;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;

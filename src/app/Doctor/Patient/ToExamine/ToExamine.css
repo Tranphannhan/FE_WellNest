@@ -1,0 +1,40 @@
+.ToExamine-container {
+  padding: 24px;
+  background: #fff;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.ToExamine-container__title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color:black;
+}
+
+.ToExamine-container__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+   border: 1px solid #f0f0f0;
+}
+
+.ToExamine-container__table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+  vertical-align: top;
+  color: #333;
+}
+
+.ToExamine-container__table tr:last-child td {
+  border-bottom: none;
+}
+
+.ToExamine-container__table td:first-child {
+  font-weight: bold;
+   
+}

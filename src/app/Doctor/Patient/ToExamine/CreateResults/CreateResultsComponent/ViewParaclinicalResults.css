@@ -1,0 +1,270 @@
+/* popup-overlay: Lớp phủ nền */
+.ViewParaclinicalResults-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* outer-wrapper: Lớp bao quanh popup-container */
+.ViewParaclinicalResults-container_outer_wrapper {
+  background-color: #F1F8FF; /* Màu xanh bạn yêu cầu */
+  padding: 10px; /* Padding 10px bạn yêu cầu */
+  border-radius: 12px; /* Bo góc nhẹ cho wrapper */
+  display: flex; /* Dùng flex để sắp xếp breadcrumb và container */
+  flex-direction: column; /* Xếp theo cột */
+  align-items: center; /* Căn giữa theo chiều ngang */
+  max-width: 980px; /* Đảm bảo wrapper không quá rộng */
+}
+
+/* breadcrumb-outside: Breadcrumb nằm ngoài container */
+.ViewParaclinicalResults-container_breadcrumb_outside {
+  font-size: 12px; /* Font size 12px bạn yêu cầu */
+  color: #000000; /* Màu chữ sáng hơn để nổi bật trên nền xanh */
+  margin-bottom: 10px; /* Khoảng cách với container */
+  align-self: flex-start; /* Căn trái trong wrapper */
+  padding-left: 5px; /* Giữ một chút khoảng cách với padding của wrapper */
+}
+
+
+.ViewParaclinicalResults-container_popup {
+  background-color: #F0F2F5;
+  border-radius: 8px;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* container-main-title: "Kết quả xét nghiệm" ở đầu container */
+.ViewParaclinicalResults-container_popup_main_title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333333;
+  padding: 10px 10px; /* Padding tương tự header cũ */
+  margin: 0; /* Loại bỏ margin mặc định */
+  background-color: #FFFFFF; /* Nền trắng cho tiêu đề này */
+}
+
+
+/* products-frame: Khung chứa 2 sản phẩm và có background trắng */
+.ViewParaclinicalResults-container_products_frame {
+  background-color: #FFFFFF; /* Nền trắng bạn yêu cầu */
+  padding: 10px 30px; /* Padding cho khung này */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Khoảng cách giữa các sản phẩm */
+}
+
+/* test-result-card: Các thẻ kết quả xét nghiệm (sản phẩm) */
+.ViewParaclinicalResults-container_test_result_card {
+  padding: 0; /* Reset padding vì content đã có padding riêng */
+  border-radius: 0; /* Không cần bo góc nữa */
+  display: flex;
+  align-items: flex-start;
+  gap: 25px;
+}
+
+.ViewParaclinicalResults-container_test_result_card .card-image-wrapper {
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #F8F8F8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #E0E0E0;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ViewParaclinicalResults-container_card_details_group {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ViewParaclinicalResults-container_card_detail_item {
+  display: flex;
+  align-items: baseline;
+}
+
+.ViewParaclinicalResults-container_card_detail_item .detail-label {
+  font-weight: 600;
+  color: #555555;
+  margin-right: 8px;
+  min-width: 140px;
+}
+
+.ViewParaclinicalResults-container_card_detail_item .detail-value {
+  color: #333333;
+  font-size: 15px;
+}
+
+.ViewParaclinicalResults-container_card_detail_item .normal-range {
+    color: #007bff;
+    font-weight: 500;
+}
+
+.ViewParaclinicalResults-container_card_detail_item .note-label {
+    font-weight: 600;
+    color: #444444;
+}
+
+.ViewParaclinicalResults-container_card_detail_item .note-value {
+    font-style: italic;
+    color: #666666;
+    font-size: 14px;
+}
+
+
+.ViewParaclinicalResults-container_card_metrics_group {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  margin-left: 20px;
+}
+
+.ViewParaclinicalResults-container_card_metrics_group .metric-item {
+  text-align: right;
+}
+
+.ViewParaclinicalResults-container_card_metrics_group .metric-label {
+  font-size: 14px;
+  color: #888888;
+}
+
+.ViewParaclinicalResults-container_card_metrics_group .metric-value {
+  font-weight: 600;
+  color: #333333;
+}
+
+.ViewParaclinicalResults-container_card_metrics_group .result-value {
+    color: #007bff;
+    font-size: 14px;
+}
+
+/* product-divider: Đường gạch chân giữa các sản phẩm */
+.ViewParaclinicalResults-container_product_divider {
+  border-bottom: 1px solid #DDDDDD; /* Đường gạch đứt nhẹ nhàng */
+  margin: 10px 0; /* Khoảng cách trên dưới đường kẻ */
+  width: 100%; /* Chiếm toàn bộ chiều rộng */
+}
+/* Loại bỏ gạch chân cho sản phẩm cuối cùng nếu bạn chỉ muốn gạch giữa */
+.ViewParaclinicalResults-container_products_frame .ViewParaclinicalResults-container_test_result_card :last-of-type + .ViewParaclinicalResults-container_product_divider {
+    display: none;
+}
+
+
+/* popup-footer: Phần chân của popup */
+.ViewParaclinicalResults-container .popup-footer {
+  background-color: #FFFFFF;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.ViewParaclinicalResults-container .popup-footer .button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.ViewParaclinicalResults-container .popup-footer .secondary-button {
+  background-color: #858585;
+  color: #fff;
+}
+
+.ViewParaclinicalResults-container .popup-footer .primary-button {
+  background-color: #fff;
+  border: 1px solid #3497F9;
+  color: #3497F9;
+}
+
+
+.plus-icon {
+  font-size: 20px;
+  margin-right: 7px;
+  line-height: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ViewParaclinicalResults-container_outer_wrapper {
+    width: 95%; /* Điều chỉnh cho màn hình nhỏ hơn */
+    padding: 8px;
+  }
+  .ViewParaclinicalResults-container_breadcrumb_outside {
+    padding-left: 0;
+  }
+  .ViewParaclinicalResults-container_popup {
+    width: 100%;
+  }
+
+  .ViewParaclinicalResults-container_popup_main_title,
+  .ViewParaclinicalResults-container_products_frame,
+  .popup-footer {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .ViewParaclinicalResults-container_test_result_card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .ViewParaclinicalResults-container_test_result_card .card-image-wrapper {
+    margin-bottom: 15px;
+    margin-right: 0;
+  }
+
+  .ViewParaclinicalResults-container_card_details_group,
+  .ViewParaclinicalResults-container_card_metrics_group {
+    width: 100%;
+    align-items: center;
+  }
+
+  .ViewParaclinicalResults-container_card_detail_item,
+  .ViewParaclinicalResults-container_card_metrics_group .metric-item {
+    justify-content: center;
+  }
+
+  .ViewParaclinicalResults-container_card_detail_item .detail-label {
+    min-width: unset;
+    margin-right: 5px;
+  }
+
+  .popup-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .button {
+    width: 100%;
+  }
+}
