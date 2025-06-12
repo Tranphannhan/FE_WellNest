@@ -7,11 +7,25 @@ import ParaclinicalComponent from "./CreateResultsComponent/Paraclinical";
 import DiagnosisResultsComponent from "./CreateResultsComponent/DiagnosisResults";
 import PrescriptionComponent from "./CreateResultsComponent/Prescription";
 import { useState } from 'react';
+import ViewParaclinicalResults from "./CreateResultsComponent/ViewParaclinicalResults";
 // qua bị xung đột file này ***
 
 
 export default function Patient(){
     const [page , setPage] = useState <string> ('Chuẩn đoán sơ bộ');
+
+    // Khai báo state trực tiếp trong component cha
+    const [showResultsPopup, setShowResultsPopup] = useState(false); // Mặc định là false (ẩn)
+
+    // Hàm để mở popup
+    const handleOpenResultsPopup = () => {
+        setShowResultsPopup(true);
+    };
+
+    // Hàm để đóng popup
+    const handleCloseResultsPopup = () => {
+        setShowResultsPopup(false);
+    };
 
     return(
         <>  
@@ -33,6 +47,12 @@ export default function Patient(){
                 </div>
                 
                 <div className="CreateResults-redirectFrame__actionButtonsContainer__rightButtons">
+                  <button
+                        className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
+                         onClick={handleOpenResultsPopup}
+                   >
+                        Xem kết quả xét nghiệm
+                   </button>
                     <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid">Yêu cầu chuyển khoa</button>
                     <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid">Xác nhận khám</button>
                 </div>
@@ -63,6 +83,7 @@ export default function Patient(){
             </div>
           </div> 
 
+          {showResultsPopup && <ViewParaclinicalResults  onClose={handleCloseResultsPopup} />}
                 
         </>
 

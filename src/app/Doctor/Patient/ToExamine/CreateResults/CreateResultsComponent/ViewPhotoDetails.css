@@ -1,0 +1,58 @@
+/* photo-details-overlay: Lớp phủ nền cho popup ảnh */
+.ViewPhotoDetails-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Nền đen đậm hơn để làm nổi bật ảnh */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Đảm bảo nó nằm trên popup kết quả xét nghiệm */
+}
+
+/* photo-details-container: Khung chứa ảnh */
+.ViewPhotoDetails-container_photo_details {
+  max-width: 100vh; /* Chiều rộng tối đa 90% viewport */
+  max-height: 90vh; /* Chiều cao tối đa 90% viewport */
+  background-color: #000; /* Nền đen cho khung ảnh */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Để định vị nút đóng nếu có */
+}
+
+/* zoomed-photo: Ảnh được phóng to */
+.ViewPhotoDetails-container_zoomed_photo {
+  width: 900px;
+  height: 100%;
+  object-fit:cover; /* Rất quan trọng! Đảm bảo ảnh hiển thị toàn bộ trong khung mà không bị cắt */
+  display: block; /* Loại bỏ khoảng trắng dưới ảnh */
+}
+
+/* close-photo-button (Tùy chọn): Nút đóng ở góc trên bên phải */
+/*
+.close-photo-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  z-index: 2001;
+}
+
+.close-photo-button:hover {
+  background-color: #fff;
+}
+*/
