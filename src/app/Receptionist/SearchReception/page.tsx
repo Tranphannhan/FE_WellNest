@@ -46,8 +46,6 @@ export default function SearchReception() {
             </button>
           </div>
         </div>
-
-        <h4 className="result-title">Kết quả:</h4>
         <div className="result-box">
           <table>
             <thead>

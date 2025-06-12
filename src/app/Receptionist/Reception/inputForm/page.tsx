@@ -74,10 +74,11 @@ export default function InputForm() {
     try {
         const response = await createMedicalExaminationCard(medicalCardDataToSend);
         const data = await response.json()
-       console.log(data)
         if(data.status === 201){
           showToast('Tạo sổ khám bệnh thành công',ToastType.success)
-
+          sessionStorage.setItem('soKhamBenh', JSON.stringify(data.data));
+          router.push('/Receptionist/Reception/PatientInformation');
+          
         }else{
           if(data?.haveATemporaryCard){
             setValueUpdate({

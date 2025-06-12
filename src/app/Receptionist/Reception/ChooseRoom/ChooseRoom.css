@@ -1,3 +1,7 @@
+.chooseRoom-container tr{
+  border-width:0 !important ;
+}
+
 .chooseRoom-container {
     padding: 20px;
     background: #fff;

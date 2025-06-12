@@ -38,9 +38,9 @@ export async function getAllDepartments() {
 }
 
 
-export async function getAllChooseRooms (_id : string) {
+export async function getAllChooseRooms (_id : string,currentPage:number) {
     try {
-        const result = await fetch(`${API_BASE_URL}/Bacsi/LayTheoKhoa/Pagination/${_id}`);
+        const result = await fetch(`${API_BASE_URL}/Bacsi/LayTheoKhoa/Pagination/${_id}?page=${currentPage}`);
         if (result){
             return result.json ();
         }
@@ -50,3 +50,58 @@ export async function getAllChooseRooms (_id : string) {
     }
 }
 
+export async function handlePay(id:string){
+
+    try {
+        const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/Xacnhanthanhtoan/${id}`,
+            {method:'PATCH'}
+        )
+        if(response.ok){
+            const data =await response.json();
+            if(data.TrangThaiDaThanhToan){
+                return ({
+                    message:data.message,
+                    status:false,
+                })
+            }else{
+                return ({
+                    message:data.message,
+                    status:true,
+                    QueueNumber: data.data.STTKham
+                })
+            }
+        }
+    } catch{
+        return ({
+                message:'Lỗi server khi thanh toán',
+                status:false
+        })
+    }
+     
+  }
+
+
+  export async function checkPay(id:string){
+
+    try {
+        const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/Detail/${id}`
+        )
+        if(response.ok){
+            const data =await response.json();
+            if(data[0].TrangThaiThanhToan){
+                return ({
+                    status:true
+                })
+            }else{
+                return ({
+                    status:false
+                })
+            }
+        }
+    } catch{
+        return ({
+                status:false
+        })
+    }
+     
+  }

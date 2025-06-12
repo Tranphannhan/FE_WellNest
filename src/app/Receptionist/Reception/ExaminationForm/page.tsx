@@ -1,148 +1,183 @@
-// page.tsx
-'use client' // Add this if you are using Next.js App Router and client-side features
-import React, { useState } from 'react';
+'use client'
+
+import React, { useEffect, useState } from 'react';
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './ExaminationForm.css'
-import PreviewExaminationForm from './PreviewExaminationForm'; // Import the modal component
+import PreviewExaminationForm from './PreviewExaminationForm';
+import type { ExaminationForm } from '@/app/types/receptionTypes/receptionTypes';
+import { checkPay, handlePay } from '@/app/services/ReceptionServices';
+import { showToast, ToastType } from '@/app/lib/Toast';
 
-export default function ExaminationForm(){
-    const [showPreviewModal, setShowPreviewModal] = useState(false);
+export default function ExaminationForm() {
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [valueRender, setValueRender] = useState<ExaminationForm | null | undefined>(undefined);
+  const [statusPay, setStatusPay] =  useState<boolean>(false)
 
-    // Sample patient data (replace with actual data from your form or state)
-    // Dữ liệu này sẽ được đẩy vào các trường input và cũng được truyền vào PreviewExaminationForm
-    const patientData = {
-        fullName: "Lý Văn Điền",
-        cccd: "080205013878",
-        dob: "16/08/1998",
-        phone: "0343527854",
-        gender: "Nam",
-        height: "191",
-        weight: "90",
-        clinic: "1",
-        department: "Chấn thương chỉnh hình",
-        address: "403, ấp Mỹ Điền, xã Long Hựu, huyện Cần Đước,tỉnh Long An",
-        reason: "Nứt xương cánh tay"
-    };
+async function Pay(){
+    if(!valueRender?.Id_PhieuKhamBenh){
+        return showToast('Chưa có mã phiếu khám bệnh',ToastType.error);
+    }
+    const result =await handlePay(valueRender?.Id_PhieuKhamBenh);
+    if(result?.status === true && result?.QueueNumber){
+        showToast(result.message,ToastType.success);
+        setValueRender((prev) => {
+          if (!prev) return prev; 
+          return { ...prev, QueueNumber: result.QueueNumber };
+        });
 
-    const currentCollectorName = "Trần Bình FMVP";
+        setStatusPay(true)
+          return
+    }else if(result){
+        return showToast(result.message,ToastType.error);
+    }    
+  }
 
-    const handleOpenPreview = () => {
-        setShowPreviewModal(true);
-    };
+async function checkRender (id:string){
+    const stutus = await checkPay(id)
+    if(stutus)
+    setStatusPay(stutus?.status)
+}
+  useEffect(() => {
+    try {
+      const dataLocal = sessionStorage.getItem('ThongTinPhieuKham');
+      if (dataLocal) {
+        const dataOb = JSON.parse(dataLocal);
+        checkRender(dataOb.Id_PhieuKhamBenh)
+        setValueRender(dataOb);
+      } else {
+        setValueRender(null); // không có dữ liệu
+      }
+    } catch (error) {
+      console.error("Lỗi khi đọc dữ liệu từ sessionStorage:", error);
+      setValueRender(null);
+    }
+  }, []);
 
-    const handleClosePreview = () => {
-        setShowPreviewModal(false);
-    };
+  const currentCollectorName = "Trần Bình FMVP";
 
-    return (
+  const handleOpenPreview = () => setShowPreviewModal(true);
+  const handleClosePreview = () => setShowPreviewModal(false);
+
+  return (
+    <>
+      <Tabbar
+        tabbarItems={{
+          tabbarItems: [
+            { text: 'Phiếu Khám', link: '/Receptionist/Reception/ExaminationForm' },
+          ]
+        }}
+      />
+
+      {/* Hiển thị loading trong khi chờ useEffect chạy */}
+      {valueRender === undefined ? (
+        <div className="ExaminationForm-Container__loading">
+          <p>Đang tải dữ liệu...</p>
+        </div>
+      ) : valueRender === null ? (
+        <div className="ExaminationForm-Container__no-data">
+          <h3>Không có dữ liệu phiếu khám để hiển thị.</h3>
+        </div>
+      ) : (
         <>
-        <Tabbar
-            tabbarItems={
-                {
-                    tabbarItems:[
-                        {text: 'Phiếu Khám', link: '/Receptionist/Reception/ExaminationForm'},
-                    ]
-                }
-            }
-        >
-        </Tabbar>
-                <div className="ExaminationForm-Container">
-                    <div className="ExaminationForm-Container__header">
-                        <h2>Thông tin phiếu khám</h2>
-                        <div className="ExaminationForm-Container__print">
-                        <button
-                            className="ExaminationForm-Container__print__btn"
-                            onClick={handleOpenPreview} // Add onClick handler here
-                        >
-                            <span><i className="bi bi-printer-fill"></i></span> In phiếu khám
-                        </button>
-                        </div>
-                    </div>
+          <div className="ExaminationForm-Container">
+            <div className="ExaminationForm-Container__header">
+              <h2>Thông tin phiếu khám</h2>
+              <div className="ExaminationForm-Container__print"
+                 style={!statusPay?{pointerEvents:"none",userSelect:'none',border:"1px solid gray"}:{}}
+              >
+                <button className="ExaminationForm-Container__print__btn"
+                    style={!statusPay?{pointerEvents:"none",userSelect:'none',color:'gray'}:{}}
+                onClick={handleOpenPreview}>
+                  <span><i className="bi bi-printer-fill"></i></span> In phiếu khám
+                </button>
+              </div>
+            </div>
 
-                    {/* Khung 1: Thông tin cơ bản (4 cột) */}
-                    <div className="form-grid grid-4">
-                        <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="fullName">Họ và tên:</label>
-                            <input type="text" id="fullName" defaultValue={patientData.fullName} readOnly/> {/* Đã đổi */}
-                        </div>
-                        <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="cccd">Số CCCD:</label>
-                            <input type="text" id="cccd" defaultValue={patientData.cccd} readOnly /> {/* Đã đổi */}
-                        </div>
-                        <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="dob">Ngày sinh:</label>
-                            <input type="text" id="dob" defaultValue={patientData.dob} readOnly /> {/* Đã đổi */}
-                        </div>
-                       <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="phone">Số điện thoại:</label>
-                            <input type="text" id="phone" defaultValue={patientData.phone} readOnly/> {/* Đã đổi */}
-                        </div>
-                    </div>
+            {/* Các khung form chi tiết như bạn đã viết */}
+            {/* KHUNG 1 */}
+            <div className="form-grid grid-4">
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="fullName">Họ và tên:</label>
+                <input type="text" id="fullName" defaultValue={valueRender.fullName} readOnly />
+              </div>
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="cccd">Số CCCD:</label>
+                <input type="text" id="cccd" defaultValue={valueRender.cccd} readOnly />
+              </div>
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="dob">Ngày sinh:</label>
+                <input type="text" id="dob" defaultValue={valueRender.dob} readOnly />
+              </div>
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="phone">Số điện thoại:</label>
+                <input type="text" id="phone" defaultValue={valueRender.phone} readOnly />
+              </div>
+            </div>
 
-                    {/* Khung 2: Thông tin chi tiết (4 cột) */}
-                    <div className="form-grid grid-3">
-                           <div className="ExaminationForm-Container__form__group">
-                                <label htmlFor="gender">Giới tính:</label>
-                                <input type="text" id="gender" defaultValue={patientData.gender} readOnly className="gender-btn" /> {/* Đã đổi */}
-                            </div>
-
-                        {/* Chiều cao */}
-                        <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="height">Chiều cao:</label>
-                            <div className="ExaminationForm-Container__input__unit">
-                                <input type="text" id="height" defaultValue={patientData.height} readOnly/> {/* Đã đổi */}
-                                <span>Cm</span>
-                            </div>
-                        </div>
-
-                        {/* Cân nặng */}
-                        <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="weight">Cân nặng:</label>
-                            <div className="ExaminationForm-Container__input__unit">
-                                <input type="text" id="weight" defaultValue={patientData.weight} readOnly/> {/* Đã đổi */}
-                                <span>Kg</span>
-                            </div>
-                        </div>
-
-                        <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="clinic">Phòng khám:</label>
-                            <input type="text" id="clinic" defaultValue={patientData.clinic} readOnly/> {/* Đã đổi */}
-                        </div>
-
-                        <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="department">Khoa:</label>
-                            <input type="text" id="department" defaultValue={patientData.department} readOnly/> {/* Đã đổi */}
-                        </div>
-                    </div>
-
-                    {/* Khung 3: Địa chỉ và Lý do đến khám (2 cột) */}
-                    <div className="form-grid grid-2">
-                        <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="address">Địa chỉ:</label>
-                            <textarea id="address" readOnly defaultValue={patientData.address} /> {/* Đã đổi */}
-                        </div>
-                        <div className="ExaminationForm-Container__form__group">
-                            <label htmlFor="reason">Lí do đến khám:</label>
-                            <textarea id="reason" readOnly defaultValue={patientData.reason} /> {/* Đã đổi */}
-                        </div>
-                    </div>
-
-                    <div className="ExaminationForm-Container__accept">
-                        <button className="ExaminationForm-Container__cancel__btn">Hủy phiếu khám</button>
-                        <button className="ExaminationForm-Container__accept__btn">Xác nhận đã thanh toán</button>
-
-                    </div>
+            {/* KHUNG 2 */}
+            <div className="form-grid grid-3">
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="gender">Giới tính:</label>
+                <input type="text" id="gender" defaultValue={valueRender.gender} readOnly className="gender-btn" />
+              </div>
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="height">Chiều cao:</label>
+                <div className="ExaminationForm-Container__input__unit">
+                  <input type="text" id="height" defaultValue={valueRender.height} readOnly />
+                  <span>Cm</span>
                 </div>
+              </div>
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="weight">Cân nặng:</label>
+                <div className="ExaminationForm-Container__input__unit">
+                  <input type="text" id="weight" defaultValue={valueRender.weight} readOnly />
+                  <span>Kg</span>
+                </div>
+              </div>
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="clinic">Phòng khám:</label>
+                <input type="text" id="clinic" defaultValue={valueRender.clinic} readOnly />
+              </div>
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="department">Khoa:</label>
+                <input type="text" id="department" defaultValue={valueRender.department} readOnly />
+              </div>
+            </div>
 
-                {/* Render the PreviewExaminationForm as a modal */}
-                <PreviewExaminationForm
-                    isOpen={showPreviewModal}
-                    onClose={handleClosePreview}
-                    patientData={patientData} // patientData này chứa toàn bộ thông tin
-                    collectorName={currentCollectorName}
-                />
+            {/* KHUNG 3 */}
+            <div className="form-grid grid-2">
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="address">Địa chỉ:</label>
+                <textarea id="address" readOnly defaultValue={valueRender.address} />
+              </div>
+              <div className="ExaminationForm-Container__form__group">
+                <label htmlFor="reason">Lí do đến khám:</label>
+                <textarea id="reason" readOnly defaultValue={valueRender.reason} />
+              </div>
+            </div>
+
+            <div className="ExaminationForm-Container__accept">
+                {
+                    statusPay?(<button className="ExaminationForm-Container__isPay__btn">Đã thanh toán</button>):(
+                            <>
+                            <button className="ExaminationForm-Container__cancel__btn">Không thanh toán</button>
+                        <button className="ExaminationForm-Container__accept__btn" onClick={Pay}>Xác nhận đã thanh toán</button></>
+                        
+                    )
+                }
+              
+            </div>
+          </div>
+
+          {/* Modal xem trước */}
+          <PreviewExaminationForm
+            isOpen={showPreviewModal}
+            onClose={handleClosePreview}
+            patientData={valueRender}
+            collectorName={currentCollectorName}
+          />
         </>
-
-    )
-
+      )}
+    </>
+  );
 }
