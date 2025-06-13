@@ -16,7 +16,7 @@ export default function Patient(){
     }
 
     const LoaddingPatient = async () => {
-        const Data = await getAllPatient ('6807397b4a1e320062ce2b20' , false , 'Kham');
+        const Data = await getAllPatient ('68470ef280684bcc24de9c43' , false , 'Kham');
         console.log(Data);
         setDataRender (Data.data);
     }
