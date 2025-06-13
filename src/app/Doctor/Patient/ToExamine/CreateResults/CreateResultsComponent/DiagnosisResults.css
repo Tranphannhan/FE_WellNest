@@ -90,15 +90,14 @@
     padding: 0 8px;
     font-family: inherit;
 }
-
+ 
 
 .DiagnosisResults-createResultsRow__create__Column__dots span::before {
     content: "....................................................................................................................";
     display: block;
     white-space: pre;
-    color: rgb(94, 94, 94);
     line-height: 22px;
-
+    color: rgb(187, 187, 187);
 }
 
 .DiagnosisResults-Body__create__footer {
@@ -155,9 +154,10 @@
     font-family: inherit;
 }
 
+
 .DiagnosisResults-Body__create__footer .DiagnosisResults-createResultsRow__create__Column__dots span::before {
     content: "........................................................................................................................................................................................................................................................";
     display: block;
     white-space: pre;
-    color: rgb(94, 94, 94);
+    color: rgb(187, 187, 187);
 }

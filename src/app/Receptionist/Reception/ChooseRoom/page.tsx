@@ -37,7 +37,9 @@ export default function ChooseRoom() {
 
 async function HandleCreate() {
     try {
-        console.log("Dữ liệu gửi đi:", examinationCardInformation);
+        console.log("Dữ liệu gửi đi:", );
+        console.log(examinationCardInformation);
+        
 
         // Gửi yêu cầu tạo phiếu khám bệnh
         const response = await fetch('http://localhost:5000/Phieu_Kham_Benh/Add', {
