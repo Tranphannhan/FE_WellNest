@@ -1,5 +1,7 @@
 
-import { MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
+
+import {  MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
+import { showToast, ToastType } from "../lib/Toast";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -17,7 +19,7 @@ export async function getAllPatient (Id_Bacsi : string , TrangThai : boolean , T
         console.error("Lỗi Khi Lấy Bác Sĩ:", error);
         throw error; 
     }
-}
+}  
  
 
 export async function getDetailMedicalExaminationCard(id: string): Promise<MedicalExaminationCard | null> {
@@ -43,4 +45,27 @@ export async function getVitalSignsByExaminationId(id: string): Promise<survival
     console.error("Fetch lỗi:", error);
     return null;
   }
+}
+
+
+
+// Cập nhât chỉ số sinh tồn
+export async function updateSurvivalIndex (id : string , data : survivalIndexType) {
+  try {
+    const response = await fetch(`http://localhost:5000/Chi_So_Sinh_Ton/Update/${id}`,{
+      method : 'Patch',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body : JSON.stringify (data)
+    });
+
+    if (!response.ok) return  showToast('Lưu chỉ số sinh tồn thất bại' , ToastType.error);
+    return response.json();
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+
 }

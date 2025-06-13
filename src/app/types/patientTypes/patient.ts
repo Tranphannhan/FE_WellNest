@@ -58,6 +58,7 @@ export interface MedicalExaminationCard {
 
 // chỉ số sinh tồn 
 export interface survivalIndexType{
+    _id? : string;
     Id_PhieuKhamBenh?: string;
     NhietDo?: string;
     Mach?: string;
@@ -67,4 +68,13 @@ export interface survivalIndexType{
     BMI?: string;
     SP02?: string;
     CanNang?: string;
+}
+
+
+
+// chuẩn đoán chi tiết lâm sang
+export interface diagnosisType {
+  Id_KhamLamSang?  : string,
+  TrieuChung? : string,
+  ChuanDoanSoBo? : string
 }
