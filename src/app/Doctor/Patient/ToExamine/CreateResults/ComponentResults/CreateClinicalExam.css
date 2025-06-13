@@ -1,0 +1,298 @@
+/* General Styling */
+.open-popup-button {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #3b82f6; /* bg-blue-500 */
+  color: #fff;
+  font-weight: 700; /* font-bold */
+  padding: 16px 32px; /* py-4 px-8 */
+  border-radius: 8px; /* rounded-lg */
+  border: none;
+  cursor: pointer;
+}
+
+.open-popup-button:hover {
+  background-color: #2563eb; /* hover:bg-blue-600 */
+}
+
+/* Ant Design Modal content specific override */
+.clinical-modal .ant-modal-content {
+  border-radius: 12px; /* rounded-xl */
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  padding: 0; /* Remove default padding from Ant Design Modal content */
+}
+
+/* Step Indicators Container */
+.steps-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px; /* gap-3 */
+  margin-bottom: 10px; /* mb-5 */
+  margin-top: 16px; /* mt-4 */
+  padding: 0 24px; /* px-6 */
+}
+
+.step-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+/* Individual Step Item */
+.step-item {
+  min-width: 215px;
+  text-align: center;
+  padding: 8px; /* p-2 */
+  margin-top: 24px; /* mt-6 */
+  border-radius: 8px; /* rounded-lg */
+  border: 1px solid; /* border */
+  transition: all 300ms ease-in-out;
+}
+
+.step-item--active {
+  border-color: #3b82f6; /* border-blue-500 */
+  color: #3b82f6; /* text-blue-500 */
+  font-weight: 600; /* font-semibold */
+  background-color: #eff6ff; /* bg-blue-50 */
+}
+
+/* Default step item styling */
+.step-item:not(.step-item--active) {
+  border-color: #d1d5db; /* border-gray-300 */
+  color: #6b7280; /* text-gray-500 */
+  background-color: #fff; /* bg-white */
+}
+
+.step-title {
+  font-size: 16px; /* text-base */
+  font-weight: 700; /* font-bold */
+}
+
+.step-subtitle {
+  font-size: 16px; /* text-base */
+  margin-top: 4px; /* mt-1 */
+}
+
+/* Connector Line */
+.step-connector {
+  flex-grow: 1;
+  height: 1px;
+  margin-left: 16px; /* mx-4 */
+  margin-right: 16px; /* mx-4 */
+  transition: background-color 300ms ease-in-out;
+}
+
+.step-connector--active {
+  background: linear-gradient(to right, #3b82f6, #60a5fa); /* bg-gradient-to-r from-blue-500 to-blue-300 */
+}
+
+/* Default connector color */
+.step-connector:not(.step-connector--active) {
+  background-color: #9ca3af; /* bg-gray-400 */
+}
+
+/* Loading Spinner Container */
+.loading-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 240px; /* h-60 */
+}
+
+/* Modal Content Sections */
+.modal-content-section {
+  padding: 16px; /* p-4 */
+}
+
+.section-title {
+  font-size: 18px; /* text-lg */
+  font-weight: 700; /* font-bold */
+  color: #1f2937; /* text-gray-800 */
+  margin-bottom: 16px; /* mb-4 */
+}
+
+/* Step 1 Note */
+.step-note {
+  font-size: 14px; /* text-sm */
+  color: #4b5563; /* text-gray-600 */
+  margin-bottom: 16px; /* mb-4 */
+  padding: 4px 8px; /* px-2 py-1 */
+  background-color: #fffbeb; /* bg-yellow-50 */
+  border: 1px solid #fde68a; /* border border-yellow-200 */
+  border-radius: 4px; /* rounded */
+}
+
+/* Search Bar */
+.search-bar-container {
+  position: relative;
+  margin-bottom: 24px; /* mb-6 */
+  display: flex;
+  justify-content: center; /* ADDED: To center the search input */
+}
+
+.search-input {
+  width: 50%; /* w-1/2 */
+  padding: 8px 16px 8px 40px; /* pl-10 pr-4 py-2 */
+  border-radius: 8px; /* rounded-lg */
+  border: 1px solid #d1d5db; /* border border-gray-300 */
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5); /* focus:ring-2 focus:ring-blue-400 */
+}
+
+.search-icon {
+  position: absolute;
+  /* Adjusted for correct centering relative to the 50% width input */
+  left: calc(25% + 10px); /* Adjust to be within the 10px left padding of the input */
+  top: 50%;
+  transform: translateY(-50%); /* vertically center */
+  color: #9ca3af; /* text-gray-400 */
+}
+
+/* Table Styling */
+.table-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+/* Allow horizontal scroll for table by default */
+.table-container {
+  overflow-x: auto;
+}
+
+/* Specific override to disable horizontal scroll for a table */
+.table-container--no-horizontal-scroll {
+  overflow-x: hidden; /* Hide horizontal scroll */
+}
+
+.data-table {
+  min-width: 100%;
+  border-collapse: collapse; /* Ensure borders collapse for a clean look */
+  table-layout: fixed; /* NEW: Fix table layout */
+}
+
+.data-table thead {
+  background-color: #f9fafb; /* bg-gray-50 */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table-header-cell {
+  padding: 12px 24px; /* px-6 py-3 */
+  text-align: left;
+  font-size: 12px; /* text-xs */
+  font-weight: 500; /* font-medium */
+  color: #6b7280; /* text-gray-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em; /* tracking-wider */
+}
+
+/* Define column widths for Step 1 table headers */
+.table-container:not(.table-container--no-horizontal-scroll) .data-table th:nth-child(1) {
+  width: 45%; /* Tên phòng thiết bị */
+}
+.table-container:not(.table-container--no-horizontal-scroll) .data-table th:nth-child(2) {
+  width: 20%; /* Hình ảnh */
+}
+.table-container:not(.table-container--no-horizontal-scroll) .data-table th:nth-child(3) {
+  display: flex;
+    width: 86%;
+    justify-content: end;
+    align-items: baseline;
+}
+
+/* Define column widths for Step 2 table headers */
+.table-container--no-horizontal-scroll .data-table th:nth-child(1) {
+  width: 20%; /* Tên xét nghiệm */
+}
+.table-container--no-horizontal-scroll .data-table th:nth-child(2) {
+  width: 15%; /* Hình ảnh */
+}
+.table-container--no-horizontal-scroll .data-table th:nth-child(3) {
+  width: 35%; /* Mô tả xét nghiệm */
+}
+.table-container--no-horizontal-scroll .data-table th:nth-child(4) {
+  width: 15%; /* Giá */
+}
+.table-container--no-horizontal-scroll .data-table th:nth-child(5) {
+  width: 15%; /* Hành động */
+}
+
+
+.table-data-cell {
+  padding: 16px 24px; /* px-6 py-4 */
+  font-size: 14px; /* text-sm */
+  color: #111827; /* text-gray-900 */
+  border-top: 1px solid #e5e7eb; /* divide-y divide-gray-200 */
+  white-space: normal; /* Allow text wrapping */
+  word-wrap: break-word; /* Ensure long words break */
+}
+
+.table-data-cell--medium-font {
+  font-weight: 500; /* font-medium */
+}
+
+/* Removed .table-data-cell--nowrap as text should wrap now */
+/* Removed .table-data-cell--wrap-text as it's now the default for .table-data-cell */
+
+
+.table-data-cell--action {
+  text-align: right;
+  font-weight: 500; /* font-medium */
+}
+
+.table-image {
+  height: 48px; /* h-12 */
+  width: 48px; /* w-12 */
+  border-radius: 6px; /* rounded-md */
+  object-fit: cover;
+}
+
+.table-row-hover:hover {
+  background-color: #eff6ff; /* hover:bg-blue-50 */
+  transition: background-color 150ms ease-in-out;
+}
+
+/* Buttons */
+.action-button {
+  background-color: #3b82f6; /* bg-blue-500 */
+  color: #fff;
+  font-weight: 700; /* font-bold */
+  padding: 12px 24px; /* py-3 px-6 */
+  border-radius: 8px; /* rounded-lg */
+  border: none;
+  cursor: pointer;
+  transition: background-color 200ms ease-in-out;
+}
+
+.action-button:hover {
+  background-color: #2563eb; /* hover:bg-blue-600 */
+}
+
+.modal-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px; /* mt-4 */
+  padding: 16px; /* p-4 to match section padding */
+}
+
+.back-button {
+  color: #4b5563; /* text-gray-700 */
+  background-color: #fff;
+  padding: 12px 24px; /* py-3 px-6 */
+  border-radius: 8px; /* rounded-lg */
+  border: 1px solid #d1d5db; /* border border-gray-300 */
+  cursor: pointer;
+  transition: background-color 200ms ease-in-out;
+}
+
+.back-button:hover {
+  background-color: #f3f4f6; /* hover:bg-gray-100 */
+}
