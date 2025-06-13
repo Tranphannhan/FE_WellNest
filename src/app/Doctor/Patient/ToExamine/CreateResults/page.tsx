@@ -24,7 +24,7 @@ export default function Patient(){
     const WaitClinicalExamination = searchParams.get('WaitClinicalExamination') === 'true';
     console.log('trạng thái : ' + WaitClinicalExamination );
 
-
+    
 
     // Khai báo state trực tiếp trong component cha
     const [showResultsPopup, setShowResultsPopup] = useState(false); // Mặc định là false (ẩn)

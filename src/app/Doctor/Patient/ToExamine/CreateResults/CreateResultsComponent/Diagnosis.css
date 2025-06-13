@@ -32,6 +32,7 @@
 .CreateResults-bodyFrame__vitalSigns__formRow__formGroup {
   flex: 1; /* Cho phép các form-group chiếm không gian đều nhau */
   min-width: 200px; /* Đảm bảo mỗi trường không quá nhỏ trên màn hình hẹp */
+  position: relative;
 }
 
 .CreateResults-bodyFrame__vitalSigns__formRow__formGroup label {
@@ -69,23 +70,13 @@
   display: flex;
   align-items: center; /* Căn giữa theo chiều dọc */
   justify-content: center; /* Căn giữa theo chiều ngang */
+   position: absolute;
+    right: 0px;
 }
 
 
 
-@media (min-width: 1200px) {
-  .CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith 
-  .CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit {
-    background-color: #f0f0f0; /* Màu nền cho đơn vị */
-    padding: 10px 9px;
-    font-size: 16px;
-    color: #666;
-    border-left: 1px solid #eee; /* Đường kẻ phân cách đơn vị */
-    display: flex;
-    align-items: center; /* Căn giữa theo chiều dọc */
-    justify-content: center; /* Căn giữa theo chiều ngang */
-  }
-}
+
 
 
 .CreateResults-bodyFrame__title2 {

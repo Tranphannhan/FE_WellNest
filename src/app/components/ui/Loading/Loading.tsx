@@ -1,6 +1,5 @@
 // app/components/LoadingSpinner.tsx
 'use client';
-
 import { motion } from 'framer-motion';
 
 interface LoadingSpinnerProps {
