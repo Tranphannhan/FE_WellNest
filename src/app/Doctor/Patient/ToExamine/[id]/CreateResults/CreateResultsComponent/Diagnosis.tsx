@@ -22,7 +22,11 @@ export default function DiagnosisComponent (){
 
   const handleSave =  async () => {
     const update = await updateSurvivalIndex (datasurvivalIndexRender._id as string , datasurvivalIndexRender );
-    console.log(update);
+    if(update.data){
+      showToast(update.message,ToastType.success)
+    }else{
+      showToast(update.message,ToastType.error)
+    }
   }
 
   

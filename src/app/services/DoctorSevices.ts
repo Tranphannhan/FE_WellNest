@@ -53,7 +53,7 @@ export async function getVitalSignsByExaminationId(id: string): Promise<survival
 export async function updateSurvivalIndex (id : string , data : survivalIndexType) {
   try {
     const response = await fetch(`http://localhost:5000/Chi_So_Sinh_Ton/Update/${id}`,{
-      method : 'Patch',
+      method : 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
