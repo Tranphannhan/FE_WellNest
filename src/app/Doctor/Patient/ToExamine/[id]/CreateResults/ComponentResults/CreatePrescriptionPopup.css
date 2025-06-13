@@ -1,13 +1,10 @@
 .prescription-popup__steps {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .prescription-popup__step {
-  min-width: 215px;
+  min-width: 224px;
   text-align: center;
   border: 1px solid #d9d9d9;
   padding: 10px;
@@ -146,5 +143,132 @@
   color: #1890ff;
   text-align: center;
   font-weight: 500;
+}
+
+/* HIDE THE SCROLLBAR */
+.ant-table-cell-scrollbar {
+  display: none !important;
+  width: 0 !important; /* Ensure width is 0 */
+  height: 0 !important; /* Ensure height is 0 */
+  visibility: hidden !important; /* Ensure it's not visible */
+}
+
+/* Optional: For WebKit browsers (Chrome, Safari) */
+.ant-table-body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Optional: For Firefox */
+.ant-table-body {
+  scrollbar-width: none !important; /* Firefox specific property */
+}
+
+.medicine-selection-layout {
+  padding: 20px 0;
+}
+
+.medicine-selection-layout .ant-input-search,
+.medicine-selection-layout .ant-select {
+  margin-bottom: 16px;
+}
+
+/* Pure HTML Table Styling */
+.medicine-table-container {
+  max-height: 240px; /* Equivalent to scroll={{ y: 240 }} */
+  overflow: auto; /* Enable scrolling for the container */
+  position: relative; /* Needed for sticky headers/columns */
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.medicine-table {
+  width: 100%;
+  border-collapse: separate; /* Required for sticky positioning to work well with borders */
+  border-spacing: 0;
+}
+
+.medicine-table th,
+.medicine-table td {
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0; /* Horizontal border */
+  border-right: 1px solid #f0f0f0; /* Vertical border */
+  white-space: nowrap; /* Prevent content from wrapping */
+  background-color: #fff; /* Ensure cells have a background to hide content underneath on scroll */
+}
+
+.medicine-table th {
+  background-color: #fafafa;
+  font-weight: 600;
+  position: sticky;
+  top: 0; /* Sticky header */
+  z-index: 10; /* Ensure header is above scrolling content */
+}
+
+/* Specific Column Alignments */
+.medicine-table .align-left {
+  text-align: center;
+}
+
+.medicine-table .align-center {
+  text-align: center;
+}
+
+.medicine-table .align-right {
+  text-align: center;
+}
+
+/* Fixed Columns (Left and Right) */
+.medicine-table .fixed-column-left {
+  position: sticky;
+  left: 0;
+  z-index: 11; /* Higher z-index for fixed columns over sticky header */
+  background-color: #fafafa; /* Background for fixed header cell */
+}
+
+.medicine-table tbody{
+  width: 300px;
+}
+
+.medicine-table tbody .fixed-column-left {
+    background-color: #fff;
+}
+
+.medicine-table .fixed-column-right {
+  position: sticky;
+  right: 0;
+  z-index: 11;
+  background-color: #fafafa; /* Background for fixed header cell */
+}
+
+.medicine-table tbody .fixed-column-right {
+    background-color: #fff; /* Background for fixed body cells */
+}
+
+/* Special styling for fixed columns at intersection with sticky header */
+.medicine-table th.fixed-column-left {
+  border-right: 1px solid #f0f0f0;
+}
+
+.medicine-table th.fixed-column-right {
+  border-left: 1px solid #f0f0f0; /* Ensure border visibility */
+  border-right: 1px solid #f0f0f0;
+}
+
+/* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+.medicine-table-container::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
+
+/* Hide scrollbar for Firefox */
+.medicine-table-container {
+  scrollbar-width: none; /* Firefox */
+}
+
+.ant-input:first-child{
+      padding: 4.2px;
 }
 

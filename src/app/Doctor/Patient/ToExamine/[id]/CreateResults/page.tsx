@@ -10,6 +10,7 @@ import { useState } from 'react';
 import ViewParaclinicalResults from "./CreateResultsComponent/ViewParaclinicalResults";
 import PrescriptionPopup from "./ComponentResults/CreatePrescriptionPopup";
 import { useParams, useSearchParams } from 'next/navigation';
+import ClinicalExamPage from "./ComponentResults/CreateClinicalExam";
 
 
 
@@ -23,7 +24,7 @@ export default function Patient(){
     // ---
     const searchParams = useSearchParams();
     const WaitClinicalExamination = searchParams.get('WaitClinicalExamination') === 'true';
-
+    const [showExaminationRequestPopup, setShowExaminationRequestPopup] = useState(false);
 
 
     // Khai báo state trực tiếp trong component cha
@@ -37,6 +38,14 @@ export default function Patient(){
     // Hàm để đóng popup
     const handleCloseResultsPopup = () => {
         setShowResultsPopup(false);
+    };
+
+    
+    const handleOpenExaminationRequestPopup = () => {
+        setShowExaminationRequestPopup(true);
+    };
+    const handleCloseExaminationRequestPopup = () => {
+        setShowExaminationRequestPopup(false);
     };
 
     return(
@@ -105,7 +114,7 @@ export default function Patient(){
           </div> 
 
           {showResultsPopup && <ViewParaclinicalResults  onClose={handleCloseResultsPopup} />}
-                
+          <ClinicalExamPage open={showExaminationRequestPopup} onClose={handleCloseExaminationRequestPopup} />
         </>
 
         
