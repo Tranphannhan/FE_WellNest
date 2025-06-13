@@ -144,7 +144,7 @@ export default function WaitClinicalExamination(){
             </tr>
         </thead>
         <tbody>
-                        {patientRecords.map((record: doctorTemporaryTypes, index: number) => (
+                        {patientRecords.map((record: doctorTemporaryTypes) => (
                             <tr key={record._id}>
                                 <td>{record.STTKham}</td>
                                 <td>{record.Id_TheKhamBenh.HoVaTen}</td>

@@ -2,15 +2,37 @@
 import React, { useEffect, useState } from "react";
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import "./SearchReception.css";
-import Link from "next/link";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
+import { medicalExaminationBook } from "@/app/types/patientTypes/patient";
+import { searchMedicalExaminationBook } from "@/app/services/ReceptionServices";
+import { useRouter } from "next/navigation";
+import NoData from "@/app/components/ui/Nodata/Nodata";
 
 export default function SearchReception() {
         const [currentPage, setCurrentPage] = useState<number>(1);
-        const totalPages = 2;
+        const [valueRender, setValueRender] = useState <medicalExaminationBook []> ([])
+        const [searchPhone,setSearchPhone] = useState <string>('')
+        const [searchName,setSearchName] = useState <string>('')
+        const [totalPages,setTotalPages] = useState <number>(1)
+        const router = useRouter()
+
+
+  async function search(phone:string,name:string,currentPage:number){
+      const response = await searchMedicalExaminationBook(phone,name,currentPage);
+      setValueRender(response.data)
+      setTotalPages(response.totalPages)
+      console.log(response)
+      console.log('Giá trị tìm kiếm tên',searchName)
+      console.log('Giá trị tìm kiếm số điện thoại',searchPhone)
+  }
+
+  function ViewDetail(value:medicalExaminationBook){
+      sessionStorage.setItem('soKhamBenh',JSON.stringify(value))
+      router.push('/Receptionist/Reception/PatientInformation')
+  }
 
   useEffect(()=>{
-      console.log(`Đang ở trang: ${currentPage}`)
+      search(searchPhone,searchName,currentPage)
 
   },[currentPage])
 
@@ -30,8 +52,15 @@ export default function SearchReception() {
               type="text"
               placeholder="Hãy nhập số điện thoại"
               className="search-input"
+              onChange={(e)=>{
+                  setSearchPhone(e.target.value)
+              }}
             />
-            <button className="search-btn">
+            <button className="search-btn"
+              onClick={()=>{
+                search(searchPhone,searchName,currentPage)
+              }}
+            >
               <i className="bi bi-search"></i>
             </button>
           </div>
@@ -40,14 +69,23 @@ export default function SearchReception() {
               type="text"
               placeholder="Hãy nhập tên"
               className="search-input"
+              onChange={(e)=>{
+                setSearchName(e.target.value)
+              }}
             />
-            <button className="search-btn">
+            <button className="search-btn"
+                onClick={()=>{
+                search(searchPhone,searchName,currentPage)
+              }}
+            >
               <i className="bi bi-search"></i>
             </button>
           </div>
         </div>
         <div className="result-box">
-          <table>
+          {
+            valueRender.length > 0?(<>
+                        <table>
             <thead>
               <tr>
                 <th>Họ và tên</th>
@@ -59,16 +97,25 @@ export default function SearchReception() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Lý Duy Lai Duy Ngã Độc Tôn</td>
-                <td>16/08/2005</td>
-                <td>Nam</td>
-                <td>0987655651</td>
-                <td>080205013878</td>
-                <td>
-                  <Link href="#">Xem chi tiết</Link>
-                </td>
-              </tr>
+              {
+                valueRender.map((patient)=>(
+                    <tr key={patient._id}>
+                      <td>{patient.HoVaTen}</td>
+                      <td>{patient.NgaySinh}</td>
+                      <td>{patient.GioiTinh}</td>
+                      <td>{patient.SoDienThoai}</td>
+                      <td>{patient.SoCCCD}</td>
+                      <td>
+                        <button 
+                          style={{color:'#349eff',cursor:'pointer'}}
+                          onClick={()=>{
+                          ViewDetail(patient)
+                        }}>Xem chi tiết</button>
+                      </td>
+                    </tr>
+
+                ))
+              }
             </tbody>
           </table>
             <div className="SearchReception-pagination">
@@ -79,6 +126,15 @@ export default function SearchReception() {
                   />
 
             </div>
+            </>):(
+                <>
+                  <NoData message="Không có sổ khám bệnh"
+                  remind="Vui lòng kiểm tra lại thông tin tìm kiếm"
+                  ></NoData>
+                </>
+
+            )
+          }
         </div>
       </div>
     </>

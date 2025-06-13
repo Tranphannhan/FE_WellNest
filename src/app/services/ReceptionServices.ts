@@ -105,3 +105,17 @@ export async function handlePay(id:string){
     }
      
   }
+
+  export async function searchMedicalExaminationBook(phone:string,name:string,page:number = 1) {
+        try{
+            const respone = await fetch(`http://localhost:5000/The_Kham_Benh/TimKiemSoKhamBenh/Pagination?sdt=${phone}&ten=${name}&page=${page}`);
+            if(respone.ok){
+            return (await respone.json())
+            }else{
+            console.error("Lỗi Khi Lấy thẻ khám bệnh:");
+        }
+        }catch(error){
+                console.error("Lỗi Khi Lấy thẻ khám bệnh:", error);
+                throw error; 
+        }
+  }

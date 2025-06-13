@@ -20,7 +20,7 @@ export default function Navbar ({conTentNavigation}:{conTentNavigation:conTentNa
                 const isActive = pathname.startsWith(value.link);
                     return(
 
-                        <Link key={index} href={value.link}
+                        <Link key={index} href={value.link} prefetch={false}
                         >
                             <div className={`Nav__item ${isActive  ? 'Nav-active':''}`} >
                                 <i className={value.icon}></i>

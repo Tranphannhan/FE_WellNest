@@ -55,7 +55,7 @@ export default function RootLayout({
                         title : 'Tiếp nhận ',
                         navItems : {
                           name : 'Nguyễn Đình Huân',
-                          role : 'Bác Sĩ',
+                          role : 'Tiếp nhận',
                           img : '/images/img-bacsi.webp'
                         }
                       }

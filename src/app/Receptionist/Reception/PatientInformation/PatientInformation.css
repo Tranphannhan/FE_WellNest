@@ -238,6 +238,9 @@
   box-shadow: 0 0 5px rgba(206, 206, 206, 0.5); /* Hiệu ứng đổ bóng */
 }
 
+.PatientInformation_Box1__content__Name{
+    color: #595959;
+}
 
 /*  */
 .PatientInformationComponent__Box_Child__contentTop__Title {

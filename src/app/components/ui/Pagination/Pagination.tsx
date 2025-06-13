@@ -49,7 +49,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
         disabled={currentPage === 1}
         onClick={() => handlePageClick(currentPage - 1)}
       >
-        Previous
+        Quay lại
       </button>
 
       {pages.map((page, index) => {
@@ -77,7 +77,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
         disabled={currentPage === totalPages}
         onClick={() => handlePageClick(currentPage + 1)}
       >
-        Next
+        Tiếp
       </button>
     </div>
   );

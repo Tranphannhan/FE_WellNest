@@ -10,6 +10,7 @@ import { showToast, ToastType } from '@/app/lib/Toast';
 import { receptionTemporaryDoctorTypes } from "@/app/types/receptionTypes/receptionTemporaryTypes";
 import { useRouter } from "next/navigation";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
+import NoData from "@/app/components/ui/Nodata/Nodata";
  
 interface createExaminationCardInformationType{
   Id_TheKhamBenh?: string;
@@ -222,7 +223,12 @@ async function HandleCreate() {
                     </Link>
                 </h1>
 
-                <table className="chooseRoom-container__table">
+
+
+            {dataChooseRoom.length > 0 ?(
+
+                <>
+                                    <table className="chooseRoom-container__table">
                     <thead>
                         <tr>
                             <th>Tên bác sĩ</th>
@@ -311,6 +317,12 @@ async function HandleCreate() {
                   />
 
             </div>
+                </>
+            ):(
+                <>
+                    <NoData message="Không có dữ liệu bác sĩ" remind="Vui lòng liên hệ bệnh viện số: 0933750634"></NoData>
+                </>
+            )}
             </div>
         </>
     );

@@ -10,9 +10,9 @@
 .page-button,
 .nav-button {
   padding: 8px 14px;
-  border: none;
+  border: 1px solid rgb(222, 222, 222);
   border-radius: 12px;
-  background-color: #fff;
+  background-color: #ffffff;
   color: #000;
   font-size: 14px;
   cursor: pointer;
@@ -22,6 +22,7 @@
 .page-button.active {
   background-color: #349eff;
   color: white;
+   border: 1px solid #349eff;
   font-weight: bold;
 }
 
