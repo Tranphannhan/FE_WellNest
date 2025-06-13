@@ -1,0 +1,259 @@
+
+
+
+/* bảng chỉ số sinh tồn */
+.CreateResults-bodyFrame__vitalSigns {
+    margin-top: 30px;
+    width: 100%; height: 300px;
+}
+
+.vital-signs-container {
+  padding: 20px;
+  background-color: white; /* Màu nền nhẹ cho container */
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.vital-signs-container h2 {
+  font-size: 24px;
+  margin-bottom: 25px;
+  color: #000;
+  font-weight: 500;
+}
+
+.CreateResults-bodyFrame__vitalSigns__formRow {
+  display: flex;
+  flex-wrap: wrap; /* Cho phép các mục xuống dòng nếu không đủ chỗ */
+  gap: 20px; /* Khoảng cách giữa các form-group */
+  margin-bottom: 20px; /* Khoảng cách giữa các hàng */
+}
+
+.CreateResults-bodyFrame__vitalSigns__formRow__formGroup {
+  flex: 1; /* Cho phép các form-group chiếm không gian đều nhau */
+  min-width: 200px; /* Đảm bảo mỗi trường không quá nhỏ trên màn hình hẹp */
+}
+
+.CreateResults-bodyFrame__vitalSigns__formRow__formGroup label {
+  display: block; /* Đặt nhãn trên input */
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #333;
+}
+
+.CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith{
+  display: flex; /* Dùng flexbox để căn chỉnh input và unit */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden; /* Đảm bảo bo tròn được áp dụng cho cả input và unit */
+  background-color: #fff;
+}
+
+.CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith input {
+  flex-grow: 1; /* Cho input chiếm hết không gian còn lại */
+  border: none;
+  padding: 10px 8px;
+  font-size: 16px;
+  outline: none; /* Loại bỏ outline khi focus */
+  color: #555;
+}
+
+.CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith 
+.CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit {
+  background-color: #f0f0f0; /* Màu nền cho đơn vị */
+  padding: 10px 26px;
+  font-size: 16px;
+  color: #666;
+  border-left: 1px solid #eee; /* Đường kẻ phân cách đơn vị */
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: center; /* Căn giữa theo chiều ngang */
+}
+
+
+
+@media (min-width: 1200px) {
+  .CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith 
+  .CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit {
+    background-color: #f0f0f0; /* Màu nền cho đơn vị */
+    padding: 10px 9px;
+    font-size: 16px;
+    color: #666;
+    border-left: 1px solid #eee; /* Đường kẻ phân cách đơn vị */
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+  }
+}
+
+
+.CreateResults-bodyFrame__title2 {
+  font-size: 20px;
+  color: black;
+  margin-left: 18px;
+  margin-top: 10px;
+}
+
+
+/* ----------------------- */
+/* Box - Form  */
+.CreateResults-bodyFrame__formVitalSigns {
+    width: 100%; height: auto;
+}
+
+
+
+
+
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer {
+  display: flex;
+  flex-wrap: wrap; /* Cho phép các phần tử con xuống dòng */
+  gap: 30px; /* Khoảng cách giữa hai cột chính */
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  color: #333;
+  position: relative; /* Để căn nút "Lưu" ở cuối */
+  padding-bottom: 80px; /* Đảm bảo có đủ không gian cho nút lưu ở dưới cùng */
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection {
+  flex: 1; /* Cho mỗi phần chiếm không gian đều nhau */
+  min-width: 300px; /* Đảm bảo mỗi phần không quá nhỏ */
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection  {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #000;
+  /* font-weight: 600; */
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #333;
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__DiagnosisTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1.5; /* Khoảng cách dòng */
+  min-height: 100px; /* Chiều cao tối thiểu cho textarea */
+  resize: vertical; /* Cho phép thay đổi kích thước theo chiều dọc */
+  outline: none;
+  box-sizing: border-box; /* Đảm bảo padding và border được tính vào width */
+  color: #555;
+}
+
+.diagnosis-textarea::placeholder {
+  color: #a0a0a0; /* Màu chữ placeholder */
+}
+
+/* Footer với nút "Lưu" */
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer {
+  width: 100%; /* Chiếm toàn bộ chiều rộng */
+  display: flex;
+  justify-content: flex-end;
+  position: absolute; 
+  bottom: 20px; 
+  right: 20px; 
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton {
+  background-color: #28a745; /* Màu xanh lá cây */
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Khoảng cách giữa icon và chữ */
+  transition: background-color 0.2s ease-in-out;
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton:hover {
+  background-color: #218838; /* Màu xanh đậm hơn khi hover */
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton:active {
+  background-color: #1e7e34;
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton__saveIcon {
+  font-size: 20px; /* Kích thước icon */
+}
+
+
+
+/* --------------- */
+/* ---- */
+.diagnosisResults-createResultsRow__create__Column {
+    width: 48%;
+}
+
+.diagnosisResults-createResultsRow__create__Column span {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea{
+  position: relative;
+  background-color: white;
+  border-radius: 8px;
+  padding: 12px;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+
+  .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput {
+    width: 100%;
+    height: 66px; /* 3 dòng */
+    border: none; resize: none;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    line-height: 27px;
+    padding: 0 8px;
+    font-family: inherit;
+    font-size: 16px;
+    color: #000;
+    outline: none;
+  }
+
+
+
+  .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__::placeholder {
+    color: #aaa;
+  }
+
+  .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots {
+    position: absolute;
+    top: 12px; left: 12px;
+    width: calc(100% - 24px);
+    height: 66px;
+    line-height: 22px;
+    z-index: 1;
+    pointer-events: none; /* Cho phép click xuyên qua */
+  }
+
+  .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots span {
+    display: block;
+    border-bottom:3px dotted #bbb; /* tăng từ 1px lên 2px để dấu chấm to hơn */
+    height: 25px;
+  }
+

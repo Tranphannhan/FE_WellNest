@@ -1,3 +1,6 @@
+
+import { MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function getAllPatient (Id_Bacsi : string , TrangThai : boolean , TrangThaiHoatDong : string) {
@@ -17,5 +20,27 @@ export async function getAllPatient (Id_Bacsi : string , TrangThai : boolean , T
 }
  
 
+export async function getDetailMedicalExaminationCard(id: string): Promise<MedicalExaminationCard | null> {
+  try {
+    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/Detail/${id}`);
+    if (!response.ok) return null;
+    const data =await response.json();
+    return data[0]
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+}
 
-
+// Lấy chỉ số sinh tồn theo Id_PhieuKhamBenh 
+export async function getVitalSignsByExaminationId(id: string): Promise<survivalIndexType | null> {
+  try {
+    const response = await fetch(`http://localhost:5000/Chi_So_Sinh_Ton/LayTheoPhieuKhamBenh?Id_PhieuKhamBenh=${id}`);
+    if (!response.ok) return null;
+    const data =await response.json();
+    return data[0]
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+}

@@ -10,13 +10,13 @@ import { useRouter } from "next/navigation";
 export default function Patient(){
     const [dataRender , setDataRender] = useState <doctorTemporaryTypes []> ([]);
     const router = useRouter()
-    function handleExamination(){
-        router.push('/Doctor/Patient/ToExamine')
+    function handleExamination(id:string){
+        router.push(`/Doctor/Patient/ToExamine/${id}`)
 
     }
 
     const LoaddingPatient = async () => {
-        const Data = await getAllPatient ('68470ef280684bcc24de9c43' , false , 'Kham');
+        const Data = await getAllPatient ('6807397b4a1e320062ce2b20' , false , 'Kham');
         console.log(Data);
         setDataRender (Data.data);
     }
@@ -94,7 +94,9 @@ export default function Patient(){
                                 <td>
                                     <button className="btn-primary"
                                         onClick={
-                                            handleExamination
+                                           ()=>{
+                                             handleExamination(record._id)
+                                           }
                                         }
                                     >Khám</button>
                                     <button className="btn-danger">Không có mặt</button>
