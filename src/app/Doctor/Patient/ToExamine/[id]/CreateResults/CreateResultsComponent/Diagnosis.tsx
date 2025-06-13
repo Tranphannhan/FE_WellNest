@@ -69,7 +69,7 @@ export default function DiagnosisComponent (){
                             {...prev,NhipTho :e.target.value}
                           ))
                         }}
-                      />
+                      /> 
                       <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">L/P</span>
                     </div>
                   </div>
