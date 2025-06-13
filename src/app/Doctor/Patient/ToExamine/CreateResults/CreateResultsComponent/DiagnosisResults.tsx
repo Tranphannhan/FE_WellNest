@@ -19,6 +19,7 @@ export default function DiagnosisResultsComponent() {
                         </div>
                     </div>
 
+
                     <div className="DiagnosisResults-createResultsRow__create__Column">
                         <span>Ghi chú:</span>
                         <div className="DiagnosisResults-createResultsRow__create__Column__inputArea">

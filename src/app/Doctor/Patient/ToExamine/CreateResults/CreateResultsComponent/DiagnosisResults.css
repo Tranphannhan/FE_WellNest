@@ -27,6 +27,8 @@
     gap: 20px;
 }
 
+
+
 .DiagnosisResults-createResultsRow__create__Column {
     width: 48%;
 }
@@ -45,6 +47,7 @@
     line-height: 30px;
     font-size: 18px;
     top: -10px;
+    width: 100%;
 }
 
 
@@ -74,14 +77,16 @@
 
 .DiagnosisResults-createResultsRow__create__Column__textInput::placeholder {
     color: #aaa;
-    font-style: italic;
-    line-height: 19px;
+    line-height: 29px;
+    font-size: 16px;
 }
+
 
 .DiagnosisResults-createResultsRow__create__Column__dots {
     position: absolute;
     top: 12px; left: 12px;
     width: calc(100% - 24px);
+    width: 100%;
     height: 66px; z-index: 1;
     pointer-events: none;
     font-size: 16px;
@@ -92,8 +97,9 @@
 }
  
 
+
 .DiagnosisResults-createResultsRow__create__Column__dots span::before {
-    content: "....................................................................................................................";
+    content: "...............................................................................................................";
     display: block;
     white-space: pre;
     line-height: 22px;
@@ -113,7 +119,8 @@
     color: #333;
 }
 
-.DiagnosisResults-Body__create__footer .DiagnosisResults-createResultsRow__create__Column__inputArea {
+.DiagnosisResults-Body__create__footer 
+.DiagnosisResults-createResultsRow__create__Column__inputArea {
     width: 100%;
 }
 
@@ -133,6 +140,18 @@
     outline: none;
 }
 
+
+@media (min-width: 1200px) {
+    .DiagnosisResults-createResultsRow__create__Column__dots span::before {
+        content: "......................................................................................................................";
+    }
+} 
+
+@media (min-width: 900px) {
+    .DiagnosisResults-createResultsRow__create__Column__dots span::before {
+        content: ".......................................................................................";
+    }
+} 
 
 
 
@@ -156,8 +175,27 @@
 
 
 .DiagnosisResults-Body__create__footer .DiagnosisResults-createResultsRow__create__Column__dots span::before {
-    content: "........................................................................................................................................................................................................................................................";
     display: block;
+    content: "...................................................................................................................................................................................................................";
     white-space: pre;
     color: rgb(187, 187, 187);
 }
+
+@media (min-width: 1200px) {
+    .DiagnosisResults-Body__create__footer .DiagnosisResults-createResultsRow__create__Column__dots span::before {
+    display: block;
+    content: ".............................................................................................................................................................................................";
+    white-space: pre;
+    color: rgb(187, 187, 187);
+}
+} 
+
+
+@media (min-width: 900px) {
+   .DiagnosisResults-Body__create__footer .DiagnosisResults-createResultsRow__create__Column__dots span::before {
+    display: block;
+    content: "...............................................................................................................................................................................................................";
+    white-space: pre;
+    color: rgb(187, 187, 187);
+}
+} 

@@ -53,7 +53,7 @@
 .CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith input {
   flex-grow: 1; /* Cho input chiếm hết không gian còn lại */
   border: none;
-  padding: 10px 12px;
+  padding: 10px 8px;
   font-size: 16px;
   outline: none; /* Loại bỏ outline khi focus */
   color: #555;
@@ -62,13 +62,29 @@
 .CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith 
 .CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit {
   background-color: #f0f0f0; /* Màu nền cho đơn vị */
-  padding: 10px 22px;
+  padding: 10px 26px;
   font-size: 16px;
   color: #666;
   border-left: 1px solid #eee; /* Đường kẻ phân cách đơn vị */
   display: flex;
   align-items: center; /* Căn giữa theo chiều dọc */
   justify-content: center; /* Căn giữa theo chiều ngang */
+}
+
+
+
+@media (min-width: 1200px) {
+  .CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith 
+  .CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit {
+    background-color: #f0f0f0; /* Màu nền cho đơn vị */
+    padding: 10px 9px;
+    font-size: 16px;
+    color: #666;
+    border-left: 1px solid #eee; /* Đường kẻ phân cách đơn vị */
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+  }
 }
 
 
@@ -218,6 +234,8 @@
     color: #000;
     outline: none;
   }
+
+
 
   .CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__::placeholder {
     color: #aaa;

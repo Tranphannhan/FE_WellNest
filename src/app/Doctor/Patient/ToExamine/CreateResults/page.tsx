@@ -9,13 +9,22 @@ import PrescriptionComponent from "./CreateResultsComponent/Prescription";
 import { useState } from 'react';
 import ViewParaclinicalResults from "./CreateResultsComponent/ViewParaclinicalResults";
 import PrescriptionPopup from "./ComponentResults/CreatePrescriptionPopup";
-// qua bị xung đột file này ***
+import { useSearchParams } from 'next/navigation';
+
 
 
 export default function Patient(){
     const [page , setPage] = useState <string> ('Chuẩn đoán sơ bộ');
     const [showPrescriptionPopup,setShowPrescriptionPopup] = useState<boolean>(false)
     const handleClose = ()=>{setShowPrescriptionPopup(false)}
+
+
+    // ---
+    const searchParams = useSearchParams();
+    const WaitClinicalExamination = searchParams.get('WaitClinicalExamination') === 'true';
+    console.log('trạng thái : ' + WaitClinicalExamination );
+
+
 
     // Khai báo state trực tiếp trong component cha
     const [showResultsPopup, setShowResultsPopup] = useState(false); // Mặc định là false (ẩn)
@@ -41,6 +50,7 @@ export default function Patient(){
             }}
           />
 
+
           <PrescriptionPopup showPrescriptionPopup={showPrescriptionPopup} handleClosePrescriptionPopup ={handleClose} ></PrescriptionPopup>
           <div className="CreateResults-redirectFrame">
               <div className="CreateResults-redirectFrame__actionButtonsContainer">
@@ -50,16 +60,22 @@ export default function Patient(){
                     >+ Tạo đơn thuốc</button>
                     <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline">+ Tạo yêu cầu xét nghiệm</button>
                 </div>
+
                 
                 <div className="CreateResults-redirectFrame__actionButtonsContainer__rightButtons">
-                  <button
-                        className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
-                         onClick={handleOpenResultsPopup}
-                   >
-                        Xem kết quả xét nghiệm
-                   </button>
-                    <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid">Yêu cầu chuyển khoa</button>
-                    <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid">Xác nhận khám</button>
+                  {
+                    WaitClinicalExamination && (
+                      <button style={{display : 'block'}}
+                            className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
+                            onClick={handleOpenResultsPopup}
+                      >
+                      Xem kết quả xét nghiệm
+                      </button>
+                    )
+                  }
+
+                  <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid">Yêu cầu chuyển khoa</button>
+                  <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid">Xác nhận khám</button>
                 </div>
             </div>
           </div>

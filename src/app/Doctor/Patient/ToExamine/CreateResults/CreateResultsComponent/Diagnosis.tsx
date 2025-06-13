@@ -15,7 +15,7 @@ export default function DiagnosisComponent (){
                       <input type="text" id="temperature" />
                       <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">°C</span>
                     </div>
-                  </div>
+                  </div>  
 
                   <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
                     <label htmlFor="temperature">Nhịp thở</label>
