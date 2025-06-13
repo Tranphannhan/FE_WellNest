@@ -2,9 +2,10 @@ import { FaSave } from 'react-icons/fa';
 import './Diagnosis.css';   
 import { useEffect, useState } from 'react';
 import { diagnosisType, survivalIndexType } from '@/app/types/patientTypes/patient';
-import { getVitalSignsByExaminationId, updateSurvivalIndex } from '@/app/services/DoctorSevices';
+import { addDiagnosis, getVitalSignsByExaminationId, updateSurvivalIndex } from '@/app/services/DoctorSevices';
 import { useParams } from 'next/navigation';
 import { showToast, ToastType } from '@/app/lib/Toast';
+
 
   
 
@@ -22,11 +23,32 @@ export default function DiagnosisComponent (){
 
   const handleSave =  async () => {
     const update = await updateSurvivalIndex (datasurvivalIndexRender._id as string , datasurvivalIndexRender );
-    if(update.data){
-      showToast(update.message,ToastType.success)
+    if(diagnosis.ChuanDoanSoBo && diagnosis.TrieuChung){
+       const updateDiagnosis = await addDiagnosis(id as string,diagnosis)
+         console.log(updateDiagnosis)
+
+        if(updateDiagnosis.data && update.data){
+          showToast("Tạo chuẩn đoán thành công",ToastType.success)
+          setDiagnosis({ChuanDoanSoBo:'',TrieuChung:''})
+        }else{
+          if(!updateDiagnosis.data){
+            showToast(updateDiagnosis.message,ToastType.error)
+          }
+          if(!update.data){
+            showToast(update.message,ToastType.error)
+          }
+          
+          
+        }
     }else{
-      showToast(update.message,ToastType.error)
+      if(update.data){
+          showToast("Lưu chỉ số sinh tồn thành công",ToastType.success)
+        }else{
+            showToast(update.message,ToastType.error)      
+        }
     }
+    
+  
   }
 
   

@@ -1,6 +1,6 @@
 
 
-import {  MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
+import {  diagnosisType, MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
 import { showToast, ToastType } from "../lib/Toast";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -63,6 +63,37 @@ export async function updateSurvivalIndex (id : string , data : survivalIndexTyp
     if (!response.ok) return  showToast('Lưu chỉ số sinh tồn thất bại' , ToastType.error);
     return response.json();
 
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+
+}
+
+export async function addDiagnosis (idMedicalExaminationCard : string , dataAdd : diagnosisType) {
+  try {
+    const response = await fetch(`http://localhost:5000/Kham_Lam_Sang/Add`,{
+      method : 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body : JSON.stringify ({Id_PhieuKhamBenh:idMedicalExaminationCard})
+    });
+
+    if (!response.ok) return  showToast('Tạo kết quả khám lâm sàng thất bại' , ToastType.error);
+    const data = await response.json()
+    const id = data.data._id;
+
+     const response2 = await fetch(`http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/Add`,{
+      method : 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body : JSON.stringify ({...dataAdd,Id_KhamLamSang:id})
+    });
+     if (!response2.ok) return  showToast('Tạo kết quả chuẩn đoán thất bại' , ToastType.error);
+     const data2 = await response2.json()
+     return data2
   } catch (error) {
     console.error("Fetch lỗi:", error);
     return null;
