@@ -65,16 +65,16 @@ export default function SelectedMedicineComponent() {
                 <td className="px-4 py-2 text-red-500 cursor-pointer hover:text-red-700">
                   <i className="bi bi-trash3-fill text-lg"></i>
                 </td>
-                <td className="px-4 py-2 font-medium text-gray-800">{item.Id_Thuoc.TenThuoc}</td>
+                <td className="px-4 py-2 font-medium text-gray-800">{item.Id_Thuoc?.TenThuoc}</td>
                 <td className="px-4 py-2">{item.DonVi || item.Id_Thuoc.DonVi}</td>
                 <td className="px-4 py-2">{item.SoLuong}</td>
                 <td className="px-4 py-2">{item.NhacNho}</td>
                 <td className="px-4 py-2">Sử dụng theo hướng dẫn</td>
                 <td className="px-4 py-2 text-green-600 font-semibold">
-                  {item.Id_Thuoc.Gia.toLocaleString()} ₫
+                  {item.Id_Thuoc.Gia.toLocaleString()||0} ₫
                 </td>
                 <td className="px-4 py-2 text-green-600 font-semibold">
-                  {(item.Id_Thuoc.Gia * item.SoLuong).toLocaleString()} ₫
+                  {(item.Id_Thuoc.Gia * item.SoLuong)?.toLocaleString()} ₫
                 </td>
               </tr>
             ))}
