@@ -12,20 +12,22 @@ export default function DiagnosisResultsComponent() {
 
                 <div className="DiagnosisResults-createResultsRow">
                     <div className="DiagnosisResults-createResultsRow__create__Column">
-                      <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-                        <textarea  className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập triệu chứng..."></textarea>
-                          <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
-                              <span></span>
-                              <span></span>
-                              <span></span>
-                          </div>
-                      </div>  
-                    </div>
+                        <div style={{font : '24px' , color : '#696969' , marginLeft : '10px' , fontWeight:  '600' }}>Kết quả</div>
+                        <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
+                            <textarea  className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập kết quả ..."></textarea>
+                            <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>    
+                    </div> 
 
 
                     <div className="DiagnosisResults-createResultsRow__create__Column">
+                        <div style={{font : '24px' , color : '#696969' , marginLeft : '10px' , fontWeight:  '600' }}>Ghi chú </div>
                        <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-                        <textarea  className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập triệu chứng..."></textarea>
+                        <textarea  className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập ghi chú..."></textarea>
                           <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
                               <span></span>
                               <span></span>
@@ -38,8 +40,9 @@ export default function DiagnosisResultsComponent() {
                 </div>
 
                 <div className="DiagnosisResults-Body__create__footer">
+                    <div style={{font : '24px' , color : '#696969' , marginLeft : '10px' , fontWeight:  '600' }}>Hướng xử lý</div>
                     <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-                        <textarea  className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập triệu chứng..."></textarea>
+                        <textarea  className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập hướng xử lý..."></textarea>
                           <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
                               <span></span>
                               <span></span>
