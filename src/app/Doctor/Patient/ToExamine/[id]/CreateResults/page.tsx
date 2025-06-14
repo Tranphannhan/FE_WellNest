@@ -92,28 +92,28 @@ export default function Patient(){
           </div>
 
     
-          <div className="CreateResults-bodyFrame">
-            <div className="CreateResults-bodyFrame__navigationBar">
-              <Diagnosiscomponent handlePage={setPage} />
-            </div>
- 
+            <div className="CreateResults-bodyFrame">
+              <div className="CreateResults-bodyFrame__navigationBar">
+                <Diagnosiscomponent handlePage={setPage} />
+              </div>
 
-            <div style={{display : page == 'Chuẩn đoán sơ bộ' ? 'block' : 'none'}}>
-              <DiagnosisComponent />
+              <div>
+                {page === 'Chuẩn đoán sơ bộ' && <DiagnosisComponent />}
+              </div>
+
+              <div>
+                {page === 'Cận lâm sàng' && <ParaclinicalComponent />}
+              </div>
+
+              <div>
+                {page === 'Chuẩn đoán kết quả' && <DiagnosisResultsComponent />}
+              </div>
+
+              <div>
+                {page === 'Đơn thuốc' && <PrescriptionComponent />}
+              </div>
             </div>
 
-            <div style={{display : page == 'Cận lâm sàng' ? 'block' : 'none'}}>
-              <ParaclinicalComponent/>
-            </div>
-
-            <div style={{display : page == 'Chuẩn đoán kết quả' ? 'block' : 'none'}}>
-              <DiagnosisResultsComponent/>
-            </div>
-
-            <div style={{display : page == 'Đơn thuốc' ? 'block' : 'none'}}>
-              <PrescriptionComponent/>
-            </div>
-          </div> 
 
           {showResultsPopup && <ViewParaclinicalResults  onClose={handleCloseResultsPopup} />}
           <ClinicalExamPage open={showExaminationRequestPopup} onClose={handleCloseExaminationRequestPopup} />

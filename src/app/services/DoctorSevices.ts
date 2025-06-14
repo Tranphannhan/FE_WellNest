@@ -2,6 +2,7 @@
 
 import {  clinicalType, diagnosisType, laboratoryType, MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
 import { showToast, ToastType } from "../lib/Toast";
+import { DoctorTemporaryTypes } from "../types/doctorTypes/doctorTestTypes";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -134,4 +135,37 @@ export async function getIdByTest(Id_PhongThietBi: string): Promise<clinicalType
         console.error("Lỗi Khi Lấy Loại Xét Nghiệm Theo ID Phòng Thiết Bị:", error);
         throw error;
     }
+}
+
+
+
+export async function getDoctorTemporaryTypes (id: string): Promise<DoctorTemporaryTypes | null> {
+  try {
+    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/LayTheoPhieuKhamBenh/${id}`);
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data[0]
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+}
+
+
+
+export async function deleteDoctorTemporaryTypes (id: string){
+  try {
+    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/Delete/${id}`,{
+      method : 'DELETE',
+    });
+
+    if (!response.ok) return  showToast('Xóa xóa xét nghiệm cận lâm sàng thất bại' , ToastType.error);
+    return showToast('Xóa xóa xét nghiệm cận lâm sàng thành công' , ToastType.success);
+  }
+  
+  catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
 }

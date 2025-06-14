@@ -1,3 +1,4 @@
+
 'use client';
 import { useEffect, useState } from 'react';
 import './Prescription.css'
@@ -39,14 +40,15 @@ export default function SelectedMedicineComponent() {
   };
 
   useEffect(() => {
-    fetchPrescriptionDetails('681e02ec95a6d1ce026584c7'); // Có thể truyền động sau này
+    fetchPrescriptionDetails('681e02ec95a6d1ce026584c7'); // Id_Dơn thuốc
   }, []);
 
   return (
     <div className="p-4">
-      <div className="overflow-x-auto border rounded-lg shadow-sm bg-white">
+      <div className="overflow-x-auto rounded-lg bg-white">
         {prescriptionDetails.length > 0 ? (
-            <table className="min-w-full divide-y divide-gray-200">
+            <>
+                     <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100 text-gray-700 text-sm font-semibold text-left">
             <tr>
               <th className="px-4 py-2">Xoá</th>
@@ -71,15 +73,19 @@ export default function SelectedMedicineComponent() {
                 <td className="px-4 py-2">{item.NhacNho}</td>
                 <td className="px-4 py-2">Sử dụng theo hướng dẫn</td>
                 <td className="px-4 py-2 text-green-600 font-semibold">
-                  {item.Id_Thuoc.Gia.toLocaleString()||0} ₫
+                  {item.Id_Thuoc?.Gia?.toLocaleString() || 0} ₫
                 </td>
                 <td className="px-4 py-2 text-green-600 font-semibold">
-                  {(item.Id_Thuoc.Gia * item.SoLuong)?.toLocaleString()} ₫
+                    {(item.Id_Thuoc?.Gia  * item.SoLuong)?.toLocaleString()} ₫
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+          <div className="flex justify-end gap-4 mt-4">
+                    <button className="Prescription-medicine__container__MedicineActions__addButton">+ Thêm thuốc</button>
+                    <button className="Prescription-medicine__container__MedicineActions__completeButton">Hoàn thành</button>
+      </div></>
         ):(
                 <NoData message="Chưa chọn thuốc!"
                   remind="Vui lòng chọn thuốc để hoán thành đơn thuốc"
@@ -87,10 +93,7 @@ export default function SelectedMedicineComponent() {
         )}
       </div>
 
-      <div className="flex justify-end gap-4 mt-4">
-                    <button className="Prescription-medicine__container__MedicineActions__addButton">+ Thêm thuốc</button>
-                    <button className="Prescription-medicine__container__MedicineActions__completeButton">Hoàn thành</button>
-      </div>
+    
     </div>
   );
 }
