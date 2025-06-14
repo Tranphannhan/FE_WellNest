@@ -24,7 +24,7 @@ export default function Patient(){
     // ---
     const searchParams = useSearchParams();
     const WaitClinicalExamination = searchParams.get('WaitClinicalExamination') === 'true';
-    const [showExaminationRequestPopup, setShowExaminationRequestPopup] = useState(false);
+
 
 
     // Khai báo state trực tiếp trong component cha
@@ -40,7 +40,7 @@ export default function Patient(){
         setShowResultsPopup(false);
     };
 
-    
+    const [showExaminationRequestPopup, setShowExaminationRequestPopup] = useState(false);
     const handleOpenExaminationRequestPopup = () => {
         setShowExaminationRequestPopup(true);
     };
@@ -67,7 +67,9 @@ export default function Patient(){
                     <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
                       onClick={()=>{setShowPrescriptionPopup(true)}}
                     >+ Tạo đơn thuốc</button>
-                    <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline">+ Tạo yêu cầu xét nghiệm</button>
+                    <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
+                    onClick={handleOpenExaminationRequestPopup}
+                    >+ Tạo yêu cầu xét nghiệm</button>
                 </div>
 
                 

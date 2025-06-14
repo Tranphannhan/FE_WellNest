@@ -1,6 +1,6 @@
 
 
-import {  diagnosisType, MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
+import {  clinicalType, diagnosisType, laboratoryType, MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
 import { showToast, ToastType } from "../lib/Toast";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -99,4 +99,39 @@ export async function addDiagnosis (idMedicalExaminationCard : string , dataAdd 
     return null;
   }
 
+}
+
+export async function getAllPagination(): Promise<laboratoryType[] | string> {
+    try {
+        const result = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination`);
+        if (result.ok) {
+            const Data = await result.json();
+            return Data.data;
+        } else {
+            const errorText = await result.text();
+            console.error(`Error fetching equipment rooms: ${result.status} - ${errorText}`);
+            return 'Lỗi Khi Lấy Phòng Thiết Bị';
+        }
+    } catch (error) {
+        console.error("Lỗi Khi Lấy Phòng Thiết Bị:", error);
+        throw error;
+    }
+}
+
+export async function getIdByTest(Id_PhongThietBi: string): Promise<clinicalType[] | string> {
+    try {
+        const result = await fetch(`${API_BASE_URL}/Loaixetnghiem/LayTheoIdPhongThietBi/${Id_PhongThietBi}`);
+
+        if (result.ok) {
+            const Data = await result.json();
+            return Data.data || Data;
+        } else {
+            const errorText = await result.text();
+            console.error(`Error fetching LoaiXetNghiem by Id_PhongThietBi: ${result.status} - ${errorText}`);
+            return 'Lỗi Khi Lấy Loại Xét Nghiệm Theo ID Phòng Thiết Bị';
+        }
+    } catch (error) {
+        console.error("Lỗi Khi Lấy Loại Xét Nghiệm Theo ID Phòng Thiết Bị:", error);
+        throw error;
+    }
 }

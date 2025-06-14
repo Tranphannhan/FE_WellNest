@@ -78,3 +78,33 @@ export interface diagnosisType {
   TrieuChung? : string,
   ChuanDoanSoBo? : string
 }
+
+//Hiện Phòng Khám Lâm Sàng
+export interface laboratoryType {
+    _id: string;
+    TenPhongThietBi: string;
+    TenXetNghiem: string;
+    Image: string;
+    __v: number;
+}
+
+//Giá dịch vụ
+export interface servicePriceType{
+        _id?: string;
+        Giadichvu?: number;
+        Tendichvu?:string;
+        Loaigia?:string;
+        TrangThaiHoatDong?:boolean;
+}
+
+//Hiện loại khám lâm sàng the
+export interface clinicalType {
+    _id?: string;
+    Id_PhongThietBi?: string;
+    Id_GiaDichVu?: servicePriceType;
+    TenXetNghiem?: string;
+    MoTaXetNghiem?: string;
+    Image?: string;
+    TrangThaiHoatDong?: boolean;
+    __v: number;
+}

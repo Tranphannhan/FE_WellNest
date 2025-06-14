@@ -1,30 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Modal, Button, Spin } from 'antd'; // Import Spin for loading indicator
 import './CreateClinicalExam.css'; // Import file CSS riêng biệt
+import { getAllPagination, getIdByTest } from '@/app/services/DoctorSevices';
+import { clinicalType, laboratoryType } from '@/app/types/patientTypes/patient';
 
-import { getAllPagination, getIdByTest } from '@/app/services/FileTam';
-
-interface paginationType {
-    _id: string;
-    TenPhongThietBi: string;
-    TenXetNghiem: string;
-    Image: string;
-    __v: number;
-}
-
-interface testType {
-    _id: string;
-    Id_PhongThietBi: string | null;
-    Id_GiaDichVu: {
-        _id: string;
-        Giadichvu: number;
-    };
-    TenXetNghiem: string;
-    MoTaXetNghiem: string;
-    Image: string;
-    TrangThaiHoatDong: boolean;
-    __v: number;
-}
 
 
 // Định nghĩa props cho component ClinicalExamPage
@@ -33,13 +12,13 @@ interface ClinicalExamPageProps {
     onClose: () => void; // Hàm gọi để đóng popup, được truyền từ component cha
 }
 
-const API_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_API_IMAGE_BASE_URL || 'http://localhost:5000/image'; // Assuming your image base URL
+const API_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // Assuming your image base URL
 
 const ClinicalExamPage = ({ open, onClose }: ClinicalExamPageProps) => {
     const [step, setStep] = useState(1);
-    const [rooms, setRooms] = useState<paginationType[]>([]); // Use paginationType interface
-    const [examinationTypes, setExaminationTypes] = useState<testType[]>([]); // Use testType interface
-    const [selectedRoom, setSelectedRoom] = useState<paginationType | null>(null); // Store the selected room object
+    const [rooms, setRooms] = useState<laboratoryType[]>([]); // Use paginationType interface
+    const [examinationTypes, setExaminationTypes] = useState<clinicalType[]>([]); // Use testType interface
+    const [selectedRoom, setSelectedRoom] = useState<laboratoryType | null>(null); // Store the selected room object
     const [loading, setLoading] = useState(false); // Loading state
 
     // Reset step and selected room when popup opens
@@ -78,7 +57,7 @@ const ClinicalExamPage = ({ open, onClose }: ClinicalExamPageProps) => {
         setLoading(false);
     };
 
-    const handleSelectRoom = (room: paginationType) => {
+    const handleSelectRoom = (room: laboratoryType) => {
         setSelectedRoom(room);
         setStep(2);
         fetchExaminationTypes(room._id);
@@ -182,7 +161,7 @@ const ClinicalExamPage = ({ open, onClose }: ClinicalExamPageProps) => {
                                                 {room.TenPhongThietBi}
                                             </td>
                                             <td className="table-data-cell">
-                                                <img src={`${API_IMAGE_BASE_URL}/${room.Image}`} alt={room.TenPhongThietBi} className="table-image" />
+                                                <img src={`${API_IMAGE_BASE_URL}/image/${room.Image}`} alt={room.TenPhongThietBi} className="table-image" />
                                             </td>
                                             <td className="table-data-cell table-data-cell--action">
                                                 <Button
@@ -253,13 +232,13 @@ const ClinicalExamPage = ({ open, onClose }: ClinicalExamPageProps) => {
                                                 {test.TenXetNghiem}
                                             </td>
                                             <td className="table-data-cell">
-                                                <img src={`${API_IMAGE_BASE_URL}/${test.Image}`} alt={test.TenXetNghiem} className="table-image" />
+                                                <img src={`${API_IMAGE_BASE_URL}/image/${test.Image}`} alt={test.TenXetNghiem} className="table-image" />
                                             </td>
                                             <td className="table-data-cell table-data-cell--wrap-text">
                                                 {test.MoTaXetNghiem}
                                             </td>
                                             <td className="table-data-cell_red">
-                                                {test.Id_GiaDichVu.Giadichvu.toLocaleString('vi-VN')} VND
+                                                {test.Id_GiaDichVu?.Giadichvu?.toLocaleString('vi-VN') || 0} VND
                                             </td>
                                             <td className="table-data-cell table-data-cell--action">
                                                 <Button
