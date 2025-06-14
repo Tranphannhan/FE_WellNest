@@ -5,12 +5,16 @@ import { DoctorTemporaryTypes } from '@/app/types/doctorTypes/doctorTestTypes';
 import { deleteDoctorTemporaryTypes, getDoctorTemporaryTypes } from '@/app/services/DoctorSevices';
 import { showToast, ToastType } from '@/app/lib/Toast';
 import { formatCurrencyVND } from '@/app/lib/Format';
+import { useParams } from 'next/navigation';
 
+ 
 
 export default function ParaclinicalComponent (){
         const [data , setData ] = useState <DoctorTemporaryTypes []> ([]);
+        const { id } = useParams();
+
         const Loadding = async () => {
-            const Data = await getDoctorTemporaryTypes ('684be071a73db14ee528b896');
+            const Data = await getDoctorTemporaryTypes (id as string);
             if (!Data) return showToast ('Không tìm thấy dữ liệu' , ToastType.error);
             const Tmdata = new Array (Data)
             setData(Tmdata);
@@ -23,8 +27,8 @@ export default function ParaclinicalComponent (){
 
         const deleteParaclinical = useCallback ((id : string) => {
             deleteDoctorTemporaryTypes (id)
-        }, [])
-
+            setData (data)
+        }, []);
         
         
     return (

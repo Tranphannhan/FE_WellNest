@@ -2,6 +2,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import './Prescription.css'
+import NoData from '@/app/components/ui/Nodata/Nodata';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export interface PrescriptionDetail {
@@ -45,7 +46,8 @@ export default function SelectedMedicineComponent() {
   return (
     <div className="p-4">
       <div className="overflow-x-auto border rounded-lg shadow-sm bg-white">
-        <table className="min-w-full divide-y divide-gray-200">
+        {prescriptionDetails.length > 0 ? (
+            <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100 text-gray-700 text-sm font-semibold text-left">
             <tr>
               <th className="px-4 py-2">Xoá</th>
@@ -64,21 +66,26 @@ export default function SelectedMedicineComponent() {
                 <td className="px-4 py-2 text-red-500 cursor-pointer hover:text-red-700">
                   <i className="bi bi-trash3-fill text-lg"></i>
                 </td>
-                <td className="px-4 py-2 font-medium text-gray-800">{item.Id_Thuoc.TenThuoc}</td>
+                <td className="px-4 py-2 font-medium text-gray-800">{item.Id_Thuoc?.TenThuoc}</td>
                 <td className="px-4 py-2">{item.DonVi || item.Id_Thuoc.DonVi}</td>
                 <td className="px-4 py-2">{item.SoLuong}</td>
                 <td className="px-4 py-2">{item.NhacNho}</td>
                 <td className="px-4 py-2">Sử dụng theo hướng dẫn</td>
                 <td className="px-4 py-2 text-green-600 font-semibold">
-                  {item.Id_Thuoc.Gia.toLocaleString()} ₫
+                  {item.Id_Thuoc?.Gia?.toLocaleString() || 0} ₫
                 </td>
                 <td className="px-4 py-2 text-green-600 font-semibold">
-{(item.Id_Thuoc.Gia * item.SoLuong).toLocaleString()} ₫
+{(item.Id_Thuoc?.Gia  * item.SoLuong)?.toLocaleString()} ₫
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        ):(
+                <NoData message="Chưa chọn thuốc!"
+                  remind="Vui lòng chọn thuốc để hoán thành đơn thuốc"
+                  ></NoData>  
+        )}
       </div>
 
       <div className="flex justify-end gap-4 mt-4">
