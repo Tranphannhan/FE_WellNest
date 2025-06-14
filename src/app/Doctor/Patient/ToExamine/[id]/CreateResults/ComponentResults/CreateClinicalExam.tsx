@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Modal, Button, Spin } from 'antd'; // Import Spin for loading indicator
 import './CreateClinicalExam.css'; // Import file CSS riêng biệt
-import { getAllPagination, getIdByTest } from '@/app/services/DoctorSevices';
+import { createTestRequest, getAllPagination, getIdByTest } from '@/app/services/DoctorSevices';
 import { clinicalType, laboratoryType } from '@/app/types/patientTypes/patient';
+import { useParams } from 'next/navigation';
+
 
 
 
@@ -20,6 +22,8 @@ const ClinicalExamPage = ({ open, onClose }: ClinicalExamPageProps) => {
     const [examinationTypes, setExaminationTypes] = useState<clinicalType[]>([]); // Use testType interface
     const [selectedRoom, setSelectedRoom] = useState<laboratoryType | null>(null); // Store the selected room object
     const [loading, setLoading] = useState(false); // Loading state
+    const {id} = useParams();
+
 
     // Reset step and selected room when popup opens
     useEffect(() => {
@@ -69,6 +73,13 @@ const ClinicalExamPage = ({ open, onClose }: ClinicalExamPageProps) => {
         setExaminationTypes([]);
     };
 
+
+    //
+    const HandleCreateTestRequest = (idLoaiXetNghiem : string) => {
+        createTestRequest (id as string , idLoaiXetNghiem)
+    }
+
+ 
     return (
         <Modal
             open={open} // Nhận trạng thái mở từ props
@@ -244,6 +255,7 @@ const ClinicalExamPage = ({ open, onClose }: ClinicalExamPageProps) => {
                                                 <Button
                                                     type="primary"
                                                     className="action-button"
+                                                    onClick={() => {HandleCreateTestRequest (test._id || '')}}
                                                 >
                                                     Chọn loại
                                                 </Button>

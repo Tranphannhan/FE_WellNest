@@ -169,3 +169,29 @@ export async function deleteDoctorTemporaryTypes (id: string){
     return null;
   }
 }
+
+
+
+
+export async function createTestRequest (Id_PhieuKhamBenh : string , Id_LoaiXetNghiem : string){
+  try {
+    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/Add`,{
+      method : 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body : JSON.stringify ({
+        Id_PhieuKhamBenh : Id_PhieuKhamBenh,
+        Id_LoaiXetNghiem : Id_LoaiXetNghiem
+      })
+    });
+
+    if (!response.ok) return  showToast('Tạo yêu cầu xét nghiệm thất bại' , ToastType.error);
+    return  showToast('Tạo yêu cầu xét nghiệm thành công' , ToastType.success);  
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+
+}
