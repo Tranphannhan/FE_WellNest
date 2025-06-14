@@ -1,7 +1,7 @@
 import './Prescription.css';
 // import { Trash2 } from 'lucide-react'; 
 
-export default function SelectedMedicineComponent() {
+export default function () {
      const medicines = [
         {
             name: 'Paracetamol 500mg',
