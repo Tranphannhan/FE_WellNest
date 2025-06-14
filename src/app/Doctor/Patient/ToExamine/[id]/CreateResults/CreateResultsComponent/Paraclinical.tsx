@@ -10,7 +10,7 @@ import { formatCurrencyVND } from '@/app/lib/Format';
 export default function ParaclinicalComponent (){
         const [data , setData ] = useState <DoctorTemporaryTypes []> ([]);
         const Loadding = async () => {
-            const Data = await getDoctorTemporaryTypes ('6836af419964ca6830bfb93b');
+            const Data = await getDoctorTemporaryTypes ('684be071a73db14ee528b896');
             if (!Data) return showToast ('Không tìm thấy dữ liệu' , ToastType.error);
             const Tmdata = new Array (Data)
             setData(Tmdata);
@@ -43,6 +43,7 @@ export default function ParaclinicalComponent (){
                             </tr>
                         </thead>
                     
+
                         <tbody>
                             {data.map((item) => (
                                 <tr key={item._id}>
@@ -53,7 +54,6 @@ export default function ParaclinicalComponent (){
                                     </td>
 
                                     <td>{formatCurrencyVND (item.Id_LoaiXetNghiem.Id_GiaDichVu.Giadichvu)}</td>
-                                
                                     <td>
                                         <div onClick={() => deleteParaclinical (item._id)} className='Paraclinical-medicine__container__medicineTable__Bton'>
                                             <span><i style={{color : "red" , fontSize : "15px"}} className="bi bi-x-lg"></i> Loại bỏ</span>

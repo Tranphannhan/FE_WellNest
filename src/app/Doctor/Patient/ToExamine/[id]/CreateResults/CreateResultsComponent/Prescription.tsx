@@ -1,96 +1,90 @@
-import './Prescription.css';
-// import { Trash2 } from 'lucide-react'; 
 
-export default function () {
-     const medicines = [
-        {
-            name: 'Paracetamol 500mg',
-            image: 'https://innguyenphong.com/Files/44/trang/h%E1%BB%99p/thi%E1%BA%BFt%20k%E1%BA%BF%20v%E1%BB%8F%20h%E1%BB%99p%20thu%E1%BB%91c/thiet-ke-vo-hop-thuoc%20(14).jpg',
-            unit: 'Vỉ',
-            quantity: 1,
-            note: 'Nên uống trước khi ăn',
-            usage: '2 vỉ 1 ngày sáng, tối',
-            price: 150000,
-        },
-        {
-            name: 'Onepiece 500mg',
-            image: 'https://innguyenphong.com/Files/44/trang/h%E1%BB%99p/thi%E1%BA%BFt%20k%E1%BA%BF%20v%E1%BB%8F%20h%E1%BB%99p%20thu%E1%BB%91c/thiet-ke-vo-hop-thuoc%20(14).jpg',
-            unit: 'Viên',
-            quantity: 20,
-            note: 'Tránh dùng cho phụ nữ mang thai',
-            usage: '4 viên 1 ngày sáng, trưa chiều tối',
-            price: 15000,
-        },
-        {
-            name: 'Naruto 500mg',
-            image: 'https://innguyenphong.com/Files/44/trang/h%E1%BB%99p/thi%E1%BA%BFt%20k%E1%BA%BF%20v%E1%BB%8F%20h%E1%BB%99p%20thu%E1%BB%91c/thiet-ke-vo-hop-thuoc%20(14).jpg',
-            unit: 'Gói',
-            quantity: 3,
-            note: 'Không dùng cho trẻ em dưới 3 tuổi',
-            usage: '3 gói 1 ngày sáng, Trưa, tối',
-            price: 450000,
-        },
-        {
-            name: 'Sasuke 500mg',
-            image: 'https://innguyenphong.com/Files/44/trang/h%E1%BB%99p/thi%E1%BA%BFt%20k%E1%BA%BF%20v%E1%BB%8F%20h%E1%BB%99p%20thu%E1%BB%91c/thiet-ke-vo-hop-thuoc%20(14).jpg',
-            unit: 'Vỉ',
-            quantity: 1,
-            note: 'Không dùng chung thuốc Naruto',
-            usage: '1 vỉ 1 ngày tối',
-            price: 250000,
-        }
-    ];
+'use client';
+import { useEffect, useState } from 'react';
+import './Prescription.css'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+export interface PrescriptionDetail {
+  _id: string;
+  Id_DonThuoc: string;
+  Id_Thuoc: {
+    _id: string;
+    Id_NhomThuoc: string;
+    TenThuoc: string;
+    DonVi: string;
+    Gia: number;
+    __v: number;
+  };
+  SoLuong: number;
+  NhacNho: string;
+  DonVi: string;
+  __v: number;
+}
 
-   
+export default function SelectedMedicineComponent() {
+  const [prescriptionDetails, setPrescriptionDetails] = useState<PrescriptionDetail[]>([]);
 
-    return (
-        <div>
-           <div className="Prescription-medicine__container">
-                <h3>Thuốc đã chọn</h3>
-                <table className="Prescription-medicine__container__medicineTable">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Tên thuốc</th>
-                            <th>Ảnh thuốc</th>
-                            <th>Đơn vị</th>
-                            <th>Số lượng</th>
-                            <th>Lưu ý</th>
-                            <th>Cách sử dụng</th>
-                            <th>Giá mỗi đơn vị</th>
-                            <th>Giá tổng</th>
-                        </tr>
-                    </thead>
-                
-                    <tbody>
-                        {medicines.map((item, index) => (
-                            <tr key={index}>
-                                <td>
-                                    <i style={{color : 'red' , fontSize : '20px'}} className="bi bi-trash3-fill"></i>
-                                </td>
-                                <td >{item.name}</td>
-                                <td>
-                                    <img src={item.image} alt={item.name} className="Prescription-medicine__container__medicineTable__medicineImage" />
-                                </td>
-                                <td>{item.unit}</td>
-                                <td>{item.quantity}</td>
-                                <td>{item.note}</td>
-                                <td>{item.usage}</td>
-                                <td>{item.price.toLocaleString()} ₫</td>
-                                <td>{(item.price * item.quantity).toLocaleString()} ₫</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+  const fetchPrescriptionDetails = async (prescriptionId: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/Donthuoc_Chitiet/LayTheoDonThuoc/${prescriptionId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setPrescriptionDetails(data || []);
+      } else {
+        console.error('Failed to fetch prescription details');
+      }
+    } catch (error) {
+      console.error('Error fetching prescription details:', error);
+    }
+  };
 
-                <div className="Prescription-medicine__container__MedicineActions">
+  useEffect(() => {
+    fetchPrescriptionDetails('681e02ec95a6d1ce026584c7'); // Có thể truyền động sau này
+  }, []);
+
+  return (
+    <div className="p-4">
+      <div className="overflow-x-auto border rounded-lg shadow-sm bg-white">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-100 text-gray-700 text-sm font-semibold text-left">
+            <tr>
+              <th className="px-4 py-2">Xoá</th>
+              <th className="px-4 py-2">Tên thuốc</th>
+              <th className="px-4 py-2">Đơn vị</th>
+              <th className="px-4 py-2">Số lượng</th>
+              <th className="px-4 py-2">Lưu ý</th>
+              <th className="px-4 py-2">Cách sử dụng</th>
+              <th className="px-4 py-2">Giá mỗi đơn vị</th>
+              <th className="px-4 py-2">Giá tổng</th>
+            </tr>
+          </thead>
+          <tbody className="text-sm text-gray-600 divide-y divide-gray-200">
+            {prescriptionDetails.map((item, index) => (
+              <tr key={index} className="hover:bg-gray-50">
+                <td className="px-4 py-2 text-red-500 cursor-pointer hover:text-red-700">
+                  <i className="bi bi-trash3-fill text-lg"></i>
+                </td>
+                <td className="px-4 py-2 font-medium text-gray-800">{item.Id_Thuoc.TenThuoc}</td>
+                <td className="px-4 py-2">{item.DonVi || item.Id_Thuoc.DonVi}</td>
+                <td className="px-4 py-2">{item.SoLuong}</td>
+                <td className="px-4 py-2">{item.NhacNho}</td>
+                <td className="px-4 py-2">Sử dụng theo hướng dẫn</td>
+                <td className="px-4 py-2 text-green-600 font-semibold">
+                  {item.Id_Thuoc.Gia.toLocaleString()} ₫
+                </td>
+                <td className="px-4 py-2 text-green-600 font-semibold">
+{(item.Id_Thuoc.Gia * item.SoLuong).toLocaleString()} ₫
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-end gap-4 mt-4">
                     <button className="Prescription-medicine__container__MedicineActions__addButton">+ Thêm thuốc</button>
                     <button className="Prescription-medicine__container__MedicineActions__completeButton">Hoàn thành</button>
-                </div>
-            </div>
-
-
-        </div>
-    );
+      </div>
+    </div>
+  );
 }
