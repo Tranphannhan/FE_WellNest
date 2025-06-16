@@ -3,7 +3,6 @@
     background-color: white;
     padding: 30px 0;
     box-sizing: border-box;
-    padding-bottom: 140px;
 }
 
 .DiagnosisResults-Container {
@@ -15,10 +14,44 @@
 }
 
 .DiagnosisResults-Body__Button {
-    position: absolute;
-    right: 80px;
-    top: 750px;
+    display: flex;
+    width: 100%;
+    justify-content: end;
+    margin-top: 40px;
+    padding-right: 25px;
 }
+
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton {
+  background-color: #28a745; /* Màu xanh lá cây */
+  color: white;
+  padding: 8px 25px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Khoảng cách giữa icon và chữ */
+  transition: background-color 0.2s ease-in-out;
+}
+
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton:hover {
+  background-color: #218838; /* Màu xanh đậm hơn khi hover */
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton:active {
+  background-color: #1e7e34;
+}
+
+.CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton__saveIcon {
+  font-size: 20px; /* Kích thước icon */
+}
+
+
+
 
 .DiagnosisResults-Body__Title {
     font-size: 24px;
