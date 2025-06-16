@@ -252,7 +252,7 @@ export default function DiagnosisComponent (){
                   <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer">
                     <button className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton"
                         onClick={handleSave}
-                    >
+                      >
                       <FaSave className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton__saveIcon" /> {/* Icon lưu */}
                       Lưu
                     </button>
