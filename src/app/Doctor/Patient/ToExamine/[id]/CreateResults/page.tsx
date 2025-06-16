@@ -6,20 +6,23 @@ import DiagnosisComponent from "./CreateResultsComponent/Diagnosis";
 import ParaclinicalComponent from "./CreateResultsComponent/Paraclinical";
 import DiagnosisResultsComponent from "./CreateResultsComponent/DiagnosisResults";
 import PrescriptionComponent from "./CreateResultsComponent/Prescription";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ViewParaclinicalResults from "./CreateResultsComponent/ViewParaclinicalResults";
 import PrescriptionPopup from "./ComponentResults/CreatePrescriptionPopup";
 import { useParams, useSearchParams } from 'next/navigation';
 import ClinicalExamPage from "./ComponentResults/CreateClinicalExam";
+import { CheckPrescription, fetchMedicalExaminationCardDetail } from "@/app/services/DoctorSevices";
+import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 
 
 
 export default function Patient(){
     const [page , setPage] = useState <string> ('Chuẩn đoán sơ bộ');
     const [showPrescriptionPopup,setShowPrescriptionPopup] = useState<boolean>(false)
+    const [paraclinicalKey, setParaclinicalKey] = useState(0);
+    const [isPrescriptionCreating, setIsPrescriptionCreating] = useState(false);
     const handleClose = ()=>{setShowPrescriptionPopup(false)}
     const { id } = useParams(); // lấy id từ URL
-
 
     // ---
     const searchParams = useSearchParams();
@@ -40,6 +43,21 @@ export default function Patient(){
         setShowResultsPopup(false);
     };
 
+    async function checkPrescriptionStatus() {
+    const resCheck = await CheckPrescription(id as string);
+    if (resCheck && !resCheck.status) {
+      // Nếu đã có đơn thuốc đang tạo thì disable nút
+      setIsPrescriptionCreating(true);
+      if (resCheck.data?._id) {
+      sessionStorage.setItem("DonThuocDaTao", JSON.stringify(resCheck.data));
+    }
+    } else {
+      setIsPrescriptionCreating(false);
+      sessionStorage.removeItem("DonThuocDaTao");
+    }
+  }
+
+
     const [showExaminationRequestPopup, setShowExaminationRequestPopup] = useState(false);
     const handleOpenExaminationRequestPopup = () => {
         setShowExaminationRequestPopup(true);
@@ -47,6 +65,23 @@ export default function Patient(){
     const handleCloseExaminationRequestPopup = () => {
         setShowExaminationRequestPopup(false);
     };
+
+    async function getValueRender() {
+      const res: MedicalExaminationCard | null = await fetchMedicalExaminationCardDetail(id as string);
+
+      if (res) {
+        console.log(res);
+        sessionStorage.setItem("ThongTinBenhNhanDangKham", JSON.stringify(res));
+      } else {
+        console.warn("Không lấy được dữ liệu chi tiết phiếu khám bệnh.");
+      }
+    }
+
+
+    useEffect(()=>{
+        getValueRender()
+        checkPrescriptionStatus();
+    },[])
 
     return(
         <>  
@@ -60,13 +95,29 @@ export default function Patient(){
           />
 
 
-          <PrescriptionPopup showPrescriptionPopup={showPrescriptionPopup} handleClosePrescriptionPopup ={handleClose} ></PrescriptionPopup>
+          <PrescriptionPopup PrescriptionInfo={{
+            Id_PhieuKhamBenh:id as string,
+
+          }} showPrescriptionPopup={showPrescriptionPopup} handleClosePrescriptionPopup ={handleClose} ></PrescriptionPopup>
           <div className="CreateResults-redirectFrame">
               <div className="CreateResults-redirectFrame__actionButtonsContainer">
                 <div className="CreateResults-redirectFrame__actionButtonsContainer__leftButtons">
-                    <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
-                      onClick={()=>{setShowPrescriptionPopup(true)}}
-                    >+ Tạo đơn thuốc</button>
+                    <button
+                      className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
+                      onClick={() => setShowPrescriptionPopup(true)}
+                      disabled={isPrescriptionCreating}
+                      style={{
+                          opacity: isPrescriptionCreating ? 0.5 : 1,
+                          cursor: isPrescriptionCreating ? 'not-allowed' : 'pointer',
+                          color: isPrescriptionCreating ? 'gray' : undefined,
+                          border: isPrescriptionCreating ? '1px solid gray' : undefined,
+                          backgroundColor: isPrescriptionCreating ? '#f5f5f5' : undefined,
+                          pointerEvents: isPrescriptionCreating ? 'none' : 'auto', 
+                        }}
+                    >
+                      + Tạo đơn thuốc
+                    </button>
+
                     <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
                     onClick={handleOpenExaminationRequestPopup}
                     >+ Tạo yêu cầu xét nghiệm</button>
@@ -94,7 +145,7 @@ export default function Patient(){
     
             <div className="CreateResults-bodyFrame">
               <div className="CreateResults-bodyFrame__navigationBar">
-                <Diagnosiscomponent handlePage={setPage} />
+                <Diagnosiscomponent handlePage={setPage} page={page} />
               </div>
 
               <div>
@@ -102,7 +153,7 @@ export default function Patient(){
               </div>
 
               <div>
-                {page === 'Cận lâm sàng' && <ParaclinicalComponent />}
+                {page === 'Cận lâm sàng' && <ParaclinicalComponent key={paraclinicalKey}/>}
               </div>
 
               <div>
@@ -116,7 +167,7 @@ export default function Patient(){
 
 
           {showResultsPopup && <ViewParaclinicalResults  onClose={handleCloseResultsPopup} />}
-          <ClinicalExamPage open={showExaminationRequestPopup} onClose={handleCloseExaminationRequestPopup} />
+          <ClinicalExamPage open={showExaminationRequestPopup} onClose={handleCloseExaminationRequestPopup}   reload={() => setParaclinicalKey(prev => prev + 1)} callback = {()=>{setPage('Cận lâm sàng')}} />
         </>
 
         

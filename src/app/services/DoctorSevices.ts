@@ -144,7 +144,7 @@ export async function getDoctorTemporaryTypes (id: string): Promise<DoctorTempor
     const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/LayTheoPhieuKhamBenh/${id}`);
     if (!response.ok) return null;
     const data = await response.json();
-    return data[0]
+    return data
 
   } catch (error) {
     console.error("Fetch lỗi:", error);
@@ -196,6 +196,7 @@ export async function createTestRequest (Id_PhieuKhamBenh : string , Id_LoaiXetN
 
 }
 
+<<<<<<< HEAD
 
 
 export async function deleteMedicine (id: string){
@@ -213,3 +214,119 @@ export async function deleteMedicine (id: string){
     return null;
   }
 }
+=======
+// tạo đơn thuốc
+export async function createPrescription(
+  Id_PhieuKhamBenh: string,
+  TenDonThuoc: string
+) {
+  try {
+    const response = await fetch("http://localhost:5000/Donthuoc/Add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Id_PhieuKhamBenh,
+        TenDonThuoc,
+      }),
+    });
+
+    console.log(response)
+    
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast(data.message || "Tạo đơn thuốc thất bại", ToastType.error);
+      return null;
+    }
+
+    showToast(data.message || "Tạo đơn thuốc thành công", ToastType.success);
+    return data; // thường sẽ trả về `{ message, data: result }`
+  } catch (error) {
+    console.error("Lỗi khi tạo đơn thuốc:", error);
+    showToast("Lỗi kết nối đến máy chủ", ToastType.error);
+    return null;
+  }
+}
+
+// tạo đơn thuốc chi tiết
+export async function createPrescriptionDetail(
+  Id_DonThuoc: string,
+  Id_Thuoc: string,
+  SoLuong: number,
+  NhacNho: string
+) {
+  try {
+    const response = await fetch('http://localhost:5000/Donthuoc_Chitiet/Add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        Id_DonThuoc:Id_DonThuoc,
+        Id_Thuoc:Id_Thuoc,
+        SoLuong: SoLuong,
+        NhacNho: NhacNho,
+      }),
+    });
+    console.log(response)
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast(data.message || 'Thêm chi tiết đơn thuốc thất bại', ToastType.error);
+      return null;
+    }
+
+    showToast(data.message || 'Thêm chi tiết đơn thuốc thành công', ToastType.success);
+    return data;
+  } catch (error) {
+    console.error('Lỗi khi tạo chi tiết đơn thuốc:', error);
+    showToast('Lỗi kết nối đến máy chủ', ToastType.error);
+    return null;
+  }
+}
+
+export async function fetchMedicalExaminationCardDetail(id: string){
+  try {
+    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/Detail/${id}`);
+
+    if (!response.ok) {
+      console.error("Không lấy được chi tiết phiếu khám bệnh");
+      return null;
+    }
+
+    const data = await response.json();
+    return data[0] || data; 
+  } catch (error) {
+    console.error("Lỗi khi fetch chi tiết phiếu khám bệnh:", error);
+    return null;
+  }
+}
+
+export async function CheckPrescription(Id_PhieuKhamBenh: string) {
+  try {
+    const response = await fetch(`http://localhost:5000/Donthuoc/KiemTraDonThuocDangTao?Id_PhieuKhamBenh=${Id_PhieuKhamBenh}`);
+
+    if (!response.ok) {
+      console.error("Không lấy được chi tiết phiếu khám bệnh");
+      return { status: false, data: null };
+    }
+
+    const data = await response.json();
+    const result = data[0] || data;
+
+    if (result?.waitForConfirmation === true) {
+      return { status: false, data: result.data[0] };
+    } else {
+      return { status: true, data: result };
+    }
+
+  } catch (error) {
+    console.error("Lỗi khi fetch chi tiết phiếu khám bệnh:", error);
+    return { status: false, data: null };
+  }
+}
+
+
+>>>>>>> 0012629fe7018c037ea652611c487c24a92bd9c9
