@@ -306,7 +306,7 @@ export async function CheckPrescription(Id_PhieuKhamBenh: string) {
     const response = await fetch(`http://localhost:5000/Donthuoc/KiemTraDonThuocDangTao?Id_PhieuKhamBenh=${Id_PhieuKhamBenh}`);
 
     if (!response.ok) {
-      console.error("Không lấy được chi tiết phiếu khám bệnh");
+      console.error("Lỗi khi kiểm tra đơn thuốc");
       return { status: false, data: null };
     }
 
@@ -320,8 +320,8 @@ export async function CheckPrescription(Id_PhieuKhamBenh: string) {
     }
 
   } catch (error) {
-    console.error("Lỗi khi fetch chi tiết phiếu khám bệnh:", error);
-    return { status: false, data: null };
+    console.error("Lỗi khi kiểm tra đơn thuốc:", error);
+    throw Error('Lỗi khi kiểm tra đơn thuốc')
   }
 }
 
