@@ -41,9 +41,8 @@ export default function ParaclinicalComponent() {
       <div className="Paraclinical-medicine__container">
         {data.length > 0 ? (
           <>
-            <div className='Paraclinical-medicine__container__title'>Các xét nghiệm đã chọn</div>
-            <table className="Paraclinical-medicine__container__medicineTable">
-              <thead>
+            <table className="Paraclinical-medicine__container__medicineTable min-w-full divide-y divide-gray-200">
+              <thead className='bg-gray-100 text-gray-700 text-sm font-semibold text-left'>
                 <tr>
                   <th>Tên phòng thiết bị</th>
                   <th>Tên xét nghiệm</th>
@@ -64,16 +63,27 @@ export default function ParaclinicalComponent() {
                         alt="Hình ảnh xét nghiệm"
                       />
                     </td>
-                    <td>{formatCurrencyVND(item.Id_LoaiXetNghiem.Id_GiaDichVu.Giadichvu)}</td>
+                    <td
+                      className='font-semibold'
+                    >{formatCurrencyVND(item.Id_LoaiXetNghiem.Id_GiaDichVu.Giadichvu)}</td>
                     <td>
-                      <div
-                        onClick={() => deleteParaclinical(item._id)}
-                        className='Paraclinical-medicine__container__medicineTable__Bton'
-                      >
-                        <span>
-                          <i className="bi bi-x-lg" style={{ color: 'red', fontSize: '15px' }}></i> Loại bỏ
-                        </span>
-                      </div>
+                       <button
+                          onClick={() => deleteParaclinical (item._id)}
+                          className='cursor-pointer'
+                          style={{
+                            backgroundColor:'red',
+                            color:'white',
+                            padding:'4px 13px',
+                            borderRadius:'5px',
+                            display:'flex',
+                            gap:8,
+                            alignItems:'center'
+                          }}
+                        ><i className="bi bi-trash3-fill text-lg"
+                          style={{
+                            fontSize:14
+                          }}
+                        ></i> Xóa</button>
                     </td>
                   </tr>
                 ))}

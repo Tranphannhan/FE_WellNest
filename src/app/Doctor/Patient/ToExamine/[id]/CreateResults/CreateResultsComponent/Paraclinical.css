@@ -2,7 +2,6 @@
     background-color: #fff;
     width: 100%;
     height: auto;
-    margin-top: 10px;
     padding: 20px;
 }
 
@@ -31,19 +30,22 @@
     margin-bottom: 20px;
 }
 
-.Paraclinical-medicine__container__medicineTable th,
+
 .Paraclinical-medicine__container__medicineTable td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+    padding: 8px 16px;
+    border-top: 1px solid #ddd;
     text-align: left;
     font-size: 15px;
-    color: #595959;
+    color: var(--color-gray-800);
 }
 
-
-.Paraclinical-medicine__container__medicineTable th {
-    background-color:  white;
+.Paraclinical-medicine__container__medicineTable th{
+    padding: 8px 16px;
+    text-align: left;
+    font-size: 15px;
+    color: black;
 }
+
 
 .Paraclinical-medicine__container__medicineTable__medicineImage {
     width: 50px;

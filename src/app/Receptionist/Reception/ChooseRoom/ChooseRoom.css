@@ -1,3 +1,51 @@
+.custom-badge {
+  display: inline-flex;
+  align-items: center;
+  font-weight: bold;
+  padding: 4px 14px;
+  border-radius: 5px;
+  animation: pulseBadge 1.5s infinite ease-in-out;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #cffbfd;
+}
+
+.custom-badge .ant-badge-status-text {
+  margin-left: 8px;
+}
+
+/* Tùy chỉnh nền theo trạng thái */
+.ant-badge-status-success.custom-badge {
+  background-color: #bce2db;
+  color: #08979c;
+}
+
+.ant-badge-status-warning.custom-badge {
+  background-color: #eee2a9;
+  color: #d48806;
+}
+
+.ant-badge-status-error.custom-badge {
+  background-color: #f17a72;
+  color: #cf1322;
+}
+
+/* Hiệu ứng nhấp nháy nhẹ */
+@keyframes pulseBadge {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .chooseRoom-container tr{
   border-width:0 !important ;
 }
@@ -45,6 +93,7 @@
     width: 100%;
     margin-top: 25px;
     border-collapse: collapse;
+    
 }
 
 .chooseRoom-container__table th{
