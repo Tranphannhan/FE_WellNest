@@ -17,3 +17,12 @@ export interface MedicinePaginationResponse {
     currentPage: number;
     totalPages: number;
 }
+
+export interface prescriptionType{
+    Id_PhieuKhamBenh?:string;
+    TenDonThuoc?:string;
+    TrangThaiThanhToan?: boolean;
+    TrangThai?:boolean;
+    _id?:string;
+    
+} 

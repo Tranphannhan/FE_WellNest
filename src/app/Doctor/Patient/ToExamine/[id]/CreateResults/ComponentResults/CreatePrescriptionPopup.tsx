@@ -3,14 +3,28 @@ import { useState, useEffect, useCallback } from 'react';
 import { Modal, Button, Input, Select, Pagination, Spin, Alert } from 'antd';
 import './CreatePrescriptionPopup.css';
 import fetchMedicines, { fetchMedicineGroupsPaginated, fetchMedicinesByGroupId, searchMedicinesByName } from '@/app/services/FileTam';
-import { medicineType, medicineGroupType } from '@/app/types/hospitalTypes/hospitalType';
+import { medicineType, medicineGroupType, prescriptionType } from '@/app/types/hospitalTypes/hospitalType';
+import { createPrescription, createPrescriptionDetail } from '@/app/services/DoctorSevices';
+import { calculateAge } from '@/app/lib/Format';
+import { MedicalExaminationCard } from '@/app/types/patientTypes/patient';
+
+interface inputPrescriptionDetail{
+    Quantity?: number;
+    Remind?: string;
+    Id_Thuoc?: string;
+    Id_DonThuoc?:string;
+}
+
 
 const { Option } = Select;
 
-const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup }: { showPrescriptionPopup: boolean, handleClosePrescriptionPopup: () => void }) => {
+const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClosePrescriptionPopup }: { PrescriptionInfo:{ Id_PhieuKhamBenh?:string;} ,showPrescriptionPopup: boolean, handleClosePrescriptionPopup: () => void }) => {
     const [step, setStep] = useState(1);
     const [isSelectingMedicine, setIsSelectingMedicine] = useState(false);
     const [selectedMedicine, setSelectedMedicine] = useState<medicineType | null>(null);
+    const [medicalCardInfo, setMedicalCardInfo] = useState <MedicalExaminationCard | null>(null);
+    const [prescription, setPrescription] = useState < prescriptionType|null>(null);
+    const [inputPrescriptionDetail, setInputPrescriptionDetail] = useState <inputPrescriptionDetail | null>(null)
 
     const [selectedGroup, setSelectedGroup] = useState('all');
     const [confirmedSearchTerm, setConfirmedSearchTerm] = useState('');
@@ -62,9 +76,9 @@ const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup
             } else {
                 setAllFilteredMedicines([]);
             }
-        } catch (error: any) {
+        } catch (error) {
             console.error('Lỗi khi fetch danh sách thuốc:', error);
-            setErrorMedicines(`Đã xảy ra lỗi khi tải dữ liệu thuốc: ${error.message || 'Lỗi không xác định'}`);
+            setErrorMedicines(`Đã xảy ra lỗi khi tải dữ liệu thuốc`);
             setAllFilteredMedicines([]);
         } finally {
             setLoadingMedicines(false);
@@ -85,6 +99,16 @@ const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup
         setTotalMedicines(allFilteredMedicines.length);
     }, [currentPage, pageSize, allFilteredMedicines]);
 
+    useEffect (()=>{
+    const medicalCardInfoStr = sessionStorage.getItem("ThongTinBenhNhanDangKham");
+
+    if (medicalCardInfoStr) {
+    const medicalCardInfo: MedicalExaminationCard = JSON.parse(medicalCardInfoStr);
+        setMedicalCardInfo(medicalCardInfo)
+    }
+
+    },[])
+
     useEffect(() => {
         const getMedicineGroups = async () => {
             setLoadingGroups(true);
@@ -98,9 +122,9 @@ const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup
                     setMedicineGroups([]);
                     setErrorGroups('Không thể tải danh mục nhóm thuốc. Dữ liệu rỗng hoặc không hợp lệ.');
                 }
-            } catch (error: any) {
+            } catch (error) {
                 console.error('Lỗi khi fetch danh mục nhóm thuốc:', error);
-                setErrorGroups(`Đã xảy ra lỗi khi tải danh mục nhóm thuốc: ${error.message || 'Lỗi không xác định'}`);
+                setErrorGroups(`Đã xảy ra lỗi khi tải danh mục nhóm thuốc`);
                 setMedicineGroups([]);
             } finally {
                 setLoadingGroups(false);
@@ -114,9 +138,23 @@ const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup
 
     // --- Các hàm xử lý sự kiện ---
 
-    const handleNextStep = () => {
-        if (step < 3) setStep(step + 1);
+    const handleNextStep = async () => {
+    const responseCreatePrescription = await createPrescription(
+        PrescriptionInfo.Id_PhieuKhamBenh as string,
+        `Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}`
+    );
+
+    if (responseCreatePrescription?.data) {
+        console.log("Đơn thuốc đã tạo:", responseCreatePrescription.data);
+
+        // ✅ Lưu vào sessionStorage
+        sessionStorage.setItem("DonThuocDaTao", JSON.stringify(responseCreatePrescription.data));
+        setPrescription(responseCreatePrescription?.data)
+    }
+
+    if (step < 3) setStep(step + 1);
     };
+
 
     const handleOpenMedicineSelectionView = () => {
         setIsSelectingMedicine(true);
@@ -175,6 +213,11 @@ const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup
         setCurrentSearchInput('');
     };
 
+    const handleCreatePrescription = async ()=>{
+        const res = await createPrescriptionDetail(prescription?._id as string, selectedMedicine?._id as string, Number(inputPrescriptionDetail?.Quantity), inputPrescriptionDetail?.Remind as string)
+        console.log(res)
+    }
+
     return (
         <>
             <Modal
@@ -204,17 +247,18 @@ const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup
                 <div className="prescription-popup__body">
                     {step !== 3 && (
                         <>
-                            <div className="presscription-popup__title">Thông tin bệnh nhân</div>
+                            <div className="presscription-popup__title">Thông tin đơn thuốc<caption></caption></div>
                             <div className="prescription-popup__content">
                                 <div className="prescription-popup__column">
                                     <p>
-                                        <strong>Họ tên:</strong> Trần Bệnh Nhân
+                                        <strong>Họ tên:</strong> {medicalCardInfo?.Id_TheKhamBenh.HoVaTen || 'Chưa có'}
                                     </p>
                                     <p>
-                                        <strong>Tên đơn thuốc:</strong> Đơn thuốc
+                                        <strong>Tuổi: </strong> 
+                                        {medicalCardInfo?.Id_TheKhamBenh.NgaySinh ? calculateAge(medicalCardInfo?.Id_TheKhamBenh.NgaySinh) : 'Chưa có'}
                                     </p>
                                     <p>
-                                        <strong>Ngày:</strong> 2025-05-20
+                                        <strong>Tên đơn thuốc:</strong> {`Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}` || 'Đơn thuốc'}
                                     </p>
 
                                     {step === 2 && (
@@ -229,13 +273,13 @@ const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup
                                 </div>
                                 <div className="prescription-popup__column">
                                     <p>
-                                        <strong>Bác sĩ:</strong> Trần Bệnh Nhân
+                                        <strong>Bác sĩ:</strong> {medicalCardInfo?.Id_Bacsi.TenBacSi ||'Chưa có'}
                                     </p>
                                     <p>
-                                        <strong>Ca:</strong> sáng
+                                        <strong>Ngày:</strong> {medicalCardInfo?.Ngay || 'Chưa có'}
                                     </p>
                                     <p>
-                                        <strong>Số phòng:</strong> 1
+                                        <strong>Số phòng:</strong> {medicalCardInfo?.Id_Bacsi?.Id_PhongKham?.SoPhongKham ||'Chưa có'}
                                     </p>
                                 </div>
                             </div>
@@ -249,7 +293,11 @@ const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup
                                     <div className="form-row">
                                         <div className="form-group qty">
                                             <label>Số Lượng</label>
-                                            <Input type="number" placeholder="Nhập số lượng" className="form-control" />
+                                            <Input type="number" placeholder="Nhập số lượng" className="form-control" 
+                                                onChange={(e)=>{setInputPrescriptionDetail((prev)=>(
+                                                    {...prev, Quantity:Number(e.target?.value)}
+                                                ))}}
+                                            />
                                         </div>
 
                                         <div className="form-group medicine">
@@ -272,11 +320,15 @@ const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup
 
                                     <div className="form-group">
                                         <label>Nhắc nhở</label>
-                                        <Input.TextArea placeholder="Nhập nhắc nhở" className="form-control" rows={4} />
+                                        <Input.TextArea placeholder="Nhập nhắc nhở" className="form-control" rows={4} 
+                                                    onChange={(e)=>{setInputPrescriptionDetail((prev)=>(
+                                                    {...prev, Remind:e.target.value}
+                                                ))}}
+                                        />
                                     </div>
 
                                     <div style={{ textAlign: 'right', marginTop: '20px' }}>
-                                        <Button type="primary">Tạo</Button>
+                                        <Button type="primary" onClick={handleCreatePrescription}>Tạo</Button>
                                     </div>
                                 </div>
                             ) : (
