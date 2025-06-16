@@ -1,6 +1,6 @@
 // File: SelectedMedicineComponent.tsx
 'use client';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './Prescription.css';
 import NoData from '@/app/components/ui/Nodata/Nodata';
 
@@ -10,6 +10,8 @@ import { CheckPrescription } from '@/app/services/DoctorSevices';
 import { useParams } from 'next/navigation';
 import { showToast, ToastType } from '@/app/lib/Toast';
 import PreviewExaminationForm from '../ComponentResults/ComponentPrintTicket/PrescriptionForm';
+import { formatCurrencyVND } from '@/app/lib/Format';
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -25,7 +27,7 @@ export interface PrescriptionDetail {
         __v: number;
     };
     SoLuong: number;
-    NhacNho: string; // This can be used for "Lưu ý" or "Cách sử dụng"
+    NhacNho: string;
     DonVi: string;
     __v: number;
 }
@@ -94,11 +96,10 @@ export interface ExaminationFormDonThuoc {
 export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAddMedicineClick: () => void }) {
     const [prescriptionDetails, setPrescriptionDetails] = useState<PrescriptionDetail[]>([]);
     const { id } = useParams();
-    const hasShownToast = useRef(false); // ✅ Ensure toast is shown only once
+    const hasShownToast = useRef(false);
     const [isDonThuocModalOpen, setIsDonThuocModalOpen] = useState(false);
     const [patientDataForForm, setPatientDataForForm] = useState<ExaminationFormDonThuoc | null>(null);
 
-    // Parse the provided patient data
     const ThongTinBenhNhanDangKham: PatientExaminationData = JSON.parse(`{"_id":"684926749c351fd5325793a4","Id_TheKhamBenh":{"_id":"6846f6da8b70d4b33ddcf8e3","HoVaTen":"Trần Phan Nhân","GioiTinh":"Nam","NgaySinh":"2005-05-14","SoDienThoai":"ok","SoBaoHiemYTe":"ok","DiaChi":"Số Nhà 359, Ấp Rạch Cát, Long Hựu Đông, Cần Đước, Long An","SoCCCD":"080205004041","SDT_NguoiThan":"ok","LichSuBenh":"ok","__v":0},"Id_Bacsi":{"_id":"6828a6926e9bedbfcafaa848","ID_Khoa":"6803ba9870cd96d5cde6d7a9","TenBacSi":"Trần Bác Sĩ 3","GioiTinh":"Nam","SoDienThoai":"0908609101","HocVi":"Tiến sĩ","NamSinh":1990,"Matkhau":"$2b$10$fZnw4ChSia5L./VsyeqV7u8QU8hWi266l/bP.M.CLCT69pTSBR7tC","Image":"http://localhost:5000/image/1747494546761.jpg","VaiTro":"BacSi","TrangThaiHoatDong":true,"__v":0,"Id_PhongKham":{"_id":"6824bbb85f64eedbc8bfb690","Id_Khoa":"681637a4044132235e13b8ba","SoPhongKham":"102"}},"Id_NguoiTiepNhan":"68272e93b4cfad70da810029","Id_GiaDichVu":"683420eb8b7660453369dce1","LyDoDenKham":"Ok khoe nhu trau","Ngay":"2025-06-11","Gio":"13:47:16","TrangThaiThanhToan":false,"STTKham":"0","TrangThai":false,"TrangThaiHoatDong":"Kham","__v":0}`);
 
     const mockCollectorNameDonThuoc = ThongTinBenhNhanDangKham.Id_Bacsi.TenBacSi;
@@ -140,16 +141,9 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
 
     const CheckRender = async () => {
         const resCheckPrescription = await CheckPrescription(id as string);
-
         if (!resCheckPrescription.status) {
-            if (!hasShownToast.current) {
-                showToast('Đang có đơn thuốc chờ xác nhận', ToastType.warn);
-                hasShownToast.current = true;
-            }
             fetchPrescriptionDetails(resCheckPrescription.data._id);
         }
-
-        console.log('Prescription check result:', resCheckPrescription);
     };
 
     useEffect(() => {
@@ -178,9 +172,8 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
 
                     <>
                         <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-100 text-gray-700 text-sm font-semibold text-left">
+                            <thead className="bg-gray-100 text-gray-700 font-semibold text-left">
                                 <tr>
-                                    <th className="px-4 py-2">Xoá</th>
                                     <th className="px-4 py-2">Tên thuốc</th>
                                     <th className="px-4 py-2">Đơn vị</th>
                                     <th className="px-4 py-2">Số lượng</th>
@@ -188,24 +181,43 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
                                     <th className="px-4 py-2">Cách sử dụng</th>
                                     <th className="px-4 py-2">Giá mỗi đơn vị</th>
                                     <th className="px-4 py-2">Giá tổng</th>
+                                    <th className="px-4 py-2">Hành động</th>
                                 </tr>
                             </thead>
                             <tbody className="text-sm text-gray-600 divide-y divide-gray-200">
-                                {prescriptionDetails.map((item, index) => (
-                                    <tr key={item._id} className="hover:bg-gray-50"> {/* Use item._id for key */}
-                                        <td className="px-4 py-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => handleDeleteMedicine(item._id)}>
-                                            <i className="bi bi-trash3-fill text-lg"></i>
-                                        </td>
+                                {prescriptionDetails.map((item) => (
+                                    <tr key={item._id} className="hover:bg-gray-50">
+
                                         <td className="px-4 py-2 font-medium text-gray-800">{item.Id_Thuoc?.TenThuoc}</td>
                                         <td className="px-4 py-2">{item.DonVi || item.Id_Thuoc?.DonVi}</td>
                                         <td className="px-4 py-2">{item.SoLuong}</td>
                                         <td className="px-4 py-2">{item.NhacNho}</td>
                                         <td className="px-4 py-2">Sử dụng theo hướng dẫn</td>
-                                        <td className="px-4 py-2 text-green-600 font-semibold">
-                                            {item.Id_Thuoc?.Gia?.toLocaleString() || 0} ₫
+                                        <td className="px-4 py-2 font-semibold">
+                                            {formatCurrencyVND(item.Id_Thuoc?.Gia)}
                                         </td>
-                                        <td className="px-4 py-2 text-green-600 font-semibold">
-                                            {(item.Id_Thuoc?.Gia * item.SoLuong)?.toLocaleString()} ₫
+                                        <td className="px-4 py-2 font-semibold">
+                                            {formatCurrencyVND(item.Id_Thuoc?.Gia * item.SoLuong)}
+                                        </td>
+                                        <td className="px-4 py-2 text-red-500 hover:text-red-700">
+                                            
+                                            <button
+                                              onClick={() => handleDeleteMedicine (item._id)}
+                                              className='cursor-pointer'
+                                              style={{
+                                                backgroundColor:'red',
+                                                color:'white',
+                                                padding:'4px 13px',
+                                                borderRadius:'5px',
+                                                display:'flex',
+                                                gap:8,
+                                                alignItems:'center'
+                                              }}
+                                            ><i className="bi bi-trash3-fill text-lg"
+                                              style={{
+                                                fontSize:14
+                                              }}
+                                            ></i> Xóa</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -213,7 +225,6 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
                         </table>
 
                         <div className="flex justify-end gap-4 mt-4">
-                            {/* Attach the onAddMedicineClick handler here */}
                             <button className="Prescription-medicine__container__MedicineActions__addButton" onClick={onAddMedicineClick}>+ Thêm thuốc</button>
                             <button className="Prescription-medicine__container__MedicineActions__completeButton">Hoàn thành</button>
                         </div>

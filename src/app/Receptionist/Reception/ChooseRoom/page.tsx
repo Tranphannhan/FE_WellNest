@@ -11,6 +11,7 @@ import { receptionTemporaryDoctorTypes } from "@/app/types/receptionTypes/recept
 import { useRouter } from "next/navigation";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
 import NoData from "@/app/components/ui/Nodata/Nodata";
+import { Badge } from 'antd';
  
 interface createExaminationCardInformationType{
   Id_TheKhamBenh?: string;
@@ -230,13 +231,14 @@ async function HandleCreate() {
             {dataChooseRoom.length > 0 ?(
 
                 <>
-                                    <table className="chooseRoom-container__table">
-                    <thead>
+                    <table className="chooseRoom-container__table  min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-100 text-gray-700 text-sm font-semibold text-left">
                         <tr>
                             <th>Tên bác sĩ</th>
                             <th>Số phòng</th>
                             <th>Số lượng bệnh nhân</th>
                             <th>Thời gian dự tính</th>
+                            <th>Trạng thái</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -277,6 +279,31 @@ async function HandleCreate() {
                                     {doctor.SoNguoiDangKham + '/10'} bệnh nhân
                                 </td>
                                 <td>{formatTime(totalMinutes)}</td>
+                                    <td>
+                                    <Badge
+                                        className="custom-badge"
+                                        style={doctor.SoNguoiDangKham < 4 ? {backgroundColor:'rgb(179 255 229)'}:
+                                            doctor.SoNguoiDangKham < 8 ? {backgroundColor:'rgb(255 239 163)'}:{
+                                                backgroundColor:'rgb(255 136 128)'
+                                            }
+                                        }
+                                        status={
+                                        doctor.SoNguoiDangKham < 4
+                                            ? 'success'
+                                            : doctor.SoNguoiDangKham < 8
+                                            ? 'warning'
+                                            : 'error'
+                                        }
+                                        text={
+                                        doctor.SoNguoiDangKham < 4
+                                            ? 'Ít bệnh nhân'
+                                            : doctor.SoNguoiDangKham < 8
+                                            ? 'Trung bình'
+                                            : 'Quá tải'
+                                        }
+                                    />
+                                    </td>
+
                                 <td>
                                   {
                                         <button

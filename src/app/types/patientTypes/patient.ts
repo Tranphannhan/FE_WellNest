@@ -108,3 +108,14 @@ export interface clinicalType {
     TrangThaiHoatDong?: boolean;
     __v: number;
 }
+
+
+// kiểu dữ liệu tạo kết quả khám
+export interface generateTestResultsType {
+  _id? : string;
+  Id_PhieuKhamBenh? : string,
+  GhiChu? : string,
+  HuongSuLy? : string,
+  KetQua? : string ,
+  TrangThaiHoanThanh ? : boolean
+}

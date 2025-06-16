@@ -1,99 +1,33 @@
 'use client'
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
-import './MedicalHistory.css'
+import '../Patient.css'
 import { doctorTemporaryTypes } from "@/app/types/doctorTypes/doctorTemporaryTypes";
 import { useEffect, useState } from "react";
+import { getAllPatient } from "@/app/services/DoctorSevices";
+import { useRouter } from "next/navigation";
+import moment from "moment";
 
-export default function MedicalHistory(){
-    const [patientRecords, setPatientRecords] = useState<doctorTemporaryTypes[]>([]);
 
-    useEffect(() => {
-    const fetchPatientData = async () => {
-        try {
-            const staticData: doctorTemporaryTypes[] = [
-                {
-                    "_id": "68381c373aae822ec88ac814",
-                    "Id_TheKhamBenh": {
-                        "_id": "6846f6da8b70d4b33ddcf8e3",
-                        "HoVaTen": "Trần Phan Nhân",
-                        "GioiTinh": "Nam",
-                        "NgaySinh": "2005-05-14",
-                        "SoDienThoai": "0912345678", // Using actual phone number for SĐT
-                        "SoBaoHiemYTe": "BHYT000001", // Using actual BHYT for the column
-                        "DiaChi": "Số Nhà 359, Ấp Rạch Cát, Long Hựu Đông, Cần Đước, Long An",
-                        "SoCCCD": "080205004041",
-                        "SDT_NguoiThan": "0987654321",
-                        "LichSuBenh": "ok",
-                        "__v": 0
-                    },
-                    "Id_NguoiTiepNhan": "6803b9e570cd96d5cde6d78e",
-                    "Ngay": "2025-06-10", // Current date: June 10, 2025
-                    "TrangThaiThanhToan": true,
-                    "STTKham": "3",
-                    "TrangThai": false,
-                    "TrangThaiHoatDong": "Kham",
-                    "__v": 0,
-                    "Id_GiaDichVu": "683420eb8b7660453369dce1",
-                    "Id_Bacsi": "68285855ca36eca7118a0859"
-                },
-                {
-                    "_id": "68381c373aae822ec88ac815",
-                    "Id_TheKhamBenh": {
-                        "_id": "6846f6da8b70d4b33ddcf8e4",
-                        "HoVaTen": "Lê Thị B",
-                        "GioiTinh": "Nữ",
-                        "NgaySinh": "1990-11-20",
-                        "SoDienThoai": "0901234567",
-                        "SoBaoHiemYTe": "BHYT000002",
-                        "DiaChi": "123 Đường ABC, Quận XYZ, TP.HCM",
-                        "SoCCCD": "012345678901",
-                        "SDT_NguoiThan": "0909876543",
-                        "LichSuBenh": "Tiểu đường",
-                        "__v": 0
-                    },
-                    "Id_NguoiTiepNhan": "6803b9e570cd96d5cde6d78e",
-                    "Ngay": "2025-06-10",
-                    "TrangThaiThanhToan": false,
-                    "STTKham": "4",
-                    "TrangThai": true,
-                    "TrangThaiHoatDong": "Cho Kham",
-                    "__v": 0,
-                    "Id_GiaDichVu": "683420eb8b7660453369dce2",
-                    "Id_Bacsi": "68285855ca36eca7118a0859"
-                },
-                {
-                    "_id": "68381c373aae822ec88ac816",
-                    "Id_TheKhamBenh": {
-                        "_id": "6846f6da8b70d4b33ddcf8e5",
-                        "HoVaTen": "Phạm Văn C",
-                        "GioiTinh": "Nam",
-                        "NgaySinh": "1985-03-01",
-                        "SoDienThoai": "0934567890",
-                        "SoBaoHiemYTe": "BHYT000003",
-                        "DiaChi": "456 Đường DEF, Quận UVW, Hà Nội",
-                        "SoCCCD": "023456789012",
-                        "SDT_NguoiThan": "0945678901",
-                        "LichSuBenh": "Huyết áp cao",
-                        "__v": 0
-                    },
-                    "Id_NguoiTiepNhan": "6803b9e570cd96d5cde6d78e",
-                    "Ngay": "2025-06-10",
-                    "TrangThaiThanhToan": true,
-                    "STTKham": "5",
-                    "TrangThai": false,
-                    "TrangThaiHoatDong": "Hoan Tat",
-                    "__v": 0,
-                    "Id_GiaDichVu": "683420eb8b7660453369dce3",
-                    "Id_Bacsi": "68285855ca36eca7118a0859"
-                }
-            ];
-            setPatientRecords(staticData);
-        } catch (err) {
-           console.error("Lỗi khi parse dữ liệu:", err);
-        }
-    };
-    fetchPatientData();
-}, []);
+export default function Patient(){
+    const [dataRender , setDataRender] = useState <doctorTemporaryTypes []> ([]);
+    const router = useRouter()
+    function handleExamination(id:string){
+        router.push(`/Doctor/Patient/ToExamine/${id}`)
+
+    }
+
+    const LoaddingPatient = async () => {
+        const Data = await getAllPatient ('6807397b4a1e320062ce2b20' , true , '');
+        console.log(Data);
+        setDataRender (Data.data);
+    }
+
+    useEffect (() => {
+        LoaddingPatient ();
+    }, []);
+
+
+
 
     return(
         <>
@@ -107,7 +41,7 @@ export default function MedicalHistory(){
             }}
             />
 
-                <div className="MedicalHistory-container">
+                <div className="Patient-container">
                     <div className="search-reception-container">
                         <div className="search-box-wrapper">
                             <div className="search-box">
@@ -132,37 +66,53 @@ export default function MedicalHistory(){
                             </div>
                         </div>
                 </div>
-    <table className="MedicalHistory-container_table">
-        <thead>
-            <tr>
-                <th>STT</th>
-                <th>Họ và tên</th>
-                <th>SĐT</th>
-                <th>Số Bảo Hiểm Y Tế</th>
-                <th>Số Căn Cước</th>
-                <th>Ngày</th>
-                <th>SĐT người thân</th>
-                <th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-                        {patientRecords.map((record: doctorTemporaryTypes, index: number) => (
+
+                <table className="Patient-container_table">
+                    <thead>
+                        <tr>
+                            <th>Thời gian khám</th>
+                            <th>Họ và tên</th>
+                            <th>SĐT</th>
+                            <th>Số Bảo Hiểm Y Tế</th>
+                            <th>Số Căn Cước</th>
+                            <th>Ngày</th>
+                            <th>SĐT người thân</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                        {dataRender.map((record: doctorTemporaryTypes) => (
                             <tr key={record._id}>
-                                <td>{record.STTKham}</td>
-                                <td>{record.Id_TheKhamBenh.HoVaTen}</td>
-                                <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
-                                <td>{record.Id_TheKhamBenh.SoBaoHiemYTe}</td>
-                                <td>{record.Id_TheKhamBenh.SoCCCD}</td>
-                                <td>{record.Ngay}</td>
-                                <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
-                                <td>
-                                        <button className="btn-primary">Xem chi tiết</button>
-                                </td>
+                                           <td>{moment(record.Gio, 'HH:mm:ss').format('hh:mm A')}</td>
+
+                                        <td>{record.Id_TheKhamBenh.HoVaTen}</td>
+                                        <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
+                                        <td>{record.Id_TheKhamBenh.SoBaoHiemYTe}</td>
+                                        <td>{record.Id_TheKhamBenh.SoCCCD}</td>
+
+                                        {/* Định dạng ngày: 2024-06-16 -> 16/06/2024 */}
+                                        <td>{moment(record.Ngay).format('DD/MM/YYYY')}</td>
+
+                                        <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
+
+                                        <td>
+                                            <button
+                                                className="patient-viewDetail"
+                                                style={{ color: '#3497F9' }}
+                                                onClick={() => handleExamination(record._id)}
+                                            >
+                                                Xem Chi Tiết
+                                            </button>
+                                            {/* <button className="btn-danger">Không có mặt</button> */}
+                                        </td>
+
                             </tr>
                         ))}
                     </tbody>
+                    
     </table>
 </div>
-        </>
-    )
-}
+</>
+    )}

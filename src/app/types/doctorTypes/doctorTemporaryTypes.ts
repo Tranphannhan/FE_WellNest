@@ -13,6 +13,8 @@ export interface doctorTemporaryTypes {
         LichSuBenh: string;
         __v: number;
     };
+
+    Gio: string,
     Id_NguoiTiepNhan: string;
     Ngay: string; // Vẫn để là string
     TrangThaiThanhToan: boolean;

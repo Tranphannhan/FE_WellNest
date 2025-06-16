@@ -2,16 +2,84 @@
 import { useCallback, useEffect, useState } from 'react';
 import './Paraclinical.css';
 import { DoctorTemporaryTypes } from '@/app/types/doctorTypes/doctorTestTypes';
-import { deleteDoctorTemporaryTypes, getDoctorTemporaryTypes } from '@/app/services/DoctorSevices';
+import { deleteDoctorTemporaryTypes, getDoctorTemporaryTypes, getExaminationResults } from '@/app/services/DoctorSevices';
 import { formatCurrencyVND } from '@/app/lib/Format';
 import { useParams } from 'next/navigation';
 import NoData from '@/app/components/ui/Nodata/Nodata';
+import PrintAppointmentForm from '../ComponentResults/ComponentPrintTicket/PrintAppointmentForm';
+
+export interface ServiceItem {
+  stt: number;
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  performer: string;
+  room: string;
+}
+
+export interface ExaminationFormForPrint {
+  fullName: string;
+  gender: string;
+  dob: string;
+  address: string;
+  department: string;
+  clinic: string;
+  diagnosis: string;
+  serviceList: ServiceItem[];
+}
+
+export interface PrintAppointmentFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  patientData: ExaminationFormForPrint;
+  diagnosticianName: string;
+  departmentName: string;
+}
 
 export default function ParaclinicalComponent() {
   const [data, setData] = useState<DoctorTemporaryTypes[]>([]);
   const { id } = useParams();
+  const [isPhieuChiDinhModalOpen, setIsPhieuChiDinhModalOpen] = useState(false);
+  const [patientData, setPatientData] = useState<ExaminationFormForPrint | null>(null);
+  const [diagnosticianName, setDiagnosticianName] = useState<string>('');
+  const [departmentName, setDepartmentName] = useState<string>('');
 
-  const loadData = async () => {
+  // Effect để tải dữ liệu bệnh nhân từ sessionStorage chỉ một lần khi component mount
+  useEffect(() => {
+    const sessionData = sessionStorage.getItem('ThongTinBenhNhanDangKham');
+    if (sessionData) {
+      const parsedData = JSON.parse(sessionData);
+      setPatientData({
+        fullName: parsedData.Id_TheKhamBenh.HoVaTen,
+        gender: parsedData.Id_TheKhamBenh.GioiTinh,
+        dob: parsedData.Id_TheKhamBenh.NgaySinh,
+        address: parsedData.Id_TheKhamBenh.DiaChi,
+        department: parsedData.Id_Bacsi.ChuyenKhoa,
+        clinic: parsedData.Id_Bacsi.Id_PhongKham.SoPhongKham,
+        diagnosis: '',
+        serviceList: [],
+      });
+      setDiagnosticianName(parsedData.Id_Bacsi.TenBacSi);
+      setDepartmentName(parsedData.Id_Bacsi.ChuyenKhoa);
+    }
+  }, []); // <-- Chỉ chạy một lần khi component mount
+
+  // Load examination results (for diagnosis)
+  // Sử dụng useCallback để memoize hàm và tránh re-render không cần thiết
+  const loadDiagnosis = useCallback(async () => {
+    try {
+      const result = await getExaminationResults(String(id));
+      if (result) {
+        setPatientData((prev) => prev ? { ...prev, diagnosis: result.KetQua || '' } : prev);
+      }
+    } catch (err) {
+      console.error('Lỗi khi load kết quả khám:', err);
+    }
+  }, [id]); // Phụ thuộc vào `id`
+
+  // Load paraclinical data
+  // Sử dụng useCallback để memoize hàm và tránh re-render không cần thiết
+  const loadData = useCallback(async () => {
     try {
       const result = await getDoctorTemporaryTypes(id as string);
       if (!result || !Array.isArray(result)) {
@@ -19,31 +87,63 @@ export default function ParaclinicalComponent() {
         return;
       }
       setData(result);
+      // Cập nhật serviceList trong patientData.
+      // Cần đảm bảo patientData đã có giá trị trước khi cập nhật serviceList.
+      setPatientData((prev) => {
+        if (!prev) return prev; // Nếu prev là null, không làm gì cả
+        const serviceList: ServiceItem[] = result.map((item, index) => ({
+          stt: index + 1,
+          name: item.Id_LoaiXetNghiem.TenXetNghiem,
+          quantity: item.SoLuong || 1,
+          unitPrice: item.Id_LoaiXetNghiem.Id_GiaDichVu.Giadichvu,
+          performer: item.Id_LoaiXetNghiem.Id_PhongThietBi.TenPhongThietBi,
+          room: item.Id_LoaiXetNghiem.Id_PhongThietBi.SoPhong || '',
+        }));
+        return { ...prev, serviceList };
+      });
     } catch (err) {
       console.error('Lỗi khi load cận lâm sàng:', err);
     }
-  };
+  }, [id]); // Phụ thuộc vào `id`
 
+  // Effect để gọi các hàm tải dữ liệu khi `id` thay đổi
   useEffect(() => {
-    loadData();
-  }, []);
+    if (id) {
+      loadDiagnosis();
+      loadData();
+    }
+  }, [id, loadDiagnosis, loadData]); // <-- Phụ thuộc vào `id` và các hàm được memoize
 
-  const deleteParaclinical = useCallback(
-    async (itemId: string) => {
-      await deleteDoctorTemporaryTypes(itemId);
-      setData(prev => prev.filter(item => item._id !== itemId));
-    },
-    []
-  );
+  const deleteParaclinical = useCallback(async (itemId: string) => {
+    await deleteDoctorTemporaryTypes(itemId);
+    // Tải lại dữ liệu sau khi xóa để đảm bảo danh sách hiển thị đúng
+    // Hoặc cập nhật state `data` và `patientData.serviceList` một cách chính xác.
+    // Cách dưới đây là cập nhật local state, có thể cần gọi lại loadData nếu cần đồng bộ hoàn toàn với backend
+    setData((prev) => {
+      const updatedData = prev.filter((item) => item._id !== itemId);
+      return updatedData;
+    });
+
+    setPatientData((prev) => {
+      if (!prev) return prev;
+      const updatedServiceList = prev.serviceList.filter((_, index) => data[index]?._id !== itemId);
+      return { ...prev, serviceList: updatedServiceList.map((item, i) => ({ ...item, stt: i + 1 })) };
+    });
+  }, [data]); // data là dependency để filter chính xác
 
   return (
-    <div className='Paraclinical-Body'>
+    <div className="Paraclinical-Body">
+      <button
+        onClick={() => setIsPhieuChiDinhModalOpen(true)}
+        className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200"
+      >
+        Xem trước Phiếu Chỉ Định Xét Nghiệm
+      </button>
       <div className="Paraclinical-medicine__container">
         {data.length > 0 ? (
           <>
-            <div className='Paraclinical-medicine__container__title'>Các xét nghiệm đã chọn</div>
-            <table className="Paraclinical-medicine__container__medicineTable">
-              <thead>
+            <table className="Paraclinical-medicine__container__medicineTable min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-100 text-gray-700 text-sm font-semibold text-left">
                 <tr>
                   <th>Tên phòng thiết bị</th>
                   <th>Tên xét nghiệm</th>
@@ -53,7 +153,7 @@ export default function ParaclinicalComponent() {
                 </tr>
               </thead>
               <tbody>
-                {data.map(item => (
+                {data.map((item) => (
                   <tr key={item._id}>
                     <td>{item.Id_LoaiXetNghiem.Id_PhongThietBi.TenPhongThietBi}</td>
                     <td>{item.Id_LoaiXetNghiem.TenXetNghiem}</td>
@@ -64,24 +164,29 @@ export default function ParaclinicalComponent() {
                         alt="Hình ảnh xét nghiệm"
                       />
                     </td>
-                    <td>{formatCurrencyVND(item.Id_LoaiXetNghiem.Id_GiaDichVu.Giadichvu)}</td>
+                    <td className="font-semibold">{formatCurrencyVND(item.Id_LoaiXetNghiem.Id_GiaDichVu.Giadichvu)}</td>
                     <td>
-                      <div
+                      <button
                         onClick={() => deleteParaclinical(item._id)}
-                        className='Paraclinical-medicine__container__medicineTable__Bton'
+                        className="cursor-pointer"
+                        style={{
+                          backgroundColor: 'red',
+                          color: 'white',
+                          padding: '4px 13px',
+                          borderRadius: '5px',
+                          display: 'flex',
+                          gap: 8,
+                          alignItems: 'center',
+                        }}
                       >
-                        <span>
-                          <i className="bi bi-x-lg" style={{ color: 'red', fontSize: '15px' }}></i> Loại bỏ
-                        </span>
-                      </div>
+                        <i className="bi bi-trash3-fill text-lg" style={{ fontSize: 14 }}></i> Xóa
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-
             <div className="Paraclinical-medicine__container__MedicineActions">
-              <button className="Paraclinical-medicine__container__MedicineActions__addButton">+ Thêm yêu cầu</button>
               <button className="Paraclinical-medicine__container__MedicineActions__completeButton">Hoàn thành</button>
             </div>
           </>
@@ -92,6 +197,15 @@ export default function ParaclinicalComponent() {
           />
         )}
       </div>
+      {isPhieuChiDinhModalOpen && patientData && (
+        <PrintAppointmentForm
+          isOpen={isPhieuChiDinhModalOpen}
+          onClose={() => setIsPhieuChiDinhModalOpen(false)}
+          patientData={patientData}
+          diagnosticianName={diagnosticianName}
+          departmentName={departmentName}
+        />
+      )}
     </div>
   );
 }
