@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import './Prescription.css'
 import NoData from '@/app/components/ui/Nodata/Nodata';
+import { deleteMedicine } from '@/app/services/DoctorSevices';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export interface PrescriptionDetail {
@@ -30,6 +31,8 @@ export default function SelectedMedicineComponent() {
       const response = await fetch(`${API_BASE_URL}/Donthuoc_Chitiet/LayTheoDonThuoc/${prescriptionId}`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
+        
         setPrescriptionDetails(data || []);
       } else {
         console.error('Failed to fetch prescription details');
@@ -38,10 +41,18 @@ export default function SelectedMedicineComponent() {
       console.error('Error fetching prescription details:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchPrescriptionDetails('681e02ec95a6d1ce026584c7'); // Id_Dơn thuốc
   }, []);
+
+
+  const handleDeleteMedicine = (id : string) => {
+    deleteMedicine (id as string);
+    setPrescriptionDetails (prescriptionDetails);
+  }
+
 
   return (
     <div className="p-4">
@@ -61,10 +72,11 @@ export default function SelectedMedicineComponent() {
               <th className="px-4 py-2">Giá tổng</th>
             </tr>
           </thead>
+
           <tbody className="text-sm text-gray-600 divide-y divide-gray-200">
             {prescriptionDetails.map((item, index) => (
               <tr key={index} className="hover:bg-gray-50">
-                <td className="px-4 py-2 text-red-500 cursor-pointer hover:text-red-700">
+                <td className="px-4 py-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => handleDeleteMedicine (item._id)}>
                   <i className="bi bi-trash3-fill text-lg"></i>
                 </td>
                 <td className="px-4 py-2 font-medium text-gray-800">{item.Id_Thuoc?.TenThuoc}</td>
