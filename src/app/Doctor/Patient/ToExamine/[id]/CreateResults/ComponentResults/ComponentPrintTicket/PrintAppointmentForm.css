@@ -1,0 +1,450 @@
+/* PrintAppointmentForm.css */
+
+/* General Body and Container */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.a4-container {
+    width: 210mm; /* A4 width */
+    min-height: 297mm; /* A4 height */
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px; /* Consistent padding */
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    position: relative;
+}
+
+/* Header Section */
+.prescription-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.prescription-header h1 {
+    font-size: 20px;
+    color: #0056b3;
+    margin-bottom: 5px;
+}
+
+.prescription-header p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.barcode {
+    width: 150px;
+    height: 70px; /* Chiều cao tối đa của các vạch ngẫu nhiên */
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-end; /* Quan trọng: căn các vạch có chiều cao khác nhau ở phía dưới */
+    /* border: 1px solid #ccc; */ /* Có thể bỏ comment nếu muốn có khung cho mã vạch */
+    /* padding: 0 5px; */ /* Tùy chọn */
+}
+
+.barcode-bar {
+    background-color: black;
+    display: inline-block;
+    /* Chiều cao và chiều rộng được đặt inline trong JS/TS */
+}
+
+.barcode-space {
+    background-color: transparent; /* Khoảng trắng */
+    display: inline-block;
+    height: 100%; /* Khoảng trắng cũng chiếm toàn bộ chiều cao */
+    /* Chiều rộng được đặt inline trong JS/TS */
+}
+
+/* Title */
+.prescription-title {
+    text-align: center;
+    font-size: 24px;
+    margin: 20px 0 30px 0; /* Updated margin-bottom */
+    color: #0056b3;
+    text-transform: uppercase;
+    font-weight: bolder; /* Added from previous versions for visual impact */
+}
+
+/* Patient Information */
+.patient-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 20px; /* Updated gap */
+    margin-bottom: 20px;
+}
+
+.patient-info-grid p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Fee/Service/Medication List Heading */
+.fee-heading { /* Reused for 'Toa Thuốc Dịch Vụ' or 'Chi Tiết Viện Phí' or 'Yêu cầu xét nghiệm' */
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #0056b3;
+    margin-top: 1rem; /* Consistent spacing */
+}
+
+/* Specific styles for Medicine List (for Don Thuoc) */
+.medicine-list {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    /* Dòng này không có tác dụng với Phiếu Chỉ Định nếu nó dùng service-table */
+}
+
+.medicine-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px dashed #ccc;
+    padding: 20px 0;
+    /* Dòng này không có tác dụng với Phiếu Chỉ Định nếu nó dùng service-table */
+}
+
+.medicine-item > div:first-child p {
+    margin: 0;
+    /* Dòng này không có tác dụng với Phiếu Chỉ Định nếu nó dùng service-table */
+}
+
+.medicine-item > div:first-child p:first-child {
+    font-weight: bold;
+    font-size: 1.1rem;
+    /* Dòng này không có tác dụng với Phiếu Chỉ Định nếu nó dùng service-table */
+}
+
+.medicine-item > div:first-child p:last-child {
+    margin-left: 1rem;
+    color: #555;
+    font-size: 0.95rem;
+    /* Dòng này không có tác dụng với Phiếu Chỉ Định nếu nó dùng service-table */
+}
+
+.pill-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.1rem;
+    text-align: right;
+    /* Dòng này không có tác dụng với Phiếu Chỉ Định nếu nó dùng service-table */
+}
+
+.pill-count span:first-child {
+    font-weight: bold;
+    /* Dòng này không có tác dụng với Phiếu Chỉ Định nếu nó dùng service-table */
+}
+
+/* Specific styles for Service Table (for Phieu Chi Dinh) */
+.service-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px; /* Updated margin-top */
+    margin-bottom: 20px;
+}
+
+.service-table th,
+.service-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.service-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+}
+
+.service-table tfoot td { /* If you use a tfoot for totals in the table */
+    font-weight: bold;
+    background-color: #f9f9f9;
+}
+
+/* Receipt Summary Section (for Phiếu Thu) */
+.receipt-summary {
+    width: 300px;
+    margin-left: auto;
+    margin-top: 20px;
+    padding-top: 0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.summary-row p {
+    margin: 0;
+    padding-bottom: 10px;
+}
+
+.summary-row .summary-value {
+    font-weight: bold;
+    text-align: right;
+    min-width: 80px;
+    white-space: nowrap;
+}
+
+.summary-row.total-row {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px solid #000;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+}
+
+/* Notes */
+.note {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #eee;
+    background-color: #f9f9f9;
+    line-height: 1.6;
+}
+
+.note em {
+    color: #555;
+    font-size: 0.9em;
+}
+
+/* Signatures */
+.receipt-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    align-items: flex-end;
+    padding: 0 0px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.signature-block {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.signature-payer {
+    text-align: left;
+    margin-left: 10px;
+    margin-bottom: 40px;
+}
+
+.collector-info-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    margin-right: 50px;
+    flex: 1;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.signature-date {
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    align-items: center;
+    margin-top: 0;
+    align-self: flex-end;
+}
+
+.signature-date p {
+    margin: 0;
+}
+
+.signature-collector {
+    align-items: center;
+    text-align: center;
+    margin-right: 20px;
+    margin-top: 0;
+}
+
+.signature-label {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 100px;
+    white-space: nowrap;
+}
+
+.signature-name {
+    font-weight: bold;
+    margin-top: 5px;
+    font-size: 1rem;
+    border-top: 1px dotted #ccc;
+    display: inline-block;
+    padding-top: 5px;
+}
+
+/* Stamp specific styling for the CHECKED image */
+.checked-stamp {
+    position: absolute;
+    right: 20mm;
+    bottom: 20mm;
+    width: 100px;
+    height: auto;
+    opacity: 0.7;
+    transform: rotate(10deg);
+    pointer-events: none;
+}
+.checked-stamp img {
+    width: 100%;
+    height: auto;
+}
+
+/* --- Modal specific styles --- */
+.pdf-preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #000;
+            backdrop-filter: blur(5px);
+        }
+
+.pdf-preview-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 50%;
+            max-height: 90%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+.pdf-preview-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.pdf-preview-content img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.pdf-preview-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.pdf-preview-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.close-btn-modal {
+    background-color: #6c757d;
+    color: white;
+}
+
+.close-btn-modal:hover {
+    background-color: #5a6268;
+}
+
+.export-btn-modal {
+    background-color: #007bff;
+    color: white;
+}
+
+.export-btn-modal:hover {
+    background-color: #0056b3;
+}
+
+/* Utility classes for demonstration */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.min-h-screen { min-height: 100vh; }
+.bg-gray-100 { background-color: #f7fafc; }
+.p-4 { padding: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.bg-blue-600 { background-color: #2563eb; }
+.text-white { color: #fff; }
+.font-semibold { font-weight: 600; }
+.rounded-lg { border-radius: 0.5rem; }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.hover\:bg-blue-700:hover { background-color: #1d4ed8; }
+.focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+.focus\:ring-2:focus { --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color); box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000); }
+.focus\:ring-blue-500:focus { --tw-ring-color: #3b82f6; }
+.focus\:ring-offset-2:focus { --tw-ring-offset-width: 2px; }
+.transition { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.duration-200 { transition-duration: 200ms; }
+
+/* Print media queries */
+@media print {
+    body {
+        background-color: white !important;
+        margin: 0;
+        padding: 0;
+    }
+    .a4-container {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        padding: 1.5cm;
+        width: 100%;
+        min-height: auto;
+    }
+    .export-button-container, .pdf-preview-modal {
+        display: none !important;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .a4-container {
+        padding: 1.5cm;
+    }
+    .prescription-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .prescription-title {
+        font-size: 2rem;
+    }
+    .patient-info-grid {
+        grid-template-columns: 1fr;
+    }
+}

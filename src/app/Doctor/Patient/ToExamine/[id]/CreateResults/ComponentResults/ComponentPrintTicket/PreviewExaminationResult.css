@@ -1,0 +1,316 @@
+/* ExaminationForm.css */
+
+/* General Body and Container */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.a4-container {
+    width: 210mm; /* A4 width */
+    min-height: 297mm; /* A4 height */
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    position: relative; /* For absolute positioning of elements if needed */
+}
+
+/* Header Section */
+.examination-result-header { /* Renamed from prescription-header */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.examination-result-header h1 {
+    font-size: 20px;
+    color: #0056b3;
+    margin-bottom: 5px;
+}
+
+.examination-result-header p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.barcode {
+    width: 150px;
+    height: 70px; /* Max height for random bars */
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-end; /* Align different height bars at the bottom */
+}
+
+.barcode-bar {
+    background-color: black;
+    display: inline-block;
+    /* Height and width set inline in JS/TS */
+}
+
+.barcode-space {
+    background-color: transparent; /* White space */
+    display: inline-block;
+    height: 100%; /* Space also takes full height */
+    /* Width set inline in JS/TS */
+}
+
+/* Title */
+.examination-result-title { /* Renamed from prescription-title */
+    text-align: center;
+    font-size: 24px;
+    margin: 20px 0 30px 0;
+    color: #0056b3;
+    text-transform: uppercase;
+}
+
+/* Patient Information */
+.patient-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 20px;
+    margin-bottom: 20px;
+}
+
+.patient-info-grid p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Examination Sections (Diagnosis and Treatment Plan) */
+.examination-section {
+    margin-bottom: 20px;
+}
+
+.section-heading { /* New style for sub-headings */
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #0056b3;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+/* --- New Styles for Diagnosis/Treatment Table --- */
+.diagnosis-treatment-table-container {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden; /* Ensures borders apply correctly */
+    margin-top: 10px;
+}
+
+.diagnosis-treatment-table {
+    width: 100%;
+    border-collapse: collapse; /* Removes double borders */
+}
+
+.diagnosis-treatment-table th,
+.diagnosis-treatment-table td {
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top; /* Align text to the top for multi-line content */
+    font-size: 13.5px; /* Slightly smaller font for table content */
+}
+
+.diagnosis-treatment-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.diagnosis-treatment-table tr:nth-child(even) {
+    background-color: #f9f9f9; /* Zebra striping */
+}
+
+.diagnosis-treatment-table tr:hover {
+    background-color: #f0f0f0; /* Hover effect for rows */
+}
+
+.diagnosis-treatment-table td:first-child {
+    width: 40px; /* Small width for STT column */
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Notes */
+.note {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #eee;
+    background-color: #f9f9f9;
+    line-height: 1.6;
+    border-radius: 5px;
+    color: #555;
+}
+
+.note strong {
+    color: #333;
+}
+
+/* Signatures */
+.receipt-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    align-items: flex-end;
+}
+
+.signature-block {
+    text-align: center;
+    flex: 1;
+}
+
+.signature-label {
+    font-weight: bold;
+    margin-bottom: 50px; /* Space for signature */
+}
+
+.signature-name {
+    font-weight: bold;
+    margin-top: 5px;
+    border-top: 1px dotted #ccc; /* Line for name */
+    display: inline-block;
+    padding-top: 5px;
+}
+
+.signature-date {
+    text-align: center;
+    margin-bottom: 10px;
+    grid-column: span 2;
+}
+
+.doctor-info-block { /* Renamed from collector-info-block */
+    text-align: right;
+    flex: 1;
+}
+
+.signature-patient { /* Renamed from signature-payer */
+    text-align: right;
+    margin-bottom: 50px; /* Space for signature */
+}
+
+
+/* Modal specific styles */
+.pdf-preview-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: #000;
+    backdrop-filter: blur(5px);
+}
+
+.pdf-preview-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 50%;
+    max-height: 90%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.pdf-preview-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.pdf-preview-content img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.pdf-preview-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.pdf-preview-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.close-btn-modal {
+    background-color: #6c757d;
+    color: white;
+}
+
+.close-btn-modal:hover {
+    background-color: #5a6268;
+}
+
+.export-btn-modal {
+    background-color: #007bff;
+    color: white;
+}
+
+.export-btn-modal:hover {
+    background-color: #0056b3;
+}
+
+/* Utility classes (keep if used elsewhere, removed if only for demonstration) */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.min-h-screen { min-height: 100vh; }
+.bg-gray-100 { background-color: #f7fafc; }
+.p-4 { padding: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.bg-blue-600 { background-color: #2563eb; }
+.text-white { color: #fff; }
+.font-semibold { font-weight: 600; }
+.rounded-lg { border-radius: 0.5rem; }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.hover\:bg-blue-700:hover { background-color: #1d4ed8; }
+.focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+.focus\:ring-2:focus { --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color); box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000); }
+.focus\:ring-blue-500:focus { --tw-ring-color: #3b82f6; }
+.focus\:ring-offset-2:focus { --tw-ring-offset-width: 2px; }
+.transition { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.duration-200 { transition-duration: 200ms; }
+
+/* Existing image_6a2843.png specific styling */
+.checked-stamp {
+    position: absolute;
+    right: 20mm; /* Adjust as needed */
+    bottom: 20mm; /* Adjust as needed */
+    width: 100px; /* Or whatever size fits */
+    height: auto;
+    opacity: 0.7; /* Optional: make it slightly transparent */
+    transform: rotate(10deg); /* Optional: slight rotation */
+    pointer-events: none; /* Allows clicks to pass through */
+}
+.checked-stamp img {
+    width: 100%;
+    height: auto;
+}

@@ -196,6 +196,22 @@ export async function createTestRequest (Id_PhieuKhamBenh : string , Id_LoaiXetN
 
 }
 
+export async function deleteMedicine (id: string){
+  try {
+    const response = await fetch(`http://localhost:5000/Donthuoc_Chitiet/Delete/${id}`,{
+      method : 'DELETE',
+    });
+    
+    if (!response.ok) return  showToast('Xóa đơn thuốc thất bại' , ToastType.error);
+    return showToast('Xóa đơn thuốc thành công' , ToastType.success);
+  }
+  
+  catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+}
+
 // tạo đơn thuốc
 export async function createPrescription(
   Id_PhieuKhamBenh: string,
@@ -308,5 +324,4 @@ export async function CheckPrescription(Id_PhieuKhamBenh: string) {
     throw Error('Lỗi khi kiểm tra đơn thuốc')
   }
 }
-
 

@@ -2,9 +2,13 @@
 import { useEffect, useState, useRef } from 'react';
 import './Prescription.css';
 import NoData from '@/app/components/ui/Nodata/Nodata';
+
+import { deleteMedicine } from '@/app/services/DoctorSevices';
+
 import { CheckPrescription } from '@/app/services/DoctorSevices';
 import { useParams } from 'next/navigation';
 import { showToast, ToastType } from '@/app/lib/Toast';
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -35,6 +39,8 @@ export default function SelectedMedicineComponent() {
       const response = await fetch(`${API_BASE_URL}/Donthuoc_Chitiet/LayTheoDonThuoc/${prescriptionId}`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
+        
         setPrescriptionDetails(data || []);
       } else {
         console.error('Không thể lấy chi tiết đơn thuốc');
@@ -43,6 +49,7 @@ export default function SelectedMedicineComponent() {
       console.error('Lỗi khi fetch đơn thuốc:', error);
     }
   };
+  
 
   const CheckRender = async () => {
     const resCheckPrescription = await CheckPrescription(id as string);
@@ -62,10 +69,18 @@ export default function SelectedMedicineComponent() {
     CheckRender();
   }, []);
 
+
+  const handleDeleteMedicine = (id : string) => {
+    deleteMedicine (id as string);
+    setPrescriptionDetails (prescriptionDetails);
+  }
+
+
   return (
     <div className="p-4">
       <div className="overflow-x-auto rounded-lg bg-white">
         {prescriptionDetails.length > 0 ? (
+
           <>
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-100 text-gray-700 text-sm font-semibold text-left">
@@ -83,7 +98,7 @@ export default function SelectedMedicineComponent() {
               <tbody className="text-sm text-gray-600 divide-y divide-gray-200">
                 {prescriptionDetails.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 text-red-500 cursor-pointer hover:text-red-700">
+                    <td className="px-4 py-2 text-red-500 cursor-pointer hover:text-red-700" onClick={() => handleDeleteMedicine (item._id)}>
                       <i className="bi bi-trash3-fill text-lg"></i>
                     </td>
                     <td className="px-4 py-2 font-medium text-gray-800">{item.Id_Thuoc?.TenThuoc}</td>
