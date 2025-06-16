@@ -24,3 +24,5 @@ export interface DoctorType {
   NamSinh?: number;
   Id_PhongKham?: ClinicType;
 }
+
+
