@@ -8,23 +8,23 @@ import { createPrescription, createPrescriptionDetail } from '@/app/services/Doc
 import { calculateAge } from '@/app/lib/Format';
 import { MedicalExaminationCard } from '@/app/types/patientTypes/patient';
 
-interface inputPrescriptionDetail{
+interface inputPrescriptionDetail {
     Quantity?: number;
     Remind?: string;
     Id_Thuoc?: string;
-    Id_DonThuoc?:string;
+    Id_DonThuoc?: string;
 }
-
 
 const { Option } = Select;
 
-const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClosePrescriptionPopup }: { PrescriptionInfo:{ Id_PhieuKhamBenh?:string;} ,showPrescriptionPopup: boolean, handleClosePrescriptionPopup: () => void }) => {
-    const [step, setStep] = useState(1);
+// Updated props to accept 'step' and 'setStep' from parent
+const PrescriptionPopup = ({ PrescriptionInfo, showPrescriptionPopup, handleClosePrescriptionPopup, step, setStep, reload }: { PrescriptionInfo: { Id_PhieuKhamBenh?: string}, showPrescriptionPopup: boolean, handleClosePrescriptionPopup: () => void, step: number, setStep: React.Dispatch<React.SetStateAction<number>>, reload:()=>void}) => {
+    // Removed internal 'step' state, now controlled by prop
     const [isSelectingMedicine, setIsSelectingMedicine] = useState(false);
     const [selectedMedicine, setSelectedMedicine] = useState<medicineType | null>(null);
-    const [medicalCardInfo, setMedicalCardInfo] = useState <MedicalExaminationCard | null>(null);
-    const [prescription, setPrescription] = useState < prescriptionType|null>(null);
-    const [inputPrescriptionDetail, setInputPrescriptionDetail] = useState <inputPrescriptionDetail | null>(null)
+    const [medicalCardInfo, setMedicalCardInfo] = useState<MedicalExaminationCard | null>(null);
+    const [prescription, setPrescription] = useState<prescriptionType | null>(null);
+    const [inputPrescriptionDetail, setInputPrescriptionDetail] = useState<inputPrescriptionDetail | null>(null)
 
     const [selectedGroup, setSelectedGroup] = useState('all');
     const [confirmedSearchTerm, setConfirmedSearchTerm] = useState('');
@@ -44,9 +44,10 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
     const [loadingGroups, setLoadingGroups] = useState(false);
     const [errorGroups, setErrorGroups] = useState<string | null>(null);
 
-    // --- Hàm để fetch TẤT CẢ thuốc phù hợp với filter/search hiện tại từ backend ---
-    // (Sau đó sẽ được phân trang ở frontend)
+    // --- Function to fetch ALL medicines matching current filter/search from backend ---
+    // (Then paginated on the frontend)
     const fetchAllMatchingMedicines = useCallback(async () => {
+        // Only fetch if currently selecting medicine
         if (!isSelectingMedicine) return;
 
         setLoadingMedicines(true);
@@ -54,20 +55,17 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
 
         try {
             let dataResponse;
-            const backendFetchLimit = 100000;
+            const backendFetchLimit = 100000; // A large number to fetch all data for client-side pagination
             const backendFetchPage = 1;
 
             if (confirmedSearchTerm) {
-                // Nếu có từ khóa tìm kiếm, DÙ BẠN ĐANG CHỌN NHÓM NÀO,
-                // chúng ta sẽ tìm kiếm tên thuốc TRONG NHÓM ĐÓ (hoặc tất cả nếu selectedGroup là 'all').
+                // If there's a search term, regardless of selected group, search for medicine names within that group (or all if 'all').
                 dataResponse = await searchMedicinesByName(confirmedSearchTerm, backendFetchLimit, backendFetchPage, selectedGroup);
             } else if (selectedGroup !== 'all') {
-                // Nếu KHÔNG có từ khóa tìm kiếm, và một nhóm cụ thể được chọn,
-                // thì load TẤT CẢ thuốc thuộc nhóm đó.
+                // If no search term, and a specific group is selected, load ALL medicines belonging to that group.
                 dataResponse = await fetchMedicinesByGroupId(selectedGroup, backendFetchLimit, backendFetchPage);
             } else {
-                // Nếu KHÔNG có từ khóa tìm kiếm và nhóm là 'all',
-                // load TẤT CẢ thuốc từ tất cả các nhóm.
+                // If no search term and group is 'all', load ALL medicines from all groups.
                 dataResponse = await fetchMedicines(backendFetchLimit, backendFetchPage, 'all');
             }
 
@@ -77,21 +75,22 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
                 setAllFilteredMedicines([]);
             }
         } catch (error) {
-            console.error('Lỗi khi fetch danh sách thuốc:', error);
-            setErrorMedicines(`Đã xảy ra lỗi khi tải dữ liệu thuốc`);
+            console.error('Error fetching medicine list:', error);
+            setErrorMedicines(`An error occurred while loading medicine data`);
             setAllFilteredMedicines([]);
         } finally {
             setLoadingMedicines(false);
         }
     }, [isSelectingMedicine, selectedGroup, confirmedSearchTerm]); // Dependencies
 
-    // Effect để kích hoạt việc fetch tất cả thuốc khớp với điều kiện hiện tại
+    // Effect to trigger fetching all matching medicines
     useEffect(() => {
         if (showPrescriptionPopup && isSelectingMedicine) {
             fetchAllMatchingMedicines();
         }
     }, [fetchAllMatchingMedicines, showPrescriptionPopup, isSelectingMedicine]);
 
+    // Effect to paginate the fetched medicines
     useEffect(() => {
         const startIndex = (currentPage - 1) * pageSize;
         const endIndex = startIndex + pageSize;
@@ -99,77 +98,90 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
         setTotalMedicines(allFilteredMedicines.length);
     }, [currentPage, pageSize, allFilteredMedicines]);
 
-    useEffect (()=>{
-    const medicalCardInfoStr = sessionStorage.getItem("ThongTinBenhNhanDangKham");
+    // Effect to load medical card info from session storage
+    useEffect(() => {
+        const medicalCardInfoStr = sessionStorage.getItem("ThongTinBenhNhanDangKham");
+        if (medicalCardInfoStr) {
+            const medicalCardInfo: MedicalExaminationCard = JSON.parse(medicalCardInfoStr);
+            setMedicalCardInfo(medicalCardInfo);
+        }
 
-    if (medicalCardInfoStr) {
-    const medicalCardInfo: MedicalExaminationCard = JSON.parse(medicalCardInfoStr);
-        setMedicalCardInfo(medicalCardInfo)
-    }
+        const storedPrescription = sessionStorage.getItem("DonThuocDaTao");
+        if (storedPrescription) {
+            try {
+                const parsedPrescription: prescriptionType = JSON.parse(storedPrescription);
+                setPrescription(parsedPrescription);
+                console.log("Đơn thuốc đã lấy từ sessionStorage:", parsedPrescription);
+            } catch (error) {
+                console.error("Lỗi khi parse dữ liệu đơn thuốc từ sessionStorage:", error);
+                // Có thể xóa item nếu dữ liệu bị lỗi
+                sessionStorage.removeItem("DonThuocDaTao");
+            }
+        }
+    }, []);
 
-    },[])
-
+    // Effect to fetch medicine groups
     useEffect(() => {
         const getMedicineGroups = async () => {
             setLoadingGroups(true);
             setErrorGroups(null);
             try {
-                const data = await fetchMedicineGroupsPaginated(100, 1)
+                const data = await fetchMedicineGroupsPaginated(100, 1); // Fetch all groups
 
                 if (data && data.data) {
                     setMedicineGroups(data.data as medicineGroupType[]);
                 } else {
                     setMedicineGroups([]);
-                    setErrorGroups('Không thể tải danh mục nhóm thuốc. Dữ liệu rỗng hoặc không hợp lệ.');
+                    setErrorGroups('Cannot load medicine groups. Data is empty or invalid.');
                 }
             } catch (error) {
-                console.error('Lỗi khi fetch danh mục nhóm thuốc:', error);
-                setErrorGroups(`Đã xảy ra lỗi khi tải danh mục nhóm thuốc`);
+                console.error('Error fetching medicine groups:', error);
+                setErrorGroups(`An error occurred while loading medicine groups`);
                 setMedicineGroups([]);
             } finally {
                 setLoadingGroups(false);
             }
         };
 
+        // Only fetch groups if the popup is shown, no groups are loaded, and no loading/error is in progress
         if (showPrescriptionPopup && medicineGroups.length === 0 && !loadingGroups && !errorGroups) {
             getMedicineGroups();
         }
     }, [showPrescriptionPopup, medicineGroups.length, loadingGroups, errorGroups]);
 
-    // --- Các hàm xử lý sự kiện ---
+    // --- Event Handlers ---
 
     const handleNextStep = async () => {
-    const responseCreatePrescription = await createPrescription(
-        PrescriptionInfo.Id_PhieuKhamBenh as string,
-        `Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}`
-    );
+        // Only create prescription if it's the first step
+        if (step === 1) {
+            const responseCreatePrescription = await createPrescription(
+                PrescriptionInfo.Id_PhieuKhamBenh as string,
+                `Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}`
+            );
 
-    if (responseCreatePrescription?.data) {
-        console.log("Đơn thuốc đã tạo:", responseCreatePrescription.data);
-
-        // ✅ Lưu vào sessionStorage
-        sessionStorage.setItem("DonThuocDaTao", JSON.stringify(responseCreatePrescription.data));
-        setPrescription(responseCreatePrescription?.data)
-    }
-
-    if (step < 3) setStep(step + 1);
+            if (responseCreatePrescription?.data) {
+                console.log("Prescription created:", responseCreatePrescription.data);
+                sessionStorage.setItem("DonThuocDaTao", JSON.stringify(responseCreatePrescription.data));
+                setPrescription(responseCreatePrescription?.data);
+            }
+        }
+        if (step < 3) setStep(step + 1);
     };
-
 
     const handleOpenMedicineSelectionView = () => {
         setIsSelectingMedicine(true);
-        setCurrentPage(1); // Đặt lại trang về 1 khi mở view chọn thuốc
-        setSelectedGroup('all'); // Đặt lại nhóm về 'all'
-        setConfirmedSearchTerm(''); // Xóa từ khóa tìm kiếm đã xác nhận
-        setCurrentSearchInput(''); // Xóa nội dung trong ô input tìm kiếm
-        setAllFilteredMedicines([]); // Xóa dữ liệu cũ
-        setMedicines([]); // Xóa dữ liệu hiển thị cũ
-        setTotalMedicines(0); // Đặt lại tổng số thuốc
+        setCurrentPage(1); // Reset page to 1 when opening medicine selection view
+        setSelectedGroup('all'); // Reset group to 'all'
+        setConfirmedSearchTerm(''); // Clear confirmed search term
+        setCurrentSearchInput(''); // Clear search input
+        setAllFilteredMedicines([]); // Clear old filtered data
+        setMedicines([]); // Clear old displayed data
+        setTotalMedicines(0); // Reset total medicines
     };
 
     const handleBackToStep3Form = () => {
         setIsSelectingMedicine(false);
-        // Đặt lại tất cả các state liên quan đến chọn thuốc khi quay lại form
+        // Reset all medicine selection related states when returning to the form
         setCurrentPage(1);
         setSelectedGroup('all');
         setConfirmedSearchTerm('');
@@ -181,7 +193,7 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
 
     const handleSelectMedicine = (medicine: medicineType) => {
         setSelectedMedicine(medicine);
-        setIsSelectingMedicine(false);
+        setIsSelectingMedicine(false); // Return to the form after selecting a medicine
     };
 
     const handlePageChange = (page: number) => {
@@ -205,22 +217,22 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
 
     const handleGroupChange = (value: string) => {
         setSelectedGroup(value);
-        setCurrentPage(1); // Đặt lại trang về 1 khi thay đổi nhóm
-        // **Quan trọng:** Luôn xóa từ khóa tìm kiếm và input khi thay đổi nhóm
-        // để đảm bảo rằng khi chọn nhóm mới, ta bắt đầu với danh sách thuốc của nhóm đó,
-        // không bị ảnh hưởng bởi tìm kiếm cũ.
+        setCurrentPage(1); // Reset page to 1 when changing group
+        // Important: Always clear search term and input when changing group
+        // to ensure that when a new group is selected, we start with that group's medicine list,
+        // unaffected by previous searches.
         setConfirmedSearchTerm('');
         setCurrentSearchInput('');
     };
 
-    const handleCreatePrescription = async ()=>{
-        console.log(inputPrescriptionDetail)
-        console.log(prescription)
-        console.log(selectedMedicine)
+    const handleCreatePrescription = async () => {
+
         const res = await createPrescriptionDetail(prescription?._id as string, selectedMedicine?._id as string, Number(inputPrescriptionDetail?.Quantity), inputPrescriptionDetail?.Remind as string)
         console.log(res)
+        setSelectedMedicine(null);
+        setInputPrescriptionDetail(null);
+        reload()
     }
-
     return (
         <>
             <Modal
@@ -248,22 +260,24 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
                 </div>
 
                 <div className="prescription-popup__body">
+                    {/* Render basic prescription info for step 1 and 2 */}
                     {step !== 3 && (
                         <>
-                            <div className="presscription-popup__title">Thông tin đơn thuốc<caption></caption></div>
+                            <div className="presscription-popup__title">Thông tin đơn thuốc</div>
                             <div className="prescription-popup__content">
                                 <div className="prescription-popup__column">
                                     <p>
                                         <strong>Họ tên:</strong> {medicalCardInfo?.Id_TheKhamBenh.HoVaTen || 'Chưa có'}
                                     </p>
                                     <p>
-                                        <strong>Tuổi: </strong> 
+                                        <strong>Tuổi: </strong>
                                         {medicalCardInfo?.Id_TheKhamBenh.NgaySinh ? calculateAge(medicalCardInfo?.Id_TheKhamBenh.NgaySinh) : 'Chưa có'}
                                     </p>
                                     <p>
                                         <strong>Tên đơn thuốc:</strong> {`Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}` || 'Đơn thuốc'}
                                     </p>
 
+                                    {/* Button to navigate to step 3 from step 2 */}
                                     {step === 2 && (
                                         <Button
                                             type="default"
@@ -276,30 +290,38 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
                                 </div>
                                 <div className="prescription-popup__column">
                                     <p>
-                                        <strong>Bác sĩ:</strong> {medicalCardInfo?.Id_Bacsi.TenBacSi ||'Chưa có'}
+                                        <strong>Bác sĩ:</strong> {medicalCardInfo?.Id_Bacsi.TenBacSi || 'Chưa có'}
                                     </p>
                                     <p>
                                         <strong>Ngày:</strong> {medicalCardInfo?.Ngay || 'Chưa có'}
                                     </p>
                                     <p>
-                                        <strong>Số phòng:</strong> {medicalCardInfo?.Id_Bacsi?.Id_PhongKham?.SoPhongKham ||'Chưa có'}
+                                        <strong>Số phòng:</strong> {medicalCardInfo?.Id_Bacsi?.Id_PhongKham?.SoPhongKham || 'Chưa có'}
                                     </p>
                                 </div>
                             </div>
                         </>
                     )}
 
+                    {/* Render content for step 3 */}
                     {step === 3 && (
                         <>
-                            {!isSelectingMedicine ? (
+                            {!isSelectingMedicine ? ( // Show form to add medicine detail
                                 <div className="prescription-popup__step3">
                                     <div className="form-row">
                                         <div className="form-group qty">
                                             <label>Số Lượng</label>
-                                            <Input type="number" placeholder="Nhập số lượng" className="form-control" 
-                                                onChange={(e)=>{setInputPrescriptionDetail((prev)=>(
-                                                    {...prev, Quantity:Number(e.target?.value)}
-                                                ))}}
+                                            <Input
+                                                type="number"
+                                                placeholder="Nhập số lượng"
+                                                className="form-control"
+                                                onChange={(e) => {
+                                                    setInputPrescriptionDetail((prev) => ({
+                                                        ...prev,
+                                                        Quantity: Number(e.target?.value)
+                                                    }));
+                                                }}
+                                                value={inputPrescriptionDetail?.Quantity || ''}
                                             />
                                         </div>
 
@@ -323,10 +345,17 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
 
                                     <div className="form-group">
                                         <label>Nhắc nhở</label>
-                                        <Input.TextArea placeholder="Nhập nhắc nhở" className="form-control" rows={4} 
-                                                    onChange={(e)=>{setInputPrescriptionDetail((prev)=>(
-                                                    {...prev, Remind:e.target.value}
-                                                ))}}
+                                        <Input.TextArea
+                                            placeholder="Nhập nhắc nhở"
+                                            className="form-control"
+                                            rows={4}
+                                            onChange={(e) => {
+                                                setInputPrescriptionDetail((prev) => ({
+                                                    ...prev,
+                                                    Remind: e.target.value
+                                                }));
+                                            }}
+                                            value={inputPrescriptionDetail?.Remind || ''}
                                         />
                                     </div>
 
@@ -334,7 +363,7 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
                                         <Button type="primary" onClick={handleCreatePrescription}>Tạo</Button>
                                     </div>
                                 </div>
-                            ) : (
+                            ) : ( // Show medicine selection view
                                 <div className="medicine-selection-layout">
                                     <h3 className="text-xl font-semibold mb-4">Chọn thuốc</h3>
                                     <div className="flex items-center gap-4 mb-4">
