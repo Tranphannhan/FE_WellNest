@@ -5,7 +5,7 @@ import { FaSave } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { generateTestResultsType } from '@/app/types/patientTypes/patient';
-import { createExaminationResults } from '@/app/services/DoctorSevices';
+import { createExaminationResults, getExaminationResults } from '@/app/services/DoctorSevices';
 
 export default function DiagnosisResultsComponent() {
     const { id } = useParams();
@@ -17,8 +17,24 @@ export default function DiagnosisResultsComponent() {
         KetQua: ''
     });
 
+
+    const loaddingApi = async () => {
+        const data = await getExaminationResults (String (id));
+        console.log(data);
+        if (!data) return;
+        setDataGenerateTestResults (data)
+    }
+
+
+    useEffect (() => {
+        loaddingApi ();
+
+    }, []);
+
+
     // Check input mỗi khi data thay đổi
     useEffect(() => {
+
         if (
             dataGenerateTestResults.GhiChu?.trim() !== '' &&
             dataGenerateTestResults.HuongSuLy?.trim() !== '' &&
@@ -29,6 +45,8 @@ export default function DiagnosisResultsComponent() {
             setStatusSave(false); // Không cho lưu khi thiếu
         }
     }, [dataGenerateTestResults]);
+
+
 
     const handleSave = async () => {
         const result = await createExaminationResults(dataGenerateTestResults);
@@ -53,6 +71,8 @@ export default function DiagnosisResultsComponent() {
                                         ...prev, KetQua: e.target.value
                                     }))
                                 }}
+
+                                value={dataGenerateTestResults.KetQua}
                             />
                             <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
                                 <span></span><span></span><span></span>
@@ -72,6 +92,8 @@ export default function DiagnosisResultsComponent() {
                                         ...prev, GhiChu: e.target.value
                                     }))
                                 }}
+
+                                  value={dataGenerateTestResults.GhiChu}
                             />
                             <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
                                 <span></span><span></span><span></span>
@@ -93,6 +115,8 @@ export default function DiagnosisResultsComponent() {
                                     ...prev, HuongSuLy: e.target.value
                                 }))
                             }}
+
+                              value={dataGenerateTestResults.HuongSuLy}
                         />
                         <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
                             <span></span><span></span><span></span>

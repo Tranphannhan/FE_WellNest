@@ -8,13 +8,25 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function getAllPatient (Id_Bacsi : string , TrangThai : boolean , TrangThaiHoatDong : string) {
         try {
-        const result = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/GetById_CaKham_Date/Pagination?Id_Bacsi=${Id_Bacsi}&TrangThai=${TrangThai}&TrangThaiHoatDong=${TrangThaiHoatDong}`);
-        if (result.ok){
-            const Data = await result.json ();
-            return Data.data;
-        } else {
-            return ('Lỗi Khi Lấy Bác Sĩ')
-        }
+          if (TrangThaiHoatDong == '' || TrangThaiHoatDong === null){
+            const result = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/GetById_CaKham_Date/Pagination?Id_Bacsi=${Id_Bacsi}&TrangThai=${TrangThai}`);
+              if (result.ok){
+                  const Data = await result.json ();
+                  return Data.data;
+              } else {
+                  return ('Lỗi Khi Lấy Bác Sĩ')
+              }
+
+          } else {
+              const result = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/GetById_CaKham_Date/Pagination?Id_Bacsi=${Id_Bacsi}&TrangThai=${TrangThai}&TrangThaiHoatDong=${TrangThaiHoatDong}`);
+              if (result.ok){
+                  const Data = await result.json ();
+                  return Data.data;
+              } else {
+                  return ('Lỗi Khi Lấy Bác Sĩ')
+              }
+          }
+
 
     } catch (error) {
         console.error("Lỗi Khi Lấy Bác Sĩ:", error);
@@ -391,3 +403,18 @@ export async function createExaminationResults(dataAdd: generateTestResultsType)
   }
 }
 
+
+
+
+export async function getExaminationResults (id: string): Promise<generateTestResultsType | null> {
+  try {
+    const response = await fetch(`http://localhost:5000/Kham_Lam_Sang/LayTheoPhieuKhamBenh/${id}`);
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data[0]
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+}
