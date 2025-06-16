@@ -17,6 +17,7 @@ import ClinicalExamPage from "./ComponentResults/CreateClinicalExam";
 export default function Patient(){
     const [page , setPage] = useState <string> ('Chuẩn đoán sơ bộ');
     const [showPrescriptionPopup,setShowPrescriptionPopup] = useState<boolean>(false)
+    const [paraclinicalKey, setParaclinicalKey] = useState(0);
     const handleClose = ()=>{setShowPrescriptionPopup(false)}
     const { id } = useParams(); // lấy id từ URL
 
@@ -94,7 +95,7 @@ export default function Patient(){
     
             <div className="CreateResults-bodyFrame">
               <div className="CreateResults-bodyFrame__navigationBar">
-                <Diagnosiscomponent handlePage={setPage} />
+                <Diagnosiscomponent handlePage={setPage} page={page} />
               </div>
 
               <div>
@@ -102,7 +103,7 @@ export default function Patient(){
               </div>
 
               <div>
-                {page === 'Cận lâm sàng' && <ParaclinicalComponent />}
+                {page === 'Cận lâm sàng' && <ParaclinicalComponent key={paraclinicalKey}/>}
               </div>
 
               <div>
@@ -116,7 +117,7 @@ export default function Patient(){
 
 
           {showResultsPopup && <ViewParaclinicalResults  onClose={handleCloseResultsPopup} />}
-          <ClinicalExamPage open={showExaminationRequestPopup} onClose={handleCloseExaminationRequestPopup} />
+          <ClinicalExamPage open={showExaminationRequestPopup} onClose={handleCloseExaminationRequestPopup}   reload={() => setParaclinicalKey(prev => prev + 1)} callback = {()=>{setPage('Cận lâm sàng')}} />
         </>
 
         

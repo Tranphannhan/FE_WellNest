@@ -144,7 +144,7 @@ export async function getDoctorTemporaryTypes (id: string): Promise<DoctorTempor
     const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/LayTheoPhieuKhamBenh/${id}`);
     if (!response.ok) return null;
     const data = await response.json();
-    return data[0]
+    return data
 
   } catch (error) {
     console.error("Fetch lỗi:", error);

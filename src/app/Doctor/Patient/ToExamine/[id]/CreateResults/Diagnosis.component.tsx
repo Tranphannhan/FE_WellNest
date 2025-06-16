@@ -1,17 +1,14 @@
 
-"use client";
-import { useState } from 'react';
 import './Diagnosis.component.css';
 
 interface DiagnosisProps {
     handlePage: (page: string) => void;
+    page:string;
 }
 
-export default function Diagnosiscomponent({ handlePage }: DiagnosisProps) {
-    const [activeTab, setActiveTab] = useState(0);
+export default function Diagnosiscomponent({ handlePage , page}: DiagnosisProps) {
     const tabs = ["Chuẩn đoán sơ bộ", "Cận lâm sàng", "Chuẩn đoán kết quả", "Đơn thuốc"];
     const handleClick = (index: number) => {
-        setActiveTab(index);
         handlePage(tabs[index]);
     };
  
@@ -20,7 +17,7 @@ export default function Diagnosiscomponent({ handlePage }: DiagnosisProps) {
             {tabs.map((tab, index) => (
                 <div
                     key={index}
-                    className={`diagnosisComponent-navigationBar__childBox ${activeTab === index ? 'active' : ''}`}
+                    className={`diagnosisComponent-navigationBar__childBox ${page === tab ? 'active' : ''}`}
                     onClick={() => handleClick(index)}
                 >
                     {tab}

@@ -12,11 +12,13 @@ import { useParams } from 'next/navigation';
 interface ClinicalExamPageProps {
     open: boolean; // Trạng thái mở/đóng popup, được điều khiển từ component cha
     onClose: () => void; // Hàm gọi để đóng popup, được truyền từ component cha
+    callback: ()=> void;
+    reload : ()=>void;
 }
 
 const API_IMAGE_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // Assuming your image base URL
 
-const ClinicalExamPage = ({ open, onClose }: ClinicalExamPageProps) => {
+const ClinicalExamPage = ({ open, onClose,callback ,reload}: ClinicalExamPageProps) => {
     const [step, setStep] = useState(1);
     const [rooms, setRooms] = useState<laboratoryType[]>([]); // Use paginationType interface
     const [examinationTypes, setExaminationTypes] = useState<clinicalType[]>([]); // Use testType interface
@@ -77,6 +79,9 @@ const ClinicalExamPage = ({ open, onClose }: ClinicalExamPageProps) => {
     //
     const HandleCreateTestRequest = (idLoaiXetNghiem : string) => {
         createTestRequest (id as string , idLoaiXetNghiem)
+        onClose()
+        callback()
+        reload()
     }
 
  
