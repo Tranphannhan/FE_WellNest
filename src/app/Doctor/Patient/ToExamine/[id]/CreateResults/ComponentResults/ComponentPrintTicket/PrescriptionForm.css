@@ -105,7 +105,7 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     border-bottom: 1px dashed #ccc;
-    padding: 0px 20px;
+    padding: 20px 0px;
 }
 
 .medicine-item > div:first-child p {
@@ -126,8 +126,9 @@ body {
 .pill-count {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 14px;
+    gap: q0px;
+    font-size: 16px;
+    flex-direction: column;
     text-align: right;
 }
 
@@ -155,24 +156,24 @@ body {
     display: flex;
     justify-content: space-between;
     margin-top: 40px;
-    width: 80%;
+    width: 90%;
     align-items: flex-end;
 }
 
 .signature-block {
     text-align: center;
-    flex: 1;
+    flex: 2;
 }
 
 .signature-label {
     font-weight: bold;
-    margin-bottom: 50px; /* Space for signature */
+    margin-bottom: 50px;
+    margin-left: 1rem;
 }
 
 .signature-name {
     font-weight: bold;
-    margin-top: 5px;
-    border-top: 1px dotted #ccc; /* Line for name */
+    margin-top: 50px;
     display: inline-block;
     padding-top: 5px;
 }
@@ -307,4 +308,11 @@ body {
 .checked-stamp img {
     width: 100%;
     height: auto;
+}
+
+.total-price-section{
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    font-size: 16px;
 }
