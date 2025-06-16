@@ -196,9 +196,6 @@ export async function createTestRequest (Id_PhieuKhamBenh : string , Id_LoaiXetN
 
 }
 
-<<<<<<< HEAD
-
-
 export async function deleteMedicine (id: string){
   try {
     const response = await fetch(`http://localhost:5000/Donthuoc_Chitiet/Delete/${id}`,{
@@ -214,7 +211,7 @@ export async function deleteMedicine (id: string){
     return null;
   }
 }
-=======
+
 // tạo đơn thuốc
 export async function createPrescription(
   Id_PhieuKhamBenh: string,
@@ -328,5 +325,3 @@ export async function CheckPrescription(Id_PhieuKhamBenh: string) {
   }
 }
 
-
->>>>>>> 0012629fe7018c037ea652611c487c24a92bd9c9
