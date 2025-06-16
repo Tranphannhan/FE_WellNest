@@ -245,7 +245,6 @@ export default function DiagnosisComponent (){
                               <span></span>
                           </div>
                       </div>  
-
                   </div>
 
 

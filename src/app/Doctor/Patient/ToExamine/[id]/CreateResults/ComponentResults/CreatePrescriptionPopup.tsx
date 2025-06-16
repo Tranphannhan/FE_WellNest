@@ -214,6 +214,9 @@ const PrescriptionPopup = ({ PrescriptionInfo,showPrescriptionPopup, handleClose
     };
 
     const handleCreatePrescription = async ()=>{
+        console.log(inputPrescriptionDetail)
+        console.log(prescription)
+        console.log(selectedMedicine)
         const res = await createPrescriptionDetail(prescription?._id as string, selectedMedicine?._id as string, Number(inputPrescriptionDetail?.Quantity), inputPrescriptionDetail?.Remind as string)
         console.log(res)
     }

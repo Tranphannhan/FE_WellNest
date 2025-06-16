@@ -8,12 +8,9 @@ import { FaSave } from 'react-icons/fa';
 export default function DiagnosisResultsComponent() {
     return (
         <div className="DiagnosisResults-Body">
-            <div className='DiagnosisResults-Body__Button'>
-                <button className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton">
-                    Lưu
-                    <FaSave className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton__saveIcon" /> {/* Icon lưu */}
-                </button>
-            </div>
+          
+
+
               
             <div className="DiagnosisResults-Container">
                 <span className='DiagnosisResults-Body__Title'>Tạo tạo kết quả khám</span>
@@ -56,16 +53,19 @@ export default function DiagnosisResultsComponent() {
                               <span></span>
                           </div>
                     </div>
-                    
-                    
-               
-
-
                 </div>
-
-
-
             </div>
+            
+
+
+            <div className='DiagnosisResults-Body__Button'>
+                <button className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton">
+                    Lưu
+                    <FaSave className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton__saveIcon" /> {/* Icon lưu */}
+                </button>
+            </div>
+
+
         </div>
     )
 }
