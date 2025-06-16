@@ -1,6 +1,6 @@
 
 
-import {  clinicalType, diagnosisType, laboratoryType, MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
+import {  clinicalType, diagnosisType, generateTestResultsType, laboratoryType, MedicalExaminationCard, survivalIndexType } from "../types/patientTypes/patient";
 import { showToast, ToastType } from "../lib/Toast";
 import { DoctorTemporaryTypes } from "../types/doctorTypes/doctorTestTypes";
 
@@ -322,6 +322,72 @@ export async function CheckPrescription(Id_PhieuKhamBenh: string) {
   } catch (error) {
     console.error("Lỗi khi fetch chi tiết phiếu khám bệnh:", error);
     return { status: false, data: null };
+  }
+}
+
+
+
+
+export async function createExaminationResults(dataAdd: generateTestResultsType) {
+  try {
+    const response = await fetch('http://localhost:5000/Kham_Lam_Sang/Add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        Id_PhieuKhamBenh: dataAdd.Id_PhieuKhamBenh,
+        GhiChu: dataAdd.GhiChu,
+        HuongSuLy: dataAdd.HuongSuLy, 
+        KetQua: dataAdd.KetQua,
+      }),
+    });
+
+    const data = await response.json();
+    console.log(data);
+
+    if (!response.ok) {
+      showToast(data.message || 'Tạo kết quả khám thất bại', ToastType.error);
+      return null;
+    }
+
+    // Update 2
+
+    if (data.Created) {
+      const updateResponse = await fetch(`http://localhost:5000/Kham_Lam_Sang/Edit/${data.data._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Id_PhieuKhamBenh: dataAdd.Id_PhieuKhamBenh,
+          GhiChu: dataAdd.GhiChu,
+          HuongSuLy: dataAdd.HuongSuLy,
+          KetQua: dataAdd.KetQua,
+        }),
+      });
+
+      const updateData = await updateResponse.json();
+      console.log(updateData);
+
+      if (!updateResponse.ok) {
+        showToast(updateData.message || 'Cập nhật kết quả khám thất bại', ToastType.error);
+        return null;
+      } else {
+        showToast(updateData.message || 'Cập nhật kết quả khám thành công', ToastType.success);
+        return updateData;
+      }
+    } else {
+      // Nếu tạo mới thành công
+      showToast(data.message || 'Thêm kết quả khám thành công', ToastType.success);
+      return data;
+    }
+  } 
+  
+  catch (error) {
+    console.error('Lỗi khi tạo kết quả khám:', error);
+    showToast('Lỗi kết nối đến máy chủ', ToastType.error);
+    return null;
   }
 }
 
