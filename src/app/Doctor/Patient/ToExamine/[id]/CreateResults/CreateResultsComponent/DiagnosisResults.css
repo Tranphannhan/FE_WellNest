@@ -3,14 +3,21 @@
     background-color: white;
     padding: 30px 0;
     box-sizing: border-box;
+    padding-bottom: 140px;
 }
 
 .DiagnosisResults-Container {
     width: 96%;
     margin: 0 auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; 
     gap: 30px;
+}
+
+.DiagnosisResults-Body__Button {
+    position: absolute;
+    right: 80px;
+    top: 750px;
 }
 
 .DiagnosisResults-Body__Title {
