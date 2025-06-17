@@ -34,35 +34,40 @@ export default function RootLayout({
       >
         <div className="containerClient">
            <ToastContainer />
+
             <Navbar
-              conTentNavigation = {
-                {
-                  logo:'/images/logoWebsite.png',
-                  navItems:[
-                    {icon:`bi bi-file-earmark-text-fill`,text:"Bệnh nhân", link:'/Doctor/Patient'},
-                    {icon:`bi bi-clipboard2-pulse-fill`,text:"Chờ xét nghiệm", link:'/Doctor/WaitClinicalExamination'}
-                  ]
+                conTentNavigation = {
+                  {
+                    logo:'/images/logoWebsite.png',
+                    navItems:[
+                      {icon:`bi bi-file-earmark-text-fill`,text:"Thống kê doanh thu", link:'/Doctor/Patient'},
+                      {icon:`bi bi-clipboard2-pulse-fill`,text:"Danh sách thanh toán", link:'/Cashier/PaymentWaitingList'}
+                    ]
+                  }
                 }
-              }
-            >
-          </Navbar>
+              >
+            </Navbar>
+            
+
 
               <div className="containerClient__content">
-
                  <Header
                     conTentHeader = {
-                      {
-                        title : 'Bác sĩ',
-                        navItems : {
-                          name : 'Nguyễn Đình Huân',
-                          role : 'Bác sĩ',
-                          img : '/images/img-bacsi.webp'
+                        {
+                          title : 'Đơn Thuốc',
+                          navItems : {
+                            name : 'Nguyễn Đình Huân',
+                            role : 'Bác sĩ',
+                            img : '/images/img-bacsi.webp'
+                          }
                         }
                       }
-                    }
-                >
-                      
+                  >
                 </Header>
+
+
+
+
               <div className="containerClient__item">
                     {children}
               </div>
