@@ -1,36 +1,33 @@
 'use client';
-import { useState } from 'react';
-import { Modal, Table, Button } from 'antd';
+import { useEffect, useState } from 'react';
+import { Modal, Table, Button, Spin } from 'antd';
+import { showToast, ToastType } from '@/app/lib/Toast';
+import { medicalExamiNationHistory } from '@/app/services/DoctorSevices';
+import { MedicalExaminationCard } from '@/app/types/patientTypes/patient';
+
+interface ExaminationHistoryItem {
+  key: string;
+  date: string;
+  doctor: string;
+  room: string;
+  result: string;
+  symptom: string;
+}
+
+export interface diseaseHistory {
+  _id: string;
+  Id_PhieuKhamBenh: MedicalExaminationCard;
+  TrangThaiHoanThanh: boolean;
+  GhiChu: string;
+  HuongSuLy: string;
+  KetQua: string;
+  __v: number;
+}
 
 const PopupHistory = () => {
   const [open, setOpen] = useState(false);
-
-  const data = [
-    {
-      key: '1',
-      date: '01/06/2025',
-      doctor: 'Dr. Nguyen Thanh Nam',
-      room: '1',
-      symptom: 'Nhức đầu, buồn nôn, tiêu chảy, khó thở, sốt 37 độ, suy thận',
-      result: 'Tình trạng nghiêm trọng, nghi ngờ suy đa tạng/nhiễm trùng nặng. Cần nhập viện cấp cứu để đánh giá và điều trị khẩn cấp.',
-    },
-    {
-      key: '2',
-      date: '01/04/2024',
-      doctor: 'Dr. Nguyen Thanh Nam',
-      room: '1',
-      symptom: 'Tê bì tay chân, co giật, đau bụng dữ dội, phù chân, mệt mỏi cực độ.',
-      result: 'Tình trạng cấp cứu, nghi ngờ rối loạn thần kinh, chuyển hóa hoặc nhiễm độc nặng.',
-    },
-    {
-      key: '3',
-      date: '01/01/2024',
-      doctor: 'Dr. Nguyen Thanh Nam',
-      room: '1',
-      symptom: 'Đau ngực, khó thở, co giật, vàng da',
-      result: 'Tình trạng cấp tính, nguy hiểm. Nghi ngờ vấn đề tim mạch/hô hấp, thần kinh hoặc gan nghiêm trọng.',
-    }
-  ];
+  const [data, setData] = useState<ExaminationHistoryItem[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const columns = [
     {
@@ -49,16 +46,55 @@ const PopupHistory = () => {
       key: 'room',
     },
     {
-      title: 'Triệu chứng',
-      dataIndex: 'symptom',
-      key: 'symptom',
-    },
-    {
-      title: 'Kết quả',
+      title: 'Chuẩn đoán',
       dataIndex: 'result',
       key: 'result',
     },
+    {
+      title: 'Chỉ định điều trị',
+      dataIndex: 'symptom',
+      key: 'symptom',
+    },
   ];
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const local = sessionStorage.getItem('ThongTinBenhNhanDangKham');
+      const datalocal = local ? JSON.parse(local) : null;
+      const id = datalocal?.Id_TheKhamBenh?._id;
+
+      if (!id) {
+        showToast('Không tìm thấy thẻ khám bệnh', ToastType.error);
+        return;
+      }
+
+      const res = await medicalExamiNationHistory(id);
+      console.log(res)
+
+      const converted = res.map((item: diseaseHistory, index: number) => ({
+        key: item._id || index,
+        date: new Date(item.Id_PhieuKhamBenh?.Ngay).toLocaleDateString('vi-VN'),
+        doctor: item.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi || 'Không rõ',
+        room: item.Id_PhieuKhamBenh?.Id_Bacsi?.Id_PhongKham?.SoPhongKham || 'Không rõ',
+        result: item.KetQua || 'Không ghi',
+        symptom: item.HuongSuLy || 'Không ghi',
+      }));
+
+      setData(converted);
+    } catch (error) {
+      console.error("Lỗi khi lấy lịch sử khám bệnh:", error);
+      showToast('Lỗi lấy lịch sử khám bệnh', ToastType.error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      fetchData();
+    }
+  }, [open]);
 
   return (
     <>
@@ -68,7 +104,7 @@ const PopupHistory = () => {
 
       <Modal
         open={open}
-        title="Những kết quả khám tại đây"
+        title="Lịch sử khám"
         onCancel={() => setOpen(false)}
         footer={[
           <Button key="back" onClick={() => setOpen(false)}>
@@ -77,12 +113,16 @@ const PopupHistory = () => {
         ]}
         width={1000}
       >
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={{ pageSize: 2 }}
-          bordered
-        />
+        {loading ? (
+          <div className="flex justify-center p-4"><Spin /></div>
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={data}
+            pagination={{ pageSize: 3 }}
+            bordered
+          />
+        )}
       </Modal>
     </>
   );

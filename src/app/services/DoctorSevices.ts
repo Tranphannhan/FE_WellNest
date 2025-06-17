@@ -439,3 +439,42 @@ export async function confirmPrescriptionCompletion (id: string){
     return null;
   }
 }
+
+
+//Lấy lịch sử khám bệnh 
+export async function medicalExamiNationHistory(id: string){
+    try {
+        const result = await fetch(`http://localhost:5000/Kham_Lam_Sang/LayTheoTheKhamBenh/Pagination/${id}`);
+        if (result.ok) {
+            const Data = await result.json();
+            return Data.data;
+        } else {
+            const errorText = await result.text();
+            console.error(`Error fetching equipment rooms: ${result.status} - ${errorText}`);
+            showToast('Lỗi khi lấy lịch sử khám bệnh', ToastType.error)
+        }
+    } catch (error) {
+        console.error("Lỗi Khi Lấy lịch sử:", error);
+        throw error;
+    }
+}
+
+// xác nhận yêu cầu xét nghiệm
+// Xác nhận đã hoàn thành đơn thuốc
+export async function testConfirmation (id: string){
+  try {
+    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/ThayDoiTrangThaiHoatDong/${id}`,{
+      method:'PATCH',
+    });
+    if (!response.ok){
+      showToast('Xác nhận thất bại', ToastType.error);
+       return false
+    };
+    showToast('Xác nhận thành công', ToastType.success);
+    return true
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return false;
+  }
+}

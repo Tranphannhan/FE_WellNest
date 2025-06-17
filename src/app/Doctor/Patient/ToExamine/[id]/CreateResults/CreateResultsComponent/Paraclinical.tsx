@@ -2,13 +2,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import './Paraclinical.css';
 import { DoctorTemporaryTypes } from '@/app/types/doctorTypes/doctorTestTypes';
-import { deleteDoctorTemporaryTypes, getDoctorTemporaryTypes, getExaminationResults } from '@/app/services/DoctorSevices';
+import { deleteDoctorTemporaryTypes, getDoctorTemporaryTypes, getExaminationResults, testConfirmation } from '@/app/services/DoctorSevices';
 import { formatCurrencyVND } from '@/app/lib/Format';
 import { useParams } from 'next/navigation';
 import NoData from '@/app/components/ui/Nodata/Nodata';
 import PrintAppointmentForm from '../ComponentResults/ComponentPrintTicket/PrintAppointmentForm';
 import { BsFillPrinterFill } from 'react-icons/bs';
-import { FaRegCheckCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaDotCircle } from 'react-icons/fa';
+import { AiFillExclamationCircle } from 'react-icons/ai';
 
 export interface ServiceItem {
   stt: number;
@@ -108,6 +109,19 @@ export default function ParaclinicalComponent() {
     }
   }, [id]); // Phụ thuộc vào `id`
 
+
+    const handleComfirm = async (id: string) => {
+      const data = await testConfirmation(id);
+      if (data) {
+        setData((prev) =>
+          prev.map((item) =>
+            item._id === id ? { ...item, TrangThaiHoatDong: true } : item
+          )
+        );
+      }
+    };
+
+
   // Effect để gọi các hàm tải dữ liệu khi `id` thay đổi
   useEffect(() => {
     if (id) {
@@ -138,6 +152,7 @@ export default function ParaclinicalComponent() {
                   <th>Tên xét nghiệm</th>
                   <th>Hình ảnh xét nghiệm</th>
                   <th>Giá</th>
+                  <th>Trạng thái</th>
                   <th>Hành Động</th>
                 </tr>
               </thead>
@@ -154,41 +169,55 @@ export default function ParaclinicalComponent() {
                       />
                     </td>
                     <td className="font-semibold">{formatCurrencyVND(item.Id_LoaiXetNghiem.Id_GiaDichVu.Giadichvu)}</td>
+                    <td>{item.TrangThaiHoatDong ? <div className='Paraclinical-tatus Confirm'><FaDotCircle className='dot' />Đã xác nhận</div>:<div className='Paraclinical-tatus Notconfirm'><FaDotCircle className='dot'/>Chưa xác nhận</div>}</td>
                     <td style={{
                       display:'flex',
                       gap: 10
                     }}>
 
                       <button
-                        onClick={() => deleteParaclinical(item._id)}
+                        onClick={() => handleComfirm(item._id)}
                         className="cursor-pointer"
-                        style={{
+                        style={item.TrangThaiHoatDong?{
                           backgroundColor: '#00d335',
                           color: 'white',
                           padding: '4px 13px',
-                          borderRadius: '5px',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          gap: 8,
+                          alignItems: 'center',
+                          pointerEvents:'none',
+                          userSelect:'none'
+                        }:{
+                          backgroundColor: '#3497f9',
+                          color: 'white',
+                          padding: '4px 13px',
+                          borderRadius: '8px',
                           display: 'flex',
                           gap: 8,
                           alignItems: 'center',
                         }}
                       >
-                        <FaRegCheckCircle /> Xác nhận
+                         {item.TrangThaiHoatDong?<><FaCheckCircle /> Đã xác nhận</>:<><AiFillExclamationCircle /> Xác nhận</>}
                       </button>
-                        <button
+                        {item.TrangThaiHoatDong?'':
+                                                <button
                           onClick={() => deleteParaclinical(item._id)}
                           className="cursor-pointer"
                           style={{
                             backgroundColor: 'red',
                             color: 'white',
                             padding: '4px 13px',
-                            borderRadius: '5px',
+                            borderRadius: '8px',
                             display: 'flex',
                             gap: 8,
                             alignItems: 'center',
                           }}
                         >
-                          <i className="bi bi-trash3-fill text-lg" style={{ fontSize: 14 }}></i> Xóa
+                          <i className="bi bi-trash3-fill text-lg" style={{ fontSize: 14 }}></i>
                         </button>
+                        }
+
                     </td>
                   </tr>
                 ))}

@@ -130,8 +130,9 @@ export default function Patient(){
                                 cursor: isPrescriptionCreating ? 'not-allowed' : 'pointer',
                                 color: isPrescriptionCreating ? 'gray' : undefined,
                                 border: isPrescriptionCreating ? '1px solid gray' : undefined,
-                                backgroundColor: isPrescriptionCreating ? '#f5f5f5' : undefined,
+                                backgroundColor: isPrescriptionCreating ? 'white' : undefined,
                                 pointerEvents: isPrescriptionCreating ? 'none' : 'auto', 
+                                userSelect: isPrescriptionCreating ? 'none' : 'auto', 
                             }}
                         >
                             + Tạo đơn thuốc
@@ -155,7 +156,13 @@ export default function Patient(){
                             )
                         }
 
-                        <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid">Yêu cầu chuyển khoa</button>
+                        <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
+                            style={{
+                                backgroundColor:'gray',
+                                pointerEvents:'none',
+                                userSelect:'none'
+                            }}
+                        >Yêu cầu chuyển khoa</button>
                         <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid">Xác nhận khám</button>
                     </div>
                 </div>

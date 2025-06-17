@@ -13,7 +13,6 @@ interface ServiceItem {
 
 interface ExaminationFormForPrint {
     fullName: string;
-
     gender: string;
     dob: string;
     address: string;
@@ -197,8 +196,8 @@ export default function PrintAppointmentForm({
                                     <th>Yêu cầu</th>
                                     <th>SL</th>
                                     <th>Đơn giá</th>
-                                    <th>Nơi thực hiện</th>
-                                    <th>Phòng</th>
+                                    <th>Phòng thực hiện</th>
+                                    <th>Số phòng</th>
                                 </tr>
                             </thead>
                             <tbody>
