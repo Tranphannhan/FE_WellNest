@@ -1,0 +1,112 @@
+
+
+
+a {
+  text-decoration: none !important;
+}
+  
+
+/* ConfirmationNotice.css */
+.confirmationNotice-title {
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.confirmationNotice-body p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.patient-name {
+    color: #7d7d7d;
+    font-weight: 500;
+}
+
+.total-price {
+    color: red;
+    font-weight: 600;
+}
+
+
+/* ---- */
+.confirmationNotice-confirmationNotice-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+/* CSS cho select */
+.confirmationNotice-body__select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background-color: #f0f4f8;
+    border: 2px solid #d0d7de;
+    border-radius: 8px;
+    padding: 10px 40px 10px 16px;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+
+.confirmationNotice-body__select:focus {
+    border-color: #dbdbdb;
+}
+
+/* CSS cho option */
+.confirmationNotice-body__select option {
+    background-color: #fff;
+    color: #333;
+    font-size: 16px;
+}
+
+
+
+
+
+
+
+
+.btn-cancel {
+    background-color: red;
+    border: none;
+    padding: 8px 16px;
+}
+
+.btn-confirm {
+    background-color: #3497F9;
+    border: none;
+    padding: 8px 16px;
+}
+
+.confirmationNotice-confirmationNotice-footer__iconCheck i {
+    font-size: 20px;
+    margin-right: 13px;
+}
+
+.confirmationNotice-confirmationNotice-footer__iconCheck {
+    font-size: 20px;
+    color: white;
+}
+
+
+.confirmationNotice-confirmationNotice-footer__iconDelete i {
+    font-size: 20px;
+    margin-right: 12px;
+}
+
+.confirmationNotice-confirmationNotice-footer__iconDelete {
+    font-size: 20px;
+    color: white;
+}
