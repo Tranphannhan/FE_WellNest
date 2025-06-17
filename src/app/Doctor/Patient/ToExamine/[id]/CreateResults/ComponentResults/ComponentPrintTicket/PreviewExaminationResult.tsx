@@ -196,7 +196,7 @@ export default function PreviewExaminationResult({
                 <thead>
                   <tr>
                     <th>STT</th>
-                    <th>Chẩn Đoán</th>
+                    <th>Kết quả</th>
                     <th>Hướng Xử Lý</th>
                     <th>Ghi Chú</th>
                   </tr>

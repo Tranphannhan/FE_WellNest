@@ -115,21 +115,9 @@ export default function ParaclinicalComponent() {
   }, [id, loadDiagnosis, loadData]); // <-- Phụ thuộc vào `id` và các hàm được memoize
 
   const deleteParaclinical = useCallback(async (itemId: string) => {
-    await deleteDoctorTemporaryTypes(itemId);
-    // Tải lại dữ liệu sau khi xóa để đảm bảo danh sách hiển thị đúng
-    // Hoặc cập nhật state `data` và `patientData.serviceList` một cách chính xác.
-    // Cách dưới đây là cập nhật local state, có thể cần gọi lại loadData nếu cần đồng bộ hoàn toàn với backend
-    setData((prev) => {
-      const updatedData = prev.filter((item) => item._id !== itemId);
-      return updatedData;
-    });
-
-    setPatientData((prev) => {
-      if (!prev) return prev;
-      const updatedServiceList = prev.serviceList.filter((_, index) => data[index]?._id !== itemId);
-      return { ...prev, serviceList: updatedServiceList.map((item, i) => ({ ...item, stt: i + 1 })) };
-    });
-  }, [data]); // data là dependency để filter chính xác
+  await deleteDoctorTemporaryTypes(itemId);
+  await loadData(); // <-- Gọi lại API đồng bộ hơn, tránh rối
+}, [loadData]);
 
   return (
     <div className="Paraclinical-Body">

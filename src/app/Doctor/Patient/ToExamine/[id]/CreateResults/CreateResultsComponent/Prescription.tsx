@@ -105,21 +105,30 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
     const mockCollectorNameDonThuoc = ThongTinBenhNhanDangKham.Id_Bacsi.TenBacSi;
 
     useEffect(() => {
-        if (ThongTinBenhNhanDangKham) {
-            // Populate the ExaminationFormDonThuoc with actual patient data
-            setPatientDataForForm({
-                fullName: ThongTinBenhNhanDangKham.Id_TheKhamBenh.HoVaTen,
-                weight: 0, // Placeholder, as weight is not in the provided data
-                gender: ThongTinBenhNhanDangKham.Id_TheKhamBenh.GioiTinh,
-                dob: ThongTinBenhNhanDangKham.Id_TheKhamBenh.NgaySinh,
-                address: ThongTinBenhNhanDangKham.Id_TheKhamBenh.DiaChi,
-                department: ThongTinBenhNhanDangKham.Id_Bacsi.ID_Khoa, // This seems to be an ID, might need a lookup
-                price: 0, // Placeholder, price is not in this specific patient data
-                clinic: ThongTinBenhNhanDangKham.Id_Bacsi.Id_PhongKham.SoPhongKham,
-                QueueNumber: ThongTinBenhNhanDangKham.STTKham,
-            });
-        }
-    }, [ThongTinBenhNhanDangKham]); // Depend on ThongTinBenhNhanDangKham
+  if (ThongTinBenhNhanDangKham) {
+    const newPatientData = {
+      fullName: ThongTinBenhNhanDangKham.Id_TheKhamBenh.HoVaTen,
+      weight: 0,
+      gender: ThongTinBenhNhanDangKham.Id_TheKhamBenh.GioiTinh,
+      dob: ThongTinBenhNhanDangKham.Id_TheKhamBenh.NgaySinh,
+      address: ThongTinBenhNhanDangKham.Id_TheKhamBenh.DiaChi,
+      department: ThongTinBenhNhanDangKham.Id_Bacsi.ID_Khoa,
+      price: 0,
+      clinic: ThongTinBenhNhanDangKham.Id_Bacsi.Id_PhongKham.SoPhongKham,
+      QueueNumber: ThongTinBenhNhanDangKham.STTKham,
+    };
+
+    setPatientDataForForm((prev) => {
+      const isSame =
+        JSON.stringify(prev) === JSON.stringify(newPatientData);
+      if (!isSame) {
+        return newPatientData;
+      }
+      return prev; // tránh update nếu không thay đổi
+    });
+  }
+}, [ThongTinBenhNhanDangKham]);
+
 
 
     const fetchPrescriptionDetails = async (prescriptionId: string) => {
@@ -140,11 +149,16 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
 
 
     const CheckRender = async () => {
-        const resCheckPrescription = await CheckPrescription(id as string);
-        if (!resCheckPrescription.status) {
-            fetchPrescriptionDetails(resCheckPrescription.data._id);
-        }
-    };
+    console.log("CheckRender đang chạy");
+    const resCheckPrescription = await CheckPrescription(id as string);
+    console.log("Kết quả CheckPrescription:", resCheckPrescription);
+
+    if (!resCheckPrescription.status) {
+        console.log("Gọi fetchPrescriptionDetails với ID:", resCheckPrescription.data._id);
+        fetchPrescriptionDetails(resCheckPrescription.data._id);
+    }
+};
+
 
     useEffect(() => {
         CheckRender();
