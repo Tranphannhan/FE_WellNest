@@ -5,25 +5,13 @@ import './PrescriptionForm.css'; // Import the CSS file (for prescription)
 // Assuming PrescriptionDetail is correctly imported from its actual path.
 // Adjust this import path if 'Prescription' is not the correct file for PrescriptionDetail.
 import { PrescriptionDetail } from '../../CreateResultsComponent/Prescription';
+import { MedicalExaminationCard } from '@/app/types/patientTypes/patient';
 
-
-interface ExaminationFormDonThuoc {
-    fullName: string;
-    weight: number;
-    gender: string;
-    dob: string;
-    address: string;
-    department: string; // Khoa khám
-    price: number; // Giá khám
-    clinic: string; // Phòng khám
-    QueueNumber: string; // Số thứ tự
-}
 
 interface PreviewExaminationFormProps {
     isOpen: boolean;
     onClose: () => void;
-    patientData?: ExaminationFormDonThuoc;
-    collectorName?: string;
+    patientData?: MedicalExaminationCard;
     prescriptionMedicines?: PrescriptionDetail[]; // NEW PROP: Array of PrescriptionDetail
 }
 
@@ -31,15 +19,11 @@ export default function PreviewExaminationForm({
     isOpen,
     onClose,
     patientData,
-    collectorName,
     prescriptionMedicines = [] // Default to an empty array if not provided
 }: PreviewExaminationFormProps) {
     const [pdfPreviewImg, setPdfPreviewImg] = useState('');
     const [totalMedicinePrice, setTotalMedicinePrice] = useState(0); // NEW: State for total medicine price
     const prescriptionRef = useRef(null);
-
-    const currentPatientData = patientData as ExaminationFormDonThuoc;
-    const currentCollectorName = collectorName;
 
     // NEW: Function to calculate total medicine price
     const calculateTotalMedicinePrice = useCallback(() => {
@@ -89,12 +73,12 @@ export default function PreviewExaminationForm({
                     pdf.addImage(pdfPreviewImg, 'PNG', 0, position, imgWidth, imgHeight);
                     heightLeft -= pageHeight;
                 }
-                pdf.save(`don_thuoc_${currentPatientData?.fullName?.replace(/\s/g, '_') || 'unknown_patient'}.pdf`);
+                pdf.save(`don_thuoc_${patientData?.Id_TheKhamBenh.HoVaTen?.replace(/\s/g, '_') || 'unknown_patient'}.pdf`);
                 onClose();
             };
             tempImg.onerror = (err) => console.error("Không thể tải ảnh để tạo PDF:", err);
         }, 50);
-    }, [pdfPreviewImg, onClose, currentPatientData?.fullName]);
+    }, [pdfPreviewImg, onClose, patientData?.Id_TheKhamBenh.HoVaTen]);
 
     useEffect(() => {
         if (isOpen) {
@@ -166,13 +150,11 @@ export default function PreviewExaminationForm({
                     <h2 className="prescription-title">Đơn Thuốc</h2>
 
                     <div className="patient-info-grid">
-                        <p><strong>Họ tên:</strong> {currentPatientData?.fullName}</p>
-                        <p><strong>Cân nặng:</strong> {currentPatientData?.weight ? `${currentPatientData.weight} kg` : 'Không có'}</p>
-                        <p><strong>Giới tính:</strong> {currentPatientData?.gender}</p>
-                        <p><strong>Ngày Sinh:</strong> {currentPatientData?.dob}</p>
-                        <p><strong>Phòng Khám:</strong> {currentPatientData?.clinic}</p>
-                        <p><strong>Khoa Khám:</strong> {currentPatientData?.department}</p>
-                        <p style={{ gridColumn: 'span 3' }}><strong>Địa chỉ liên hệ:</strong> {currentPatientData?.address}</p>
+                        <p><strong>Họ tên:</strong> {patientData?.Id_TheKhamBenh.HoVaTen}</p>
+                        <p><strong>Giới tính:</strong> {patientData?.Id_TheKhamBenh.GioiTinh}</p>
+                        <p><strong>Ngày Sinh:</strong> {patientData?.Id_TheKhamBenh.NgaySinh}</p>
+                        <p><strong>Phòng Khám:</strong> {patientData?.Id_Bacsi.Id_PhongKham?.SoPhongKham}</p>
+                        <p style={{ gridColumn: 'span 2' }}><strong>Địa chỉ liên hệ:</strong> {patientData?.Id_TheKhamBenh.DiaChi}</p>
                         <p style={{ gridColumn: 'span 3' }}><strong>Chuẩn đoán:</strong> Không có</p>
 
                     </div>
@@ -220,7 +202,7 @@ export default function PreviewExaminationForm({
                             </div>
                             <div className="signature-block signature-collector">
                                 <p className="signature-label">Bác sĩ kê đơn</p>
-                                <p className="signature-name">{currentCollectorName}</p>
+                                <p className="signature-name">{patientData?.Id_Bacsi.TenBacSi}</p>
                             </div>
                         </div>
                     </div>

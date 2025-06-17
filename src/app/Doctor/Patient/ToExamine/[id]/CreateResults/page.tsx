@@ -181,7 +181,11 @@ export default function Patient(){
 
                 <div>
                     {/* Pass the new handler to PrescriptionComponent */}
-                    {page === 'Đơn thuốc' && <PrescriptionComponent onAddMedicineClick={handleAddMedicineFromTable} key={prescriptionComponentKey} /> }
+                    {page === 'Đơn thuốc' && 
+                    <PrescriptionComponent 
+                        onAddMedicineClick={handleAddMedicineFromTable} 
+                        key={prescriptionComponentKey} 
+                        reload={()=>{setprescriptionComponentKey(prev => prev+1)}}/> }
                 </div>
             </div>
 

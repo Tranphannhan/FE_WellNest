@@ -172,8 +172,8 @@ export async function deleteDoctorTemporaryTypes (id: string){
       method : 'DELETE',
     });
 
-    if (!response.ok) return  showToast('Xóa xóa xét nghiệm cận lâm sàng thất bại' , ToastType.error);
-    return showToast('Xóa xóa xét nghiệm cận lâm sàng thành công' , ToastType.success);
+    if (!response.ok) return  showToast('Xóa chỉ định cận lâm sàng thất bại' , ToastType.error);
+    return showToast('Xóa chỉ định cận lâm sàng thành công' , ToastType.success);
   }
   
   catch (error) {
@@ -199,7 +199,7 @@ export async function createTestRequest (Id_PhieuKhamBenh : string , Id_LoaiXetN
     });
 
     if (!response.ok) return  showToast('Tạo yêu cầu xét nghiệm thất bại' , ToastType.error);
-    return  showToast('Tạo yêu cầu xét nghiệm thành công' , ToastType.success);  
+    return  showToast('Tạo chỉ định xét nghiệm thành công' , ToastType.success);  
 
   } catch (error) {
     console.error("Fetch lỗi:", error);
@@ -383,10 +383,10 @@ export async function createExaminationResults(dataAdd: generateTestResultsType)
       console.log(updateData);
 
       if (!updateResponse.ok) {
-        showToast(updateData.message || 'Cập nhật kết quả khám thất bại', ToastType.error);
+        showToast('Cập nhật kết quả khám thất bại', ToastType.error);
         return null;
       } else {
-        showToast(updateData.message || 'Cập nhật kết quả khám thành công', ToastType.success);
+        showToast('Cập nhật kết quả khám thành công', ToastType.success);
         return updateData;
       }
     } else {
@@ -412,6 +412,27 @@ export async function getExaminationResults (id: string): Promise<generateTestRe
     if (!response.ok) return null;
     const data = await response.json();
     return data[0]
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+}
+
+
+// Xác nhận đã hoàn thành đơn thuốc
+export async function confirmPrescriptionCompletion (id: string){
+  try {
+    const response = await fetch(`http://localhost:5000/Donthuoc/ThayDoiTrangThai/${id}?TrangThai=DaXacNhan`,{
+      method:'PATCH',
+    });
+    if (!response.ok){
+      showToast('Hoàn thành đơn thuốc thất bại', ToastType.error);
+       return null
+    };
+    showToast('Hoàn thành đơn thuốc thành công', ToastType.success);
+    const data = await response.json();
+    return data.updatedDonthuoc
 
   } catch (error) {
     console.error("Fetch lỗi:", error);

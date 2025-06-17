@@ -179,7 +179,6 @@ export default function PreviewExaminationResult({
 
           <div className="patient-info-grid">
             <p><strong>Họ tên:</strong> {currentPatientData.fullName}</p>
-            <p><strong>Cân nặng:</strong> {currentPatientData.weight}kg</p>
             <p><strong>Giới tính:</strong> {currentPatientData.gender}</p>
             <p><strong>Ngày Sinh:</strong> {currentPatientData.dob}</p>
             <p style={{ gridColumn: 'span 3' }}><strong>Địa chỉ liên hệ:</strong> {currentPatientData.address}</p>

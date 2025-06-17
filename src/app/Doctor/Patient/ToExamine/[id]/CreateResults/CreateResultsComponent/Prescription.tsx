@@ -1,16 +1,19 @@
 // File: SelectedMedicineComponent.tsx
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Prescription.css';
 import NoData from '@/app/components/ui/Nodata/Nodata';
 
-import { deleteMedicine } from '@/app/services/DoctorSevices';
+import { confirmPrescriptionCompletion, deleteMedicine } from '@/app/services/DoctorSevices';
 
 import { CheckPrescription } from '@/app/services/DoctorSevices';
 import { useParams } from 'next/navigation';
-import { showToast, ToastType } from '@/app/lib/Toast';
 import PreviewExaminationForm from '../ComponentResults/ComponentPrintTicket/PrescriptionForm';
 import { formatCurrencyVND } from '@/app/lib/Format';
+import { MedicalExaminationCard } from '@/app/types/patientTypes/patient';
+import { BsFillPrinterFill } from 'react-icons/bs';
+import ModalComponent from '@/app/components/shared/Modal/Modal';
+import { FaCheck } from 'react-icons/fa';
 
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -79,55 +82,25 @@ export interface PatientExaminationData {
     __v: number;
 }
 
-// Type cho dữ liệu của Đơn Thuốc (PreviewExaminationForm) - Updated to be more flexible
-export interface ExaminationFormDonThuoc {
-    fullName: string;
-    weight: number; // Assuming weight would come from elsewhere or be added later
-    gender: string;
-    dob: string;
-    address: string;
-    department: string; // Khoa khám
-    price: number; // Giá khám (có thể không hiển thị trên đơn thuốc)
-    clinic: string; // Phòng khám
-    QueueNumber: string; // Số thứ tự khám (có thể không hiển thị trên đơn thuốc)
-}
 
 // Added onAddMedicineClick prop
-export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAddMedicineClick: () => void }) {
+export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}: { onAddMedicineClick: () => void ,reload :()=>void}) {
     const [prescriptionDetails, setPrescriptionDetails] = useState<PrescriptionDetail[]>([]);
     const { id } = useParams();
-    const hasShownToast = useRef(false);
     const [isDonThuocModalOpen, setIsDonThuocModalOpen] = useState(false);
-    const [patientDataForForm, setPatientDataForForm] = useState<ExaminationFormDonThuoc | null>(null);
-
-    const ThongTinBenhNhanDangKham: PatientExaminationData = JSON.parse(`{"_id":"684926749c351fd5325793a4","Id_TheKhamBenh":{"_id":"6846f6da8b70d4b33ddcf8e3","HoVaTen":"Trần Phan Nhân","GioiTinh":"Nam","NgaySinh":"2005-05-14","SoDienThoai":"ok","SoBaoHiemYTe":"ok","DiaChi":"Số Nhà 359, Ấp Rạch Cát, Long Hựu Đông, Cần Đước, Long An","SoCCCD":"080205004041","SDT_NguoiThan":"ok","LichSuBenh":"ok","__v":0},"Id_Bacsi":{"_id":"6828a6926e9bedbfcafaa848","ID_Khoa":"6803ba9870cd96d5cde6d7a9","TenBacSi":"Trần Bác Sĩ 3","GioiTinh":"Nam","SoDienThoai":"0908609101","HocVi":"Tiến sĩ","NamSinh":1990,"Matkhau":"$2b$10$fZnw4ChSia5L./VsyeqV7u8QU8hWi266l/bP.M.CLCT69pTSBR7tC","Image":"http://localhost:5000/image/1747494546761.jpg","VaiTro":"BacSi","TrangThaiHoatDong":true,"__v":0,"Id_PhongKham":{"_id":"6824bbb85f64eedbc8bfb690","Id_Khoa":"681637a4044132235e13b8ba","SoPhongKham":"102"}},"Id_NguoiTiepNhan":"68272e93b4cfad70da810029","Id_GiaDichVu":"683420eb8b7660453369dce1","LyDoDenKham":"Ok khoe nhu trau","Ngay":"2025-06-11","Gio":"13:47:16","TrangThaiThanhToan":false,"STTKham":"0","TrangThai":false,"TrangThaiHoatDong":"Kham","__v":0}`);
-
-    const mockCollectorNameDonThuoc = ThongTinBenhNhanDangKham.Id_Bacsi.TenBacSi;
+    const [patientDataForForm, setPatientDataForForm] = useState< MedicalExaminationCard | null>(null);
+    const [showModal, setShowModal] = useState <boolean>(false)
+    const [showBtn, setShowBtn] = useState<boolean>(false)
+    const [comPlete, setComplete] = useState <boolean>(false)
+    const [idPrescription, setIdPrescription] = useState <string>('')
 
     useEffect(() => {
-  if (ThongTinBenhNhanDangKham) {
-    const newPatientData = {
-      fullName: ThongTinBenhNhanDangKham.Id_TheKhamBenh.HoVaTen,
-      weight: 0,
-      gender: ThongTinBenhNhanDangKham.Id_TheKhamBenh.GioiTinh,
-      dob: ThongTinBenhNhanDangKham.Id_TheKhamBenh.NgaySinh,
-      address: ThongTinBenhNhanDangKham.Id_TheKhamBenh.DiaChi,
-      department: ThongTinBenhNhanDangKham.Id_Bacsi.ID_Khoa,
-      price: 0,
-      clinic: ThongTinBenhNhanDangKham.Id_Bacsi.Id_PhongKham.SoPhongKham,
-      QueueNumber: ThongTinBenhNhanDangKham.STTKham,
-    };
-
-    setPatientDataForForm((prev) => {
-      const isSame =
-        JSON.stringify(prev) === JSON.stringify(newPatientData);
-      if (!isSame) {
-        return newPatientData;
-      }
-      return prev; // tránh update nếu không thay đổi
-    });
-  }
-}, [ThongTinBenhNhanDangKham]);
+        const dataLocal = sessionStorage.getItem('ThongTinBenhNhanDangKham');
+        if(dataLocal){
+            const data = JSON.parse(dataLocal)
+            setPatientDataForForm(data)
+        }
+    }, []);
 
 
 
@@ -152,10 +125,21 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
     console.log("CheckRender đang chạy");
     const resCheckPrescription = await CheckPrescription(id as string);
     console.log("Kết quả CheckPrescription:", resCheckPrescription);
-
     if (!resCheckPrescription.status) {
         console.log("Gọi fetchPrescriptionDetails với ID:", resCheckPrescription.data._id);
+        setIdPrescription(resCheckPrescription.data._id || '')
         fetchPrescriptionDetails(resCheckPrescription.data._id);
+        setShowBtn(true)
+    }else{
+        console.log(resCheckPrescription)
+        if(resCheckPrescription.data !== null){
+            fetchPrescriptionDetails(resCheckPrescription.data.data._id);
+            setComplete(true)
+        }   
+            // Ẩn nút thêm thuốc
+            setShowBtn(false)
+        
+        
     }
 };
 
@@ -167,19 +151,37 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
 
     const handleDeleteMedicine = (id: string) => {
         deleteMedicine(id as string);
-        // After deletion, you should re-fetch the details to update the UI
-        // Or, more efficiently, filter the state directly if the deletion was successful
         setPrescriptionDetails(prescriptionDetails.filter(detail => detail._id !== id));
+    }
+
+    const HandleSuccess = async() =>{
+       const data = await confirmPrescriptionCompletion(
+            idPrescription
+        )
+        console.log(data)
+        setShowModal(false)
+        setComplete(true)
+        reload()
+    }
+
+    const showModalHandleSuccess = ()=>{
+        setShowModal(true)
     }
 
 
     return (
-        <div className="p-4">
+        <div className="p-4 Prescription-container">
             <button
+                style={!comPlete?{
+                    userSelect:'none',
+                    pointerEvents:'none',
+                    color:'gray',
+                    border:'1px solid gray'
+                }:{}}
                 onClick={() => setIsDonThuocModalOpen(true)}
-                className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
+                className="Prescription-printBtn"
             >
-                Xem trước Đơn Thuốc
+               <BsFillPrinterFill /> Đơn thuốc
             </button>
             <div className="overflow-x-auto rounded-lg bg-white">
                 {prescriptionDetails.length > 0 ? (
@@ -218,15 +220,27 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
                                             <button
                                               onClick={() => handleDeleteMedicine (item._id)}
                                               className='cursor-pointer'
-                                              style={{
+                                              style={comPlete?{
+                                                backgroundColor:'gray',
+                                                color:'white',
+                                                userSelect:'none',
+                                                pointerEvents:'none',
+                                                padding:'4px 13px',
+                                                borderRadius:'5px',
+                                                display:'flex',
+                                                gap:8,
+                                                alignItems:'center',
+                                              }:{
                                                 backgroundColor:'red',
                                                 color:'white',
                                                 padding:'4px 13px',
                                                 borderRadius:'5px',
                                                 display:'flex',
                                                 gap:8,
-                                                alignItems:'center'
-                                              }}
+                                                alignItems:'center',
+                                              }
+                                              
+                                            }
                                             ><i className="bi bi-trash3-fill text-lg"
                                               style={{
                                                 fontSize:14
@@ -239,15 +253,53 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
                         </table>
 
                         <div className="flex justify-end gap-4 mt-4">
-                            <button className="Prescription-medicine__container__MedicineActions__addButton" onClick={onAddMedicineClick}>+ Thêm thuốc</button>
-                            <button className="Prescription-medicine__container__MedicineActions__completeButton">Hoàn thành</button>
+                            {comPlete ? <>
+                                <button className="Prescription-medicine__container__MedicineActions__completeButton"
+                                onClick={showModalHandleSuccess}
+                                style={{
+                                    backgroundColor:'#00d335',
+                                    display:'flex',
+                                    alignItems:'center',
+                                    gap:10,
+                                    pointerEvents:'none',
+                                    userSelect:'none'
+                                }}
+                                ><FaCheck /> Đã hoàn thành</button>
+
+                            </>:<>
+                                <button className="Prescription-medicine__container__MedicineActions__addButton" onClick={onAddMedicineClick}>+ Thêm thuốc</button>
+                                <button className="Prescription-medicine__container__MedicineActions__completeButton"
+                                onClick={showModalHandleSuccess}
+                                >Hoàn thành</button>
+                            </>}
+                            
                         </div>
                     </>
                 ) : (
-                    <NoData
+                    <>
+                      <NoData
                         message="Chưa chọn thuốc!"
                         remind="Vui lòng chọn thuốc để hoàn thành đơn thuốc"
                     />
+                        {showBtn ? 
+                            <>  <div className="flex justify-end gap-4 mt-4">
+                                <button className="Prescription-medicine__container__MedicineActions__addButton" onClick={onAddMedicineClick}>+ Thêm thuốc</button>
+                                <button className="Prescription-medicine__container__MedicineActions__completeButton"
+                                    style={
+                                        {
+                                            backgroundColor:'gray',
+                                            pointerEvents:'none',
+                                            userSelect:'none'
+                                        }
+                                    }     
+                                >Hoàn thành</button>
+                            </div>
+                            </>
+                        
+                        :''}
+                   
+                    </>
+                  
                 )}
             </div>
             {isDonThuocModalOpen && patientDataForForm && (
@@ -255,10 +307,17 @@ export default function SelectedMedicineComponent({ onAddMedicineClick }: { onAd
                     isOpen={isDonThuocModalOpen}
                     onClose={() => setIsDonThuocModalOpen(false)}
                     patientData={patientDataForForm}
-                    collectorName={mockCollectorNameDonThuoc}
                     prescriptionMedicines={prescriptionDetails}
                 />
             )}
+
+            <ModalComponent Data_information={{
+                content:'Xác nhận hoàn thành đơn thuốc',
+                callBack:HandleSuccess,
+                handleClose:()=>{setShowModal(false)},
+                handleShow:()=>{setShowModal(true)},
+                show:showModal
+            }}></ModalComponent>
         </div>
     );
 }

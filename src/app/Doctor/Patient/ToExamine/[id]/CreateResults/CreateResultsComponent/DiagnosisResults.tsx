@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { generateTestResultsType } from '@/app/types/patientTypes/patient';
 import { createExaminationResults, getExaminationResults } from '@/app/services/DoctorSevices';
 import PreviewExaminationResult from '../ComponentResults/ComponentPrintTicket/PreviewExaminationResult';
+import { BsFillPrinterFill } from 'react-icons/bs';
 
 // Types for Examination Result
 interface DiagnosisTreatmentPair {
@@ -25,12 +26,6 @@ interface ExaminationResultData {
   notes?: string;
 }
 
-interface PreviewExaminationResultProps {
-  isOpen: boolean;
-  onClose: () => void;
-  patientData?: ExaminationResultData;
-  doctorName?: string;
-}
 
 export default function DiagnosisResultsComponent() {
   const { id } = useParams();
@@ -165,9 +160,9 @@ export default function DiagnosisResultsComponent() {
     <div className="DiagnosisResults-Body">
       <button
         onClick={() => setIsExaminationResultModalOpen(true)}
-        className="px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition duration-200"
+        className="DiagnosisResults-printBtn"
       >
-        Xem trước Phiếu Kết Quả Khám
+        <BsFillPrinterFill /> Kết quả
       </button>
       <div className="DiagnosisResults-Container">
         <span className="DiagnosisResults-Body__Title">Tạo kết quả khám</span>

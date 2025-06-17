@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import { Modal, Table, Button } from 'antd';
-import 'antd/dist/reset.css';
 
 const PopupHistory = () => {
   const [open, setOpen] = useState(false);

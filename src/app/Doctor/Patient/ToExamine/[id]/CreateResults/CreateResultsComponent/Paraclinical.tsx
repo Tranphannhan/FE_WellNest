@@ -7,6 +7,8 @@ import { formatCurrencyVND } from '@/app/lib/Format';
 import { useParams } from 'next/navigation';
 import NoData from '@/app/components/ui/Nodata/Nodata';
 import PrintAppointmentForm from '../ComponentResults/ComponentPrintTicket/PrintAppointmentForm';
+import { BsFillPrinterFill } from 'react-icons/bs';
+import { FaRegCheckCircle } from 'react-icons/fa';
 
 export interface ServiceItem {
   stt: number;
@@ -120,12 +122,11 @@ export default function ParaclinicalComponent() {
 }, [loadData]);
 
   return (
-    <div className="Paraclinical-Body">
-      <button
+    <div className="Paraclinical-Body">      <button
         onClick={() => setIsPhieuChiDinhModalOpen(true)}
-        className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200"
+        className="Paraclinical-printBtn"
       >
-        Xem trước Phiếu Chỉ Định Xét Nghiệm
+        <BsFillPrinterFill /> Chỉ định xét nghiệm
       </button>
       <div className="Paraclinical-medicine__container">
         {data.length > 0 ? (
@@ -153,12 +154,16 @@ export default function ParaclinicalComponent() {
                       />
                     </td>
                     <td className="font-semibold">{formatCurrencyVND(item.Id_LoaiXetNghiem.Id_GiaDichVu.Giadichvu)}</td>
-                    <td>
+                    <td style={{
+                      display:'flex',
+                      gap: 10
+                    }}>
+
                       <button
                         onClick={() => deleteParaclinical(item._id)}
                         className="cursor-pointer"
                         style={{
-                          backgroundColor: 'red',
+                          backgroundColor: '#00d335',
                           color: 'white',
                           padding: '4px 13px',
                           borderRadius: '5px',
@@ -167,8 +172,23 @@ export default function ParaclinicalComponent() {
                           alignItems: 'center',
                         }}
                       >
-                        <i className="bi bi-trash3-fill text-lg" style={{ fontSize: 14 }}></i> Xóa
+                        <FaRegCheckCircle /> Xác nhận
                       </button>
+                        <button
+                          onClick={() => deleteParaclinical(item._id)}
+                          className="cursor-pointer"
+                          style={{
+                            backgroundColor: 'red',
+                            color: 'white',
+                            padding: '4px 13px',
+                            borderRadius: '5px',
+                            display: 'flex',
+                            gap: 8,
+                            alignItems: 'center',
+                          }}
+                        >
+                          <i className="bi bi-trash3-fill text-lg" style={{ fontSize: 14 }}></i> Xóa
+                        </button>
                     </td>
                   </tr>
                 ))}

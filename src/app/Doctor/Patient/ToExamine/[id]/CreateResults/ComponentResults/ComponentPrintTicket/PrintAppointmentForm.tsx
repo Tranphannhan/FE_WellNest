@@ -36,7 +36,6 @@ export default function PrintAppointmentForm({
     onClose,
     patientData,
     diagnosticianName,
-    departmentName,
 }: PrintAppointmentFormProps) {
     const [pdfPreviewImg, setPdfPreviewImg] = useState('');
     const prescriptionRef = useRef(null);
@@ -182,8 +181,7 @@ export default function PrintAppointmentForm({
                     <h2 className="prescription-title">Phiếu chỉ định</h2>
 
                     <div className="patient-info-grid">
-                        <p><strong>Họ tên:</strong> {patientData.fullName}</p>
-                        <p><strong>Cân nặng:</strong> 0kg</p>
+                        <p><strong>Họ tên:</strong> {patientData.fullName}</p>  
                         <p><strong>Giới tính:</strong> {patientData.gender}</p>
                         <p><strong>Ngày Sinh:</strong> {patientData.dob}</p>
                         <p style={{ gridColumn: 'span 3' }}><strong>Địa chỉ liên hệ:</strong> {patientData.address}</p>
