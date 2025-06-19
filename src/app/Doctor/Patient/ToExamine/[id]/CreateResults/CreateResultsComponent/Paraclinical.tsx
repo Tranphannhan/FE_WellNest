@@ -97,7 +97,9 @@ export default function ParaclinicalComponent() {
       // Cần đảm bảo patientData đã có giá trị trước khi cập nhật serviceList.
       setPatientData((prev) => {
         if (!prev) return prev; // Nếu prev là null, không làm gì cả
-        const serviceList: ServiceItem[] = result.map((item, index) => ({
+        const serviceList: ServiceItem[] = result
+        .filter((item) => item.TrangThaiHoatDong === true)
+        .map((item, index) => ({
           stt: index + 1,
           name: item.Id_LoaiXetNghiem.TenXetNghiem,
           quantity: item.SoLuong || 1,
@@ -121,6 +123,7 @@ export default function ParaclinicalComponent() {
             item._id === id ? { ...item, TrangThaiHoatDong: true } : item
           )
         );
+        await loadData();
       }
     };
 
