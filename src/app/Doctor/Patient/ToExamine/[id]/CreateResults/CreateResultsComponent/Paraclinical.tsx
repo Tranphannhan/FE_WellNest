@@ -47,6 +47,9 @@ export default function ParaclinicalComponent() {
   const [diagnosticianName, setDiagnosticianName] = useState<string>('');
   const [departmentName, setDepartmentName] = useState<string>('');
 
+  const allConfirmed = data.every(item => item.TrangThaiHoatDong === true);
+
+
   // Effect để tải dữ liệu bệnh nhân từ sessionStorage chỉ một lần khi component mount
   useEffect(() => {
     const sessionData = sessionStorage.getItem('ThongTinBenhNhanDangKham');
@@ -224,7 +227,19 @@ export default function ParaclinicalComponent() {
               </tbody>
             </table>
             <div className="Paraclinical-medicine__container__MedicineActions">
-              <button className="Paraclinical-medicine__container__MedicineActions__completeButton">Hoàn thành</button>
+              <button
+                className="Paraclinical-medicine__container__MedicineActions__completeButton"
+                disabled={!allConfirmed}
+                style={{
+                  backgroundColor: allConfirmed ? '' : 'gray',
+                  cursor: allConfirmed ? 'pointer' : 'not-allowed'
+                }}
+                onClick={()=>{alert('ok')}}
+              >
+
+              Hoàn thành
+            </button>
+
             </div>
           </>
         ) : (

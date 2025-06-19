@@ -478,3 +478,23 @@ export async function testConfirmation (id: string){
     return false;
   }
 }
+
+// Sử lí khi bệnh nhân vắng mặt
+export async function handlingAbsences (id: string){
+  try {
+    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/KhongCoMat/${id}`,{
+      method:'PATCH',
+    });
+    if (!response.ok){
+      showToast('Xác nhận vắng mặt thất bại', ToastType.error);
+       return false
+    };
+    showToast('Xác nhận vắng mặt thành công', ToastType.success);
+    return true
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return false;
+  }
+}
+

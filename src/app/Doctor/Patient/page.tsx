@@ -1,18 +1,26 @@
 'use client'
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './Patient.css'
-import { doctorTemporaryTypes } from "@/app/types/doctorTypes/doctorTemporaryTypes";
 import { useEffect, useState } from "react";
-import { getAllPatient } from "@/app/services/DoctorSevices";
+import { getAllPatient, handlingAbsences } from "@/app/services/DoctorSevices";
 import { useRouter } from "next/navigation";
+import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
+import moment from "moment";
 
 
 export default function Patient(){
-    const [dataRender , setDataRender] = useState <doctorTemporaryTypes []> ([]);
+    const [dataRender , setDataRender] = useState <MedicalExaminationCard []> ([]);
     const router = useRouter()
     function handleExamination(id:string){
         router.push(`/Doctor/Patient/ToExamine/${id}`)
 
+    }
+
+    async function Absences(id:string){
+        const res = await handlingAbsences(id)
+        if(res){
+            LoaddingPatient()
+        }
     }
 
     const LoaddingPatient = async () => {
@@ -71,26 +79,26 @@ export default function Patient(){
                         <tr>
                             <th>STT</th>
                             <th>Họ và tên</th>
-                            <th>SĐT</th>
-                            <th>Số Bảo Hiểm Y Tế</th>
+                            <th>Số điện thoại</th>
+                            <th>Người thân</th>
                             <th>Số Căn Cước</th>
-                            <th>Ngày</th>
-                            <th>SĐT người thân</th>
+                            <th>Thời gian</th>
+                            <th>Đã vắng</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
 
 
                     <tbody>
-                        {dataRender.map((record: doctorTemporaryTypes) => (
+                        {dataRender.map((record: MedicalExaminationCard) => (
                             <tr key={record._id}>
                                 <td>{record.STTKham}</td>
                                 <td>{record.Id_TheKhamBenh.HoVaTen}</td>
                                 <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
-                                <td>{record.Id_TheKhamBenh.SoBaoHiemYTe}</td>
-                                <td>{record.Id_TheKhamBenh.SoCCCD}</td>
-                                <td>{record.Ngay}</td>
                                 <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
+                                <td>{record.Id_TheKhamBenh.SoCCCD}</td>
+                                <td>{moment(record.Gio, "HH:mm:ss").format("hh:mm:ss A")}</td>
+                                <td>{<div className={record.SoLanKhongCoMat === 0 ? 'tatusTable green':record.SoLanKhongCoMat === 1 ? 'tatusTable yellow':'tatusTable red'}>{record.SoLanKhongCoMat} đợt</div>}</td>
                                 <td>
                                     <button className="btn-primary"
                                         onClick={
@@ -99,7 +107,7 @@ export default function Patient(){
                                            }
                                         }
                                     >Khám</button>
-                                    <button className="btn-danger">Không có mặt</button>
+                                    <button className="btn-danger" onClick={()=>{Absences(record._id)}}>Không có mặt</button>
                                 </td>
                             </tr>
                         ))}

@@ -1,3 +1,4 @@
+'use client'
 import { FaSave } from 'react-icons/fa'; 
 import './Diagnosis.css';   
 import { useEffect, useState } from 'react';
@@ -6,58 +7,67 @@ import { addDiagnosis, getVitalSignsByExaminationId, updateSurvivalIndex } from 
 import { useParams } from 'next/navigation';
 import { showToast, ToastType } from '@/app/lib/Toast';
 
+export default function DiagnosisComponent () {
+  const { id } = useParams();
 
-  
-
-export default function DiagnosisComponent (){
-  const {id} = useParams();
-
-  const [datasurvivalIndexRender , setDatasurvivalIndexRender] = useState <survivalIndexType > ({})
-  const [diagnosis , setDiagnosis] = useState  <diagnosisType> ({});
+  const [datasurvivalIndexRender, setDatasurvivalIndexRender] = useState<survivalIndexType>({});
+  const [initialSurvivalIndex, setInitialSurvivalIndex] = useState<survivalIndexType>({});
+  const [diagnosis, setDiagnosis] = useState<diagnosisType>({});
 
   const getData = async () => {
-    const data = await getVitalSignsByExaminationId (id as string);
-    if (!data) return showToast ('Không có chỉ số sinh tồn' , ToastType.error);
-    setDatasurvivalIndexRender (data);
-  }
+    const data = await getVitalSignsByExaminationId(id as string);
+    if (!data) return showToast('Không có chỉ số sinh tồn', ToastType.error);
+    setDatasurvivalIndexRender(data);
+    setInitialSurvivalIndex(data); // lưu ban đầu để kiểm tra thay đổi
+  };
 
-  const handleSave =  async () => {
-    const update = await updateSurvivalIndex (datasurvivalIndexRender._id as string , datasurvivalIndexRender );
-    if(diagnosis.ChuanDoanSoBo && diagnosis.TrieuChung){
-       const updateDiagnosis = await addDiagnosis(id as string,diagnosis)
-         console.log(updateDiagnosis)
-
-        if(updateDiagnosis.data && update.data){
-          showToast("Tạo chuẩn đoán thành công",ToastType.success)
-          setDiagnosis({ChuanDoanSoBo:'',TrieuChung:''})
-        }else{
-          if(!updateDiagnosis.data){
-            showToast(updateDiagnosis.message,ToastType.error)
-          }
-          if(!update.data){
-            showToast(update.message,ToastType.error)
-          }
-          
-          
-        }
-    }else{
-      if(update.data){
-          showToast("Lưu chỉ số sinh tồn thành công",ToastType.success)
-        }else{
-            showToast(update.message,ToastType.error)      
-        }
+  const hasSurvivalIndexChanged = () => {
+    const keys = Object.keys(initialSurvivalIndex || {}) as (keyof survivalIndexType)[];
+    for (const key of keys) {
+      if (initialSurvivalIndex && datasurvivalIndexRender[key] !== initialSurvivalIndex[key]) {
+        return true;
+      }
     }
-    
-  
-  }
+    return false;
+  };
 
-  
-  useEffect (() => {
-    getData ();
+
+  const isDiagnosisFilled = Boolean(
+    diagnosis.TrieuChung?.trim() || diagnosis.ChuanDoanSoBo?.trim()
+  );
+  const isSurvivalIndexChanged = hasSurvivalIndexChanged();
+  const isSaveEnabled = isDiagnosisFilled || isSurvivalIndexChanged;
+
+  const handleSave = async () => {
+    const update = await updateSurvivalIndex(datasurvivalIndexRender._id as string, datasurvivalIndexRender);
+
+    if (diagnosis.ChuanDoanSoBo && diagnosis.TrieuChung) {
+      const updateDiagnosis = await addDiagnosis(id as string, diagnosis);
+      if (updateDiagnosis.data && update.data) {
+        showToast("Tạo chuẩn đoán thành công", ToastType.success);
+        setDiagnosis({ ChuanDoanSoBo: '', TrieuChung: '' });
+        setInitialSurvivalIndex(datasurvivalIndexRender); // cập nhật lại sau khi lưu
+      } else {
+        if (!updateDiagnosis.data) {
+          showToast(updateDiagnosis.message, ToastType.error);
+        }
+        if (!update.data) {
+          showToast(update.message, ToastType.error);
+        }
+      }
+    } else {
+      if (update.data) {
+        showToast("Lưu chỉ số sinh tồn thành công", ToastType.success);
+        setInitialSurvivalIndex(datasurvivalIndexRender); // cập nhật lại sau khi lưu
+      } else {
+        showToast(update.message, ToastType.error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getData();
   }, []);
-
-
-
   
 
     return (
@@ -248,14 +258,20 @@ export default function DiagnosisComponent (){
                   </div>
 
 
-                  <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer">
-                    <button className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton"
+              <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer">
+                      <button
+                        className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton"
                         onClick={handleSave}
+                        disabled={!isSaveEnabled}
+                        style={{
+                          backgroundColor: isSaveEnabled ? '' : 'gray',
+                          cursor: isSaveEnabled ? 'pointer' : 'not-allowed'
+                        }}
                       >
-                      <FaSave className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton__saveIcon" /> {/* Icon lưu */}
-                      Lưu
-                    </button>
-                  </div>
+                        <FaSave className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton__saveIcon" />
+                        Lưu
+                      </button>
+                    </div>
 
 
                 </div>
@@ -263,3 +279,5 @@ export default function DiagnosisComponent (){
        </>
     )
 }
+
+

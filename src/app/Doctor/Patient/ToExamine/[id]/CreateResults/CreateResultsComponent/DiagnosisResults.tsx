@@ -35,6 +35,7 @@ export default function DiagnosisResultsComponent() {
   const [doctorName, setDoctorName] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [printingIsAllowed, setPrintingIsAllowed] = useState<boolean>(false);
 
   const [dataGenerateTestResults, setDataGenerateTestResults] = useState<generateTestResultsType>({
     Id_PhieuKhamBenh: String(id),
@@ -80,6 +81,9 @@ export default function DiagnosisResultsComponent() {
           const examinationData = await getExaminationResults(String(id));
           if (examinationData) {
             setDataGenerateTestResults(examinationData);
+            if(examinationData.KetQua !== '', examinationData.HuongSuLy !=='', examinationData.GhiChu !==''){
+              setPrintingIsAllowed(true)
+            }
             // Map examination data to diagnosisTreatmentList
             patientInfo.diagnosisTreatmentList = [
               {
@@ -129,6 +133,7 @@ export default function DiagnosisResultsComponent() {
       // Optionally reload data to reflect changes
       const examinationData = await getExaminationResults(String(id));
       if (examinationData && patientData) {
+        setPrintingIsAllowed(true)
         setDataGenerateTestResults(examinationData);
         setPatientData({
           ...patientData,
@@ -160,6 +165,15 @@ export default function DiagnosisResultsComponent() {
     <div className="DiagnosisResults-Body">
       <button
         onClick={() => setIsExaminationResultModalOpen(true)}
+        disabled={!printingIsAllowed}
+        style={printingIsAllowed?{
+
+        }:{
+          color:'gray',
+          border:'1px solid gray'
+          ,
+          cursor:'not-allowed'
+        }}
         className="DiagnosisResults-printBtn"
       >
         <BsFillPrinterFill /> Kết quả
@@ -245,9 +259,9 @@ export default function DiagnosisResultsComponent() {
       {/* Nút Lưu */}
       <div className="DiagnosisResults-Body__Button">
         <button
+          disabled={!statusSave}
           style={{
-            background: statusSave ? '#28a745' : 'rgb(207, 207, 207)',
-            pointerEvents: statusSave ? 'auto' : 'none',
+            background: statusSave ? '#28a745' : 'gray',
             cursor: statusSave ? 'pointer' : 'not-allowed',
           }}
           onClick={handleSave}

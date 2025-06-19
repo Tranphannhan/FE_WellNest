@@ -1,15 +1,15 @@
 'use client'
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import '../Patient.css'
-import { doctorTemporaryTypes } from "@/app/types/doctorTypes/doctorTemporaryTypes";
 import { useEffect, useState } from "react";
 import { getAllPatient } from "@/app/services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import moment from "moment";
+import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 
 
 export default function Patient(){
-    const [dataRender , setDataRender] = useState <doctorTemporaryTypes []> ([]);
+    const [dataRender , setDataRender] = useState <MedicalExaminationCard []> ([]);
     const router = useRouter()
     function handleExamination(id:string){
         router.push(`/Doctor/Patient/ToExamine/${id}`)
@@ -70,33 +70,26 @@ export default function Patient(){
                 <table className="Patient-container_table">
                     <thead>
                         <tr>
-                            <th>Thời gian khám</th>
+                            <th>Thời gian tiếp nhận</th>
+                            <th>Thời gian kết thúc khám</th>
                             <th>Họ và tên</th>
-                            <th>SĐT</th>
-                            <th>Số Bảo Hiểm Y Tế</th>
-                            <th>Số Căn Cước</th>
-                            <th>Ngày</th>
+                            <th>Số điện thoại</th>
                             <th>SĐT người thân</th>
+                            <th>Số Căn Cước</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
 
 
                     <tbody>
-                        {dataRender.map((record: doctorTemporaryTypes) => (
+                        {dataRender.map((record: MedicalExaminationCard) => (
                             <tr key={record._id}>
-                                           <td>{moment(record.Gio, 'HH:mm:ss').format('hh:mm A')}</td>
-
+                                        <td>{moment(record.Gio, "HH:mm:ss").format("hh:mm:ss A")}</td>
+                                        <td>{moment(record.GioKetThucKham, "HH:mm:ss").format("hh:mm:ss A")}</td>
                                         <td>{record.Id_TheKhamBenh.HoVaTen}</td>
                                         <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
-                                        <td>{record.Id_TheKhamBenh.SoBaoHiemYTe}</td>
-                                        <td>{record.Id_TheKhamBenh.SoCCCD}</td>
-
-                                        {/* Định dạng ngày: 2024-06-16 -> 16/06/2024 */}
-                                        <td>{moment(record.Ngay).format('DD/MM/YYYY')}</td>
-
                                         <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
-
+                                        <td>{record.Id_TheKhamBenh.SoCCCD}</td>
                                         <td>
                                             <button
                                                 className="patient-viewDetail"

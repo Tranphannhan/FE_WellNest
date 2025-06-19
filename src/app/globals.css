@@ -49,3 +49,43 @@ body {
   width: 100%;
   padding-right: 20px;
 }
+
+.tatusTable {
+    border-radius: 100px;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+    padding: 2px 10px;
+    font-size: 14px;
+    display: flex;
+}
+
+.tatusTable.green {
+    color: green;
+    background-color: #d6fdd6;
+}
+
+.tatusTable.red {
+    color: red;
+    background-color: #fdd6d6;
+}
+
+.tatusTable.yellow {
+    color: #c2c200;
+    background-color: #edffb2;
+}
+
+.dotTableStatus{
+    animation: fadeAndScale 1s ease-in-out infinite alternate;
+}
+
+@keyframes fadeAndScale {
+  0% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+}

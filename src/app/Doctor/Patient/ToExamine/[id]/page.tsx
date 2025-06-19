@@ -14,6 +14,7 @@ export default function Patient() {
     const WaitClinicalExamination = searchParams.get('WaitClinicalExamination') === 'true';
     const [data, setData] = useState<MedicalExaminationCard | null>(null);
 
+
     useEffect(() => {
         if (!id) return;
 
@@ -26,15 +27,25 @@ export default function Patient() {
     }, [id]);
 
     return (
-        <>
-            <Tabbar
-                tabbarItems={{
-                    tabbarItems: [
-                        { text: 'Thông tin bệnh nhân', link: `/Doctor/Patient/ToExamine/${id}` },
-                        { text: 'Tạo kết quả', link: `/Doctor/Patient/ToExamine/${id}/CreateResults${WaitClinicalExamination?'?WaitClinicalExamination=true':''}` },
-                    ],
-                }}
-            />
+        <>  
+            {data?.TrangThai?
+                <Tabbar
+                    tabbarItems={{
+                        tabbarItems: [
+                            { text: 'Thông tin bệnh nhân', link: `/Doctor/Patient/ToExamine/${id}` } 
+                        ],
+                    }}
+                />:            
+                <Tabbar
+                    tabbarItems={{
+                        tabbarItems: [
+                            { text: 'Thông tin bệnh nhân', link: `/Doctor/Patient/ToExamine/${id}` },
+                            { text: 'Tạo kết quả', link: `/Doctor/Patient/ToExamine/${id}/CreateResults${WaitClinicalExamination?'?WaitClinicalExamination=true':''}` },
+                        ],
+                    }}
+                />
+            }
+
             <div className="ToExamine-container">
                 <h1 className="ToExamine-container__title">Thông tin bệnh nhân</h1>
 
@@ -43,8 +54,6 @@ export default function Patient() {
                 ) : (
                     <table className="ToExamine-container__table">
                         <tbody>
-                            <tr><td>Ngày khám</td><td className={!data.Ngay ? "nodata" : ""}>{data.Ngay || "Không có"}</td></tr>
-                            <tr><td>Số thứ tự</td><td className={!data.STTKham ? "nodata" : ""}>{data.STTKham || "Không có"}</td></tr>
                             <tr><td>Họ và tên</td><td className={!data.Id_TheKhamBenh?.HoVaTen ? "nodata" : ""}>{data.Id_TheKhamBenh?.HoVaTen || "Không có"}</td></tr>
                             <tr><td>Giới tính</td><td className={!data.Id_TheKhamBenh?.GioiTinh ? "nodata" : ""}>{data.Id_TheKhamBenh?.GioiTinh || "Không có"}</td></tr>
                             <tr><td>Ngày sinh</td><td className={!data.Id_TheKhamBenh?.NgaySinh ? "nodata" : ""}>{data.Id_TheKhamBenh?.NgaySinh || "Không có"}</td></tr>
@@ -53,6 +62,7 @@ export default function Patient() {
                             <tr><td>SĐT người thân</td><td className={!data.Id_TheKhamBenh?.SDT_NguoiThan ? "nodata" : ""}>{data.Id_TheKhamBenh?.SDT_NguoiThan || "Không có"}</td></tr>
                             <tr><td>Số BHYT</td><td className={!data.Id_TheKhamBenh?.SoBaoHiemYTe ? "nodata" : ""}>{data.Id_TheKhamBenh?.SoBaoHiemYTe || "Không có"}</td></tr>
                             <tr><td>Địa chỉ</td><td className={!data.Id_TheKhamBenh?.DiaChi ? "nodata" : ""}>{data.Id_TheKhamBenh?.DiaChi || "Không có"}</td></tr>
+                            <tr><td>Lý do đến khám</td><td className={!data.LyDoDenKham ? "nodata" : ""}>{data.LyDoDenKham || "Không có"}</td></tr>
                             <tr><td>Lịch sử bệnh</td><td className={!data.Id_TheKhamBenh?.LichSuBenh ? "nodata" : ""}>{data.Id_TheKhamBenh?.LichSuBenh || "Không có"}</td></tr>
                             <tr>
                                 <td>Lịch sử khám tại đây</td>

@@ -50,10 +50,12 @@ export interface MedicalExaminationCard {
   Ngay: string;
   Gio: string;
   TrangThaiThanhToan: boolean;
-  STTKham: string;
+  STTKham: number;
   TrangThai: boolean;
   TrangThaiHoatDong: string;
+  GioKetThucKham:string;
   __v: number;
+  SoLanKhongCoMat:number;
 }
 
 // chỉ số sinh tồn 
