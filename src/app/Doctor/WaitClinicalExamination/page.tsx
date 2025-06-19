@@ -1,14 +1,14 @@
 'use client'
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import '../Patient/Patient.css'
-import { doctorTemporaryTypes } from "@/app/types/doctorTypes/doctorTemporaryTypes";
 import { useEffect, useState } from "react";
 import { getAllPatient } from "@/app/services/DoctorSevices";
 import { useRouter } from "next/navigation";
+import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 
 
 export default function Patient(){
-    const [dataRender , setDataRender] = useState <doctorTemporaryTypes []> ([]);
+    const [dataRender , setDataRender] = useState <MedicalExaminationCard []> ([]);
     const router = useRouter()
     function handleExamination(id:string){
         router.push(`/Doctor/Patient/ToExamine/${id}?WaitClinicalExamination=true`)
@@ -80,7 +80,7 @@ export default function Patient(){
 
 
                     <tbody>
-                        {dataRender.map((record: doctorTemporaryTypes) => (
+                        {dataRender.map((record: MedicalExaminationCard) => (
                             <tr key={record._id}>
                                 <td>{record.STTKham}</td>
                                 <td>{record.Id_TheKhamBenh.HoVaTen}</td>
