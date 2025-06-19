@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import Chart from 'chart.js/auto'; // Import Chart.js
-import './RevenueDashboard.css'; // Import the new CSS file
+import Chart from 'chart.js/auto';
+import './RevenueDashboard.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
+import Pagination from '@/app/components/ui/Pagination/Pagination';
 
-// Define types for clarity, adjust as per your actual data structure
 interface Transaction {
     date: string;
     time: string;
@@ -43,7 +43,6 @@ const allTransactions: Transaction[] = [
     { date: '2024-10-01', time: '15:00', type: 'Cận lâm sàng', description: 'Xét nghiệm chức năng thận', amount: 600000 },
     { date: '2024-11-10', time: '09:30', type: 'Đơn thuốc', description: 'Đơn thuốc kháng sinh', amount: 700000 },
     { date: '2024-12-05', time: '11:45', type: 'Cận lâm sàng', description: 'MRI cột sống', amount: 4000000 },
-
     // Data for 2023
     { date: '2023-01-01', time: '10:00', type: 'Đơn thuốc', description: 'Đơn thuốc cũ 2023', amount: 1000000 },
     { date: '2023-04-15', time: '11:00', type: 'Cận lâm sàng', description: 'Xét nghiệm 2023', amount: 500000 },
@@ -53,8 +52,7 @@ const allTransactions: Transaction[] = [
     { date: '2023-05-22', time: '16:00', type: 'Cận lâm sàng', description: 'CT Scan 2023', amount: 2000000 },
     { date: '2023-08-01', time: '10:00', type: 'Đơn thuốc', description: 'Đơn thuốc dị ứng 2023', amount: 450000 },
     { date: '2023-11-11', time: '12:00', type: 'Cận lâm sàng', description: 'MRI não 2023', amount: 3500000 },
-
-    // Data for June 19, 2025 (Today's Date for demonstration)
+    // Data for June 19, 2025 (current date for testing)
     { date: '2025-06-16', time: '09:00', type: 'Đơn thuốc', description: 'Đơn thuốc đầu tuần này', amount: 2000000 },
     { date: '2025-06-17', time: '09:30', type: 'Cận lâm sàng', description: 'Xét nghiệm hôm qua', amount: 1000000 },
     { date: '2025-06-18', time: '10:00', type: 'Đơn thuốc', description: 'Đơn thuốc hôm qua 2', amount: 1200000 },
@@ -79,21 +77,19 @@ const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
-// Function to get the start of the week (Monday) for a given date
 const getStartOfWeek = (date: Date) => {
     const d = new Date(date);
-    const day = d.getDay(); // 0 for Sunday, 1 for Monday, etc.
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust if Sunday
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
     d.setDate(diff);
-    d.setHours(0, 0, 0, 0); // Set to start of the day
+    d.setHours(0, 0, 0, 0);
     return d;
 };
 
-// Function to get the end of the week (Sunday) for a given date
 const getEndOfWeek = (date: Date) => {
     const d = new Date(getStartOfWeek(date));
-    d.setDate(d.getDate() + 6); // Add 6 days to get to Sunday
-    d.setHours(23, 59, 59, 999); // Set to end of the day
+    d.setDate(d.getDate() + 6);
+    d.setHours(23, 59, 59, 999);
     return d;
 };
 
@@ -106,29 +102,54 @@ const formatDateForInput = (date: Date) => {
 
 const RevenueDashboard: React.FC = () => {
     const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
-    const [totalPrescriptionRevenue, setTotalPrescriptionRevenue] = useState(0);
-    const [totalClinicalRevenue, setTotalClinicalRevenue] = useState(0);
+    const [displayPrescriptionRevenue, setDisplayPrescriptionRevenue] = useState(0);
+    const [displayClinicalRevenue, setDisplayClinicalRevenue] = useState(0);
+    const [chartPrescriptionRevenue, setChartPrescriptionRevenue] = useState(0);
+    const [chartClinicalRevenue, setChartClinicalRevenue] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
     const [filterStartDate, setFilterStartDate] = useState('');
     const [filterEndDate, setFilterEndDate] = useState('');
     const [filterMonth, setFilterMonth] = useState('');
     const [filterQuarter, setFilterQuarter] = useState('');
-    const [filterYear, setFilterYear] = useState('');
+    // Khởi tạo mặc định là 2025
+    const [filterYear, setFilterYear] = useState('2025');
 
     const barChartRef = useRef<HTMLCanvasElement>(null);
     const pieChartRef = useRef<HTMLCanvasElement>(null);
     const myBarChart = useRef<Chart | null>(null);
     const myPieChart = useRef<Chart | null>(null);
 
+    // Hàm để chạy số từ từ
+    const animateCounter = (
+        start: number,
+        end: number,
+        duration: number,
+        setDisplayValue: React.Dispatch<React.SetStateAction<number>>,
+        setChartValue: React.Dispatch<React.SetStateAction<number>>
+    ) => {
+        let startTimestamp: number | null = null;
+        const step = (timestamp: number) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const easedProgress = progress < 0.5
+                ? 2 * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2; // Ease in-out
+            const current = Math.floor(start + (end - start) * easedProgress);
+            setDisplayValue(current);
+            if (progress === 1) {
+                setChartValue(end); // Chỉ cập nhật giá trị biểu đồ khi animation hoàn tất
+            }
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            }
+        };
+        requestAnimationFrame(step);
+    };
+
     const populateYears = useCallback(() => {
-        const currentYear = new Date().getFullYear();
-        const startYear = 2023; // Or whatever your earliest data year is
-        const years = [];
-        for (let year = currentYear + 1; year >= startYear; year--) {
-            years.push(year);
-        }
-        return years;
+        const years = Array.from(new Set(allTransactions.map(t => new Date(t.date).getFullYear())));
+        return years.sort((a, b) => b - a);
     }, []);
 
     const applyFilters = useCallback(() => {
@@ -136,16 +157,16 @@ const RevenueDashboard: React.FC = () => {
             alert('Ngày kết thúc không thể trước ngày bắt đầu!');
             return;
         }
+
         let currentFiltered = allTransactions.filter(transaction => {
             const transactionDateObj = new Date(transaction.date);
             const transactionYear = transactionDateObj.getFullYear();
-            const transactionMonth = transactionDateObj.getMonth() - 1; // 1-indexed
+            const transactionMonth = transactionDateObj.getMonth() + 1;
 
-            // Priority: Date Range > Month > Quarter > Year > Default (Current Week)
             if (filterStartDate && filterEndDate) {
                 const startDateObj = new Date(filterStartDate);
                 const endDateObj = new Date(filterEndDate);
-                endDateObj.setHours(23, 59, 59, 999); // Include end date fully
+                endDateObj.setHours(23, 59, 59, 999);
                 return transactionDateObj >= startDateObj && transactionDateObj <= endDateObj;
             }
 
@@ -164,17 +185,15 @@ const RevenueDashboard: React.FC = () => {
                 return quarter.toString() === filterQuarter;
             }
 
-            if (filterYear && !filterQuarter) {
+            if (filterYear) {
                 return transactionYear === parseInt(filterYear);
             }
 
-            // Default to current week
-            const today = new Date();
-            const startOfWeek = getStartOfWeek(today);
-            const endOfWeek = getEndOfWeek(today);
-            return transactionDateObj >= startOfWeek && transactionDateObj <= endOfWeek;
+            // If no specific filters are active, show all transactions (this means filterYear is empty string)
+            return true;
         });
 
+        // Sắp xếp từ ngày gần nhất đến xa nhất
         currentFiltered.sort((a, b) => {
             const dateA = new Date(a.date + ' ' + a.time);
             const dateB = new Date(b.date + ' ' + b.time);
@@ -182,35 +201,14 @@ const RevenueDashboard: React.FC = () => {
         });
 
         setFilteredTransactions(currentFiltered);
-        setCurrentPage(1); // Reset to first page
+        setCurrentPage(1);
     }, [filterStartDate, filterEndDate, filterMonth, filterQuarter, filterYear]);
 
+    // Sử dụng useEffect để áp dụng bộ lọc lần đầu khi component mount
+    // Điều này sẽ đảm bảo dữ liệu hiển thị theo filterYear mặc định '2025'
     useEffect(() => {
-        const today = new Date();
-        const startOfWeek = getStartOfWeek(today);
-        const endOfWeek = getEndOfWeek(today);
-
-        setFilterStartDate(formatDateForInput(startOfWeek));
-        setFilterEndDate(formatDateForInput(endOfWeek));
-        setFilterYear(today.getFullYear().toString());
-        applyFilters(); // Gọi applyFilters để hiển thị dữ liệu tuần hiện tại
-    }, []); // Chỉ chạy một lần khi mount
-
-    useEffect(() => {
-        const today = new Date();
-        const startOfWeek = getStartOfWeek(today);
-        const endOfWeek = getEndOfWeek(today);
-
-        setFilterStartDate(formatDateForInput(startOfWeek));
-        setFilterEndDate(formatDateForInput(endOfWeek));
-        // We call applyFilters initially here to set the default current week data
-        // and it will recalculate totals and render charts/table.
-        // We also need to set the default selected year in the dropdown.
-        setFilterYear(today.getFullYear().toString());
-    }, []); // Run only once on mount to set initial filters
-
-
-
+        applyFilters();
+    }, []); // Dependency array rỗng, chỉ chạy một lần khi mount
 
     useEffect(() => {
         let prescriptionRev = 0;
@@ -222,13 +220,25 @@ const RevenueDashboard: React.FC = () => {
                 clinicalRev += transaction.amount;
             }
         });
-        setTotalPrescriptionRevenue(prescriptionRev);
-        setTotalClinicalRevenue(clinicalRev);
-    }, [filteredTransactions]); // Recalculate totals when filteredTransactions change
 
+        // Animate counters and update chart values after animation
+        animateCounter(
+            displayPrescriptionRevenue,
+            prescriptionRev,
+            300,
+            setDisplayPrescriptionRevenue,
+            setChartPrescriptionRevenue
+        );
+        animateCounter(
+            displayClinicalRevenue,
+            clinicalRev,
+            300,
+            setDisplayClinicalRevenue,
+            setChartClinicalRevenue
+        );
+    }, [filteredTransactions]);
 
     useEffect(() => {
-        // Destroy existing charts if they exist
         if (myBarChart.current) {
             myBarChart.current.destroy();
         }
@@ -237,9 +247,9 @@ const RevenueDashboard: React.FC = () => {
         }
 
         const chartLabels = ['Đơn Thuốc', 'Cận Lâm Sàng'];
-        const chartData = [totalPrescriptionRevenue, totalClinicalRevenue];
+        const chartData = [chartPrescriptionRevenue, chartClinicalRevenue];
 
-        if (barChartRef.current && (totalPrescriptionRevenue > 0 || totalClinicalRevenue > 0)) {
+        if (barChartRef.current && (chartPrescriptionRevenue > 0 || chartClinicalRevenue > 0)) {
             const barCtx = barChartRef.current.getContext('2d');
             if (barCtx) {
                 myBarChart.current = new Chart(barCtx, {
@@ -249,14 +259,8 @@ const RevenueDashboard: React.FC = () => {
                         datasets: [{
                             label: 'Doanh thu (VND)',
                             data: chartData,
-                            backgroundColor: [
-                                'rgba(59, 130, 246, 0.7)', // Blue 500
-                                'rgba(22, 163, 74, 0.7)'  // Green 600
-                            ],
-                            borderColor: [
-                                'rgba(59, 130, 246, 1)',
-                                'rgba(22, 163, 74, 1)'
-                            ],
+                            backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(22, 163, 74, 0.7)'],
+                            borderColor: ['rgba(59, 130, 246, 1)', 'rgba(22, 163, 74, 1)'],
                             borderWidth: 1
                         }]
                     },
@@ -264,30 +268,14 @@ const RevenueDashboard: React.FC = () => {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            title: {
-                                display: true,
-                                text: 'So sánh Doanh thu',
-                                font: {
-                                    size: 18,
-                                    weight: 'bold'
-                                }
-                            },
-                            legend: {
-                                display: false
-                            }
+                            title: { display: true, text: 'So sánh Doanh thu', font: { size: 18, weight: 'bold' } },
+                            legend: { display: false }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Số tiền (VND)'
-                                },
-                                ticks: {
-                                    callback: function (value: string | number) {
-                                        return formatCurrency(Number(value));
-                                    }
-                                }
+                                title: { display: true, text: 'Số tiền (VND)' },
+                                ticks: { callback: (value: string | number) => formatCurrency(Number(value)) }
                             }
                         }
                     }
@@ -295,7 +283,7 @@ const RevenueDashboard: React.FC = () => {
             }
         }
 
-        if (pieChartRef.current && (totalPrescriptionRevenue > 0 || totalClinicalRevenue > 0)) {
+        if (pieChartRef.current && (chartPrescriptionRevenue > 0 || chartClinicalRevenue > 0)) {
             const pieCtx = pieChartRef.current.getContext('2d');
             if (pieCtx) {
                 myPieChart.current = new Chart(pieCtx, {
@@ -305,14 +293,8 @@ const RevenueDashboard: React.FC = () => {
                         datasets: [{
                             label: 'Tỷ lệ Doanh thu',
                             data: chartData,
-                            backgroundColor: [
-                                'rgba(59, 130, 246, 0.7)', // Blue 500
-                                'rgba(22, 163, 74, 0.7)'  // Green 600
-                            ],
-                            borderColor: [
-                                'rgba(59, 130, 246, 1)',
-                                'rgba(22, 163, 74, 1)'
-                            ],
+                            backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(22, 163, 74, 0.7)'],
+                            borderColor: ['rgba(59, 130, 246, 1)', 'rgba(22, 163, 74, 1)'],
                             borderWidth: 1
                         }]
                     },
@@ -320,17 +302,10 @@ const RevenueDashboard: React.FC = () => {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            title: {
-                                display: true,
-                                text: 'Tỷ lệ phân bổ Doanh thu',
-                                font: {
-                                    size: 18,
-                                    weight: 'bold'
-                                }
-                            },
+                            title: { display: true, text: 'Tỷ lệ phân bổ Doanh thu', font: { size: 18, weight: 'bold' } },
                             tooltip: {
                                 callbacks: {
-                                    label: function (context) {
+                                    label: (context) => {
                                         const label = context.label || '';
                                         const value = context.parsed || 0;
                                         const total = context.dataset.data.reduce((sum, current) => Number(sum) + Number(current), 0);
@@ -345,7 +320,6 @@ const RevenueDashboard: React.FC = () => {
             }
         }
 
-        // Cleanup function for charts
         return () => {
             if (myBarChart.current) {
                 myBarChart.current.destroy();
@@ -356,33 +330,23 @@ const RevenueDashboard: React.FC = () => {
                 myPieChart.current = null;
             }
         };
-    }, [totalPrescriptionRevenue, totalClinicalRevenue]); // Re-render charts when revenue totals change
+    }, [chartPrescriptionRevenue, chartClinicalRevenue]);
 
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
 
     const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
     const startIndex = (currentPage - 1) * transactionsPerPage;
     const endIndex = Math.min(startIndex + transactionsPerPage, filteredTransactions.length);
     const transactionsToShow = filteredTransactions.slice(startIndex, endIndex);
 
-    const handlePrevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(prev => prev - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(prev => prev + 1);
-        }
-    };
-
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
-        // Clear conflicting filters based on selection
         switch (id) {
             case 'filterStartDate':
                 setFilterStartDate(value);
-                setFilterEndDate(''); // Clear end date to allow it to be set after start
+                setFilterEndDate('');
                 setFilterMonth('');
                 setFilterQuarter('');
                 setFilterYear('');
@@ -405,36 +369,34 @@ const RevenueDashboard: React.FC = () => {
                 setFilterStartDate('');
                 setFilterEndDate('');
                 setFilterMonth('');
-                // If year is not selected, this will filter quarter across all years
+                // Không xóa filterYear ở đây vì filter quý thường đi kèm với năm
                 break;
             case 'filterYear':
                 setFilterYear(value);
                 setFilterStartDate('');
                 setFilterEndDate('');
                 setFilterMonth('');
-                // If quarter is not selected, this will filter year across all quarters
+                // Không xóa filterQuarter ở đây vì filter năm có thể kết hợp với quý
                 break;
             default:
                 break;
         }
+        // applyFilters(); // Loại bỏ dòng này để không tự động lọc
     };
 
-    const grandTotal = totalPrescriptionRevenue + totalClinicalRevenue;
+    const grandTotal = displayPrescriptionRevenue + displayClinicalRevenue;
 
     return (
         <>
             <Tabbar
                 tabbarItems={{
                     tabbarItems: [
-                        { text: 'Thông kê doanh thu', link: `/Doctor/Patient/ToExamine/684926749c351fd5325793a4/CreateResults/ComponentResults/ComponentPrintTicket` },
+                        { text: 'Thống kê doanh thu', link: `/Doctor/Patient/ToExamine/684926749c351fd5325793a4/CreateResults/ComponentResults/ComponentPrintTicket` },
                     ],
                 }}
             />
 
             <div className="revenue-dashboard-container">
-                {/* <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-10 mt-6"></h1> */}
-
-                {/* Filter Controls */}
                 <div className="card mb-5">
                     <h4 className="text-2xl font-bold text-gray-700 mb-5 text-center">Thống Kê Doanh Thu</h4>
                     <div className="grid grid-cols-1 md:grid-cols-6 gap-6 items-end">
@@ -456,7 +418,7 @@ const RevenueDashboard: React.FC = () => {
                                 className="input-select"
                                 value={filterEndDate}
                                 onChange={handleFilterChange}
-                                disabled={!filterStartDate} // Disable end date if start date is not picked
+                                disabled={!filterStartDate}
                             />
                         </div>
                         <div>
@@ -498,35 +460,32 @@ const RevenueDashboard: React.FC = () => {
                                 ))}
                             </select>
                         </div>
-                        <button id="applyFilterBtn" className="btn-filter w-1/2 md:w-auto" onClick={applyFilters}>
-                            Áp dụng bộ lọc
-                        </button>
+                        <div className="flex justify-center">
+                            {/* Gọi applyFilters khi nút được nhấn */}
+                            <button id="applyFilterBtn" className="btn-filter w-1/2 md:w-auto" onClick={applyFilters}>
+                                Áp dụng bộ lọc
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <div className="w-full flex justify-between">
                     <div className="flex flex-col md:flex-row justify-between gap-6 mb-5 flex-1">
-                        {/* Tổng Doanh Thu Hiện tại Card */}
                         <div className="card text-center flex-1">
                             <h2 className="text-2xl font-bold text-gray-700 mb-5">Tổng Doanh Thu</h2>
                             <p id="totalRevenueDisplay" className="text-2xl font-extrabold text-red-500">{formatCurrency(grandTotal)}</p>
                         </div>
-
-                        {/* Doanh Thu Đơn Thuốc Card */}
                         <div className="card text-center flex-1">
                             <h2 className="text-2xl font-bold text-gray-700 mb-5">Doanh Thu Đơn Thuốc</h2>
-                            <p id="prescriptionRevenueDisplay" className="text-2xl font-extrabold text-blue-500">{formatCurrency(totalPrescriptionRevenue)}</p>
+                            <p id="prescriptionRevenueDisplay" className="text-2xl font-extrabold text-blue-500">{formatCurrency(displayPrescriptionRevenue)}</p>
                         </div>
-
-                        {/* Doanh Thu Cận Lâm Sàng Card */}
                         <div className="card text-center flex-1">
                             <h2 className="text-2xl font-bold text-gray-700 mb-5">Doanh Thu Cận Lâm Sàng</h2>
-                            <p id="clinicalRevenueDisplay" className="text-2xl font-extrabold text-green-500">{formatCurrency(totalClinicalRevenue)}</p>
+                            <p id="clinicalRevenueDisplay" className="text-2xl font-extrabold text-green-500">{formatCurrency(displayClinicalRevenue)}</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Biểu Đồ Thống Kê */}
                 <div className="charts-section">
                     <div className="card chart-card">
                         <h3 className="chart-title">So Sánh Doanh Thu Theo Loại</h3>
@@ -534,7 +493,6 @@ const RevenueDashboard: React.FC = () => {
                             <canvas ref={barChartRef}></canvas>
                         </div>
                     </div>
-
                     <div className="card chart-card">
                         <h3 className="chart-title">Tỷ Lệ Phân Bổ Doanh Thu</h3>
                         <div className="chart-container">
@@ -543,7 +501,6 @@ const RevenueDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Bảng Thống Kê Chi Tiết */}
                 <div className="card">
                     <h2 className="text-2xl font-bold text-gray-700 mb-5 text-center">Bảng Thống Kê Chi Tiết Giao Dịch</h2>
                     <div className="overflow-x-auto">
@@ -583,32 +540,11 @@ const RevenueDashboard: React.FC = () => {
                         </table>
                     </div>
 
-                    {/* Pagination Controls */}
-                    <div className="flex justify-end items-center mt-6 space-x-2"> {/* Changed justify-center to justify-end */}
-                        <button
-                            className="pagination-arrow-btn"
-                            onClick={handlePrevPage}
-                            disabled={currentPage === 1}
-                        >
-                            &lt; {/* Unicode for left arrow */}
-                        </button>
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                            <button
-                                key={page}
-                                className={`pagination-number-btn ${currentPage === page ? 'active' : ''}`}
-                                onClick={() => setCurrentPage(page)}
-                            >
-                                {page}
-                            </button>
-                        ))}
-                        <button
-                            className="pagination-arrow-btn"
-                            onClick={handleNextPage}
-                            disabled={currentPage === totalPages || totalPages === 0}
-                        >
-                            &gt; {/* Unicode for right arrow */}
-                        </button>
-                    </div>
+                    <Pagination
+                        totalPages={totalPages}
+                        currentPage={currentPage}
+                        onPageChange={handlePageChange}
+                    />
                 </div>
             </div>
         </>
