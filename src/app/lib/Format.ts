@@ -1,3 +1,5 @@
+import moment from "moment";
+
 // Định dạng năm từ 14052005 thành 2005-24-05
 export function convertDateFormat(dateStr: string): string {
   const day = dateStr.substring(0, 2);
@@ -32,4 +34,9 @@ export function calculateAge(ngaySinhChuoi: string): number | null {
   if (chuaDenSinhNhat) tuoi--;
 
   return tuoi;
+}
+
+//định dạng thời gian 01-50-29s AM/PM
+export function formatTime(time:string){
+  return (moment(time, "HH:mm:ss").format("hh:mm:ss A"))
 }
