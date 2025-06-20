@@ -3,8 +3,8 @@
 'use client';
 import '../PrescriptionDetails/PrescriptionDetails.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
+import { formatCurrencyVND } from '@/app/lib/Format';
 import { useRouter } from 'next/navigation';
-
 
 
 
@@ -37,15 +37,14 @@ export default function PrescriptionDetails() {
                 {/* Thông tin bệnh nhân */}
                 <div className="PrescriptionDetails-container__Box1">
                     <h3>Thông tin bệnh nhân</h3>
-                    <div className="patient-info">
+                    <div className="PrescriptionDetails-container__Box1__patient-info">
                         <p><strong>Dịch vụ:</strong> Xét nghiệm máu</p>
                         <p><strong>Bệnh nhân:</strong> Nguyễn Văn Hoàng Kim Cốt</p>
                         <p><strong>Ngày:</strong> 05/12/2022</p>
-                        <p><strong>Bác sĩ yêu cầu:</strong> Dr. John</p>
+                        <p><strong>Bác sĩ yêu cầu: </strong> Dr. John</p>
                         <p><strong>Số điện thoại:</strong> 0908109200</p>
-                        <p><strong style={{fontSize : '16px'}}>Tổng tiền :</strong> <span style={{color : 'red' , fontSize : '16px'}}>2.050.000 đ</span></p>
+                        <p><strong style={{fontSize : '18px'}}>Tổng tiền : </strong><span style={{color : 'red' , fontSize : '16px'}}>{formatCurrencyVND(250000)}</span></p>
                     </div>
-
 
                     <div className="PrescriptionDetails-container__Box1__boxPage">
                         <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer"
@@ -62,11 +61,11 @@ export default function PrescriptionDetails() {
                             Xác nhận thanh toán
                         </button>
                     </div>
-                </div>
+                </div>  
 
 
 
-                
+                 
                 <div className="PrescriptionDetails-container__Box2">
                     <div className='PrescriptionDetails-container__Box2__title'>Chi tiết cận lâm sàng</div>
 
@@ -86,8 +85,9 @@ export default function PrescriptionDetails() {
                                     <td>{item.TenPhongThietBi}</td>
                                     <td>{item.TenXetNghiem}</td>
                                     <td>{item.GiaMoiDonVi}</td>
-                                    <td style={{ color: 'red', fontWeight: 'bold' }}>{item.GiaTong.toLocaleString()} đ</td>
-
+                                    <td style={{ color: 'red', fontWeight: 'bold' }}>
+                                        {formatCurrencyVND (item.GiaTong)}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

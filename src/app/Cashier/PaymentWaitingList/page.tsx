@@ -5,7 +5,7 @@ import './Prescription.css';
 import { useRouter } from 'next/navigation';
 import ConfirmationNotice from "../ComponentCashier/ConfirmationNotice";
 import React, {  useState } from 'react';
-import { formatCurrencyVND } from "@/app/lib/Format";
+import { formatCurrencyVND, formatTime } from "@/app/lib/Format";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
 
 
@@ -138,69 +138,54 @@ export default function Prescription (){
                         </tr>
                     </thead>
 
- 
+   
                     <tbody>
                         {mockData.map((record , index) => (
                             <tr key={record._id}>
-                                <td>{index}</td>
+                                <td>{1 + index}</td>
                                 <td>{record.Id_TheKhamBenh.HoVaTen}</td>
                                 <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
                                 <td>{record.Id_TheKhamBenh.TenDonThuoc}</td>
                                 <td>{record.Id_TheKhamBenh.TenBacSi}</td>
                                 <td>{record.Ngay}</td>
-                                  <td style={{ alignItems: 'center', gap: '4px' }}>
-                                    <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#333' }}>{record.Gio}</span>
+                                <td >{formatTime (record.Gio)}</td>
+                                
+                                <td style={{color : 'red' , fontWeight : 'bold'}}>
+                                    {formatCurrencyVND (record.Id_TheKhamBenh.TongTien)}
                                 </td>
-                                <td>{formatCurrencyVND (record.Id_TheKhamBenh.TongTien)}</td>
-                            
 
-                                <td>
+                                 <td>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <button
-                                            className="btn-primary"
-                                            onClick={() => router.push('/Cashier/PaymentWaitingList/ParaclinicalDetails')}
+                                        <button className="button--green"
                                             style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                marginRight: '10px' 
+                                                marginRight : '10px'
                                             }}
-                                        >
-                                            <i
-                                                className="bi bi-eye-fill"
-                                                style={{
-                                                    color: 'white',
-                                                    fontSize: '16px',
-                                                    paddingRight: '10px'
-                                                }}
-                                            ></i>
-                                            <span style={{ color: 'white', fontStyle: 'normal' }}>Xem Chi Tiết</span>
+                                            onClick={() => router.push('/Cashier/PaymentWaitingList/ParaclinicalDetails')}
+                                            
+                                            >
+                                            <i className="bi bi-eye-fill"></i>
+                                            Xem chi tiết
                                         </button>
 
 
-                                        
-                                        <button
-                                            className="btn-danger"
-                                            onClick={() => handlePaymenConfirmation(
+                                        <button className="button--red"
+                                               onClick={() => handlePaymenConfirmation(
                                                 record.Id_TheKhamBenh.HoVaTen,
                                                 record.Id_TheKhamBenh.TongTien
                                             )}
-                                            style={{
-                                                display: 'flex',
-                                                alignItems: 'center'
-                                            }}
                                         >
-                                            <FaMoneyCheckDollar
-                                                style={{
-                                                    color: 'white',
-                                                    fontSize: '22px',
-                                                    paddingRight: '5px',
-                                                    marginRight : '7px'
-                                                }}
-                                            />
-                                            <span style={{ color: 'white', fontStyle: 'normal' }}>Thu tiền</span>
+                                            <FaMoneyCheckDollar/>
+                                            Thu tiền
                                         </button>
+
+
+                                            
                                     </div>
                                 </td>
+                            
+
+
+                              
 
 
 

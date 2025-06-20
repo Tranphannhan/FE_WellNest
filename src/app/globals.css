@@ -117,9 +117,10 @@ body {
   background-color: rgb(32, 131, 229); /* màu hover đậm hơn */
 }
 
+
 /* nút nhỏ màu xanh */
 .button--green {
-  background-color: rgb(0, 255, 68);
+  background-color: #00d335;
   color: white;
   padding: 4px 13px;
   border-radius: 8px;
@@ -130,8 +131,11 @@ body {
   transition: background-color 0.2s ease;
 }
 .button--green:hover {
-  background-color: rgb(0, 149, 20); /* màu hover đậm hơn */
+  background-color: #00d335; /* màu hover đậm hơn */
 }
+
+
+
 
 /* View Detail Button */
 .button--viewDetail {
