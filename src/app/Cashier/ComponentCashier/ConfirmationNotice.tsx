@@ -4,16 +4,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import './ConfirmationNotice.css';
+import React from 'react';
 
 
 interface Type_Data_information {
-  name: string;
-  totalPrice: string;
+  name ? : string;
+  totalPrice ?  : string;
   paymentMethod: string;
   handleClose: () => void;
   handleShow: () => void;
   show: boolean;
   callBack: () => void;
+  paymentConfirmation : () => void;
 }
 
 
@@ -43,20 +45,29 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
               <option value="Chuyển khoản">Chuyển khoản</option>
               <option value="Thẻ">Thẻ</option>
             </select>
-
-
-
           </div>
         </Modal.Body>
 
 
         <Modal.Footer className="confirmationNotice-confirmationNotice-footer">
-          <Button variant="danger" onClick={Data_information.handleClose} className="btn-cancel confirmationNotice-confirmationNotice-footer__iconDelete">
+          <Button variant="danger" 
+              onClick={Data_information.handleClose} 
+              className="btn-cancel confirmationNotice-confirmationNotice-footer__iconDelete"
+              style={{
+                paddingLeft : '20px',
+                paddingRight : '30px'
+              }}
+            >
             <i className ="bi bi-x-circle-fill"></i> Hủy
           </Button>
           
 
-          <Button  variant="primary" onClick={Data_information.callBack} className="btn-confirm  confirmationNotice-confirmationNotice-footer__iconCheck">
+          <Button  variant="primary" 
+              onClick={Data_information.paymentConfirmation} 
+              className="btn-confirm  confirmationNotice-confirmationNotice-footer__iconCheck"
+            
+            >
+              
             <i className ="bi bi-check-circle-fill"></i>
              Xác nhận thanh toán
           </Button>

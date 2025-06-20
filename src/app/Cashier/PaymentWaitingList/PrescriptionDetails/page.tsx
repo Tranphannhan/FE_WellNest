@@ -3,8 +3,11 @@
 import React from 'react';
 import './PrescriptionDetails.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
+import { useRouter } from 'next/navigation';
+
 
 export default function PrescriptionDetails() {
+    const router = useRouter();
     const mockData = [
         { name: 'Paracetamol 500mg', unit: 'Vỉ', quantity: 1, price: 150000, total: 150000 },
         { name: 'Onepiece 500mg', unit: 'Viên', quantity: 20, price: 15000, total: 300000 },
@@ -15,6 +18,8 @@ export default function PrescriptionDetails() {
         { name: 'Sasuke 500mg', unit: 'Vỉ', quantity: 1, price: 250000, total: 250000 },
     ];
 
+
+
     return (
         <>
             <Tabbar
@@ -24,6 +29,7 @@ export default function PrescriptionDetails() {
                     ],
                 }}
             />
+
 
             <div className="PrescriptionDetails-container">
                 {/* Thông tin bệnh nhân */}
@@ -40,7 +46,9 @@ export default function PrescriptionDetails() {
 
 
                     <div className="PrescriptionDetails-container__Box1__boxPage">
-                        <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer">
+                        <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer"
+                             onClick={() => router.push('/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired')}
+                        >
                             <i className ="bi bi-x-circle-fill"></i>
                             Hủy
                         </button>
@@ -77,11 +85,13 @@ export default function PrescriptionDetails() {
                                     <td>{item.quantity}</td>
                                     <td>{item.price.toLocaleString()} đ</td>
                                     <td style={{ color: 'red', fontWeight: 'bold' }}>{item.total.toLocaleString()} đ</td>
-                                    
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+
+
+                    
                 </div>
             </div>
         </>

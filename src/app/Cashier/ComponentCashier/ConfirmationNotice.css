@@ -72,14 +72,8 @@ a {
 }
 
 
-
-
-
-
-
-
 .btn-cancel {
-    background-color: red;
+    background-color: tomato;
     border: none;
     padding: 8px 16px;
 }

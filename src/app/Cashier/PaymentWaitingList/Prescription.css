@@ -27,25 +27,26 @@
 }
 
 .Prescription-container_table tbody tr:last-child td {
-    border-bottom: none; /* No border for the last row */
-}
+    border-bottom: none; 
+}  
 
 .Prescription-container_table__btn-primary ,
 .btn-primary {
-    color: #3497F9;
-    border: 1px solid #3497F9;
+    background-color: #07bc0c !important;
+    color: white;
     padding: 5px 12px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    margin-right: 5px;
+    margin-right: 13px;
+    font-style: normal;
     transition: background-color 0.2s, color 0.2s;
 }
 
 
 .Prescription-container .btn-danger {
-    color: #FF0000;
-    border: 1px solid #FF0000;
+    background-color: tomato !important;
+    color: white;
     padding: 5px 12px;
     border-radius: 4px;
     cursor: pointer;
@@ -53,6 +54,8 @@
     transition: background-color 0.2s, color 0.2s;
 }
 
+
+/* ---------- */
 
 .Prescription-searchReceptionContainer
 .Prescription_searchBoxWrapper {
@@ -91,7 +94,7 @@
     background-color: #D1F3FF;
     border: none;
     border-radius: 999px;
-    padding: 4px 8px;
+    padding: 4px 8px;   
     cursor: pointer;
     color: #3497F9;
     font-size: 16px;

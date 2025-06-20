@@ -1,11 +1,16 @@
 
 
 'use client';
-import React from 'react';
 import '../PrescriptionDetails/PrescriptionDetails.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
+import { useRouter } from 'next/navigation';
+
+
+
 
 export default function PrescriptionDetails() {
+    const router = useRouter();
+    
     const mockData = [
         { TenPhongThietBi: 'Phòng xét nghiệm 101', TenXetNghiem: 'Xét nghiệm máu', GiaMoiDonVi: 1, GiaTong: 150000 },
         { TenPhongThietBi: 'Phòng xét nghiệm 102', TenXetNghiem: 'Xét nghiệm nước tiểu', GiaMoiDonVi: 1, GiaTong: 200000 },
@@ -14,7 +19,7 @@ export default function PrescriptionDetails() {
         { TenPhongThietBi: 'Phòng nội soi 401', TenXetNghiem: 'Nội soi dạ dày', GiaMoiDonVi: 1, GiaTong: 800000 },
         { TenPhongThietBi: 'Phòng xét nghiệm 103', TenXetNghiem: 'Xét nghiệm tiểu đường', GiaMoiDonVi: 1, GiaTong: 250000 },
         { TenPhongThietBi: 'Phòng X-Quang 302', TenXetNghiem: 'Chụp X-Quang cột sống', GiaMoiDonVi: 1, GiaTong: 400000 }
-    ];
+    ]; 
 
 
     return (
@@ -27,13 +32,14 @@ export default function PrescriptionDetails() {
                 }}
             />
 
+
             <div className="PrescriptionDetails-container">
                 {/* Thông tin bệnh nhân */}
                 <div className="PrescriptionDetails-container__Box1">
                     <h3>Thông tin bệnh nhân</h3>
                     <div className="patient-info">
                         <p><strong>Dịch vụ:</strong> Xét nghiệm máu</p>
-                        <p><strong>Bệnh nhân:</strong> Loza Niiii</p>
+                        <p><strong>Bệnh nhân:</strong> Nguyễn Văn Hoàng Kim Cốt</p>
                         <p><strong>Ngày:</strong> 05/12/2022</p>
                         <p><strong>Bác sĩ yêu cầu:</strong> Dr. John</p>
                         <p><strong>Số điện thoại:</strong> 0908109200</p>
@@ -42,12 +48,16 @@ export default function PrescriptionDetails() {
 
 
                     <div className="PrescriptionDetails-container__Box1__boxPage">
-                        <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer">
+                        <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer"
+                             onClick={() => router.push('/Cashier/PaymentWaitingList')}
+                        >
                             <i className ="bi bi-x-circle-fill"></i>
                             Hủy
                         </button>
 
-                        <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__check">
+                        <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__check"
+                            
+                        >
                             <i className="bi bi-check-circle-fill"></i>
                             Xác nhận thanh toán
                         </button>

@@ -14,7 +14,7 @@ export default function SearchReception() {
         const [searchPhone,setSearchPhone] = useState <string>('')
         const [searchName,setSearchName] = useState <string>('')
         const [totalPages,setTotalPages] = useState <number>(1)
-        const router = useRouter()
+        const router = useRouter() 
 
 
   async function search(phone:string,name:string,currentPage:number){
