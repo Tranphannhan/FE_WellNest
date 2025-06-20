@@ -103,7 +103,7 @@ body {
 }
 
 .button--blue {
-  background-color: rgb(52, 151, 249);
+  background-color: #3497f9;
   color: white;
   padding: 4px 13px;
   border-radius: 8px;
@@ -117,6 +117,21 @@ body {
   background-color: rgb(32, 131, 229); /* màu hover đậm hơn */
 }
 
+/* nút nhỏ màu xanh */
+.button--green {
+  background-color: rgb(0, 255, 68);
+  color: white;
+  padding: 4px 13px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.button--green:hover {
+  background-color: rgb(0, 149, 20); /* màu hover đậm hơn */
+}
 
 /* View Detail Button */
 .button--viewDetail {
@@ -153,7 +168,7 @@ body {
 }
 
 
-/* Red Button */
+/* nút nhỏ màu đỏ */
 .button--red {
   background-color: rgb(255, 64, 64);
   color: white;
@@ -188,7 +203,7 @@ body {
 
 /* nut xanh lá to */
 .bigButton--green{
-  background-color: rgb(0, 211, 53);
+  background-color: #00d335;
   color: white;
   padding: 8px 30px;
   border-radius: 8px;

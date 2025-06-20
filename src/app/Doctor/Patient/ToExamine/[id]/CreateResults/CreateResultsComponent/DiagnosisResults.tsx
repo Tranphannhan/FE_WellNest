@@ -273,10 +273,6 @@ export default function DiagnosisResultsComponent({reLoad}:{reLoad:()=>void}) {
       <div className="DiagnosisResults-Body__Button">
         <button
           disabled={!statusSave}
-          style={{
-            background: statusSave ? '#28a745' : 'gray',
-            cursor: statusSave ? 'pointer' : 'not-allowed',
-          }}
           onClick={handleSave}
           className={`bigButton--green ${statusSave||'disabled'}`}
         >

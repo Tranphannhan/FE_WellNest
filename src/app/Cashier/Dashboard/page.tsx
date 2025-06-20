@@ -77,28 +77,28 @@ const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
-const getStartOfWeek = (date: Date) => {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    d.setDate(diff);
-    d.setHours(0, 0, 0, 0);
-    return d;
-};
+// const getStartOfWeek = (date: Date) => {
+//     const d = new Date(date);
+//     const day = d.getDay();
+//     const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+//     d.setDate(diff);
+//     d.setHours(0, 0, 0, 0);
+//     return d;
+// };
 
-const getEndOfWeek = (date: Date) => {
-    const d = new Date(getStartOfWeek(date));
-    d.setDate(d.getDate() + 6);
-    d.setHours(23, 59, 59, 999);
-    return d;
-};
+// const getEndOfWeek = (date: Date) => {
+//     const d = new Date(getStartOfWeek(date));
+//     d.setDate(d.getDate() + 6);
+//     d.setHours(23, 59, 59, 999);
+//     return d;
+// };
 
-const formatDateForInput = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
+// const formatDateForInput = (date: Date) => {
+//     const year = date.getFullYear();
+//     const month = String(date.getMonth() + 1).padStart(2, '0');
+//     const day = String(date.getDate()).padStart(2, '0');
+//     return `${year}-${month}-${day}`;
+// };
 
 const RevenueDashboard: React.FC = () => {
     const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
@@ -158,7 +158,7 @@ const RevenueDashboard: React.FC = () => {
             return;
         }
 
-        let currentFiltered = allTransactions.filter(transaction => {
+        const currentFiltered = allTransactions.filter(transaction => {
             const transactionDateObj = new Date(transaction.date);
             const transactionYear = transactionDateObj.getFullYear();
             const transactionMonth = transactionDateObj.getMonth() + 1;
