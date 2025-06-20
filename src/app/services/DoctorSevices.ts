@@ -498,3 +498,38 @@ export async function handlingAbsences (id: string){
   }
 }
 
+// Lấy chuẩn đoán mới nhất
+//Lấy lịch sử khám bệnh 
+export async function latestDiagnosis(id: string){
+    try {
+        const result = await fetch(`http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/KiemTraCoChiTietKhamLamSang?Id_PhieuKhamBenh=${id}`);
+        if (result.ok) {
+            const Data = await result.json();
+            return {continueRender:true,data:Data[0]};
+        } else {
+            return {continueRender:false, data:null};
+        }
+    } catch (error) {
+        console.error("Lỗi Khi Lấy lịch sử:", error);
+        throw error;
+    }
+}
+
+//Xác nhận hoàn thành khám
+export async function confirmCompletion (id: string){
+  try {
+    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/XacNhanTrangThai/${id}`,{
+      method:'PATCH',
+    });
+    if (!response.ok){
+      showToast('Xác nhận hoàn thành khám thất bại', ToastType.error);
+       return false
+    };
+    showToast('Xác nhận hoàn thành khám thành công', ToastType.success);
+    return true
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return false;
+  }
+}

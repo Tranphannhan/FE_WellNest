@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import './Paraclinical.css';
 import { DoctorTemporaryTypes } from '@/app/types/doctorTypes/doctorTestTypes';
-import { deleteDoctorTemporaryTypes, getDoctorTemporaryTypes, getExaminationResults, testConfirmation } from '@/app/services/DoctorSevices';
+import { deleteDoctorTemporaryTypes, getDoctorTemporaryTypes, getExaminationResults, latestDiagnosis, testConfirmation } from '@/app/services/DoctorSevices';
 import { formatCurrencyVND } from '@/app/lib/Format';
 import { useParams } from 'next/navigation';
 import NoData from '@/app/components/ui/Nodata/Nodata';
@@ -10,6 +10,7 @@ import PrintAppointmentForm from '../ComponentResults/ComponentPrintTicket/Print
 import { BsFillPrinterFill } from 'react-icons/bs';
 import { FaCheckCircle, FaDotCircle } from 'react-icons/fa';
 import { AiFillExclamationCircle } from 'react-icons/ai';
+import DoNotContinue from '@/app/components/ui/DoNotContinue/DoNotContinue';
 
 export interface ServiceItem {
   stt: number;
@@ -46,12 +47,23 @@ export default function ParaclinicalComponent() {
   const [patientData, setPatientData] = useState<ExaminationFormForPrint | null>(null);
   const [diagnosticianName, setDiagnosticianName] = useState<string>('');
   const [departmentName, setDepartmentName] = useState<string>('');
-
-  const allConfirmed = data.every(item => item.TrangThaiHoatDong === true);
-
+  
+  
+  const allConfirmed =data.length > 0 ? data.every(item => item.TrangThaiHoatDong === true): false;
+  
+  const [continueRender, setContinueRender] = useState <boolean>(false)
+  const checkRender = async() =>{
+      const data  = await latestDiagnosis(id as string)
+      console.log(data)
+      if(data.continueRender){
+        setContinueRender(true)
+      }
+      
+  }
 
   // Effect để tải dữ liệu bệnh nhân từ sessionStorage chỉ một lần khi component mount
   useEffect(() => {
+    checkRender()
     const sessionData = sessionStorage.getItem('ThongTinBenhNhanDangKham');
     if (sessionData) {
       const parsedData = JSON.parse(sessionData);
@@ -128,7 +140,6 @@ export default function ParaclinicalComponent() {
     };
 
 
-  // Effect để gọi các hàm tải dữ liệu khi `id` thay đổi
   useEffect(() => {
     if (id) {
       loadDiagnosis();
@@ -144,12 +155,19 @@ export default function ParaclinicalComponent() {
   return (
     <div className="Paraclinical-Body">      <button
         onClick={() => setIsPhieuChiDinhModalOpen(true)}
+        disabled={!allConfirmed}
+        style={!allConfirmed ? {
+          color:'gray',
+          border:'1px solid gray'
+          ,
+          cursor:'not-allowed'
+        }:{}}
         className="Paraclinical-printBtn"
       >
         <BsFillPrinterFill /> Chỉ định xét nghiệm
       </button>
       <div className="Paraclinical-medicine__container">
-        {data.length > 0 ? (
+        {continueRender ?(data.length > 0 ? (
           <>
             <table className="Paraclinical-medicine__container__medicineTable min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-100 text-gray-700 text-sm font-semibold text-left">
@@ -164,7 +182,7 @@ export default function ParaclinicalComponent() {
               </thead>
               <tbody>
                 {data.map((item) => (
-                  <tr key={item._id}>
+                  <tr key={item._id} className='hover:bg-gray-50'>
                     <td>{item.Id_LoaiXetNghiem.Id_PhongThietBi.TenPhongThietBi}</td>
                     <td>{item.Id_LoaiXetNghiem.TenXetNghiem}</td>
                     <td>
@@ -231,12 +249,8 @@ export default function ParaclinicalComponent() {
             </table>
             <div className="Paraclinical-medicine__container__MedicineActions">
               <button
-                className="Paraclinical-medicine__container__MedicineActions__completeButton"
-                disabled={!allConfirmed}
-                style={{
-                  backgroundColor: allConfirmed ? '' : 'gray',
-                  cursor: allConfirmed ? 'pointer' : 'not-allowed'
-                }}
+                className={`bigButton--blue ${allConfirmed || 'disabled'}`}
+                disabled={!allConfirmed} 
                 onClick={()=>{alert('ok')}}
               >
 
@@ -250,7 +264,10 @@ export default function ParaclinicalComponent() {
             message="Không có chỉ định cận lâm sàng"
             remind="Nếu cần kết quả để chẩn đoán vui lòng chỉ định"
           />
-        )}
+        )):(<DoNotContinue
+            message="Chưa có chẩn đoán lâm sàng"
+            remind="Vui lòng chẩn đoán để tiếp tục yêu cầu xét nghiệm"
+          />)}
       </div>
       {isPhieuChiDinhModalOpen && patientData && (
         <PrintAppointmentForm

@@ -6,6 +6,7 @@ import { getAllPatient, handlingAbsences } from "@/app/services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 import moment from "moment";
+import { FaNotesMedical, FaUserSlash } from "react-icons/fa";
 
 
 export default function Patient(){
@@ -99,15 +100,15 @@ export default function Patient(){
                                 <td>{record.Id_TheKhamBenh.SoCCCD}</td>
                                 <td>{moment(record.Gio, "HH:mm:ss").format("hh:mm:ss A")}</td>
                                 <td>{<div className={record.SoLanKhongCoMat === 0 ? 'tatusTable green':record.SoLanKhongCoMat === 1 ? 'tatusTable yellow':'tatusTable red'}>{record.SoLanKhongCoMat} đợt</div>}</td>
-                                <td>
-                                    <button className="btn-primary"
+                                <td style={{display:'flex',gap:'10px'}}>
+                                    <button className="button--blue"
                                         onClick={
                                            ()=>{
                                              handleExamination(record._id)
                                            }
                                         }
-                                    >Khám</button>
-                                    <button className="btn-danger" onClick={()=>{Absences(record._id)}}>Không có mặt</button>
+                                    ><FaNotesMedical />Khám</button>
+                                    <button className="button--red" onClick={()=>{Absences(record._id)}}><FaUserSlash />Không có mặt</button>
                                 </td>
                             </tr>
                         ))}

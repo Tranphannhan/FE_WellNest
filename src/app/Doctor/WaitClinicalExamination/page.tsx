@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { getAllPatient } from "@/app/services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
+import moment from "moment";
+import { FaNotesMedical } from "react-icons/fa";
 
 
 export default function Patient(){
@@ -67,13 +69,12 @@ export default function Patient(){
                 <table className="Patient-container_table">
                     <thead>
                         <tr>
-                            <th>STT</th>
                             <th>Họ và tên</th>
-                            <th>SĐT</th>
-                            <th>Số Bảo Hiểm Y Tế</th>
+                            <th>Số điện thoại</th>
+                            <th>Người thân</th>
                             <th>Số Căn Cước</th>
-                            <th>Ngày</th>
-                            <th>SĐT người thân</th>
+                            <th>Thời gian</th>
+                            <th>Trạng thái</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
@@ -82,22 +83,20 @@ export default function Patient(){
                     <tbody>
                         {dataRender.map((record: MedicalExaminationCard) => (
                             <tr key={record._id}>
-                                <td>{record.STTKham}</td>
                                 <td>{record.Id_TheKhamBenh.HoVaTen}</td>
                                 <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
-                                <td>{record.Id_TheKhamBenh.SoBaoHiemYTe}</td>
-                                <td>{record.Id_TheKhamBenh.SoCCCD}</td>
-                                <td>{record.Ngay}</td>
                                 <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
+                                <td>{record.Id_TheKhamBenh.SoCCCD}</td>
+                                <td>{moment(record.Gio, "HH:mm:ss").format("hh:mm:ss A")}</td>
+                                <td>{<div className={record.TrangThaiHoatDong === 'XetNghiem' ? 'tatusTable blue':'tatusTable red'}>Chờ xét nghiệm</div>}</td>
                                 <td>
-                                    <button className="btn-primary"
+                                    <button className="button--blue"
                                         onClick={
                                            ()=>{
                                              handleExamination(record._id)
                                            }
                                         }
-                                    >Khám</button>
-                                    <button className="btn-danger">Không có mặt</button>
+                                    ><FaNotesMedical />Tiếp tục khám</button>
                                 </td>
                             </tr>
                         ))}

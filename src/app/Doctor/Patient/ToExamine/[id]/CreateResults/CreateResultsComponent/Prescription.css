@@ -9,6 +9,10 @@
     position: relative;
 }
 
+.Prescription-tr{
+    border-top: 1px solid #ddd;
+}
+
 .Prescription-printBtn{
     color: #3497f9;
     cursor: pointer;

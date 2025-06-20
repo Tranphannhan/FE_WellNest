@@ -37,14 +37,10 @@
     color: #2196f3;
     padding: 8px 16px;
     border-radius: 4px;
-    cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s, color 0.3s;
 }
 
-.CreateResults-redirectFrame__actionButtonsContainer__buttonOutline:hover {
-    background-color: #e3f2fd;
-}
 
 .CreateResults-redirectFrame__actionButtonsContainer__buttonSolid {
     background-color: #2196f3;

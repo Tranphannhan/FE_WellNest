@@ -70,3 +70,13 @@
 a {
   text-decoration: none !important;
 }
+.remid-style {
+  color: hsl(0, 0%, 45%);
+  font-size: 14px;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+.text-start {
+    text-align: start !important;
+}

@@ -6,6 +6,7 @@ import { getAllPatient } from "@/app/services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import moment from "moment";
 import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
+import { FaEye } from "react-icons/fa";
 
 
 export default function Patient(){
@@ -92,11 +93,11 @@ export default function Patient(){
                                         <td>{record.Id_TheKhamBenh.SoCCCD}</td>
                                         <td>
                                             <button
-                                                className="patient-viewDetail"
+                                                className="button--viewDetail"
                                                 style={{ color: '#3497F9' }}
                                                 onClick={() => handleExamination(record._id)}
                                             >
-                                                Xem Chi Tiết
+                                               <FaEye /> Xem Chi Tiết
                                             </button>
                                             {/* <button className="btn-danger">Không có mặt</button> */}
                                         </td>

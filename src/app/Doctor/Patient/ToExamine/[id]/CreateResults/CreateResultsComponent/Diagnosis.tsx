@@ -7,7 +7,7 @@ import { addDiagnosis, getVitalSignsByExaminationId, updateSurvivalIndex } from 
 import { useParams } from 'next/navigation';
 import { showToast, ToastType } from '@/app/lib/Toast';
 
-export default function DiagnosisComponent () {
+export default function DiagnosisComponent ({reLoad}:{reLoad:()=>void}) {
   const { id } = useParams();
 
   const [datasurvivalIndexRender, setDatasurvivalIndexRender] = useState<survivalIndexType>({});
@@ -47,6 +47,7 @@ export default function DiagnosisComponent () {
         showToast("Tạo chuẩn đoán thành công", ToastType.success);
         setDiagnosis({ ChuanDoanSoBo: '', TrieuChung: '' });
         setInitialSurvivalIndex(datasurvivalIndexRender); // cập nhật lại sau khi lưu
+        reLoad()
       } else {
         if (!updateDiagnosis.data) {
           showToast(updateDiagnosis.message, ToastType.error);
@@ -58,7 +59,7 @@ export default function DiagnosisComponent () {
     } else {
       if (update.data) {
         showToast("Lưu chỉ số sinh tồn thành công", ToastType.success);
-        setInitialSurvivalIndex(datasurvivalIndexRender); // cập nhật lại sau khi lưu
+        setInitialSurvivalIndex(datasurvivalIndexRender);
       } else {
         showToast(update.message, ToastType.error);
       }
@@ -260,15 +261,11 @@ export default function DiagnosisComponent () {
 
               <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer">
                       <button
-                        className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton"
+                        className={`bigButton--green ${isSaveEnabled || 'disabled'}`}
                         onClick={handleSave}
                         disabled={!isSaveEnabled}
-                        style={{
-                          backgroundColor: isSaveEnabled ? '' : 'gray',
-                          cursor: isSaveEnabled ? 'pointer' : 'not-allowed'
-                        }}
                       >
-                        <FaSave className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton__saveIcon" />
+                        <FaSave />
                         Lưu
                       </button>
                     </div>

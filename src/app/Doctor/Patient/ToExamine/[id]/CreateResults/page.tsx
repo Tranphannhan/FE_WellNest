@@ -9,10 +9,12 @@ import PrescriptionComponent from "./CreateResultsComponent/Prescription";
 import { useEffect, useState } from 'react';
 import ViewParaclinicalResults from "./CreateResultsComponent/ViewParaclinicalResults";
 import PrescriptionPopup from "./ComponentResults/CreatePrescriptionPopup";
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ClinicalExamPage from "./ComponentResults/CreateClinicalExam";
-import { CheckPrescription, fetchMedicalExaminationCardDetail } from "@/app/services/DoctorSevices";
-import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
+import { CheckPrescription, confirmCompletion, fetchMedicalExaminationCardDetail, getExaminationResults, latestDiagnosis } from "@/app/services/DoctorSevices";
+import { generateTestResultsType, MedicalExaminationCard } from "@/app/types/patientTypes/patient";
+import ModalComponent from "@/app/components/shared/Modal/Modal";
+
 
 
 
@@ -22,7 +24,10 @@ export default function Patient(){
     const [prescriptionStep, setPrescriptionStep] = useState(1); // New state to control PrescriptionPopup step
     const [paraclinicalKey, setParaclinicalKey] = useState(0);
     const [isPrescriptionCreating, setIsPrescriptionCreating] = useState(false);
-    const [prescriptionComponentKey,setprescriptionComponentKey] = useState(0)
+    const [prescriptionComponentKey,setprescriptionComponentKey] = useState(0);
+    const [beFinished, setBeFinished] = useState <boolean>(false);
+    const [showModalCompletion, setShowModalCompletion] = useState <boolean>(false)
+    const router = useRouter()
     
     // Function to close the prescription popup and reset its step
     const handleClosePrescriptionPopup = () => {
@@ -44,6 +49,14 @@ export default function Patient(){
     const handleCloseResultsPopup = () => {
         setShowResultsPopup(false);
     };
+
+    const checkPrescription = async()=>{
+         const resCheckPrescription = await CheckPrescription(id as string);
+         console.log('đơn thuốc:',resCheckPrescription)
+         if(resCheckPrescription && resCheckPrescription.data?.data?.TrangThai==='DaXacNhan'){
+            setBeFinished(true)
+         }
+    }
 
     // Function to check prescription status and update state
     async function checkPrescriptionStatus() {
@@ -86,10 +99,39 @@ export default function Patient(){
         setPrescriptionStep(3); // Set step directly to 3 (Chọn thuốc)
     };
 
+    const [continueRender, setContinueRender] = useState <boolean>(false)
+    const checkRender = async() =>{
+            const data  = await latestDiagnosis(id as string)
+            console.log(data)
+            if(data.continueRender){
+              setContinueRender(true)
+            }
+            
+    }
+
+          const [continueRenderExaminationResults, setContinueRenderExaminationResults] = useState <boolean>(false)
+          const checkRenderContinueExaminationResults = async() =>{
+              const data:generateTestResultsType |null = await getExaminationResults(id as string)
+              if(data && data.TrangThaiHoanThanh){
+                setContinueRenderExaminationResults(true)
+              }
+              
+          }
+
+    const HandleConfirmCompletion = async() =>{
+        const res =await confirmCompletion(id as string)
+        if(res){
+            router.push('http://localhost:3000/Doctor/Patient')
+        }
+    }
+
     // Effects to run on component mount
     useEffect(()=>{
         getValueRender();
+        checkRender();
+        checkRenderContinueExaminationResults();
         checkPrescriptionStatus();
+        checkPrescription();
     },[prescriptionComponentKey]);
 
     return(
@@ -121,24 +163,33 @@ export default function Patient(){
             <div className="CreateResults-redirectFrame">
                 <div className="CreateResults-redirectFrame__actionButtonsContainer">
                     <div className="CreateResults-redirectFrame__actionButtonsContainer__leftButtons">
-                        <button
+                            <button
                             className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
-                            onClick={() => setShowPrescriptionPopup(true)} // This button opens popup at step 1
-                            disabled={isPrescriptionCreating}
+                            onClick={() => setShowPrescriptionPopup(true)}
+                            disabled={!continueRenderExaminationResults || isPrescriptionCreating}
                             style={{
-                                opacity: isPrescriptionCreating ? 0.5 : 1,
-                                cursor: isPrescriptionCreating ? 'not-allowed' : 'pointer',
-                                color: isPrescriptionCreating ? 'gray' : undefined,
-                                border: isPrescriptionCreating ? '1px solid gray' : undefined,
-                                backgroundColor: isPrescriptionCreating ? 'white' : undefined,
-                                pointerEvents: isPrescriptionCreating ? 'none' : 'auto', 
-                                userSelect: isPrescriptionCreating ? 'none' : 'auto', 
+                                borderRadius:'8px',
+                                cursor: !continueRenderExaminationResults || isPrescriptionCreating ? 'not-allowed' : 'pointer',
+                                color: !continueRenderExaminationResults || isPrescriptionCreating ? '#cacaca' : undefined,
+                                border: '1px solid ' + (!continueRenderExaminationResults || isPrescriptionCreating ? '#cacaca' : ''), // hoặc undefined
+                                backgroundColor: !continueRenderExaminationResults || isPrescriptionCreating ? '#f5faff' : undefined,
                             }}
-                        >
+                            >
                             + Tạo đơn thuốc
                         </button>
 
                         <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
+                            disabled={!continueRender}
+                            style={!continueRender ? {
+                                borderRadius:'8px',
+                                color:'#cacaca',
+                                border:'#cacaca 1px solid',
+                                cursor:'not-allowed',
+                                backgroundColor:'#f5faff',
+                            }:{
+                                cursor: 'pointer',
+                                borderRadius:'8px',
+                            }}
                             onClick={handleOpenExaminationRequestPopup}
                         >+ Tạo yêu cầu xét nghiệm</button>
                     </div>
@@ -147,7 +198,9 @@ export default function Patient(){
                     <div className="CreateResults-redirectFrame__actionButtonsContainer__rightButtons">
                         {
                             WaitClinicalExamination && (
-                                <button style={{display : 'block'}}
+                                <button style={{display : 'block',
+                                    borderRadius:'8px',
+                                }}
                                     className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
                                     onClick={handleOpenResultsPopup}
                                 >
@@ -157,13 +210,22 @@ export default function Patient(){
                         }
 
                         <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
+                            disabled={false}
                             style={{
                                 backgroundColor:'gray',
-                                pointerEvents:'none',
-                                userSelect:'none'
+                                cursor:'not-allowed',
+                                borderRadius:'8px',
                             }}
                         >Yêu cầu chuyển khoa</button>
-                        <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid">Xác nhận khám</button>
+                        <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
+                            disabled={!beFinished}
+                            onClick={()=>setShowModalCompletion(true)}
+                            style={!beFinished?{backgroundColor:'gray',cursor:'not-allowed',borderRadius:'8px'
+                                
+                                }:{
+                                borderRadius:'8px'
+                            }}
+                        >Hoàn thành khám</button>
                     </div>
                 </div>
             </div>
@@ -175,7 +237,9 @@ export default function Patient(){
                 </div>
 
                 <div>
-                    {page === 'Chuẩn đoán sơ bộ' && <DiagnosisComponent />}
+                    {page === 'Chuẩn đoán sơ bộ' && <DiagnosisComponent reLoad={()=>{
+                        checkRender()
+                    }} />}
                 </div>
 
                 <div>
@@ -183,7 +247,7 @@ export default function Patient(){
                 </div>
 
                 <div>
-                    {page === 'Chuẩn đoán kết quả' && <DiagnosisResultsComponent />}
+                    {page === 'Chuẩn đoán kết quả' && <DiagnosisResultsComponent reLoad={checkRenderContinueExaminationResults}/>}
                 </div>
 
                 <div>
@@ -203,6 +267,14 @@ export default function Patient(){
                 reload={() => setParaclinicalKey(prev => prev + 1)} 
                 callback={() => setPage('Cận lâm sàng')} 
             />
+            <ModalComponent Data_information={{
+                callBack:HandleConfirmCompletion,
+                content:'Xác nhận kết thúc khám',
+                remid:'Kết thúc khám sẽ trở về danh sách bệnh nhân',
+                show:showModalCompletion,
+                handleClose:()=>{setShowModalCompletion(false)},
+                handleShow:()=>{setShowModalCompletion(true)}
+            }}></ModalComponent>
         </>
     )
 }

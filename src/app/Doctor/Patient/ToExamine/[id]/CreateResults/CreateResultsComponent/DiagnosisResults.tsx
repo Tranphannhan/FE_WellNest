@@ -4,9 +4,10 @@ import { FaSave } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { generateTestResultsType } from '@/app/types/patientTypes/patient';
-import { createExaminationResults, getExaminationResults } from '@/app/services/DoctorSevices';
+import { createExaminationResults, getExaminationResults, latestDiagnosis } from '@/app/services/DoctorSevices';
 import PreviewExaminationResult from '../ComponentResults/ComponentPrintTicket/PreviewExaminationResult';
 import { BsFillPrinterFill } from 'react-icons/bs';
+import DoNotContinue from '@/app/components/ui/DoNotContinue/DoNotContinue';
 
 // Types for Examination Result
 interface DiagnosisTreatmentPair {
@@ -27,7 +28,7 @@ interface ExaminationResultData {
 }
 
 
-export default function DiagnosisResultsComponent() {
+export default function DiagnosisResultsComponent({reLoad}:{reLoad:()=>void}) {
   const { id } = useParams();
   const [statusSave, setStatusSave] = useState<boolean>(false);
   const [isExaminationResultModalOpen, setIsExaminationResultModalOpen] = useState(false);
@@ -44,8 +45,18 @@ export default function DiagnosisResultsComponent() {
     KetQua: '',
   });
 
-  // Load session and database data
+    const [continueRender, setContinueRender] = useState <boolean>(false)
+    const checkRender = async() =>{
+        const data  = await latestDiagnosis(id as string)
+        console.log(data)
+        if(data.continueRender){
+          setContinueRender(true)
+        }
+        
+    }
+
   useEffect(() => {
+    checkRender()
     const loadData = async () => {
       setLoading(true);
       setError(null);
@@ -81,7 +92,7 @@ export default function DiagnosisResultsComponent() {
           const examinationData = await getExaminationResults(String(id));
           if (examinationData) {
             setDataGenerateTestResults(examinationData);
-            if(examinationData.KetQua !== '', examinationData.HuongSuLy !=='', examinationData.GhiChu !==''){
+            if(examinationData.KetQua !== '' && examinationData.HuongSuLy !=='' && examinationData.GhiChu !=='' && examinationData.TrangThaiHoanThanh){
               setPrintingIsAllowed(true)
             }
             // Map examination data to diagnosisTreatmentList
@@ -130,7 +141,8 @@ export default function DiagnosisResultsComponent() {
     try {
       const result = await createExaminationResults(dataGenerateTestResults);
       console.log('Save successful:', result);
-      // Optionally reload data to reflect changes
+      // Optionally reload data to reflect 
+      reLoad()
       const examinationData = await getExaminationResults(String(id));
       if (examinationData && patientData) {
         setPrintingIsAllowed(true)
@@ -178,7 +190,8 @@ export default function DiagnosisResultsComponent() {
       >
         <BsFillPrinterFill /> Kết quả
       </button>
-      <div className="DiagnosisResults-Container">
+        {continueRender ? <>
+                <div className="DiagnosisResults-Container">
         <span className="DiagnosisResults-Body__Title">Tạo kết quả khám</span>
 
         {/* Ô Kết quả */}
@@ -265,12 +278,16 @@ export default function DiagnosisResultsComponent() {
             cursor: statusSave ? 'pointer' : 'not-allowed',
           }}
           onClick={handleSave}
-          className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton"
+          className={`bigButton--green ${statusSave||'disabled'}`}
         >
+          <FaSave />
           Lưu
-          <FaSave className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer__saveButton__saveIcon" />
         </button>
       </div>
+        </>:<DoNotContinue
+              message="Chưa có chẩn đoán lâm sàng"
+            remind="Vui lòng chẩn đoán để tiếp tục chẩn đoán"
+        ></DoNotContinue>}
 
       {isExaminationResultModalOpen && patientData && (
         <PreviewExaminationResult

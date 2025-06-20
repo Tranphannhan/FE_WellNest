@@ -75,6 +75,11 @@ body {
     background-color: #edffb2;
 }
 
+.tatusTable.blue {
+    color: #00a2ff;
+    background-color: #b2f1ff;
+}
+
 .dotTableStatus{
     animation: fadeAndScale 1s ease-in-out infinite alternate;
 }
@@ -88,4 +93,111 @@ body {
     opacity: 0.5;
     transform: scale(1);
   }
+}
+
+.disabled{
+  background-color: gray !important;
+  color: white !important;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+.button--blue {
+  background-color: rgb(52, 151, 249);
+  color: white;
+  padding: 4px 13px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.button--blue:hover {
+  background-color: rgb(32, 131, 229); /* màu hover đậm hơn */
+}
+
+
+/* View Detail Button */
+.button--viewDetail {
+  background-color: #b1e2ff;
+  color: #00a2ff !important;
+  padding: 4px 13px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.button--viewDetail:hover {
+  background-color: #a1d8f7;
+  color: #007ccc !important;
+}
+
+
+/* View Detail Button */
+.bigButton--add {
+  border: 1px solid #00a2ff;
+  color: #00a2ff !important;
+  padding: 8px 30px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.bigButton--add:hover {
+  background-color: #a1d8f7;
+}
+
+
+/* Red Button */
+.button--red {
+  background-color: rgb(255, 64, 64);
+  color: white;
+  padding: 4px 13px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.button--red:hover {
+  background-color: rgb(176, 0, 0);
+}
+
+
+/* nut xanh to */
+.bigButton--blue{
+  background-color: rgb(52, 151, 249);
+  color: white;
+  padding: 8px 30px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.bigButton--blue:hover {
+  background-color: rgb(32, 131, 229); /* màu hover đậm hơn */
+}
+
+/* nut xanh lá to */
+.bigButton--green{
+  background-color: rgb(0, 211, 53);
+  color: white;
+  padding: 8px 30px;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.bigButton--green:hover {
+  background-color: rgb(35, 182, 18); /* màu hover đậm hơn */
 }

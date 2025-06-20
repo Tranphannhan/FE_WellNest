@@ -4,16 +4,17 @@ import { useEffect, useState } from 'react';
 import './Prescription.css';
 import NoData from '@/app/components/ui/Nodata/Nodata';
 
-import { confirmPrescriptionCompletion, deleteMedicine } from '@/app/services/DoctorSevices';
+import { confirmPrescriptionCompletion, deleteMedicine, getExaminationResults } from '@/app/services/DoctorSevices';
 
 import { CheckPrescription } from '@/app/services/DoctorSevices';
 import { useParams } from 'next/navigation';
 import PreviewExaminationForm from '../ComponentResults/ComponentPrintTicket/PrescriptionForm';
 import { formatCurrencyVND } from '@/app/lib/Format';
-import { MedicalExaminationCard } from '@/app/types/patientTypes/patient';
+import { generateTestResultsType, MedicalExaminationCard } from '@/app/types/patientTypes/patient';
 import { BsFillPrinterFill } from 'react-icons/bs';
 import ModalComponent from '@/app/components/shared/Modal/Modal';
 import { FaCheck } from 'react-icons/fa';
+import DoNotContinue from '@/app/components/ui/DoNotContinue/DoNotContinue';
 
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -94,6 +95,16 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
     const [comPlete, setComplete] = useState <boolean>(false)
     const [idPrescription, setIdPrescription] = useState <string>('')
 
+      const [continueRender, setContinueRender] = useState <boolean>(false)
+      const checkRenderContinue = async() =>{
+          const data:generateTestResultsType |null = await getExaminationResults(id as string)
+          if(data && data.TrangThaiHoanThanh){
+            setContinueRender(true)
+          }
+          
+      }
+    
+
     useEffect(() => {
         const dataLocal = sessionStorage.getItem('ThongTinBenhNhanDangKham');
         if(dataLocal){
@@ -122,9 +133,7 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
 
 
     const CheckRender = async () => {
-    console.log("CheckRender đang chạy");
     const resCheckPrescription = await CheckPrescription(id as string);
-    console.log("Kết quả CheckPrescription:", resCheckPrescription);
     if (!resCheckPrescription.status) {
         console.log("Gọi fetchPrescriptionDetails với ID:", resCheckPrescription.data._id);
         setIdPrescription(resCheckPrescription.data._id || '')
@@ -145,6 +154,7 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
 
 
     useEffect(() => {
+        checkRenderContinue();
         CheckRender();
     }, []);
 
@@ -170,11 +180,11 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
 
 
     return (
-        <div className="p-4 Prescription-container">
+        <div className="p-[20px] Prescription-container">
             <button
+                disabled={!comPlete}
                 style={!comPlete?{
-                    userSelect:'none',
-                    pointerEvents:'none',
+                    cursor:'not-allowed',
                     color:'gray',
                     border:'1px solid gray'
                 }:{}}
@@ -183,8 +193,10 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
             >
                <BsFillPrinterFill /> Đơn thuốc
             </button>
+           {continueRender ?  
             <div className="overflow-x-auto rounded-lg bg-white">
-                {prescriptionDetails.length > 0 ? (
+                {
+                prescriptionDetails.length > 0 ? (
 
                     <>
                         <table className="min-w-full divide-y divide-gray-200">
@@ -202,7 +214,7 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
                             </thead>
                             <tbody className="text-sm text-gray-600 divide-y divide-gray-200">
                                 {prescriptionDetails.map((item) => (
-                                    <tr key={item._id} className="hover:bg-gray-50">
+                                    <tr key={item._id} className="hover:bg-gray-50 Prescription-tr">
 
                                         <td className="px-4 py-2 font-medium text-gray-800">{item.Id_Thuoc?.TenThuoc}</td>
                                         <td className="px-4 py-2">{item.DonVi || item.Id_Thuoc?.DonVi}</td>
@@ -252,23 +264,14 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
                             </tbody>
                         </table>
 
-                        <div className="flex justify-end gap-4 mt-4">
+                        <div className="flex justify-end gap-[12px] mt-4">
                             {comPlete ? <>
-                                <button className="Prescription-medicine__container__MedicineActions__completeButton"
-                                onClick={showModalHandleSuccess}
-                                style={{
-                                    backgroundColor:'#00d335',
-                                    display:'flex',
-                                    alignItems:'center',
-                                    gap:10,
-                                    pointerEvents:'none',
-                                    userSelect:'none'
-                                }}
+                                <button className="bigButton--green"
                                 ><FaCheck /> Đã hoàn thành</button>
 
                             </>:<>
-                                <button className="Prescription-medicine__container__MedicineActions__addButton" onClick={onAddMedicineClick}>+ Thêm thuốc</button>
-                                <button className="Prescription-medicine__container__MedicineActions__completeButton"
+                                <button className="bigButton--add" onClick={onAddMedicineClick}>+ Thêm thuốc</button>
+                                <button className="bigButton--blue"
                                 onClick={showModalHandleSuccess}
                                 >Hoàn thành</button>
                             </>}
@@ -283,8 +286,8 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
                     />
                         {showBtn ? 
                             <>  <div className="flex justify-end gap-4 mt-4">
-                                <button className="Prescription-medicine__container__MedicineActions__addButton" onClick={onAddMedicineClick}>+ Thêm thuốc</button>
-                                <button className="Prescription-medicine__container__MedicineActions__completeButton"
+                                <button className="bigButton--add" onClick={onAddMedicineClick}>+ Thêm thuốc</button>
+                                <button className="bigButton--blue disabled"
                                     style={
                                         {
                                             backgroundColor:'gray',
@@ -301,7 +304,11 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
                     </>
                   
                 )}
-            </div>
+            </div>:
+            <DoNotContinue
+                message='Chưa có chẩn đoán'
+                remind='Vui lòng chẩn đoán để tiếp tục'
+            ></DoNotContinue>}
             {isDonThuocModalOpen && patientDataForForm && (
                 <PreviewExaminationForm
                     isOpen={isDonThuocModalOpen}
