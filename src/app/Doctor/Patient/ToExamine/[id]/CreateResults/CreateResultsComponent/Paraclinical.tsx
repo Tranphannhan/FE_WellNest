@@ -2,15 +2,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import './Paraclinical.css';
 import { DoctorTemporaryTypes } from '@/app/types/doctorTypes/doctorTestTypes';
-import { deleteDoctorTemporaryTypes, getDoctorTemporaryTypes, getExaminationResults, latestDiagnosis, testConfirmation } from '@/app/services/DoctorSevices';
+import { deleteDoctorTemporaryTypes, getDoctorTemporaryTypes, getExaminationResults, latestDiagnosis, testConfirmation, waitingForTesting } from '@/app/services/DoctorSevices';
 import { formatCurrencyVND } from '@/app/lib/Format';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import NoData from '@/app/components/ui/Nodata/Nodata';
 import PrintAppointmentForm from '../ComponentResults/ComponentPrintTicket/PrintAppointmentForm';
 import { BsFillPrinterFill } from 'react-icons/bs';
 import { FaCheckCircle, FaDotCircle } from 'react-icons/fa';
 import { AiFillExclamationCircle } from 'react-icons/ai';
 import DoNotContinue from '@/app/components/ui/DoNotContinue/DoNotContinue';
+import ModalComponent from '@/app/components/shared/Modal/Modal';
 
 export interface ServiceItem {
   stt: number;
@@ -47,6 +48,8 @@ export default function ParaclinicalComponent() {
   const [patientData, setPatientData] = useState<ExaminationFormForPrint | null>(null);
   const [diagnosticianName, setDiagnosticianName] = useState<string>('');
   const [departmentName, setDepartmentName] = useState<string>('');
+  const [showModal , setShowModal] = useState<boolean> (false);
+  const router = useRouter()
   
   
   const allConfirmed =data.length > 0 ? data.every(item => item.TrangThaiHoatDong === true): false;
@@ -138,6 +141,13 @@ export default function ParaclinicalComponent() {
         await loadData();
       }
     };
+
+     const completeDesignation = async ()=>{
+        const res = await waitingForTesting(id as string);
+        if(res){
+            router.push('http://localhost:3000/Doctor/WaitClinicalExamination')
+        }
+     }
 
 
   useEffect(() => {
@@ -251,7 +261,7 @@ export default function ParaclinicalComponent() {
               <button
                 className={`bigButton--blue ${allConfirmed || 'disabled'}`}
                 disabled={!allConfirmed} 
-                onClick={()=>{alert('ok')}}
+                onClick={()=>{setShowModal(true)}}
               >
 
               Hoàn thành
@@ -278,6 +288,14 @@ export default function ParaclinicalComponent() {
           departmentName={departmentName}
         />
       )}
+      <ModalComponent Data_information={{
+                      callBack:completeDesignation,
+                      content:'Hoàn thành chỉ đinh xét nghiệm',
+                      remid:'Xác nhận sẽ đưa bệnh nhân qua danh sách chờ',
+                      show:showModal,
+                      handleClose:()=>{setShowModal(false)},
+                      handleShow:()=>{setShowModal(true)}
+                  }}></ModalComponent>
     </div>
   );
 }

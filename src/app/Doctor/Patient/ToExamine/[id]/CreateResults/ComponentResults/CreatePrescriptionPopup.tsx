@@ -7,6 +7,7 @@ import { medicineType, medicineGroupType, prescriptionType } from '@/app/types/h
 import { createPrescription, createPrescriptionDetail } from '@/app/services/DoctorSevices';
 import { calculateAge } from '@/app/lib/Format';
 import { MedicalExaminationCard } from '@/app/types/patientTypes/patient';
+import { useParams } from 'next/navigation';
 
 interface inputPrescriptionDetail {
     Quantity?: number;
@@ -18,7 +19,7 @@ interface inputPrescriptionDetail {
 const { Option } = Select;
 
 // Updated props to accept 'step' and 'setStep' from parent
-const PrescriptionPopup = ({ PrescriptionInfo, showPrescriptionPopup, handleClosePrescriptionPopup, step, setStep, reload }: { PrescriptionInfo: { Id_PhieuKhamBenh?: string}, showPrescriptionPopup: boolean, handleClosePrescriptionPopup: () => void, step: number, setStep: React.Dispatch<React.SetStateAction<number>>, reload:()=>void}) => {
+const PrescriptionPopup = ({ showPrescriptionPopup, handleClosePrescriptionPopup, step, setStep, reload }: { showPrescriptionPopup: boolean, handleClosePrescriptionPopup: () => void, step: number, setStep: React.Dispatch<React.SetStateAction<number>>, reload:()=>void}) => {
     // Removed internal 'step' state, now controlled by prop
     const [isSelectingMedicine, setIsSelectingMedicine] = useState(false);
     const [selectedMedicine, setSelectedMedicine] = useState<medicineType | null>(null);
@@ -43,6 +44,7 @@ const PrescriptionPopup = ({ PrescriptionInfo, showPrescriptionPopup, handleClos
     const [medicineGroups, setMedicineGroups] = useState<medicineGroupType[]>([]);
     const [loadingGroups, setLoadingGroups] = useState(false);
     const [errorGroups, setErrorGroups] = useState<string | null>(null);
+    const { id } = useParams();
 
     // --- Function to fetch ALL medicines matching current filter/search from backend ---
     // (Then paginated on the frontend)
@@ -100,25 +102,27 @@ const PrescriptionPopup = ({ PrescriptionInfo, showPrescriptionPopup, handleClos
 
     // Effect to load medical card info from session storage
     useEffect(() => {
-        const medicalCardInfoStr = sessionStorage.getItem("ThongTinBenhNhanDangKham");
-        if (medicalCardInfoStr) {
-            const medicalCardInfo: MedicalExaminationCard = JSON.parse(medicalCardInfoStr);
-            setMedicalCardInfo(medicalCardInfo);
-        }
+    if (!showPrescriptionPopup) return;
 
-        const storedPrescription = sessionStorage.getItem("DonThuocDaTao");
-        if (storedPrescription) {
-            try {
-                const parsedPrescription: prescriptionType = JSON.parse(storedPrescription);
-                setPrescription(parsedPrescription);
-                console.log("Đơn thuốc đã lấy từ sessionStorage:", parsedPrescription);
-            } catch (error) {
-                console.error("Lỗi khi parse dữ liệu đơn thuốc từ sessionStorage:", error);
-                // Có thể xóa item nếu dữ liệu bị lỗi
-                sessionStorage.removeItem("DonThuocDaTao");
-            }
+    const medicalCardInfoStr = sessionStorage.getItem("ThongTinBenhNhanDangKham");
+    if (medicalCardInfoStr) {
+        const medicalCardInfo: MedicalExaminationCard = JSON.parse(medicalCardInfoStr);
+        setMedicalCardInfo(medicalCardInfo);
+    }
+
+    const storedPrescription = sessionStorage.getItem("DonThuocDaTao");
+    if (storedPrescription) {
+        try {
+        const parsedPrescription: prescriptionType = JSON.parse(storedPrescription);
+        setPrescription(parsedPrescription);
+        console.log("Đơn thuốc đã lấy từ sessionStorage:", parsedPrescription);
+        } catch (error) {
+        console.error("Lỗi khi parse dữ liệu đơn thuốc từ sessionStorage:", error);
+        sessionStorage.removeItem("DonThuocDaTao");
         }
-    }, []);
+    }
+    }, [showPrescriptionPopup]); // chạy lại mỗi khi modal được mở
+
 
     // Effect to fetch medicine groups
     useEffect(() => {
@@ -155,7 +159,7 @@ const PrescriptionPopup = ({ PrescriptionInfo, showPrescriptionPopup, handleClos
         // Only create prescription if it's the first step
         if (step === 1) {
             const responseCreatePrescription = await createPrescription(
-                PrescriptionInfo.Id_PhieuKhamBenh as string,
+                id as string,
                 `Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}`
             );
 
@@ -311,18 +315,30 @@ const PrescriptionPopup = ({ PrescriptionInfo, showPrescriptionPopup, handleClos
                                     <div className="form-row">
                                         <div className="form-group qty">
                                             <label>Số Lượng</label>
-                                            <Input
-                                                type="number"
-                                                placeholder="Nhập số lượng"
-                                                className="form-control"
-                                                onChange={(e) => {
-                                                    setInputPrescriptionDetail((prev) => ({
-                                                        ...prev,
-                                                        Quantity: Number(e.target?.value)
-                                                    }));
-                                                }}
-                                                value={inputPrescriptionDetail?.Quantity || ''}
-                                            />
+                                <Input
+                                type="number"
+                                placeholder="Nhập số lượng"
+                                className={`form-control ${inputPrescriptionDetail?.Quantity !== undefined && inputPrescriptionDetail?.Quantity < 1 ? 'input-error' : ''}`}
+                                min={1}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    const numberValue = Number(value);
+                                    if (numberValue < 1) {
+                                        setInputPrescriptionDetail((prev) => ({
+                                        ...prev,
+                                        Quantity: 0,
+                                        }))
+                                    };
+
+                                    setInputPrescriptionDetail((prev) => ({
+                                    ...prev,
+                                    Quantity: numberValue,
+                                    }));
+                                }}
+                                value={inputPrescriptionDetail?.Quantity ?? ''}
+                                />
+
+
                                         </div>
 
                                         <div className="form-group medicine">

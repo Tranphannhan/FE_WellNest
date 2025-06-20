@@ -272,3 +272,9 @@
       padding: 4.2px;
 }
 
+.input-error {
+  border: 1px solid red !important;
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+}
+
+

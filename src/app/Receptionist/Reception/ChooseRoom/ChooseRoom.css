@@ -149,6 +149,6 @@
     border: none;
 }
 
-.chooseRoom-container table{
-  border: none;
+.chooseRoom-container__table{
+  border: white 1px solid !important;
 }

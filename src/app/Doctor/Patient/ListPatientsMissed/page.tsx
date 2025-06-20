@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 import moment from "moment";
 import { FaNotesMedical } from "react-icons/fa";
+import NoData from "@/app/components/ui/Nodata/Nodata";
 
 
 export default function ListPatientsMissed(){
@@ -66,8 +67,8 @@ export default function ListPatientsMissed(){
                             </div>
                         </div>
                 </div>
-
-                <table className="Patient-container_table">
+                {dataRender.length > 0?
+                    <table className="Patient-container_table">
                     <thead>
                         <tr>
                             <th>Họ và tên</th>
@@ -102,7 +103,9 @@ export default function ListPatientsMissed(){
                                               </tr>
                                           ))}
                                       </tbody>
-    </table>
+                                    </table>
+                :<NoData></NoData>}
+                
 </div>
 </>
     )}
