@@ -40,7 +40,7 @@ export default function RootLayout({
                   {
                     logo:'/images/logoWebsite.png',
                     navItems:[
-                      {icon:`bi bi-file-earmark-text-fill`,text:"Thống kê doanh thu", link:'/Doctor/Patient'},
+                      {icon:`bi bi-file-earmark-text-fill`,text:"Thống kê doanh thu", link:'/Cashier/Dashboard'},
                       {icon:`bi bi-clipboard2-pulse-fill`,text:"Danh sách thanh toán", link:'/Cashier/PaymentWaitingList'}
                     ]
                   }

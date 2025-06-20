@@ -391,13 +391,13 @@ const RevenueDashboard: React.FC = () => {
             <Tabbar
                 tabbarItems={{
                     tabbarItems: [
-                        { text: 'Thống kê doanh thu', link: `/Doctor/Patient/ToExamine/684926749c351fd5325793a4/CreateResults/ComponentResults/ComponentPrintTicket` },
+                        { text: 'Thống kê doanh thu', link: `/Cashier/Dashboard` },
                     ],
                 }}
             />
 
             <div className="revenue-dashboard-container">
-                <div className="card mb-5">
+                <div className="card_Container   mb-5">
                     <h4 className="text-2xl font-bold text-gray-700 mb-5 text-center">Thống Kê Doanh Thu</h4>
                     <div className="grid grid-cols-1 md:grid-cols-6 gap-6 items-end">
                         <div>
@@ -471,15 +471,15 @@ const RevenueDashboard: React.FC = () => {
 
                 <div className="w-full flex justify-between">
                     <div className="flex flex-col md:flex-row justify-between gap-6 mb-5 flex-1">
-                        <div className="card text-center flex-1">
+                        <div className="card_Container   text-center flex-1">
                             <h2 className="text-2xl font-bold text-gray-700 mb-5">Tổng Doanh Thu</h2>
                             <p id="totalRevenueDisplay" className="text-2xl font-extrabold text-red-500">{formatCurrency(grandTotal)}</p>
                         </div>
-                        <div className="card text-center flex-1">
+                        <div className="card_Container   text-center flex-1">
                             <h2 className="text-2xl font-bold text-gray-700 mb-5">Doanh Thu Đơn Thuốc</h2>
                             <p id="prescriptionRevenueDisplay" className="text-2xl font-extrabold text-blue-500">{formatCurrency(displayPrescriptionRevenue)}</p>
                         </div>
-                        <div className="card text-center flex-1">
+                        <div className="card_Container   text-center flex-1">
                             <h2 className="text-2xl font-bold text-gray-700 mb-5">Doanh Thu Cận Lâm Sàng</h2>
                             <p id="clinicalRevenueDisplay" className="text-2xl font-extrabold text-green-500">{formatCurrency(displayClinicalRevenue)}</p>
                         </div>
@@ -487,13 +487,13 @@ const RevenueDashboard: React.FC = () => {
                 </div>
 
                 <div className="charts-section">
-                    <div className="card chart-card">
+                    <div className="card_Container   chart-card_Container ">
                         <h3 className="chart-title">So Sánh Doanh Thu Theo Loại</h3>
                         <div className="chart-container">
                             <canvas ref={barChartRef}></canvas>
                         </div>
                     </div>
-                    <div className="card chart-card">
+                    <div className="card_Container   chart-card_Container ">
                         <h3 className="chart-title">Tỷ Lệ Phân Bổ Doanh Thu</h3>
                         <div className="chart-container">
                             <canvas ref={pieChartRef}></canvas>
@@ -501,7 +501,7 @@ const RevenueDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="card">
+                <div className="card_Container  ">
                     <h2 className="text-2xl font-bold text-gray-700 mb-5 text-center">Bảng Thống Kê Chi Tiết Giao Dịch</h2>
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white rounded-lg overflow-hidden border border-gray-200">
