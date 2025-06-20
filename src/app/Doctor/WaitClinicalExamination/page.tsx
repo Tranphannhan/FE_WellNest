@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 import moment from "moment";
 import { FaNotesMedical } from "react-icons/fa";
+import NoData from "@/app/components/ui/Nodata/Nodata";
 
 
 export default function Patient(){
@@ -19,8 +20,11 @@ export default function Patient(){
 
     const LoaddingPatient = async () => {
         const Data = await getAllPatient ('6807397b4a1e320062ce2b20' , false , 'XetNghiem');
-        console.log(Data);
+        console.log(Data)
+        if(Data){
         setDataRender (Data.data);
+        }
+
     }
 
     useEffect (() => {
@@ -65,8 +69,9 @@ export default function Patient(){
                             </div>
                         </div>
                 </div>
-
-                <table className="Patient-container_table">
+            {dataRender.length >0 ? 
+            
+            <table className="Patient-container_table">
                     <thead>
                         <tr>
                             <th>Họ và tên</th>
@@ -81,12 +86,14 @@ export default function Patient(){
 
 
                     <tbody>
-                        {dataRender.map((record: MedicalExaminationCard) => (
+                        {
+
+                            dataRender.map((record: MedicalExaminationCard) => (
                             <tr key={record._id}>
-                                <td>{record.Id_TheKhamBenh.HoVaTen}</td>
-                                <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
-                                <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
-                                <td>{record.Id_TheKhamBenh.SoCCCD}</td>
+                                <td>{record.Id_TheKhamBenh?.HoVaTen || ''}</td>
+                                <td>{record.Id_TheKhamBenh?.SoDienThoai || ''}</td>
+                                <td>{record.Id_TheKhamBenh?.SDT_NguoiThan || ''}</td>
+                                <td>{record.Id_TheKhamBenh?.SoCCCD || ''}</td>
                                 <td>{moment(record.Gio, "HH:mm:ss").format("hh:mm:ss A")}</td>
                                 <td>{<div className={record.TrangThaiHoatDong === 'XetNghiem' ? 'tatusTable blue':'tatusTable red'}>Chờ xét nghiệm</div>}</td>
                                 <td>
@@ -99,9 +106,13 @@ export default function Patient(){
                                     ><FaNotesMedical />Tiếp tục khám</button>
                                 </td>
                             </tr>
-                        ))}
+                        ))
+
+                        }
                     </tbody>
     </table>
+            : <NoData></NoData>}
+                
 </div>
 </>
     )}

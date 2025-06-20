@@ -147,17 +147,11 @@ export default function Patient(){
 
             {/* Prescription Popup, now controlled by prescriptionStep */}
             <PrescriptionPopup 
-                PrescriptionInfo={
-                  { Id_PhieuKhamBenh:id as string ,
-                   
-                  }
-              } 
                 showPrescriptionPopup={showPrescriptionPopup} 
                 handleClosePrescriptionPopup={handleClosePrescriptionPopup} 
                 step={prescriptionStep} // Pass the step state
                 setStep={setPrescriptionStep} // Pass the setStep function
                 reload ={()=>setprescriptionComponentKey(prev => prev + 1)}
-
             />
 
             <div className="CreateResults-redirectFrame">

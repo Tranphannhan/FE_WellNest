@@ -533,3 +533,22 @@ export async function confirmCompletion (id: string){
     return false;
   }
 }
+
+// Chuyển phiếu khám bệnh sang trạng thái chớ xét nghiệm
+export async function waitingForTesting (id: string){
+  try {
+    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/ThayDoiTrangThaiHoatDong/${id}?TrangThaiHoatDong=XetNghiem`,{
+      method:'PATCH',
+    });
+    if (!response.ok){
+      showToast('Xác nhận chỉ định xét nghiệm thất bại', ToastType.error);
+       return false
+    };
+    showToast('Thành công đã chuyển bệnh nhân qua danh sách chờ', ToastType.success);
+    return true
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return false;
+  }
+}
