@@ -114,7 +114,7 @@ body {
   transition: background-color 0.2s ease;
 }
 .button--blue:hover {
-  background-color: rgb(32, 131, 229); /* màu hover đậm hơn */
+  background-color: #1f78d1; 
 }
 
 
@@ -131,7 +131,7 @@ body {
   transition: background-color 0.2s ease;
 }
 .button--green:hover {
-  background-color: #00d335; /* màu hover đậm hơn */
+  background-color: #00a62a; /* màu hover đậm hơn */
 }
 
 
@@ -189,6 +189,7 @@ body {
 }
 
 
+
 /* nut xanh to */
 .bigButton--blue{
   background-color: rgb(52, 151, 249);
@@ -218,6 +219,21 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 .bigButton--green:hover {
-  background-color: rgb(35, 182, 18); /* màu hover đậm hơn */
+  background-color: rgb(15, 154, 0); /* màu hover đậm hơn */
 }
 
+/* nut đỏ to */
+.bigButton--red{
+  background-color: #ff4040;
+  color: white;
+  padding: 8px 30px;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.bigButton--red:hover {
+  background-color: rgb(205, 0, 0); /* màu hover đậm hơn */
+}

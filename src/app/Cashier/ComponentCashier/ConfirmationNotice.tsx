@@ -61,27 +61,22 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
          
  
 
-        <Modal.Footer className="confirmationNotice-confirmationNotice-footer">
-          <Button variant="danger" 
-              onClick={Data_information.handleClose} 
-              className="btn-cancel confirmationNotice-confirmationNotice-footer__iconDelete"
-              style={{
-                paddingLeft : '20px',
-                paddingRight : '30px'
-              }}
-            >
-            <i className ="bi bi-x-circle-fill"></i> Hủy
-          </Button>
-          
+        <Modal.Footer className="confirmationNotice-confirmationNotice-footer">          
+            
+          <button
+                onClick={Data_information.handleClose} 
+              className="bigButton--red"
+          >
 
-          <Button  variant="primary" 
-              onClick={Data_information.paymentConfirmation} 
-              className="btn-confirm  confirmationNotice-confirmationNotice-footer__iconCheck"
-            >
-              
-            <i className ="bi bi-check-circle-fill"></i>
+                <i className ="bi bi-x-circle-fill"></i> Hủy
+          </button>
+          <button 
+                onClick={Data_information.paymentConfirmation} 
+              className="bigButton--green">
+
+                            <i className ="bi bi-check-circle-fill"></i>
              Xác nhận thanh toán
-          </Button>
+              </button>
         </Modal.Footer>
 
 

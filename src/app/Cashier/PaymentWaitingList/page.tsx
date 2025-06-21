@@ -20,7 +20,7 @@ export default function Prescription (){
                 HoVaTen: 'Nguyễn Văn A',
                 SoDienThoai: '0901234567',
                 TenDonThuoc: 'Tên đơn thuốc 1',
-                TenBacSi: '012345678901',
+                TenBacSi: 'Trần Bác Học',
                 TongTien : 1982,
             },
             Ngay: '2024-06-17',
@@ -35,7 +35,7 @@ export default function Prescription (){
                 HoVaTen: 'Trần Thị B',
                 SoDienThoai: '0909876543',
                 TenDonThuoc: 'Tên đơn thuốc 2',
-                TenBacSi: '098765432109',
+                TenBacSi: 'Thất Học Bác',
                 TongTien : 9232,
             },
             Ngay: '2024-06-17',
@@ -131,7 +131,6 @@ export default function Prescription (){
                             <th>Số điện thoại</th>
                             <th>Tên Đơn Thuốc</th>
                             <th>Tên bác sĩ</th>
-                            <th>Ngày</th>
                             <th>Thời gian</th>
                             <th>Tổng tiền</th>
                             <th>Hành động</th>
@@ -147,7 +146,6 @@ export default function Prescription (){
                                 <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
                                 <td>{record.Id_TheKhamBenh.TenDonThuoc}</td>
                                 <td>{record.Id_TheKhamBenh.TenBacSi}</td>
-                                <td>{record.Ngay}</td>
                                 <td >{formatTime (record.Gio)}</td>
                                 
                                 <td style={{color : 'red' , fontWeight : 'bold'}}>

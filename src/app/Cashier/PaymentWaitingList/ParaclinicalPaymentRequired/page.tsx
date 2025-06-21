@@ -4,13 +4,11 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import '../Prescription.css';
 import ConfirmationNotice from '../../ComponentCashier/ConfirmationNotice';
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { formatCurrencyVND, formatTime } from "@/app/lib/Format";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
    
  
 export default function Prescription (){
-    const router = useRouter();
     const mockData = [
         {
             _id: '1',
@@ -132,7 +130,6 @@ export default function Prescription (){
                             <th>Số Điện Thoại</th>
                             <th>Dịch vụ</th>
                             <th>Tên bác sĩ</th>
-                            <th>Ngày</th>
                             <th>Thời gian</th>
                             <th>Tổng Tiền</th>
                             <th>Hành động </th>
@@ -148,7 +145,6 @@ export default function Prescription (){
                                 <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
                                 <td>{record.Id_TheKhamBenh.DichVu}</td>
                                 <td>{record.Id_TheKhamBenh.TenBacSi}</td>
-                                <td>{record.Ngay}</td>
                                 <td >{formatTime (record.Gio)}</td>
 
 

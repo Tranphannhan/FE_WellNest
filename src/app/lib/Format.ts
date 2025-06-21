@@ -12,7 +12,7 @@ export function convertDateFormat(dateStr: string): string {
 
 // Định dạng tiền theo vnđ
 export function formatCurrencyVND(value: number): string {
-    return value.toLocaleString('vi-VN') + ' VND';
+    return value.toLocaleString('vi-VN') + ' VNĐ';
 }
 
 // tính tuổi
