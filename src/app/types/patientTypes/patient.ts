@@ -121,3 +121,17 @@ export interface generateTestResultsType {
   KetQua? : string ,
   TrangThaiHoanThanh ? : boolean
 }
+
+
+// đơn thuốc
+export interface prescriptionType {
+  _id: string;
+  Id_PhieuKhamBenh: MedicalExaminationCard;
+  TenDonThuoc: string;
+  TrangThaiThanhToan: boolean;
+  Gio: string;
+  TrangThai: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}

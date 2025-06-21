@@ -4,45 +4,31 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './Prescription.css';
 import { useRouter } from 'next/navigation';
 import ConfirmationNotice from "../ComponentCashier/ConfirmationNotice";
-import React, {  useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { formatCurrencyVND, formatTime } from "@/app/lib/Format";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
+import { prescriptionType } from "@/app/types/patientTypes/patient";
+import { getPrescriptionPendingPayment } from "@/app/services/Cashier";
+
 
 
 export default function Prescription (){
     const router = useRouter();
-    
-    const mockData = [
-        {
-            _id: '1',
-            STTKham: '1',
-            Id_TheKhamBenh: {
-                HoVaTen: 'Nguyễn Văn A',
-                SoDienThoai: '0901234567',
-                TenDonThuoc: 'Tên đơn thuốc 1',
-                TenBacSi: '012345678901',
-                TongTien : 1982,
-            },
-            Ngay: '2024-06-17',
-            Gio : '15:30:45'
-
-        },
-
-        {
-            _id: '2',
-            STTKham: '2',
-            Id_TheKhamBenh: {
-                HoVaTen: 'Trần Thị B',
-                SoDienThoai: '0909876543',
-                TenDonThuoc: 'Tên đơn thuốc 2',
-                TenBacSi: '098765432109',
-                TongTien : 9232,
-            },
-            Ngay: '2024-06-17',
-            Gio : '15:30:45'
+    const [dataPrescription , setDataPrescription] = useState <prescriptionType []> ([]);
+    const loadApi = async () => {
+        const getData : prescriptionType | [] | null = await getPrescriptionPendingPayment();
+        if (!getData) return;
+        if (Array.isArray(getData)) {
+            setDataPrescription(getData);
+        } else {
+            setDataPrescription([getData]);
         }
-    ];
+    }
 
+    useEffect (() => {
+        loadApi ();
+    },[]);
+    
     
     // 
     const [showModal, setShowModal] = useState(false);
@@ -140,18 +126,18 @@ export default function Prescription (){
 
    
                     <tbody>
-                        {mockData.map((record , index) => (
+                        {dataPrescription.map((record , index) => (
                             <tr key={record._id}>
                                 <td>{1 + index}</td>
-                                <td>{record.Id_TheKhamBenh.HoVaTen}</td>
-                                <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
-                                <td>{record.Id_TheKhamBenh.TenDonThuoc}</td>
-                                <td>{record.Id_TheKhamBenh.TenBacSi}</td>
-                                <td>{record.Ngay}</td>
+                                <td>{record.Id_PhieuKhamBenh.Id_TheKhamBenh.HoVaTen}</td>
+                                <td>{record.Id_PhieuKhamBenh.Id_TheKhamBenh.SoDienThoai}</td>
+                                <td>{record.TenDonThuoc}</td>
+                                <td>{record.Id_PhieuKhamBenh.Id_Bacsi.TenBacSi}</td>
+                                <td>{record.Id_PhieuKhamBenh.Ngay}</td>
                                 <td >{formatTime (record.Gio)}</td>
                                 
                                 <td style={{color : 'red' , fontWeight : 'bold'}}>
-                                    {formatCurrencyVND (record.Id_TheKhamBenh.TongTien)}
+                                    {formatCurrencyVND (9999)}
                                 </td>
 
                                  <td>
@@ -170,27 +156,21 @@ export default function Prescription (){
 
                                         <button className="button--red"
                                                onClick={() => handlePaymenConfirmation(
-                                                record.Id_TheKhamBenh.HoVaTen,
-                                                record.Id_TheKhamBenh.TongTien
+                                                record.Id_PhieuKhamBenh.Id_TheKhamBenh.HoVaTen as string,
+                                                9999
                                             )}
                                         >
                                             <FaMoneyCheckDollar/>
                                             Thu tiền
                                         </button>
-
-
-                                            
                                     </div>
+
+
                                 </td>
-                            
-
-
-                              
-
-
-
-
                             </tr>
+
+
+
                         ))}
                     </tbody>
 
