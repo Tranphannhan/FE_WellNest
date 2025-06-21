@@ -247,14 +247,14 @@ const ClinicalExamPage = ({ open, onClose,callback ,reload}: ClinicalExamPagePro
                                             <td className="table-data-cell table-data-cell--medium-font">
                                                 {test.TenXetNghiem}
                                             </td>
-                                            <td className="table-data-cell">
+                                            <td className="table-data-cell CreateClinicalExam-imageType">
                                                 <img src={`${API_IMAGE_BASE_URL}/image/${test.Image}`} alt={test.TenXetNghiem} className="table-image" />
                                             </td>
                                             <td className="table-data-cell table-data-cell--wrap-text">
                                                 {test.MoTaXetNghiem}
                                             </td>
-                                            <td className="table-data-cell_red">
-                                                {test.Id_GiaDichVu?.Giadichvu?.toLocaleString('vi-VN') || 0} VND
+                                            <td className="table-data-cell_red" style={{fontWeight:600, fontSize:14}}>
+                                                {test.Id_GiaDichVu?.Giadichvu?.toLocaleString('vi-VN') || 0} VNĐ
                                             </td>
                                             <td className="table-data-cell table-data-cell--action">
                                                 <Button

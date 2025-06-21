@@ -34,6 +34,21 @@
     
 }
 
+.Paraclinical-tatus.WaitingPayment {
+  background-color: #fffacc;
+  color: #c49b00;
+}
+
+.Paraclinical-tatus.WaitingTest {
+  background-color: #ccf0ff;
+  color: #007aa3;
+}
+
+.Paraclinical-tatus.DoneTest {
+  background-color: #e6ccff;
+  color: #7a00cc;
+}
+
 .Paraclinical-tatus.Confirm{
     background-color:#d6fdd6;
     color: green;
@@ -86,10 +101,18 @@
     margin-bottom: 20px;
 }
 
+.Paraclinical-medicine__container__medicineTable tr{
+
+    border-top: 1px solid #ddd;
+} 
+
+.Paraclinical-medicine__container__medicineTable tr th{
+
+    border-top: 1px solid white;
+} 
 
 .Paraclinical-medicine__container__medicineTable td {
     padding: 8px 16px;
-    border-top: 1px solid #ddd;
     text-align: left;
     font-size: 15px;
     color: var(--color-gray-800);

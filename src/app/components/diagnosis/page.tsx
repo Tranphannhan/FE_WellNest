@@ -118,7 +118,7 @@ const DiagnosisPopup = () => {
     {
       title: <div style={{ textAlign: "center" }}>Hành động</div>,
       key: "action",
-      render: (_: any, record: DataType) => (
+      render: (_:string, record: DataType) => (
         <div
           style={{
             display: "flex",

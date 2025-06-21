@@ -3,50 +3,35 @@
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import '../Prescription.css';
 import ConfirmationNotice from '../../ComponentCashier/ConfirmationNotice';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { formatCurrencyVND, formatTime } from "@/app/lib/Format";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
+import { getParaclinicalAwaitingPayment } from "@/app/services/Cashier";
+import { paraclinicalType } from "@/app/types/patientTypes/patient";
    
+// 
  
 export default function Prescription (){
-    const router = useRouter();
-    const mockData = [
-        {
-            _id: '1',
-            Id_TheKhamBenh: {
-                HoVaTen: 'Nguyễn Văn A',
-                SoDienThoai :  '0909876543',
-                DichVu : 'Xét nghiệm máu',
-                TenBacSi: 'Dr Ngô Hoàng Anh',
-                TongTien : 1282,
-            },
-            Ngay: '2024/06/17',
-            Gio : '15:30:45'
-        },
+      const [dataPrescription , setDataPrescription] = useState <paraclinicalType []> ([]);
+        const loadApi = async () => {
+            const getData = await getParaclinicalAwaitingPayment();
+            if (!getData) return;
+            console.log(getData);
 
-        {
-            _id: '2',
-            Id_TheKhamBenh: {
-                HoVaTen: 'Nguyễn Văn Hùng',
-                SoDienThoai :  '0909876512',
-                DichVu : 'Xét nghiệm châm',
-                TenBacSi: 'Dr GT Giao Long',
-                TongTien : 1982,
-            },
-            Ngay: '2024/06/27',
-            Gio : '15:30:45'
-        },
-    ];
+            if (Array.isArray(getData)) {
+                setDataPrescription(getData);
+            }
+        }
+    
+        useEffect (() => {
+            loadApi ();
+        },[]);
 
-  
 
     //
     const [showModal, setShowModal] = useState(false);
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
-
-
 
     interface paymenConfirmationType {
         HoVaTen ? : string,
@@ -63,7 +48,8 @@ export default function Prescription (){
         setShowModal(false);
         console.log('xác nhận thanh toán thành công');
     }
-    
+
+
 
     return (
         <>
@@ -86,13 +72,10 @@ export default function Prescription (){
                     handleClose: handleClose,
                     handleShow: handleShow,
                     show: showModal,
-                    callBack: handlePaymenConfirmation,
+                    callBack: () => {alert ("xxx")},
                     paymentConfirmation: paymentConfirmation
                 }}
             />
-
-
-                
 
 
             <div className="Prescription-container">
@@ -132,7 +115,6 @@ export default function Prescription (){
                             <th>Số Điện Thoại</th>
                             <th>Dịch vụ</th>
                             <th>Tên bác sĩ</th>
-                            <th>Ngày</th>
                             <th>Thời gian</th>
                             <th>Tổng Tiền</th>
                             <th>Hành động </th>
@@ -141,19 +123,18 @@ export default function Prescription (){
 
 
                     <tbody>  
-                        {mockData.map((record , index) => (
+                        {dataPrescription.map((record , index) => (
                             <tr key={record._id}>
                                 <td>{1 + index}</td>
-                                <td>{record.Id_TheKhamBenh.HoVaTen}</td>
-                                <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
-                                <td>{record.Id_TheKhamBenh.DichVu}</td>
-                                <td>{record.Id_TheKhamBenh.TenBacSi}</td>
-                                <td>{record.Ngay}</td>
+                                <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen || ''}</td>
+                                <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</td>
+                                <td>{record.Id_LoaiXetNghiem.TenXetNghiem}</td>
+                                <td>{record.Id_PhieuKhamBenh.Id_Bacsi?.TenBacSi}</td>
                                 <td >{formatTime (record.Gio)}</td>
 
 
                                 <td style={{color : 'red' , fontWeight : 'bold'}}>
-                                    {formatCurrencyVND (record.Id_TheKhamBenh.TongTien)}
+                                    {formatCurrencyVND (9999)}
                                 </td>
 
 
@@ -171,8 +152,8 @@ export default function Prescription (){
 
                                         <button className="button--red"
                                              onClick={() => handlePaymenConfirmation(
-                                                record.Id_TheKhamBenh.HoVaTen,
-                                                record.Id_TheKhamBenh.TongTien
+                                                record.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen as string,
+                                                99990
                                             )}
                                         >
                                             <FaMoneyCheckDollar/>

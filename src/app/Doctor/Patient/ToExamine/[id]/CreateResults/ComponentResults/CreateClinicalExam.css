@@ -166,9 +166,34 @@
   border-radius: 8px;
 }
 
+.CreateClinicalExam-imageType img{
+  height: 50px;
+}
+
 /* Allow horizontal scroll for table by default */
 .table-container {
   overflow-x: auto;
+}
+
+/* Scrollbar tổng thể */
+.table-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Phần track (nền thanh cuộn) */
+.table-container::-webkit-scrollbar-track {
+  background: transparent; /* không nền để gọn hơn */
+}
+
+/* Phần thumb (nút cuộn) */
+.table-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2); /* mờ nhẹ */
+  border-radius: 4px;
+}
+
+/* Hover vào thumb thì đậm hơn tí */
+.table-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 /* Specific override to disable horizontal scroll for a table */
@@ -187,6 +212,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  transform: translateY(-2px);
 }
 
 .table-header-cell {
@@ -241,15 +267,24 @@
   width: 15%; /* Hành động */
 }
 
+.table-container th{
+  border-top: solid white 1px;
+}
+
+.table-container tr{
+  border-top: 1px solid #e5e7eb; /* divide-y divide-gray-200 */
+}
 
 .table-data-cell {
   padding: 16px 24px; /* px-6 py-4 */
   font-size: 14px; /* text-sm */
   color: #111827; /* text-gray-900 */
-  border-top: 1px solid #e5e7eb; /* divide-y divide-gray-200 */
+
   white-space: normal; /* Allow text wrapping */
   word-wrap: break-word; /* Ensure long words break */
 }
+
+
 
 .table-data-cell--medium-font {
   font-weight: 500; /* font-medium */
@@ -265,10 +300,11 @@
 }
 
 .table-image {
-  height: 48px; /* h-12 */
-  width: 48px; /* w-12 */
   border-radius: 6px; /* rounded-md */
   object-fit: cover;
+  object-position: center;
+  height: 100px;
+  width: 150px;
 }
 
 .table-row-hover:hover {

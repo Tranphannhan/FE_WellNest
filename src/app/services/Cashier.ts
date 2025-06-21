@@ -1,3 +1,4 @@
+import { Testtype } from "../types/hospitalTypes/hospitalType";
 import { prescriptionType } from "../types/patientTypes/patient";
 
 
@@ -12,3 +13,18 @@ export async function getPrescriptionPendingPayment (): Promise<prescriptionType
     return null;
   }
 }
+
+
+
+export async function getParaclinicalAwaitingPayment (): Promise<Testtype | null> {
+  try {
+    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Pagination?TrangThaiThanhToan=false&gidzl=ReQG2WGF9X5ZdP05214Z7s6PaGuH52yOVP3C0qOOSn8gbv89GKXs72gMm0yN6dDFBSJ3NJTUl8SZ0muc6m`);
+    if (!response.ok) return null;
+    const data =await response.json();
+    return data.data
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+}
+

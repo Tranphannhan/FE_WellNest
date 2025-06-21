@@ -26,3 +26,23 @@ export interface prescriptionType{
     _id?:string;
     
 } 
+
+
+// Phòng thiết bị
+interface EquipmentType {
+    _id: string;
+    TenPhongThietBi: string;
+    TenXetNghiem : string;
+    Image : string
+}
+
+
+// Loại xét nghiệm
+export interface Testtype {
+    _id: string;
+    Id_PhongThietBi: EquipmentType;
+    TenXetNghiem: string;
+} 
+
+
+

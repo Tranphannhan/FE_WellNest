@@ -1,4 +1,5 @@
 import { DoctorType } from "../doctorTypes/doctorTypes";
+import { Testtype } from "../hospitalTypes/hospitalType";
 
 // dữ liểu frontEnd
 export interface codeScanningInformationType{
@@ -41,21 +42,21 @@ export interface medicalExaminationBook {
 
 // phiếu khám bệnh 
 export interface MedicalExaminationCard {
-  _id: string;
-  Id_TheKhamBenh: medicalExaminationBook;
-  Id_Bacsi: DoctorType;
-  Id_NguoiTiepNhan: string;
-  Id_GiaDichVu: string;
-  LyDoDenKham: string;
-  Ngay: string;
-  Gio: string;
-  TrangThaiThanhToan: boolean;
-  STTKham: number;
-  TrangThai: boolean;
-  TrangThaiHoatDong: string;
-  GioKetThucKham:string;
+  _id ? : string;
+  Id_TheKhamBenh ? : medicalExaminationBook;
+  Id_Bacsi ? : DoctorType;
+  Id_NguoiTiepNhan ? : string;
+  Id_GiaDichVu ?: string;
+  LyDoDenKham ? : string;
+  Ngay ? : string;
+  Gio ? : string;
+  TrangThaiThanhToan ? : boolean;
+  STTKham ? : number;
+  TrangThai ? : boolean;
+  TrangThaiHoatDong ? : string;
+  GioKetThucKham ? :string;
   __v: number;
-  SoLanKhongCoMat:number;
+  SoLanKhongCoMat ? :number;
 }
 
 // chỉ số sinh tồn 
@@ -99,6 +100,7 @@ export interface servicePriceType{
         TrangThaiHoatDong?:boolean;
 }
 
+
 //Hiện loại khám lâm sàng the
 export interface clinicalType {
     _id?: string;
@@ -123,6 +125,7 @@ export interface generateTestResultsType {
 }
 
 
+
 // đơn thuốc
 export interface prescriptionType {
   _id: string;
@@ -134,4 +137,21 @@ export interface prescriptionType {
   createdAt: string;
   updatedAt: string;
   __v: number;
+}
+
+
+// cận lâm sàng 
+export interface paraclinicalType {
+    _id: string;
+    Id_PhieuKhamBenh: MedicalExaminationCard;
+    Id_LoaiXetNghiem: Testtype;
+    Gio: string;
+    TrangThaiThanhToan: boolean;
+    Ngay: string;
+    STT: string;
+    TrangThai: boolean;
+    TrangThaiHoatDong: boolean;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
 }

@@ -63,23 +63,21 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
         </Modal.Body>
  
 
-        <Modal.Footer className="confirmationNotice-confirmationNotice-footer">
-          <Button variant="danger" 
-              onClick={Data_information.handleClose} 
-              className="btn-cancel confirmationNotice-confirmationNotice-footer__iconDelete"
-              style={{
-                paddingLeft : '20px',
-                paddingRight : '30px'
-              }}
+        <Modal.Footer className="confirmationNotice-confirmationNotice-footer">          
+            
+          <button
+                  onClick={Data_information.handleClose} 
+                className="bigButton--red"
             >
-            <i className ="bi bi-x-circle-fill"></i> Hủy
-          </Button>
-          
+
+                <i className ="bi bi-x-circle-fill"></i> Hủy
+          </button>
+
 
           {
             paymentType == 'Cash' ? (
               <Button  variant="primary" 
-                  onClick={Data_information.paymentConfirmation} 
+                  onClick={() => {Data_information.callBack()}} 
                   className="btn-confirm  confirmationNotice-confirmationNotice-footer__iconCheck"
                 >
               
@@ -95,7 +93,7 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
           {
             paymentType == 'transfer' ? (
              <Button  variant="primary" 
-                onClick={Data_information.paymentConfirmation} 
+                onClick={Data_information.callBack} 
                   className="btn-confirm  confirmationNotice-confirmationNotice-footer__iconCheck"
                 >
                 
@@ -105,6 +103,10 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
 
               ) : ( null)
           }
+
+
+
+
 
         </Modal.Footer>
       </Modal>

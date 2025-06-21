@@ -117,7 +117,6 @@ export default function Prescription (){
                             <th>Số điện thoại</th>
                             <th>Tên Đơn Thuốc</th>
                             <th>Tên bác sĩ</th>
-                            <th>Ngày</th>
                             <th>Thời gian</th>
                             <th>Tổng tiền</th>
                             <th>Hành động</th>
