@@ -4,7 +4,7 @@ import { FaSave } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { generateTestResultsType } from '@/app/types/patientTypes/patient';
-import { createExaminationResults, getExaminationResults, latestDiagnosis } from '@/app/services/DoctorSevices';
+import { createExaminationResults, getDoctorTemporaryTypes, getExaminationResults } from '@/app/services/DoctorSevices';
 import PreviewExaminationResult from '../ComponentResults/ComponentPrintTicket/PreviewExaminationResult';
 import { BsFillPrinterFill } from 'react-icons/bs';
 import DoNotContinue from '@/app/components/ui/DoNotContinue/DoNotContinue';
@@ -28,7 +28,7 @@ interface ExaminationResultData {
 }
 
 
-export default function DiagnosisResultsComponent({reLoad}:{reLoad:()=>void}) {
+export default function DiagnosisResultsComponent({reLoad, allowsGeneratingResults}:{reLoad:()=>void, allowsGeneratingResults:boolean}) {
   const { id } = useParams();
   const [statusSave, setStatusSave] = useState<boolean>(false);
   const [isExaminationResultModalOpen, setIsExaminationResultModalOpen] = useState(false);
@@ -47,11 +47,23 @@ export default function DiagnosisResultsComponent({reLoad}:{reLoad:()=>void}) {
 
     const [continueRender, setContinueRender] = useState <boolean>(false)
     const checkRender = async() =>{
-        const data  = await latestDiagnosis(id as string)
-        console.log(data)
-        if(data.continueRender){
-          setContinueRender(true)
-        }
+        // const data  = await latestDiagnosis(id as string)
+        // console.log(data)
+        // if(data.continueRender){
+        //   setContinueRender(true)
+        // }
+
+              const result = await getDoctorTemporaryTypes(id as string);
+              if (!result || !Array.isArray(result)) {
+                console.error("Không tìm thấy dữ liệu cận lâm sàng");
+                return;
+              }
+              const isTrue = result.length > 0 && result.every(item => item.TrangThai === true);
+
+              console.log('dữ liệu xét nghiệm', isTrue)
+              if(isTrue){
+                  setContinueRender(true)
+              }
         
     }
 
@@ -190,7 +202,7 @@ export default function DiagnosisResultsComponent({reLoad}:{reLoad:()=>void}) {
       >
         <BsFillPrinterFill /> Kết quả
       </button>
-        {continueRender ? <>
+        {continueRender || allowsGeneratingResults ? <>
                 <div className="DiagnosisResults-Container">
         <span className="DiagnosisResults-Body__Title">Tạo kết quả khám</span>
 
@@ -281,8 +293,8 @@ export default function DiagnosisResultsComponent({reLoad}:{reLoad:()=>void}) {
         </button>
       </div>
         </>:<DoNotContinue
-              message="Chưa có chẩn đoán lâm sàng"
-            remind="Vui lòng chẩn đoán để tiếp tục chẩn đoán"
+              message="Không thể tạo kết quả"
+            remind="Vui lòng chỉ định lâm sàng hoặc bỏ qua để tiếp tục"
         ></DoNotContinue>}
 
       {isExaminationResultModalOpen && patientData && (

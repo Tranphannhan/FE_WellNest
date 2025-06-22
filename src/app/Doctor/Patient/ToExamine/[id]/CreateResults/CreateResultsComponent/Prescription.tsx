@@ -103,15 +103,20 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
           }
           
       }
-    
+      
+      const getResults =async ()=>{
+        const result = await getExaminationResults(String(id));
+        const dataLocal = sessionStorage.getItem('ThongTinBenhNhanDangKham');
+         
+        if(dataLocal && result){
+            const data = JSON.parse(dataLocal)
+            setPatientDataForForm({...data,results:result.KetQua})
+        }
+      }
 
     useEffect(() => {
-        const dataLocal = sessionStorage.getItem('ThongTinBenhNhanDangKham');
-        if(dataLocal){
-            const data = JSON.parse(dataLocal)
-            setPatientDataForForm(data)
-        }
-    }, []);
+        getResults()
+    }, [id]);
 
 
 

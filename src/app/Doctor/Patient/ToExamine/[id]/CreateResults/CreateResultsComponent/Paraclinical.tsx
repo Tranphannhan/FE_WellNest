@@ -5,7 +5,6 @@ import { DoctorTemporaryTypes } from "@/app/types/doctorTypes/doctorTestTypes";
 import {
   deleteDoctorTemporaryTypes,
   getDoctorTemporaryTypes,
-  getExaminationResults,
   latestDiagnosis,
   testConfirmation,
   waitingForTesting,
@@ -48,7 +47,7 @@ export interface PrintAppointmentFormProps {
   departmentName: string;
 }
 
-export default function ParaclinicalComponent() {
+export default function ParaclinicalComponent({hiddenButton,shouldContinue,callBack,notAllowsGeneratingResults,AllowsGeneratingResults}:{shouldContinue:boolean,callBack:(id:string)=>void,AllowsGeneratingResults:()=>void,notAllowsGeneratingResults:()=>void, hiddenButton:boolean}) {
   const [data, setData] = useState<DoctorTemporaryTypes[]>([]);
   const { id } = useParams();
   const [isPhieuChiDinhModalOpen, setIsPhieuChiDinhModalOpen] = useState(false);
@@ -59,10 +58,11 @@ export default function ParaclinicalComponent() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const router = useRouter();
 
-  const allConfirmed =
-    data.length > 0
-      ? data.every((item) => item.TrangThaiHoatDong === true)
-      : false;
+const allConfirmed =
+  data.length > 0 &&
+  data.every(item => item.TrangThaiHoatDong === true) &&  // Tất cả đã xác nhận
+  data.some(item => item.TrangThai === false);            // Có ít nhất một cái chưa xét nghiệm
+
 
   const [continueRender, setContinueRender] = useState<boolean>(false);
   const checkRender = async () => {
@@ -98,10 +98,11 @@ export default function ParaclinicalComponent() {
   // Sử dụng useCallback để memoize hàm và tránh re-render không cần thiết
   const loadDiagnosis = useCallback(async () => {
     try {
-      const result = await getExaminationResults(String(id));
+      const result = await latestDiagnosis(String(id));
+      console.log(result)
       if (result) {
         setPatientData((prev) =>
-          prev ? { ...prev, diagnosis: result.KetQua || "" } : prev
+          prev ? { ...prev, diagnosis: result?.data?.ChuanDoanSoBo || "Chưa có chuẩn đoán" } : prev
         );
       }
     } catch (err) {
@@ -120,13 +121,14 @@ export default function ParaclinicalComponent() {
       }
 
       console.log('dữ liệu xét nghiệm', result)
+
       setData(result);
       // Cập nhật serviceList trong patientData.
       // Cần đảm bảo patientData đã có giá trị trước khi cập nhật serviceList.
       setPatientData((prev) => {
         if (!prev) return prev; // Nếu prev là null, không làm gì cả
         const serviceList: ServiceItem[] = result
-          .filter((item) => item.TrangThaiHoatDong === true)
+          .filter((item) => item.TrangThaiHoatDong === true && item.TrangThaiThanhToan === false)
           .map((item, index) => ({
             stt: index + 1,
             name: item.Id_LoaiXetNghiem.TenXetNghiem,
@@ -277,7 +279,7 @@ export default function ParaclinicalComponent() {
                       trangThaiClass = "DoneTest";
                       actionButtons = (
                         <button
-                          onClick={() => alert("Đã có kết quả")}
+                          onClick={() => callBack(item._id)}
                           className="button--green"
                         >
                           <FaEye /> Xem kết quả
@@ -330,15 +332,35 @@ export default function ParaclinicalComponent() {
                     setShowModal(true);
                   }}
                 >
-                  Hoàn thành
+                  Chờ xét nghiệm
                 </button>
               </div>
             </>
           ) : (
-            <NoData
+
+          hiddenButton ?  <DoNotContinue
+            message="Không thể chỉ định cận lâm sàng"
+            remind="Đã có kết quả chẩn đoán"
+          />:
+            <>
+                        <NoData
               message="Không có chỉ định cận lâm sàng"
               remind="Nếu cần kết quả để chẩn đoán vui lòng chỉ định"
             />
+            <button style={{marginLeft:'auto'}} className={shouldContinue?"bigButton--blue":"bigButton--red"} onClick={()=>{
+              if(shouldContinue){
+                  notAllowsGeneratingResults()
+              }else{
+                  AllowsGeneratingResults()
+              }
+              
+            
+            }}>{shouldContinue?'Tiếp tục tạo yêu cầu':'Bỏ qua cận lâm sàng'}
+              </button>
+            </>
+
+          
+
           )
         ) : (
           <DoNotContinue

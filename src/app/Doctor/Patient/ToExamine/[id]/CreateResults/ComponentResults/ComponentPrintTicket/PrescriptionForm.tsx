@@ -155,7 +155,7 @@ export default function PreviewExaminationForm({
                         <p><strong>Ngày Sinh:</strong> {patientData?.Id_TheKhamBenh.NgaySinh}</p>
                         <p><strong>Phòng Khám:</strong> {patientData?.Id_Bacsi.Id_PhongKham?.SoPhongKham}</p>
                         <p style={{ gridColumn: 'span 2' }}><strong>Địa chỉ liên hệ:</strong> {patientData?.Id_TheKhamBenh.DiaChi}</p>
-                        <p style={{ gridColumn: 'span 3' }}><strong>Chuẩn đoán:</strong> Không có</p>
+                        <p style={{ gridColumn: 'span 3' }}><strong>Chẩn đoán:</strong> {patientData?.results || 'Không có'}</p>
 
                     </div>
 

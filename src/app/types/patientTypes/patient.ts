@@ -56,6 +56,9 @@ export interface MedicalExaminationCard {
   GioKetThucKham:string;
   __v: number;
   SoLanKhongCoMat:number;
+
+  // là dữ liệu phát sinh trên FE
+  results?:string;
 }
 
 // chỉ số sinh tồn 
