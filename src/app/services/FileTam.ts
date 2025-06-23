@@ -1,6 +1,6 @@
 // FileTam.ts (hoặc file services của bạn)
 
-import { MedicinePaginationResponse, PrescriptionStatsPaginationResponse, TestRequestPaginationResponse } from "@/app/types/hospitalTypes/hospitalType";
+import { MedicalRecordPaginationResponse, MedicinePaginationResponse, PrescriptionStatsPaginationResponse, TestRequestPaginationResponse } from "@/app/types/hospitalTypes/hospitalType";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -144,6 +144,37 @@ export async function fetchTestRequestsByDateRange(fromDate?: string, toDate?: s
     return data;
   } catch (error) {
     console.error('Error fetching test requests:', error);
+    throw error;
+  }
+}
+
+export async function fetchMedicalRecordsByDateRange(
+  fromDate?: string,
+  toDate?: string,
+  year?: number
+): Promise<MedicalRecordPaginationResponse> {
+  try {
+    let url = `${API_BASE_URL}/Phieu_Kham_Benh/filter-phieu-kham-benh`;
+    const params = new URLSearchParams();
+
+    if (fromDate && toDate) {
+      params.append('fromDate', fromDate);
+      params.append('toDate', toDate);
+    }
+    if (year) {
+      params.append('year', year.toString());
+    }
+
+    const response = await fetch(`${url}?${params.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: MedicalRecordPaginationResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching medical records:', error);
     throw error;
   }
 }

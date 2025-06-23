@@ -1,0 +1,418 @@
+/* ExaminationForm.css */
+
+/* General Body and Container */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.a4-container {
+    width: 210mm; /* A4 width */
+    min-height: 297mm; /* A4 height */
+    padding: 20px; /* Adjusted padding for better fit with image */
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    position: relative; /* For absolute positioning of elements like stamp */
+    line-height: 1.4; /* Adjusted line height for readability */
+}
+
+/* Header Section */
+.prescription-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px; /* Reduced margin for tighter header */
+}
+
+.prescription-header > div:first-child {
+    flex-grow: 1; /* Allows hospital info to take available space */
+}
+
+.prescription-header p {
+    margin: 0;
+    line-height: 1.3; /* Tighter line spacing for header details */
+    font-size: 13px; /* Smaller font for contact details */
+}
+
+.prescription-header p:first-child {
+    font-weight: bold;
+    font-size: 16px; /* "PHIẾU THU TIỀN THUỐC" */
+    margin-bottom: 5px;
+}
+
+.prescription-header h1 {
+    font-size: 18px; /* Hospital name size */
+    color: #000; /* Black color as in the image */
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+}
+
+.barcode {
+    width: 120px; /* Adjusted width to match image more closely */
+    height: 50px; /* Adjusted height */
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-end;
+    margin-left: 20px;
+    margin-top: 5px; /* Alignment with "PHIẾU THU TIỀN THUỐC" */
+}
+
+.barcode-bar {
+    background-color: black;
+    display: inline-block;
+    /* Height and width set inline in JS/TS */
+}
+
+.barcode-space {
+    background-color: transparent;
+    display: inline-block;
+    height: 100%;
+    /* Width set inline in JS/TS */
+}
+
+/* Title */
+.prescription-title {
+    text-align: center;
+    font-size: 24px; /* "HÓA ĐƠN" title size */
+    margin: 20px 0 25px 0; /* Adjusted margin */
+    color: #000; /* Black color for "HÓA ĐƠN" */
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Patient Information */
+.patient-info-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr; /* Adjusted column widths to match image */
+    gap: 5px 20px; /* Tighter row spacing */
+    margin-bottom: 20px;
+}
+
+.patient-info-grid p {
+    margin: 0;
+    line-height: 1.4;
+    font-size: 13px; /* Font size for patient info */
+}
+
+
+
+/* Medicine Table */
+.fee-heading {
+    font-size: 16px; /* "Chi tiết Thuốc" heading */
+    margin-bottom: 10px;
+    color: #000; /* Black color for heading */
+    font-weight: bold;
+}
+
+.medicine-table-container {
+    width: 100%;
+    margin-bottom: 20px; /* Space below the table */
+}
+
+.medicine-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px; /* Font size for table content */
+}
+
+.medicine-table-container th,
+.medicine-table-container td {
+    border: 1px solid #ccc; /* Lighter border as in image */
+    padding: 6px 8px; /* Adjusted padding for table cells */
+    text-align: left;
+    vertical-align: top; /* Align text to top in cells */
+}
+
+.medicine-table-container th {
+    background-color: #f8f8f8; /* Very light background for headers */
+    font-weight: bold;
+    text-align: center; /* Center headers as in image */
+}
+
+.medicine-table-container td:nth-child(1) { width: 5%; text-align: center; } /* STT */
+.medicine-table-container td:nth-child(2) { width: 40%; } /* Tên thuốc */
+.medicine-table-container td:nth-child(3) { width: 10%; text-align: center; } /* ĐVT */
+.medicine-table-container td:nth-child(4) { width: 10%; text-align: right; } /* SL */
+.medicine-table-container td:nth-child(5) { width: 15%; text-align: right; } /* Đơn giá */
+.medicine-table-container td:nth-child(6) { width: 20%; text-align: right; } /* Thành tiền */
+
+.medicine-usage {
+    font-size: 11px; /* Smaller font for usage instructions */
+    color: #555;
+    margin-top: 3px;
+    margin-left: 0; /* Remove left margin from previous example */
+}
+
+/* Total Price Sections */
+.total-price-section {
+    margin-top: 5px; /* Giảm khoảng cách để các dòng gần nhau hơn */
+    display: flex;
+    justify-content: flex-end; /* Căn phải cả khối */
+    font-size: 14px;
+    padding-right: 10px;
+    /* Loại bỏ max-width và right: 0 ở đây vì chúng ta sẽ xử lý nó trên phần tử con <p> */
+}
+
+.total-price-section p {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 300px; /* Chiều rộng cố định cho phần label + value, điều chỉnh nếu cần */
+    /* Không có border-bottom chung cho span ở đây nếu bạn muốn chỉ dòng giảm giá có */
+}
+
+.total-price-section strong {
+    flex-grow: 1;
+    text-align: left;
+    padding-right: 10px;
+    font-weight: normal;
+}
+
+.total-price-section span {
+    display: inline-block;
+    min-width: 120px;
+    text-align: right;
+    font-weight: bold;
+    color: #000;
+    /* KHÔNG CÓ border-bottom ở đây nếu bạn chỉ muốn áp dụng cho dòng Giảm */
+    /* Nếu bạn muốn tất cả các dòng có gạch chân dưới số tiền, hãy để lại border-bottom ở đây */
+    /* padding-bottom: 2px; */ /* Giữ lại nếu bạn muốn khoảng cách với gạch chân */
+}
+
+/* Style riêng cho dòng GIẢM có gạch chân */
+.total-price-section.discount-line-underline p {
+    border-bottom: 1px solid #ccc; /* Áp dụng gạch chân cho phần tử <p> của dòng giảm */
+    padding-bottom: 5px; /* Khoảng cách giữa chữ và đường gạch */
+    margin-bottom: 5px; /* Giữ khoảng cách với dòng tiếp theo */
+    /* Đảm bảo width đã được định nghĩa ở .total-price-section p */
+    width: 300px; /* Cần phải có cùng chiều rộng hoặc điều chỉnh phù hợp */
+}
+/* Nếu bạn muốn border-bottom chỉ dưới số 0, thì bạn cần áp dụng nó cho span của dòng giảm, và loại bỏ border-bottom chung của total-price-section span. */
+/* Ví dụ nếu muốn chỉ span của dòng giảm có gạch: */
+/*
+.total-price-section.discount-line-underline span {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 2px;
+}
+*/
+
+
+/* Signatures */
+.receipt-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px; /* Space above signatures */
+    width: 100%;
+    align-items: flex-start; /* Align signature blocks to the top */
+    padding: 0 10px; /* Padding to match image layout */
+}
+
+.signature-block {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signature-label {
+    font-weight: bold;
+    margin-bottom: 60px; /* Space for signature */
+    font-size: 13px; /* Label font size */
+    white-space: nowrap; /* Prevent wrapping for labels like "(Ký, ghi rõ họ tên)" */
+}
+
+.signature-name {
+    font-weight: bold;
+    font-size: 14px; /* Name font size */
+    margin-top: 5px; /* Small space after "(Ký, ghi rõ họ tên)" if it's separate */
+    text-transform: uppercase; /* Match uppercase name in image */
+}
+
+.signature-payer,
+.signature-collector {
+    padding: 0 10px; /* Add some horizontal padding */
+}
+
+.collector-info-block {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signature-date {
+    margin-bottom: 5px; /* Space between date and "Người thu tiền" */
+    font-style: italic; /* Italic date */
+    font-size: 13px; /* Date font size */
+    text-align: center;
+    width: 100%; /* Ensure it spans the width of its container */
+}
+
+
+/* Hospital Stamp */
+.hospital-stamp {
+    position: absolute; /* Position relative to .a4-container */
+    bottom: 20px; /* Adjust as needed */
+    left: 20px; /* Adjust as needed */
+    text-align: center;
+    font-size: 11px; /* Smaller font size for stamp text */
+    color: #000; /* Black color for stamp text */
+    line-height: 1.1;
+    width: 150px; /* Approximate width of the stamp area */
+}
+
+.hospital-stamp p:first-of-type {
+    font-weight: bold;
+    font-size: 12px; /* Slightly larger for main hospital name */
+    margin-bottom: 2px;
+}
+
+.hospital-stamp p:nth-of-type(2) {
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.hospital-stamp p:nth-of-type(3) {
+    font-weight: bold;
+    font-size: 14px; /* "ĐÃ XUẤT HÓA ĐƠN" */
+    color: red; /* Red color for "ĐÃ XUẤT HÓA ĐƠN" */
+    border: 2px solid red; /* Border around "ĐÃ XUẤT HÓA ĐƠN" */
+    padding: 2px 5px;
+    display: inline-block; /* To make border fit content */
+    transform: rotate(-10deg); /* Slight rotation */
+    margin-top: 5px;
+}
+
+.hospital-stamp p:last-of-type {
+    font-weight: bold;
+    font-size: 10px;
+    color: red;
+    transform: rotate(-10deg);
+    margin-top: -5px; /* Closer to the above text */
+}
+
+/* Modal specific styles */
+.pdf-preview-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: #000;
+    backdrop-filter: blur(5px);
+}
+
+.pdf-preview-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 50%;
+    max-height: 90%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.pdf-preview-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.pdf-preview-content img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.pdf-preview-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.pdf-preview-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.close-btn-modal {
+    background-color: #6c757d;
+    color: white;
+}
+
+.close-btn-modal:hover {
+    background-color: #5a6268;
+}
+
+.export-btn-modal {
+    background-color: #007bff;
+    color: white;
+}
+
+.export-btn-modal:hover {
+    background-color: #0056b3;
+}
+
+/* Utility classes - kept for completeness but may not be directly used if replaced by direct styling */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.min-h-screen { min-height: 100vh; }
+.bg-gray-100 { background-color: #f7fafc; }
+.p-4 { padding: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.bg-blue-600 { background-color: #2563eb; }
+.text-white { color: #fff; }
+.font-semibold { font-weight: 600; }
+.rounded-lg { border-radius: 0.5rem; }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.hover\:bg-blue-700:hover { background-color: #1d4ed8; }
+.focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
+.focus\:ring-2:focus { --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color); box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000); }
+.focus\:ring-blue-500:focus { --tw-ring-color: #3b82f6; }
+.focus\:ring-offset-2:focus { --tw-ring-offset-width: 2px; }
+.transition { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.duration-200 { transition-duration: 200ms; }
+
+/* Existing image_6a2843.png specific styling - if you have a stamp image */
+.checked-stamp {
+    position: absolute;
+    right: 20mm; /* Adjust as needed */
+    bottom: 20mm; /* Adjust as needed */
+    width: 100px; /* Or whatever size fits */
+    height: auto;
+    opacity: 0.7; /* Optional: make it slightly transparent */
+    transform: rotate(10deg); /* Optional: slight rotation */
+    pointer-events: none; /* Allows clicks to pass through */
+}
+.checked-stamp img {
+    width: 100%;
+    height: auto;
+}

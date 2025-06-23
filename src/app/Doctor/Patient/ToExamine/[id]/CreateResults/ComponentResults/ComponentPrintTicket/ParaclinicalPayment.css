@@ -1,0 +1,366 @@
+/* ParaclinicalPayment.css (Thiết kế tương tự MedicineFees.css) */
+
+/* General Body and Container */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.a4-container {
+    width: 210mm; /* A4 width */
+    min-height: 297mm; /* A4 height */
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    position: relative;
+    line-height: 1.4;
+}
+
+/* Header Section */
+.paraclinical-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.paraclinical-header > div:first-child {
+    flex-grow: 1;
+}
+
+.paraclinical-header p {
+    margin: 0;
+    line-height: 1.3;
+    font-size: 13px;
+}
+
+.paraclinical-header p:first-child {
+    font-weight: bold;
+    font-size: 16px; /* "GIẤY XÁC NHẬN THANH TOÁN" */
+    margin-bottom: 5px;
+}
+
+.paraclinical-header h1 {
+    font-size: 18px; /* Hospital name size */
+    color: #000;
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+}
+
+.barcode {
+    width: 120px;
+    height: 50px;
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-end;
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+.barcode-bar {
+    background-color: black;
+    display: inline-block;
+}
+
+.barcode-space {
+    background-color: transparent;
+    display: inline-block;
+    height: 100%;
+}
+
+/* Title */
+.paraclinical-title {
+    text-align: center;
+    font-size: 24px; /* Title size */
+    margin: 20px 0 25px 0;
+    color: #000;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Patient Information */
+.patient-info-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1.5fr 1fr; /* Adjusted for patient ID, name, gender, dob */
+    gap: 5px 20px;
+    margin-bottom: 20px;
+}
+
+.patient-info-grid p {
+    margin: 0;
+    line-height: 1.4;
+    font-size: 13px;
+}
+
+.patient-info-grid p strong {
+    font-weight: bold; /* Make strong tags bold by default */
+}
+
+/* Service Table */
+.service-heading {
+    font-size: 16px; /* "Chi tiết Dịch vụ Cận lâm sàng" heading */
+    margin-bottom: 10px;
+    color: #000;
+    font-weight: bold;
+}
+
+.service-table-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.service-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.service-table-container th,
+.service-table-container td {
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.service-table-container th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Column widths for the service table */
+.service-table-container td:nth-child(1) { width: 5%; text-align: center; } /* STT */
+.service-table-container td:nth-child(2) { width: 25%; } /* Tên dịch vụ */
+.service-table-container td:nth-child(3) { width: 15%; text-align: right; } /* Đơn giá */
+.service-table-container td:nth-child(4) { width: 25%; } /* Phòng thực hiện */
+.service-table-container td:nth-child(5) { width: 15%; text-align: center; } /* STT của bạn */
+.service-table-container td:nth-child(6) { width: 15%; text-align: center; } /* Số người chờ */
+
+
+/* Total Price Sections */
+.total-price-section {
+    margin-top: 5px; /* Giảm khoảng cách để các dòng gần nhau hơn */
+    display: flex;
+    justify-content: flex-end; /* Căn phải cả khối */
+    font-size: 14px;
+    padding-right: 10px;
+    /* Loại bỏ max-width và right: 0 ở đây vì chúng ta sẽ xử lý nó trên phần tử con <p> */
+}
+
+.total-price-section p {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 300px; /* Chiều rộng cố định cho phần label + value, điều chỉnh nếu cần */
+    /* Không có border-bottom chung cho span ở đây nếu bạn muốn chỉ dòng giảm giá có */
+}
+
+.total-price-section strong {
+    flex-grow: 1;
+    text-align: left;
+    padding-right: 10px;
+    font-weight: normal;
+}
+
+.total-price-section span {
+    display: inline-block;
+    min-width: 120px;
+    text-align: right;
+    font-weight: bold;
+    color: #000;
+    /* KHÔNG CÓ border-bottom ở đây nếu bạn chỉ muốn áp dụng cho dòng Giảm */
+    /* Nếu bạn muốn tất cả các dòng có gạch chân dưới số tiền, hãy để lại border-bottom ở đây */
+    /* padding-bottom: 2px; */ /* Giữ lại nếu bạn muốn khoảng cách với gạch chân */
+}
+
+/* Style riêng cho dòng GIẢM có gạch chân */
+.total-price-section.discount-line-underline p {
+    border-bottom: 1px solid #ccc; /* Áp dụng gạch chân cho phần tử <p> của dòng giảm */
+    padding-bottom: 5px; /* Khoảng cách giữa chữ và đường gạch */
+    margin-bottom: 5px; /* Giữ khoảng cách với dòng tiếp theo */
+    /* Đảm bảo width đã được định nghĩa ở .total-price-section p */
+    width: 300px; /* Cần phải có cùng chiều rộng hoặc điều chỉnh phù hợp */
+}
+
+
+/* Signatures */
+.receipt-signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    width: 100%;
+    align-items: flex-start;
+    padding: 0 10px;
+}
+
+.signature-block {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signature-label {
+    font-weight: bold;
+    margin-bottom: 60px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.signature-name {
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 5px;
+    text-transform: uppercase;
+}
+
+.signature-payer,
+.signature-collector {
+    padding: 0 10px;
+}
+
+.collector-info-block {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signature-date {
+    margin-bottom: 5px;
+    font-style: italic;
+    font-size: 13px;
+    text-align: center;
+    width: 100%;
+}
+
+
+/* Hospital Stamp */
+.hospital-stamp {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    text-align: center;
+    font-size: 11px;
+    color: #000;
+    line-height: 1.1;
+    width: 150px;
+}
+
+.hospital-stamp p:first-of-type {
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.hospital-stamp p:nth-of-type(2) {
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.hospital-stamp p:nth-of-type(3) {
+    font-weight: bold;
+    font-size: 14px;
+    color: red;
+    border: 2px solid red;
+    padding: 2px 5px;
+    display: inline-block;
+    transform: rotate(-10deg);
+    margin-top: 5px;
+}
+
+.hospital-stamp p:last-of-type {
+    font-weight: bold;
+    font-size: 10px;
+    color: red;
+    transform: rotate(-10deg);
+    margin-top: -5px;
+}
+
+/* Modal specific styles */
+.pdf-preview-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: #000;
+    backdrop-filter: blur(5px);
+}
+
+.pdf-preview-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 50%;
+    max-height: 90%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.pdf-preview-content h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.pdf-preview-content img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.pdf-preview-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.pdf-preview-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.close-btn-modal {
+    background-color: #6c757d;
+    color: white;
+}
+
+.close-btn-modal:hover {
+    background-color: #5a6268;
+}
+
+.export-btn-modal {
+    background-color: #007bff;
+    color: white;
+}
+
+.export-btn-modal:hover {
+    background-color: #0056b3;
+}

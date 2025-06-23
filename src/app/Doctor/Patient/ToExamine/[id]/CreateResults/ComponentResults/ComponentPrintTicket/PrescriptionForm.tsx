@@ -73,12 +73,12 @@ export default function PreviewExaminationForm({
                     pdf.addImage(pdfPreviewImg, 'PNG', 0, position, imgWidth, imgHeight);
                     heightLeft -= pageHeight;
                 }
-                pdf.save(`don_thuoc_${patientData?.Id_TheKhamBenh.HoVaTen?.replace(/\s/g, '_') || 'unknown_patient'}.pdf`);
+                pdf.save(`don_thuoc_${patientData?.Id_TheKhamBenh?.HoVaTen?.replace(/\s/g, '_') || 'unknown_patient'}.pdf`);
                 onClose();
             };
             tempImg.onerror = (err) => console.error("Không thể tải ảnh để tạo PDF:", err);
         }, 50);
-    }, [pdfPreviewImg, onClose, patientData?.Id_TheKhamBenh.HoVaTen]);
+    }, [pdfPreviewImg, onClose, patientData?.Id_TheKhamBenh?.HoVaTen]);
 
     useEffect(() => {
         if (isOpen) {
@@ -150,11 +150,11 @@ export default function PreviewExaminationForm({
                     <h2 className="prescription-title">Đơn Thuốc</h2>
 
                     <div className="patient-info-grid">
-                        <p><strong>Họ tên:</strong> {patientData?.Id_TheKhamBenh.HoVaTen}</p>
-                        <p><strong>Giới tính:</strong> {patientData?.Id_TheKhamBenh.GioiTinh}</p>
-                        <p><strong>Ngày Sinh:</strong> {patientData?.Id_TheKhamBenh.NgaySinh}</p>
-                        <p><strong>Phòng Khám:</strong> {patientData?.Id_Bacsi.Id_PhongKham?.SoPhongKham}</p>
-                        <p style={{ gridColumn: 'span 2' }}><strong>Địa chỉ liên hệ:</strong> {patientData?.Id_TheKhamBenh.DiaChi}</p>
+                        <p><strong>Họ tên:</strong> {patientData?.Id_TheKhamBenh?.HoVaTen}</p>
+                        <p><strong>Giới tính:</strong> {patientData?.Id_TheKhamBenh?.GioiTinh}</p>
+                        <p><strong>Ngày Sinh:</strong> {patientData?.Id_TheKhamBenh?.NgaySinh}</p>
+                        <p><strong>Phòng Khám:</strong> {patientData?.Id_Bacsi?.Id_PhongKham?.SoPhongKham}</p>
+                        <p style={{ gridColumn: 'span 2' }}><strong>Địa chỉ liên hệ:</strong> {patientData?.Id_TheKhamBenh?.DiaChi}</p>
                         <p style={{ gridColumn: 'span 3' }}><strong>Chẩn đoán:</strong> {patientData?.results || 'Không có'}</p>
 
                     </div>
@@ -202,7 +202,7 @@ export default function PreviewExaminationForm({
                             </div>
                             <div className="signature-block signature-collector">
                                 <p className="signature-label">Bác sĩ kê đơn</p>
-                                <p className="signature-name">{patientData?.Id_Bacsi.TenBacSi}</p>
+                                <p className="signature-name">{patientData?.Id_Bacsi?.TenBacSi}</p>
                             </div>
                         </div>
                     </div>

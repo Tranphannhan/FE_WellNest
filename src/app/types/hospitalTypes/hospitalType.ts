@@ -27,8 +27,6 @@ export interface prescriptionType{
     
 } 
 
-<<<<<<< HEAD
-
 // Phòng thiết bị
 interface EquipmentType {
     _id: string;
@@ -47,7 +45,6 @@ export interface Testtype {
 
 
 
-=======
 //Type Don thuoc thong ke
 export interface PrescriptionStatsType {
   _id?: string;
@@ -57,8 +54,8 @@ export interface PrescriptionStatsType {
   TrangThaiThanhToan?: boolean;
   Gio?: string;
   TrangThai?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: string; // Đã có
+  updatedAt?: string; // Đã có
   __v?: number;
   TongTien?: number;
 }
@@ -104,8 +101,8 @@ export interface TestRequestType {
   STT?: string;
   TrangThai?: boolean;
   TrangThaiHoatDong?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: string; // Đã có
+  updatedAt?: string; // Đã có
   __v?: number;
 }
 
@@ -116,4 +113,31 @@ export interface TestRequestPaginationResponse {
   currentPage: number;
   totalPages: number;
 }
->>>>>>> 83eab1754ff43b959b443118f93fbc6cfbb6de41
+
+export interface MedicalRecordType {
+  _id?: string;
+  Id_TheKhamBenh?: string;
+  Id_Bacsi?: string;
+  Id_NguoiTiepNhan?: string;
+  Id_GiaDichVu?: ServicePriceType;
+  LyDoDenKham?: string;
+  Ngay?: string;
+  Gio?: string;
+  TrangThaiThanhToan?: boolean;
+  STTKham?: number;
+  TrangThai?: boolean;
+  TrangThaiHoatDong?: string;
+  GioKetThucKham?: string;
+  SoLanKhongCoMat?: number;
+  createdAt?: string; // <-- THÊM VÀO ĐÂY
+  updatedAt?: string; // <-- THÊM VÀO ĐÂY
+  __v?: number;
+}
+
+// Interface cho response từ API phiếu khám bệnh
+export interface MedicalRecordPaginationResponse {
+  totalItems: number;
+  currentPage: number;
+  totalPages: number;
+  data: MedicalRecordType[];
+}

@@ -5,8 +5,8 @@ import Chart from 'chart.js/auto';
 import './RevenueDashboard.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import Pagination from '@/app/components/ui/Pagination/Pagination';
-import { PrescriptionStatsPaginationResponse, TestRequestPaginationResponse, PrescriptionStatsType, TestRequestType } from '@/app/types/hospitalTypes/hospitalType';
-import { fetchPrescriptionsByDateRange, fetchTestRequestsByDateRange } from '@/app/services/FileTam';
+import { PrescriptionStatsType, TestRequestType, MedicalRecordType } from '@/app/types/hospitalTypes/hospitalType';
+import { fetchPrescriptionsByDateRange, fetchTestRequestsByDateRange, fetchMedicalRecordsByDateRange } from '@/app/services/FileTam';
 
 interface Transaction {
     date: string;
@@ -26,10 +26,10 @@ const RevenueDashboard: React.FC = () => {
     const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
     const [displayPrescriptionRevenue, setDisplayPrescriptionRevenue] = useState(0);
     const [displayClinicalRevenue, setDisplayClinicalRevenue] = useState(0);
-    const [displayExaminationRevenue, setDisplayExaminationRevenue] = useState(0); // Thêm state cho tiền khám
+    const [displayExaminationRevenue, setDisplayExaminationRevenue] = useState(0);
     const [chartPrescriptionRevenue, setChartPrescriptionRevenue] = useState(0);
     const [chartClinicalRevenue, setChartClinicalRevenue] = useState(0);
-    const [chartExaminationRevenue, setChartExaminationRevenue] = useState(0); // Thêm state cho biểu đồ tiền khám
+    const [chartExaminationRevenue, setChartExaminationRevenue] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
     const [filterStartDate, setFilterStartDate] = useState('');
@@ -77,44 +77,65 @@ const RevenueDashboard: React.FC = () => {
         try {
             let prescriptions: PrescriptionStatsType[] = [];
             let testRequests: TestRequestType[] = [];
-            const limit = 10000; // Giới hạn 10,000 bản ghi
+            let medicalRecords: MedicalRecordType[] = [];
+            const limit = 10;
 
             if (filterStartDate && filterEndDate) {
-                const prescriptionResponse = await fetchPrescriptionsByDateRange(filterStartDate, filterEndDate);
-                const testRequestResponse = await fetchTestRequestsByDateRange(filterStartDate, filterEndDate);
-                prescriptions = prescriptionResponse.data.slice(0, limit);
-                testRequests = testRequestResponse.data.slice(0, limit);
-                console.log('Test requests for date range:', testRequests);
-            } else if (filterMonth) {
+    console.log('🔍 Fetching data from:', filterStartDate, 'to', filterEndDate); // <-- Log phạm vi ngày
+
+    const prescriptionResponse = await fetchPrescriptionsByDateRange(filterStartDate, filterEndDate);
+    const testRequestResponse = await fetchTestRequestsByDateRange(filterStartDate, filterEndDate);
+    const medicalResponse = await fetchMedicalRecordsByDateRange(filterStartDate, filterEndDate);
+
+    prescriptions = prescriptionResponse.data.slice(0, 6);
+    testRequests = testRequestResponse.data?.slice(0, 6) || [];
+    medicalRecords = medicalResponse.data.slice(0, 6);
+
+    console.log('📝 Prescriptions for 23-6:', prescriptions);
+    console.log('🔬 Test requests for 23-6:', testRequests);
+    console.log('📋 Medical records for 23-6:', medicalRecords);
+} else if (filterMonth) {
                 const [year, month] = filterMonth.split('-').map(Number);
                 const fromDate = `${year}-${month.toString().padStart(2, '0')}-01`;
                 const toDate = new Date(year, month, 0).toISOString().split('T')[0];
                 const prescriptionResponse = await fetchPrescriptionsByDateRange(fromDate, toDate);
                 const testRequestResponse = await fetchTestRequestsByDateRange(fromDate, toDate);
+                const medicalResponse = await fetchMedicalRecordsByDateRange(fromDate, toDate);
                 prescriptions = prescriptionResponse.data.slice(0, limit);
-                testRequests = testRequestResponse.data.slice(0, limit);
+                testRequests = testRequestResponse.data.slice(0, 6);
+                medicalRecords = medicalResponse.data?.slice(0, 6) || [];
                 console.log('Test requests for month:', testRequests);
+                console.log('Medical records for month:', medicalRecords);
             } else if (filterQuarter && filterYear) {
                 const quarterStartMonth = (Number(filterQuarter) - 1) * 3 + 1;
                 const fromDate = `${filterYear}-${quarterStartMonth.toString().padStart(2, '0')}-01`;
                 const toDate = `${filterYear}-${(quarterStartMonth + 2).toString().padStart(2, '0')}-${new Date(Number(filterYear), quarterStartMonth + 2, 0).getDate()}`;
                 const prescriptionResponse = await fetchPrescriptionsByDateRange(fromDate, toDate);
                 const testRequestResponse = await fetchTestRequestsByDateRange(fromDate, toDate);
+                const medicalResponse = await fetchMedicalRecordsByDateRange(fromDate, toDate);
                 prescriptions = prescriptionResponse.data.slice(0, limit);
                 testRequests = testRequestResponse.data.slice(0, limit);
+                medicalRecords = medicalResponse.data.slice(0, limit);
                 console.log('Test requests for quarter:', testRequests);
+                console.log('Medical records for quarter:', medicalRecords);
             } else if (filterYear) {
                 const prescriptionResponse = await fetchPrescriptionsByDateRange(undefined, undefined, Number(filterYear));
                 const testRequestResponse = await fetchTestRequestsByDateRange(undefined, undefined, Number(filterYear));
+                const medicalResponse = await fetchMedicalRecordsByDateRange(undefined, undefined, Number(filterYear));
                 prescriptions = prescriptionResponse.data.slice(0, limit);
                 testRequests = testRequestResponse.data.slice(0, limit);
+                medicalRecords = medicalResponse.data.slice(0, limit);
                 console.log('Test requests for year:', testRequests);
+                console.log('Medical records for year:', medicalRecords);
             } else {
                 const prescriptionResponse = await fetchPrescriptionsByDateRange(undefined, undefined, 2025);
                 const testRequestResponse = await fetchTestRequestsByDateRange(undefined, undefined, 2025);
+                const medicalResponse = await fetchMedicalRecordsByDateRange(undefined, undefined, 2025);
                 prescriptions = prescriptionResponse.data.slice(0, limit);
                 testRequests = testRequestResponse.data.slice(0, limit);
+                medicalRecords = medicalResponse.data.slice(0, limit);
                 console.log('Test requests for default 2025:', testRequests);
+                console.log('Medical records for default 2025:', medicalRecords);
             }
 
             const prescriptionTransactions: Transaction[] = prescriptions
@@ -140,7 +161,17 @@ const RevenueDashboard: React.FC = () => {
                     };
                 });
 
-            const allTransactions = [...prescriptionTransactions, ...testRequestTransactions].sort((a, b) => {
+            const medicalTransactions: Transaction[] = medicalRecords
+                .filter(m => m.TrangThaiThanhToan && m.Id_GiaDichVu?.Giadichvu)
+                .map(m => ({
+                    date: m.Ngay || new Date().toISOString().split('T')[0],
+                    time: m.Gio || new Date().toLocaleTimeString('vi-VN', { hour12: false }),
+                    type: 'Khám' as const,
+                    description: m.Id_GiaDichVu?.Tendichvu || 'Phiếu khám không tên',
+                    amount: m.Id_GiaDichVu?.Giadichvu || 0,
+                }));
+
+            const allTransactions = [...prescriptionTransactions, ...testRequestTransactions, ...medicalTransactions].sort((a, b) => {
                 const dateA = new Date(a.date + ' ' + a.time);
                 const dateB = new Date(b.date + ' ' + b.time);
                 return dateB.getTime() - dateA.getTime();
@@ -157,18 +188,19 @@ const RevenueDashboard: React.FC = () => {
 
     useEffect(() => {
         fetchTransactions();
-    }, []); // Gọi một lần khi mount
+    }, []);
 
     useEffect(() => {
         let prescriptionRev = 0;
         let clinicalRev = 0;
-        let examinationRev = 0; // Thêm biến cho tiền khám
+        let examinationRev = 0;
         filteredTransactions.forEach(transaction => {
             if (transaction.type === 'Đơn thuốc') {
                 prescriptionRev += transaction.amount;
-                examinationRev += transaction.amount; // Dùng dữ liệu đơn thuốc cho tiền khám
             } else if (transaction.type === 'Cận lâm sàng') {
                 clinicalRev += transaction.amount;
+            } else if (transaction.type === 'Khám') {
+                examinationRev += transaction.amount; // Sử dụng dữ liệu Khám cho tiền khám
             }
         });
 
@@ -318,18 +350,15 @@ const RevenueDashboard: React.FC = () => {
         const { id, value } = e.target;
         switch (id) {
             case 'filterStartDate':
-                setFilterStartDate(value);
-                setFilterEndDate('');
-                setFilterMonth('');
-                setFilterQuarter('');
-                setFilterYear('');
-                break;
-            case 'filterEndDate':
-                setFilterEndDate(value);
-                setFilterMonth('');
-                setFilterQuarter('');
-                setFilterYear('');
-                break;
+            setFilterStartDate(value);
+            setFilterMonth('');
+            setFilterQuarter('');
+            break;
+        case 'filterEndDate':
+            setFilterEndDate(value);
+            setFilterMonth('');
+            setFilterQuarter('');
+            break;
             case 'filterMonth':
                 setFilterMonth(value);
                 setFilterStartDate('');
