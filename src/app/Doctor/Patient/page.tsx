@@ -95,10 +95,10 @@ export default function Patient() {
               {dataRender.map((record: MedicalExaminationCard) => (
                 <tr key={record._id}>
                   <td>{record.STTKham}</td>
-                  <td>{record.Id_TheKhamBenh.HoVaTen}</td>
-                  <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
-                  <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
-                  <td>{record.Id_TheKhamBenh.SoCCCD}</td>
+                  <td>{record.Id_TheKhamBenh?.HoVaTen}</td>
+                  <td>{record.Id_TheKhamBenh?.SoDienThoai}</td>
+                  <td>{record.Id_TheKhamBenh?.SDT_NguoiThan}</td>
+                  <td>{record.Id_TheKhamBenh?.SoCCCD}</td>
                   <td>{moment(record.Gio, "HH:mm:ss").format("hh:mm:ss A")}</td>
                   <td>
                     {
@@ -119,7 +119,7 @@ export default function Patient() {
                     <button
                       className="button--blue"
                       onClick={() => {
-                        handleExamination(record._id);
+                        handleExamination(record._id || '');
                       }}
                     >
                       <FaNotesMedical />
@@ -128,7 +128,7 @@ export default function Patient() {
                     <button
                       className="button--red"
                       onClick={() => {
-                        Absences(record._id);
+                        Absences(record._id || '');
                       }}
                     >
                       <FaUserSlash />

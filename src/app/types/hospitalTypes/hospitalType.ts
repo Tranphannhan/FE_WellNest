@@ -44,8 +44,6 @@ export interface Testtype {
 } 
 
 
-
-//Type Don thuoc thong ke
 export interface PrescriptionStatsType {
   _id?: string;
   Id_PhieuKhamBenh?: string;
