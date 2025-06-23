@@ -361,7 +361,7 @@ const PrescriptionPopup = ({
                   </p>
                   <p>
                     <strong>Tên đơn thuốc:</strong>{" "}
-                    {`Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}` ||
+                    {`Đơn thuốc ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}` ||
                       "Đơn thuốc"}
                   </p>
 

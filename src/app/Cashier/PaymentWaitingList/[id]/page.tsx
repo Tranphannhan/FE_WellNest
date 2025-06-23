@@ -46,7 +46,7 @@ export default function PrescriptionDetails() {
             <Tabbar
                 tabbarItems={{
                     tabbarItems: [
-                        { text: 'Chi tiết đơn thuốc', link: '/Cashier/PaymentWaitingList/PrescriptionDetails' },
+                        { text: 'Chi tiết đơn thuốc', link: `/Cashier/PaymentWaitingList/${id}` },
                     ],
                 }}
             />
@@ -56,20 +56,20 @@ export default function PrescriptionDetails() {
                 {/* Thông tin bệnh nhân */}
                 <div className="PrescriptionDetails-container__Box1" style={{height : '450px'}}>
                     <h3>Thông tin bệnh nhân</h3>
-                    <div className="patient-info" >
-                        <p><strong>Tên đơn thuốc:</strong>{data?.TenDonThuoc}</p>
+                    <div className="patient-info" style={{color:'black'}}>
+                        <p><strong>Tên đơn thuốc: </strong>{data?.TenDonThuoc}</p>
                         <p><strong>Bệnh nhân:</strong> {data?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</p>
                         <p><strong>Số điện thoại:</strong> {data?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</p>
                         <p><strong>Bác sĩ:</strong>  {data?.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi}</p>
                         <p><strong>Thời gian:</strong> {formatTime (data?.Gio as string)}</p>
                         <p><strong>Ngày:</strong> {data?.Id_PhieuKhamBenh?.Ngay}</p>
-                        <p><strong style={{fontSize : '16px'}}>Tổng tiền :</strong> <span style={{color : 'red' , fontSize : '16px'}}>{formatCurrencyVND (data?.TongTien ||  0)}</span></p>
+                        <p><strong style={{fontSize : '18px'}}>Tổng tiền :</strong> <span style={{color : 'red' , fontSize : '16px', fontWeight:600}}>{formatCurrencyVND (data?.TongTien ||  0)}</span></p>
                     </div>
 
 
                     <div className="PrescriptionDetails-container__Box1__boxPage">
                         <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer"
-                             onClick={() => router.push('/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired')}
+                             onClick={() => router.push('/Cashier/PaymentWaitingList')}
                         >
                             <i className ="bi bi-x-circle-fill"></i>
                             Hủy
@@ -108,7 +108,7 @@ export default function PrescriptionDetails() {
 
                                 
                                     {/* <td style={{ color: 'red', fontWeight: 'bold' }}>12</td> */}
-                                    <td>{formatCurrencyVND (item.Id_Thuoc.Gia || 0)}</td>
+                                    <td style={{color:'red'}}>{formatCurrencyVND (item.Id_Thuoc.Gia || 0)}</td>
                                     
                                 </tr>
                             ))}

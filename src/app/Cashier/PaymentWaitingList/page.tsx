@@ -129,13 +129,13 @@ export default function Prescription (){
                         {dataPrescription.map((record , index) => (
                             <tr key={record._id}>
                                 <td>{1 + index}</td>
-                                <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</td>
                                 <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</td>
                                 <td>{record?.TenDonThuoc}</td>
-                                <td>{record?.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi}</td>
-                                <td >{formatTime (record.Gio)}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{record?.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi}</td>
+                                <td style={{whiteSpace:'nowrap'}}>{formatTime (record.Gio)}</td>
                                 
-                                <td style={{color : 'red' , fontWeight : 'bold'}}>
+                                <td style={{color : 'red' , fontWeight : '600', whiteSpace:'nowrap'}}>
                                     {formatCurrencyVND (record.TongTien || 0)}
                                 </td>
 

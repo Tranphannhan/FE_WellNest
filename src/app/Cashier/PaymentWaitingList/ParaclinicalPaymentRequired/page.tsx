@@ -131,7 +131,7 @@ export default function Prescription (){
                                 <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh}</td>
                                 <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</td>
                                 <td>{record?.Id_PhieuKhamBenh?.Ngay}</td>
-                                <td style={{color : 'red' , fontWeight : 'bold'}}>
+                                <td style={{color : 'red' , fontWeight : 600}}>
                                     {formatCurrencyVND (record?.TongTien || 0)}
                                 </td>
 

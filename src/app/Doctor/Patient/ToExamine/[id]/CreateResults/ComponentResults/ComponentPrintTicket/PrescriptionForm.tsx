@@ -175,7 +175,7 @@ export default function PreviewExaminationForm({
                                         </div>
                                         <div className='pill-count-text'>
                                             <span>Giá tổng:</span>
-                                            <span>{(item.Id_Thuoc?.Gia * item.SoLuong)?.toLocaleString()} ₫</span>
+                                            <span>{(item.Id_Thuoc?.Gia || 0 * item.SoLuong)?.toLocaleString()} ₫</span>
                                         </div>
                                     </div>
                                 </div>

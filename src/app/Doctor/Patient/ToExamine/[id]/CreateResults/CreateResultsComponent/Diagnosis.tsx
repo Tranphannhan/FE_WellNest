@@ -213,7 +213,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
               </div>
             </div>
 
-            <div className='CreateResults-bodyFrame__title2'>Chuẩn đoán sơ bộ</div>
+            <div className='CreateResults-bodyFrame__title2'>Chẩn đoán sơ bộ</div>
             <div className="CreateResults-bodyFrame__formVitalSigns">
                <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer">
                   <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
@@ -239,7 +239,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
 
   
                   <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
-                      <div>Chuẩn đoán</div>
+                      <div>Chẩn đoán sơ bộ</div>
                       <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
                         <textarea 
                           onChange={(e) => {
