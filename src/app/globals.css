@@ -237,3 +237,22 @@ body {
 .bigButton--red:hover {
   background-color: rgb(205, 0, 0); /* màu hover đậm hơn */
 }
+
+/* nut đỏ to */
+.bigButton--redType2{
+  background-color: #ffffff;
+  border: 1px solid #ff4040;
+  color: #ff4040;
+  padding: 8px 30px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.bigButton--redType2:hover {
+  background-color: rgb(255, 0, 0); /* màu hover đậm hơn */
+  color: white;
+}

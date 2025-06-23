@@ -185,7 +185,7 @@ export default function PrintAppointmentForm({
                         <p><strong>Ngày Sinh:</strong> {patientData.dob}</p>
                         <p style={{ gridColumn: 'span 3' }}><strong>Địa chỉ liên hệ:</strong> {patientData.address}</p>
                         <p><strong>Phòng khám:</strong> {patientData.clinic}</p>
-                        <p style={{ gridColumn: 'span 2' }}><strong>Chẩn đoán:</strong> {patientData.diagnosis}</p>
+                        <p style={{ gridColumn: 'span 2' }}><strong>Chẩn đoán sơ bộ:</strong> {patientData.diagnosis}</p>
                     </div>
 
                     <div className="service-list">

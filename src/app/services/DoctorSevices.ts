@@ -552,3 +552,39 @@ export async function waitingForTesting (id: string){
     return false;
   }
 }
+
+//Lấy kết quả xét nghiệm theo Id_PhieuKhamBenh
+export async function getResultsByMedicalExaminationFormId(id: string){
+    try {
+        const result = await fetch(`http://localhost:5000/Ket_Qua_Xet_Nghiem/LayTheoIdPhieuKhamBenh/${id}`);
+        if (result.ok) {
+            const Data = await result.json();
+            console.log('Lấy kq xét nghiệm theo Id_PhieuKhamBenh',Data)
+            return Data;
+        } else {
+            const errorText = await result.text();
+            console.error(`Error fetching equipment rooms: ${result.status} - ${errorText}`);
+        }
+    } catch (error) {
+        console.error("Lỗi Khi Lấy kết quả xét nghiệm:", error);
+        throw error;
+    }
+}
+
+//Lấy kết quả xét nghiệm theo Id_Yêu Cầu Xét Nghiệm
+export async function getResultsByRequestTesting(id: string){
+    try {
+        const result = await fetch(`http://localhost:5000/Ket_Qua_Xet_Nghiem/LayTheoYeuCauXetNghiem/${id}`);
+        if (result.ok) {
+            const Data = await result.json();
+            console.log('Lấy kq xét nghiệm theo Id_YeuCauXetNghiem',Data)
+            return Data;
+        } else {
+            const errorText = await result.text();
+            console.error(`Error fetching equipment rooms: ${result.status} - ${errorText}`);
+        }
+    } catch (error) {
+        console.error("Lỗi Khi Lấy kết quả xét nghiệm:", error);
+        throw error;
+    }
+}

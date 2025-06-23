@@ -82,7 +82,6 @@
 
 .revenue-dashboard-container > div:first-child { /* w-full max-w-5xl */
     width: 100%;
-    max-width: 80rem; /* Adjusted for a bit more width, original was 1024px, 5xl is 1024px but can be wider */
 }
 
 /* --- Charts Section --- */
@@ -129,7 +128,7 @@ canvas {
 }
 
 .text-2xl {
-    font-size: 1.5rem; /* Hoặc 1.25rem nếu base font size là 16px */
+    font-size: 19px; /* Hoặc 1.25rem nếu base font size là 16px */
 }
 /* Pagination Styles */
 .pagination-arrow-btn {

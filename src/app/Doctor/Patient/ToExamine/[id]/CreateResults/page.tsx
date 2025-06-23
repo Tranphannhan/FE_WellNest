@@ -7,11 +7,11 @@ import ParaclinicalComponent from "./CreateResultsComponent/Paraclinical";
 import DiagnosisResultsComponent from "./CreateResultsComponent/DiagnosisResults";
 import PrescriptionComponent from "./CreateResultsComponent/Prescription";
 import { useEffect, useState } from 'react';
-import ViewParaclinicalResults from "./CreateResultsComponent/ViewParaclinicalResults";
+import ViewParaclinicalResults, { NormalTestResult } from "./CreateResultsComponent/ViewParaclinicalResults";
 import PrescriptionPopup from "./ComponentResults/CreatePrescriptionPopup";
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ClinicalExamPage from "./ComponentResults/CreateClinicalExam";
-import { CheckPrescription, confirmCompletion, fetchMedicalExaminationCardDetail, getExaminationResults, latestDiagnosis } from "@/app/services/DoctorSevices";
+import { CheckPrescription, confirmCompletion, fetchMedicalExaminationCardDetail, getExaminationResults, getResultsByRequestTesting, latestDiagnosis } from "@/app/services/DoctorSevices";
 import { generateTestResultsType, MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 import ModalComponent from "@/app/components/shared/Modal/Modal";
 
@@ -26,7 +26,10 @@ export default function Patient(){
     const [isPrescriptionCreating, setIsPrescriptionCreating] = useState(false);
     const [prescriptionComponentKey,setprescriptionComponentKey] = useState(0);
     const [beFinished, setBeFinished] = useState <boolean>(false);
-    const [showModalCompletion, setShowModalCompletion] = useState <boolean>(false)
+    const [showModalCompletion, setShowModalCompletion] = useState <boolean>(false);
+    const [testResults, setTestResults] = useState <NormalTestResult []>([])
+    const [allowsGeneratingResults, setAllowsGeneratingResults] = useState<boolean>(false)
+    const [hiddenButton, setHiddenButton]= useState<boolean>(false)
     const router = useRouter()
     
     // Function to close the prescription popup and reset its step
@@ -114,9 +117,12 @@ export default function Patient(){
               const data:generateTestResultsType |null = await getExaminationResults(id as string)
               if(data && data.TrangThaiHoanThanh){
                 setContinueRenderExaminationResults(true)
+                setAllowsGeneratingResults(true)
+                setHiddenButton(true)
               }
               
           }
+    
 
     const HandleConfirmCompletion = async() =>{
         const res =await confirmCompletion(id as string)
@@ -124,6 +130,19 @@ export default function Patient(){
             router.push('http://localhost:3000/Doctor/Patient')
         }
     }
+
+       const handleGetResultsByMedicalExaminationFormId = async () => {
+            setTestResults([])
+            handleOpenResultsPopup()
+      };
+
+      const handleGetResultsByRequestTesting = async (id:string) => {
+        const res = await getResultsByRequestTesting(id);
+        if (res) {
+            setTestResults(res)
+            handleOpenResultsPopup()
+        }
+      };
 
     // Effects to run on component mount
     useEffect(()=>{
@@ -173,8 +192,8 @@ export default function Patient(){
                         </button>
 
                         <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
-                            disabled={!continueRender}
-                            style={!continueRender ? {
+                            disabled={!continueRender || allowsGeneratingResults}
+                            style={!continueRender || allowsGeneratingResults? {
                                 borderRadius:'8px',
                                 color:'#cacaca',
                                 border:'#cacaca 1px solid',
@@ -196,7 +215,7 @@ export default function Patient(){
                                     borderRadius:'8px',
                                 }}
                                     className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
-                                    onClick={handleOpenResultsPopup}
+                                    onClick={handleGetResultsByMedicalExaminationFormId}
                                 >
                                     Xem kết quả xét nghiệm
                                 </button>
@@ -237,11 +256,16 @@ export default function Patient(){
                 </div>
 
                 <div>
-                    {page === 'Cận lâm sàng' && <ParaclinicalComponent key={paraclinicalKey}/>}
+                    {page === 'Cận lâm sàng' && <ParaclinicalComponent hiddenButton={hiddenButton} shouldContinue = {allowsGeneratingResults} AllowsGeneratingResults={()=>{setAllowsGeneratingResults(true)
+                        setPage('Chuẩn đoán kết quả')
+                    }} 
+                    notAllowsGeneratingResults={()=>{setAllowsGeneratingResults(false)
+                    }}
+                    callBack = {handleGetResultsByRequestTesting} key={paraclinicalKey}/>}
                 </div>
 
                 <div>
-                    {page === 'Chuẩn đoán kết quả' && <DiagnosisResultsComponent reLoad={checkRenderContinueExaminationResults}/>}
+                    {page === 'Chuẩn đoán kết quả' && <DiagnosisResultsComponent allowsGeneratingResults={allowsGeneratingResults} reLoad={checkRenderContinueExaminationResults}/>}
                 </div>
 
                 <div>
@@ -254,7 +278,7 @@ export default function Patient(){
                 </div>
             </div>
 
-            {showResultsPopup && <ViewParaclinicalResults onClose={handleCloseResultsPopup} />}
+            {showResultsPopup && <ViewParaclinicalResults dataFromOutside={testResults} onClose={handleCloseResultsPopup} />}
             <ClinicalExamPage 
                 open={showExaminationRequestPopup} 
                 onClose={handleCloseExaminationRequestPopup} 

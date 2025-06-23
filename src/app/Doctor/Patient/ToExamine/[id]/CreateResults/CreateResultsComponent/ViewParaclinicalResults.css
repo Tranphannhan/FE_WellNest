@@ -40,6 +40,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 600px;
 }
 
 /* container-main-title: "Kết quả xét nghiệm" ở đầu container */
@@ -59,7 +60,10 @@
   padding: 10px 30px; /* Padding cho khung này */
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Khoảng cách giữa các sản phẩm */
+  gap: 15px; /* Khoảng cách giữa các sản phẩm */
+  max-height: 350px;
+  overflow: auto;
+
 }
 
 /* test-result-card: Các thẻ kết quả xét nghiệm (sản phẩm) */
@@ -69,7 +73,17 @@
   display: flex;
   align-items: flex-start;
   gap: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
 }
+
+.ViewParaclinicalResults-container_products_frame 
+.ViewParaclinicalResults-container_test_result_card:last-child {
+  border-bottom: none;
+}
+
+
+
 
 .ViewParaclinicalResults-container_test_result_card .card-image-wrapper {
   flex-shrink: 0;
@@ -113,6 +127,10 @@
 .ViewParaclinicalResults-container_card_detail_item .detail-value {
   color: #333333;
   font-size: 15px;
+      word-wrap: break-word;       /* Tự ngắt từ nếu quá dài */
+    overflow-wrap: break-word;   /* Dành cho trình duyệt hiện đại */
+    white-space: normal;         /* Cho phép xuống dòng */
+    max-width: 350px;
 }
 
 .ViewParaclinicalResults-container_card_detail_item .normal-range {
@@ -126,9 +144,12 @@
 }
 
 .ViewParaclinicalResults-container_card_detail_item .note-value {
-    font-style: italic;
     color: #666666;
     font-size: 14px;
+    word-wrap: break-word;       /* Tự ngắt từ nếu quá dài */
+    overflow-wrap: break-word;   /* Dành cho trình duyệt hiện đại */
+    white-space: normal;         /* Cho phép xuống dòng */
+    max-width: 350px;
 }
 
 
@@ -139,6 +160,7 @@
   align-items: flex-end;
   gap: 8px;
   margin-left: 20px;
+  max-width: 250px;
 }
 
 .ViewParaclinicalResults-container_card_metrics_group .metric-item {
@@ -151,13 +173,16 @@
 }
 
 .ViewParaclinicalResults-container_card_metrics_group .metric-value {
-  font-weight: 600;
   color: #333333;
 }
 
 .ViewParaclinicalResults-container_card_metrics_group .result-value {
     color: #007bff;
     font-size: 14px;
+    word-wrap: break-word;       /* Tự ngắt từ nếu quá dài */
+    overflow-wrap: break-word;   /* Dành cho trình duyệt hiện đại */
+    white-space: normal;         /* Cho phép xuống dòng */
+     word-break: break-all; /* 👈 quan trọng */
 }
 
 /* product-divider: Đường gạch chân giữa các sản phẩm */
@@ -175,7 +200,7 @@
 /* popup-footer: Phần chân của popup */
 .ViewParaclinicalResults-container .popup-footer {
   background-color: #FFFFFF;
-  padding: 20px 30px;
+  padding: 0px 30px 10px 30px;
   display: flex;
   justify-content: flex-end;
   gap: 15px;
@@ -209,6 +234,21 @@
   font-size: 20px;
   margin-right: 7px;
   line-height: 1;
+}
+
+@keyframes slideDownFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px); /* Dịch từ trên xuống */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ViewParaclinicalResults-container_popup {
+  animation: slideDownFadeIn 0.4s ease-out;
 }
 
 /* Responsive adjustments */

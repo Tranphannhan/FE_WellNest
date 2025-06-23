@@ -10,7 +10,6 @@ import { getParaclinicalAwaitingPayment } from "@/app/services/Cashier";
 import { paraclinicalType } from "@/app/types/patientTypes/patient";
    
 // 
- 
 export default function Prescription (){
       const [dataPrescription , setDataPrescription] = useState <paraclinicalType []> ([]);
         const loadApi = async () => {

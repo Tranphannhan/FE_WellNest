@@ -1,0 +1,317 @@
+/* Áp dụng font Inter cho toàn bộ trang và reset CSS cơ bản */
+/* body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #e2e8f0; 
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} */
+
+/* Container chính của toàn bộ trang đăng nhập */
+.main-app-container {
+    position: relative; /* relative */
+    min-height: 100vh; /* min-h-screen */
+    display: flex; /* flex */
+    align-items: center; /* items-center */
+    justify-content: center; /* justify-center */
+    width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng có sẵn */
+    padding: 1rem; /* Thêm padding để tránh nội dung chạm sát cạnh màn hình trên thiết bị nhỏ */
+    box-sizing: border-box; /* Bao gồm padding và border trong width/height */
+}
+
+/* Phần Background chính với hiệu ứng cắt góc */
+.main-angled-bg {
+    position: absolute; /* absolute */
+    top: 0; /* inset-0 */
+    right: 0; /* inset-0 */
+    bottom: 0; /* inset-0 */
+    left: 0; /* inset-0 */
+    background-color: #f7f7f7; /* Sử dụng ảnh nền */
+    background-size: cover; /* background-size */
+    background-position: center; /* background-position */
+    display: flex; /* flex */
+    align-items: center; /* items-center */
+    justify-content: center; /* justify-center */
+    overflow: hidden; /* Quan trọng để clip-path hoạt động đúng */
+}
+
+/* Lớp phủ gradient với clip-path để tạo hình dạng góc cạnh trên background chính */
+.main-angled-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    background-image: url('https://saobacdautelecom.vn/wp-content/uploads/2021/08/Be%CC%A3%CC%82nh-vie%CC%A3%CC%82n-Pho%CC%80ng-kha%CC%81m_1920x772-e1633608427676.png');
+    background-size: cover; /* Giữ ảnh luôn phủ hết khung */
+    background-repeat: no-repeat;
+    background-position: 144% center;
+    
+    opacity: 1;
+    clip-path: polygon(0% 0%, 60% 0%, 56% 100%, 0% 100%);
+    z-index: 0;
+
+}
+
+/* Container của Form Đăng nhập - Đặt ở giữa và có bóng đổ */
+.login-card {
+    position: relative; /* relative */
+    z-index: 10; /* z-10 */
+    background-color: #ffffff; /* bg-white */
+    color: #2d3748; /* text-gray-800 */
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    padding: 0; /* p-0 */
+    display: flex; /* flex */
+    flex-direction: column; /* flex-col */
+    overflow: hidden; /* overflow-hidden */
+    width: 90%; /* w-[90%] */
+    max-width: 1000px; /* max-w-[1000px] */
+    gap: 25px;
+}
+
+/* Responsive adjustments for login-card */
+@media (min-width: 640px) { /* sm */
+    .login-card {
+        width: 90%; /* sm:w-[80%] */
+    }
+}
+
+@media (min-width: 768px) { /* md */
+    .login-card {
+        width: 70%; /* md:w-[70%] */
+        flex-direction: row; /* md:flex-row */
+    }
+}
+
+@media (min-width: 1024px) { /* lg */
+    .login-card {
+        width: 80%; /* lg:w-[60%] */
+    }
+}
+
+/* Phần bên trái: Ảnh minh họa bên trong thẻ đăng nhập */
+.inner-image-section {
+    position: relative; /* relative */
+    flex: 1; /* flex-1 */
+    display: none; /* hidden */
+    align-items: center; /* items-center */
+    justify-content: center; /* justify-center */
+    padding: 5px 0 5px 5px ; /* p-6 */
+    overflow: hidden; /* Để clip-path hoạt động */
+    /* clip-path: polygon(0% 0%, 98% 0%, 93% 100%, 0% 100%); inner-image-angled */
+}
+
+.inner-image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 80% center; /* thay vì center center */
+}
+
+
+
+/* Responsive adjustment for inner-image-section */
+@media (min-width: 768px) { /* md */
+    .inner-image-section {
+        display: flex; /* md:flex */
+    }
+}
+
+.internal-image {
+    width: 100%; /* w-full */
+    height: 100%; /* h-full */
+    object-fit: cover; /* object-cover */
+    object-position: center; /* object-center */
+    border-radius: 8px 0 0 8px ;
+    clip-path: polygon(0% 0%, 99% 0%, 92% 100%, 0% 100%);
+}
+
+/* Phần bên phải: Form Đăng nhập */
+.login-form-section {
+    flex: 1; /* flex-1 */
+    padding: 20px 10px 20px 10px; /* p-8 */
+    display: flex; /* flex */
+    flex-direction: column; /* flex-col */
+    justify-content: center; /* justify-center */
+}
+
+.form-content-wrapper {
+    width: 95%; /* w-full */
+}
+
+.form-title {
+    font-size: 20px; /* text-3xl */
+    font-weight: 700; /* font-bold */
+    margin-bottom: 10px; /* mb-6 */
+    text-align: center; /* text-center */
+    color: #2d3748; /* text-gray-800 */
+}
+
+.separator-line {
+    flex-grow: 1; /* flex-grow */
+    border-top: 1px solid #d1d5db;
+    margin-top: 15px;
+}
+
+.separator-text {
+    flex-shrink: 0; /* flex-shrink (ngăn chặn co lại) */
+    margin-left: 1rem; /* mx-4 */
+    margin-right: 1rem; /* mx-4 */
+    color: #6b7280; /* text-gray-500 */
+}
+
+/* Trường nhập Email và Mật khẩu */
+.input-group {
+    margin-bottom: 1rem; /* mb-4 */
+}
+
+.input-group:last-of-type { /* Đối với trường mật khẩu */
+    margin-bottom: 8px; /* mb-6 */
+}
+
+.input-label {
+    display: block; /* block */
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500; /* font-medium */
+    color: #4b5563; /* text-gray-700 */
+    margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.input-field {
+    width: 100%; /* w-full */
+    padding: 0.5rem 1rem; /* px-4 py-2 */
+    border: 1px solid #d1d5db; /* border border-gray-300 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: all 300ms ease; /* transition duration-300 */
+    color: #374151; /* text-gray-700 */
+}
+
+
+.input-field::placeholder {
+    color: #9ca3af; /* placeholder-gray-400 */
+}
+
+/* Liên kết Quên mật khẩu */
+.forgot-password-link {
+    display: block; /* block */
+    text-align: right; /* text-right */
+    font-size: 0.875rem; /* text-sm */
+    color: #4f46e5; /* text-indigo-600 */
+    margin-top: 0.5rem; /* mt-2 */
+    text-decoration: none;
+    transition: color 300ms ease; /* transition duration-300 */
+}
+
+.forgot-password-link:hover {
+    color: #3730a3; /* hover:text-indigo-800 */
+}
+
+/* Nút Đăng nhập */
+.login-button {
+    width: 100%; /* w-full */
+    background-color: #3497F9; /* bg-indigo-600 */
+    color: #ffffff; /* text-white */
+    padding: 10px 10px; /* py-3 px-4 */
+    border-radius: 8px; /* rounded-lg */
+    font-weight: 600; /* font-semibold */
+    transition: background-color 300ms ease; /* transition duration-300 */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+    border: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+/* Liên kết Đăng ký */
+.signup-text {
+    text-align: center; /* text-center */
+    font-size: 0.875rem; /* text-sm */
+    color: #4b5563; /* text-gray-600 */
+    margin-top: 1.5rem; /* mt-6 */
+}
+
+.signup-link {
+    font-weight: 500; /* font-medium */
+    color: #4f46e5; /* text-indigo-600 */
+    text-decoration: none;
+    transition: color 300ms ease; /* transition duration-300 */
+}
+
+.signup-link:hover {
+    color: #3730a3; /* hover:text-indigo-800 */
+}
+
+.select-field {
+  width: 250px; /* 👈 Chiều rộng riêng cho dropdown */
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: white;
+  color: #374151;
+  font-size: 1rem;
+  transition: all 300ms ease;
+}
+
+
+.helper-text {
+  color: red;
+  font-size: 18px;
+  padding: 10px 5px;
+  text-align: right;
+}
+
+.system-title {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.system-title-main {
+  font-size: 22px; /* hoặc text-xl */
+  font-weight: 700;
+  color: #3497F9; /* màu xanh dương như trong ảnh */
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.system-title-sub {
+  font-size: 1rem;
+  color: #6b7280; /* xám nhẹ */
+}
+
+.input-icon-wrapper {
+  position: relative;
+}
+
+/* Icon bên trái */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: #aaa;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* Mặc định input chừa chỗ cho icon */
+.input-field.with-icon {
+  padding-left: 3rem;
+}
+
+/* Ẩn icon khi input có chữ (không còn placeholder) */
+.input-field:not(:placeholder-shown) + .input-icon {
+  opacity: 0;
+}
+
+
+.form-content-wrapper-title{
+    display: flex;
+    gap: 10px
+}
