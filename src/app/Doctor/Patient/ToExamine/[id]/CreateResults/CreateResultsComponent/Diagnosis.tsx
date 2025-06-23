@@ -6,10 +6,11 @@ import { diagnosisType, survivalIndexType } from '@/app/types/patientTypes/patie
 import { addDiagnosis, getVitalSignsByExaminationId, updateSurvivalIndex } from '@/app/services/DoctorSevices';
 import { useParams } from 'next/navigation';
 import { showToast, ToastType } from '@/app/lib/Toast';
+import DiagnosisPopup from '@/app/components/diagnosis/DiagnosisPopup';
 
 export default function DiagnosisComponent ({reLoad}:{reLoad:()=>void}) {
   const { id } = useParams();
-
+const [isModalOpen, setIsModalOpen] = useState(false);
   const [datasurvivalIndexRender, setDatasurvivalIndexRender] = useState<survivalIndexType>({});
   const [initialSurvivalIndex, setInitialSurvivalIndex] = useState<survivalIndexType>({});
   const [diagnosis, setDiagnosis] = useState<diagnosisType>({});
@@ -257,7 +258,22 @@ export default function DiagnosisComponent ({reLoad}:{reLoad:()=>void}) {
                           </div>
                       </div>  
                   </div>
+                      
+                          
+                              <div className="p-6">
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Xem chi tiết
+      </button>
 
+      <DiagnosisPopup
+        id="68592939bdd3a1f09a7874c0"
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </div>
 
               <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer">
                       <button

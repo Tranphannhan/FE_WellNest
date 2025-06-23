@@ -81,20 +81,15 @@ const RevenueDashboard: React.FC = () => {
             const limit = 10;
 
             if (filterStartDate && filterEndDate) {
-    console.log('🔍 Fetching data from:', filterStartDate, 'to', filterEndDate); // <-- Log phạm vi ngày
-
-    const prescriptionResponse = await fetchPrescriptionsByDateRange(filterStartDate, filterEndDate);
-    const testRequestResponse = await fetchTestRequestsByDateRange(filterStartDate, filterEndDate);
-    const medicalResponse = await fetchMedicalRecordsByDateRange(filterStartDate, filterEndDate);
-
-    prescriptions = prescriptionResponse.data.slice(0, 6);
-    testRequests = testRequestResponse.data?.slice(0, 6) || [];
-    medicalRecords = medicalResponse.data.slice(0, 6);
-
-    console.log('📝 Prescriptions for 23-6:', prescriptions);
-    console.log('🔬 Test requests for 23-6:', testRequests);
-    console.log('📋 Medical records for 23-6:', medicalRecords);
-} else if (filterMonth) {
+                const prescriptionResponse = await fetchPrescriptionsByDateRange(filterStartDate, filterEndDate);
+                const testRequestResponse = await fetchTestRequestsByDateRange(filterStartDate, filterEndDate);
+                const medicalResponse = await fetchMedicalRecordsByDateRange(filterStartDate, filterEndDate);
+                prescriptions = prescriptionResponse.data.slice(0, 6);
+                testRequests = testRequestResponse.data?.slice(0, 6) || [];
+                medicalRecords = medicalResponse.data.slice(0, 6);
+                console.log('Test requests for date:', testRequests);
+                console.log('Medical records for date range:', medicalRecords);
+            } else if (filterMonth) {
                 const [year, month] = filterMonth.split('-').map(Number);
                 const fromDate = `${year}-${month.toString().padStart(2, '0')}-01`;
                 const toDate = new Date(year, month, 0).toISOString().split('T')[0];
@@ -347,41 +342,45 @@ const RevenueDashboard: React.FC = () => {
     const transactionsToShow = filteredTransactions.slice(startIndex, endIndex);
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { id, value } = e.target;
-        switch (id) {
-            case 'filterStartDate':
+    const { id, value } = e.target;
+    switch (id) {
+        case 'filterStartDate':
             setFilterStartDate(value);
             setFilterMonth('');
             setFilterQuarter('');
+            setFilterYear('');
             break;
         case 'filterEndDate':
             setFilterEndDate(value);
             setFilterMonth('');
             setFilterQuarter('');
+            setFilterYear('');
             break;
-            case 'filterMonth':
-                setFilterMonth(value);
-                setFilterStartDate('');
-                setFilterEndDate('');
-                setFilterQuarter('');
-                setFilterYear('');
-                break;
-            case 'filterQuarter':
-                setFilterQuarter(value);
-                setFilterStartDate('');
-                setFilterEndDate('');
-                setFilterMonth('');
-                break;
-            case 'filterYear':
-                setFilterYear(value);
-                setFilterStartDate('');
-                setFilterEndDate('');
-                setFilterMonth('');
-                break;
-            default:
-                break;
-        }
-    };
+        case 'filterMonth':
+            setFilterMonth(value);
+            setFilterStartDate('');
+            setFilterEndDate('');
+            setFilterQuarter('');
+            setFilterYear('');
+            break;
+        case 'filterQuarter':
+            setFilterQuarter(value);
+            setFilterStartDate('');
+            setFilterEndDate('');
+            setFilterMonth('');
+            setFilterYear(value ? filterYear || '2025' : '');
+            break;
+        case 'filterYear':
+            setFilterYear(value);
+            setFilterStartDate('');
+            setFilterEndDate('');
+            setFilterMonth('');
+            setFilterQuarter('');
+            break;
+        default:
+            break;
+    }
+};
 
     const grandTotal = displayPrescriptionRevenue + displayClinicalRevenue + displayExaminationRevenue;
 

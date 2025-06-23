@@ -379,7 +379,7 @@ const PrescriptionPopup = ({
                 <div className="prescription-popup__column">
                   <p>
                     <strong>Bác sĩ:</strong>{" "}
-                    {medicalCardInfo?.Id_Bacsi.TenBacSi || "Chưa có"}
+                    {medicalCardInfo?.Id_Bacsi?.TenBacSi || "Chưa có"}
                   </p>
                   <p>
                     <strong>Ngày:</strong> {medicalCardInfo?.Ngay || "Chưa có"}
