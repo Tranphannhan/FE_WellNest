@@ -27,7 +27,6 @@ export interface prescriptionType{
     
 } 
 
-<<<<<<< HEAD
 
 // Phòng thiết bị
 interface EquipmentType {
@@ -47,7 +46,7 @@ export interface Testtype {
 
 
 
-=======
+
 //Type Don thuoc thong ke
 export interface PrescriptionStatsType {
   _id?: string;
@@ -116,4 +115,4 @@ export interface TestRequestPaginationResponse {
   currentPage: number;
   totalPages: number;
 }
->>>>>>> 83eab1754ff43b959b443118f93fbc6cfbb6de41
+

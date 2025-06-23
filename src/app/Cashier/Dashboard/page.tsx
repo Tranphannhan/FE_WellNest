@@ -5,7 +5,7 @@ import Chart from 'chart.js/auto';
 import './RevenueDashboard.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import Pagination from '@/app/components/ui/Pagination/Pagination';
-import { PrescriptionStatsPaginationResponse, TestRequestPaginationResponse, PrescriptionStatsType, TestRequestType } from '@/app/types/hospitalTypes/hospitalType';
+import {  PrescriptionStatsType, TestRequestType } from '@/app/types/hospitalTypes/hospitalType';
 import { fetchPrescriptionsByDateRange, fetchTestRequestsByDateRange } from '@/app/services/FileTam';
 
 interface Transaction {
