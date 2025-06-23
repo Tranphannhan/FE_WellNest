@@ -15,6 +15,7 @@ import { BsFillPrinterFill } from 'react-icons/bs';
 import ModalComponent from '@/app/components/shared/Modal/Modal';
 import { FaCheck } from 'react-icons/fa';
 import DoNotContinue from '@/app/components/ui/DoNotContinue/DoNotContinue';
+import { medicineType } from '@/app/types/hospitalTypes/hospitalType';
 
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -22,14 +23,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export interface PrescriptionDetail {
     _id: string;
     Id_DonThuoc: string;
-    Id_Thuoc: {
-        _id: string;
-        Id_NhomThuoc: string;
-        TenThuoc: string;
-        DonVi: string;
-        Gia: number;
-        __v: number;
-    };
+    Id_Thuoc: medicineType;
     SoLuong: number;
     NhacNho: string;
     DonVi: string;
@@ -227,10 +221,10 @@ export default function SelectedMedicineComponent({ onAddMedicineClick ,reload}:
                                         <td className="px-4 py-2">{item.NhacNho}</td>
                                         <td className="px-4 py-2">Sử dụng theo hướng dẫn</td>
                                         <td className="px-4 py-2 font-semibold">
-                                            {formatCurrencyVND(item.Id_Thuoc?.Gia)}
+                                            {formatCurrencyVND(item.Id_Thuoc?.Gia || 0)}
                                         </td>
                                         <td className="px-4 py-2 font-semibold">
-                                            {formatCurrencyVND(item.Id_Thuoc?.Gia * item.SoLuong)}
+                                            {formatCurrencyVND(item.Id_Thuoc?.Gia || 0 * item.SoLuong ||  0)}
                                         </td>
                                         <td className="px-4 py-2 text-red-500 hover:text-red-700">
                                             

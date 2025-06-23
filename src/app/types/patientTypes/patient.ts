@@ -140,21 +140,23 @@ export interface prescriptionType {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  TongTien ? : number
 }
 
 
 // cận lâm sàng 
 export interface paraclinicalType {
-    _id: string;
-    Id_PhieuKhamBenh: MedicalExaminationCard;
-    Id_LoaiXetNghiem: Testtype;
-    Gio: string;
-    TrangThaiThanhToan: boolean;
-    Ngay: string;
-    STT: string;
-    TrangThai: boolean;
-    TrangThaiHoatDong: boolean;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
+  _id: string;
+  Id_PhieuKhamBenh: MedicalExaminationCard;
+  Id_LoaiXetNghiem: Testtype;
+  Gio: string;
+  TrangThaiThanhToan: boolean;
+  Ngay: string;
+  STT: string;
+  TrangThai: boolean;
+  TrangThaiHoatDong: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  TongTien? : number
 }

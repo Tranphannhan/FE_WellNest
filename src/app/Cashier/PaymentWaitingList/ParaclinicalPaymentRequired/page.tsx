@@ -4,11 +4,13 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import '../Prescription.css';
 import ConfirmationNotice from '../../ComponentCashier/ConfirmationNotice';
 import React, { useEffect, useState } from 'react';
-import { formatCurrencyVND, formatTime } from "@/app/lib/Format";
+import { formatCurrencyVND } from "@/app/lib/Format";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { getParaclinicalAwaitingPayment } from "@/app/services/Cashier";
 import { paraclinicalType } from "@/app/types/patientTypes/patient";
+import Link from 'next/link';
    
+
 // 
 export default function Prescription (){
       const [dataPrescription , setDataPrescription] = useState <paraclinicalType []> ([]);
@@ -62,7 +64,6 @@ export default function Prescription (){
                 }}
             />
 
-
            <ConfirmationNotice 
                 Data_information={{
                     name: dataPendingPayment.HoVaTen || '', 
@@ -111,10 +112,10 @@ export default function Prescription (){
                         <tr>
                             <th>STT</th>
                             <th>Họ và tên</th>
+                            <th>Giới tính</th>
+                            <th>Ngày sinh</th>
                             <th>Số Điện Thoại</th>
-                            <th>Dịch vụ</th>
-                            <th>Tên bác sĩ</th>
-                            <th>Thời gian</th>
+                            <th>Ngày</th>
                             <th>Tổng Tiền</th>
                             <th>Hành động </th>
                         </tr>
@@ -126,33 +127,33 @@ export default function Prescription (){
                             <tr key={record._id}>
                                 <td>{1 + index}</td>
                                 <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen || ''}</td>
+                                <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh || ''}</td>
+                                <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh}</td>
                                 <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</td>
-                                <td>{record.Id_LoaiXetNghiem.TenXetNghiem}</td>
-                                <td>{record.Id_PhieuKhamBenh.Id_Bacsi?.TenBacSi}</td>
-                                <td >{formatTime (record.Gio)}</td>
-
-
+                                <td>{record?.Id_PhieuKhamBenh?.Ngay}</td>
                                 <td style={{color : 'red' , fontWeight : 'bold'}}>
-                                    {formatCurrencyVND (9999)}
+                                    {formatCurrencyVND (record?.TongTien || 0)}
                                 </td>
-
 
                                 <td>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <button className="button--green"
-                                            style={{
-                                                marginRight : '10px'
-                                            }}>
+                                       <Link href={`/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${record?.Id_PhieuKhamBenh._id}`}>
+                                         <button className="button--green"
+                                                style={{
+                                                    marginRight : '10px'
+                                                }}>
 
-                                            <i className="bi bi-eye-fill"></i>
-                                            Xem chi tiết
-                                        </button>
+                                                
+                                                <i className="bi bi-eye-fill"></i>
+                                                Xem chi tiết
+                                            </button>
+                                       </Link>
 
 
                                         <button className="button--red"
                                              onClick={() => handlePaymenConfirmation(
                                                 record.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen as string,
-                                                99990
+                                                record?.TongTien || 0
                                             )}
                                         >
                                             <FaMoneyCheckDollar/>

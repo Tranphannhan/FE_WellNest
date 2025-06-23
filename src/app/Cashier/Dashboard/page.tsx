@@ -73,113 +73,107 @@ const RevenueDashboard: React.FC = () => {
         return [2025, 2024, 2023];
     }, []);
 
-    const fetchTransactions = useCallback(async () => {
-        try {
-            let prescriptions: PrescriptionStatsType[] = [];
-            let testRequests: TestRequestType[] = [];
-            let medicalRecords: MedicalRecordType[] = [];
-            const limit = 10;
+const fetchTransactions = useCallback(async () => {
+    try {
+        let prescriptions: PrescriptionStatsType[] = [];
+        let testRequests: TestRequestType[] = [];
+        let medicalRecords: MedicalRecordType[] = [];
 
-            if (filterStartDate && filterEndDate) {
-                const prescriptionResponse = await fetchPrescriptionsByDateRange(filterStartDate, filterEndDate);
-                const testRequestResponse = await fetchTestRequestsByDateRange(filterStartDate, filterEndDate);
-                const medicalResponse = await fetchMedicalRecordsByDateRange(filterStartDate, filterEndDate);
-                prescriptions = prescriptionResponse.data.slice(0, 6);
-                testRequests = testRequestResponse.data?.slice(0, 6) || [];
-                medicalRecords = medicalResponse.data.slice(0, 6);
-                console.log('Test requests for date:', testRequests);
-                console.log('Medical records for date range:', medicalRecords);
-            } else if (filterMonth) {
-                const [year, month] = filterMonth.split('-').map(Number);
-                const fromDate = `${year}-${month.toString().padStart(2, '0')}-01`;
-                const toDate = new Date(year, month, 0).toISOString().split('T')[0];
-                const prescriptionResponse = await fetchPrescriptionsByDateRange(fromDate, toDate);
-                const testRequestResponse = await fetchTestRequestsByDateRange(fromDate, toDate);
-                const medicalResponse = await fetchMedicalRecordsByDateRange(fromDate, toDate);
-                prescriptions = prescriptionResponse.data.slice(0, limit);
-                testRequests = testRequestResponse.data.slice(0, 6);
-                medicalRecords = medicalResponse.data?.slice(0, 6) || [];
-                console.log('Test requests for month:', testRequests);
-                console.log('Medical records for month:', medicalRecords);
-            } else if (filterQuarter && filterYear) {
-                const quarterStartMonth = (Number(filterQuarter) - 1) * 3 + 1;
-                const fromDate = `${filterYear}-${quarterStartMonth.toString().padStart(2, '0')}-01`;
-                const toDate = `${filterYear}-${(quarterStartMonth + 2).toString().padStart(2, '0')}-${new Date(Number(filterYear), quarterStartMonth + 2, 0).getDate()}`;
-                const prescriptionResponse = await fetchPrescriptionsByDateRange(fromDate, toDate);
-                const testRequestResponse = await fetchTestRequestsByDateRange(fromDate, toDate);
-                const medicalResponse = await fetchMedicalRecordsByDateRange(fromDate, toDate);
-                prescriptions = prescriptionResponse.data.slice(0, limit);
-                testRequests = testRequestResponse.data.slice(0, limit);
-                medicalRecords = medicalResponse.data.slice(0, limit);
-                console.log('Test requests for quarter:', testRequests);
-                console.log('Medical records for quarter:', medicalRecords);
-            } else if (filterYear) {
-                const prescriptionResponse = await fetchPrescriptionsByDateRange(undefined, undefined, Number(filterYear));
-                const testRequestResponse = await fetchTestRequestsByDateRange(undefined, undefined, Number(filterYear));
-                const medicalResponse = await fetchMedicalRecordsByDateRange(undefined, undefined, Number(filterYear));
-                prescriptions = prescriptionResponse.data.slice(0, limit);
-                testRequests = testRequestResponse.data.slice(0, limit);
-                medicalRecords = medicalResponse.data.slice(0, limit);
-                console.log('Test requests for year:', testRequests);
-                console.log('Medical records for year:', medicalRecords);
-            } else {
-                const prescriptionResponse = await fetchPrescriptionsByDateRange(undefined, undefined, 2025);
-                const testRequestResponse = await fetchTestRequestsByDateRange(undefined, undefined, 2025);
-                const medicalResponse = await fetchMedicalRecordsByDateRange(undefined, undefined, 2025);
-                prescriptions = prescriptionResponse.data.slice(0, limit);
-                testRequests = testRequestResponse.data.slice(0, limit);
-                medicalRecords = medicalResponse.data.slice(0, limit);
-                console.log('Test requests for default 2025:', testRequests);
-                console.log('Medical records for default 2025:', medicalRecords);
-            }
+        // Xây dựng tham số lọc
+        let fromDate: string | undefined = undefined;
+        let toDate: string | undefined = undefined;
+        let year: number | undefined = undefined;
 
-            const prescriptionTransactions: Transaction[] = prescriptions
-                .filter(p => p.TrangThaiThanhToan)
-                .map(p => ({
-                    date: p.Ngay || new Date(p.createdAt!).toISOString().split('T')[0],
-                    time: p.Gio || new Date(p.createdAt!).toLocaleTimeString('vi-VN', { hour12: false }),
-                    type: 'Đơn thuốc' as const,
-                    description: p.TenDonThuoc || 'Đơn thuốc không tên',
-                    amount: p.TongTien || 0,
-                }));
-
-            const testRequestTransactions: Transaction[] = testRequests
-                .filter(t => t.TrangThaiThanhToan && t.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu)
-                .map(t => {
-                    console.log('Mapping test request:', t);
-                    return {
-                        date: t.Ngay || new Date(t.createdAt!).toISOString().split('T')[0],
-                        time: t.Gio || new Date(t.createdAt!).toLocaleTimeString('vi-VN', { hour12: false }),
-                        type: 'Cận lâm sàng' as const,
-                        description: t.Id_LoaiXetNghiem?.TenXetNghiem || 'Xét nghiệm không tên',
-                        amount: t.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu || 0,
-                    };
-                });
-
-            const medicalTransactions: Transaction[] = medicalRecords
-                .filter(m => m.TrangThaiThanhToan && m.Id_GiaDichVu?.Giadichvu)
-                .map(m => ({
-                    date: m.Ngay || new Date().toISOString().split('T')[0],
-                    time: m.Gio || new Date().toLocaleTimeString('vi-VN', { hour12: false }),
-                    type: 'Khám' as const,
-                    description: m.Id_GiaDichVu?.Tendichvu || 'Phiếu khám không tên',
-                    amount: m.Id_GiaDichVu?.Giadichvu || 0,
-                }));
-
-            const allTransactions = [...prescriptionTransactions, ...testRequestTransactions, ...medicalTransactions].sort((a, b) => {
-                const dateA = new Date(a.date + ' ' + a.time);
-                const dateB = new Date(b.date + ' ' + b.time);
-                return dateB.getTime() - dateA.getTime();
-            });
-
-            console.log('All transactions:', allTransactions);
-            setFilteredTransactions(allTransactions);
-            setCurrentPage(1);
-        } catch (error) {
-            console.error('Error fetching transactions:', error);
-            setFilteredTransactions([]);
+        if (filterStartDate && filterEndDate) {
+            // Lọc theo khoảng ngày
+            fromDate = filterStartDate;
+            toDate = filterEndDate;
+        } else if (filterMonth) {
+            // Lọc theo tháng
+            const [yearStr, month] = filterMonth.split('-').map(Number);
+            fromDate = `${yearStr}-${month.toString().padStart(2, '0')}-01`;
+            toDate = new Date(yearStr, month, 0).toISOString().split('T')[0];
+        } else if (filterQuarter && filterYear) {
+            // Lọc theo quý
+            const quarterStartMonth = (Number(filterQuarter) - 1) * 3 + 1;
+            fromDate = `${filterYear}-${quarterStartMonth.toString().padStart(2, '0')}-01`;
+            toDate = `${filterYear}-${(quarterStartMonth + 2).toString().padStart(2, '0')}-${new Date(
+                Number(filterYear),
+                quarterStartMonth + 2,
+                0
+            ).getDate()}`;
+        } else if (filterYear) {
+            // Lọc theo năm
+            year = Number(filterYear);
+        } else {
+            // Mặc định lấy dữ liệu cho năm 2025
+            year = 2025;
         }
-    }, [filterStartDate, filterEndDate, filterMonth, filterQuarter, filterYear]);
+
+        // Gọi các service với tham số phù hợp
+        const [prescriptionResponse, testRequestResponse, medicalResponse] = await Promise.all([
+            fetchPrescriptionsByDateRange(fromDate, toDate, year).catch(() => ({ data: [] })),
+            fetchTestRequestsByDateRange(fromDate, toDate, year).catch(() => ({ data: [] })),
+            fetchMedicalRecordsByDateRange(fromDate, toDate, year).catch(() => ({ data: [] })),
+        ]);
+
+        // Lấy dữ liệu từ response, đảm bảo mảng rỗng nếu không có dữ liệu
+        prescriptions = prescriptionResponse.data || [];
+        testRequests = testRequestResponse.data || [];
+        medicalRecords = medicalResponse.data || [];
+
+        console.log('Fetched prescriptions:', prescriptions);
+        console.log('Fetched test requests:', testRequests);
+        console.log('Fetched medical records:', medicalRecords);
+
+        // Ánh xạ dữ liệu thành Transaction
+        const prescriptionTransactions: Transaction[] = prescriptions
+            .filter((p) => p.TrangThaiThanhToan)
+            .map((p) => ({
+                date: p.Ngay || new Date(p.createdAt || Date.now()).toISOString().split('T')[0],
+                time: p.Gio || new Date(p.createdAt || Date.now()).toLocaleTimeString('vi-VN', { hour12: false }),
+                type: 'Đơn thuốc' as const,
+                description: p.TenDonThuoc || 'Đơn thuốc không tên',
+                amount: p.TongTien || 0,
+            }));
+
+        const testRequestTransactions: Transaction[] = testRequests
+            .filter((t) => t.TrangThaiThanhToan && t.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu)
+            .map((t) => ({
+                date: t.Ngay || new Date(t.createdAt || Date.now()).toISOString().split('T')[0],
+                time: t.Gio || new Date(t.createdAt || Date.now()).toLocaleTimeString('vi-VN', { hour12: false }),
+                type: 'Cận lâm sàng' as const,
+                description: t.Id_LoaiXetNghiem?.TenXetNghiem || 'Xét nghiệm không tên',
+                amount: t.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu || 0,
+            }));
+
+        const medicalTransactions: Transaction[] = medicalRecords
+            .filter((m) => m.TrangThaiThanhToan && m.Id_GiaDichVu?.Giadichvu)
+            .map((m) => ({
+                date: m.Ngay || new Date(m.createdAt || Date.now()).toISOString().split('T')[0],
+                time: m.Gio || new Date(m.createdAt || Date.now()).toLocaleTimeString('vi-VN', { hour12: false }),
+                type: 'Khám' as const,
+                description: m.Id_GiaDichVu?.Tendichvu || 'Phiếu khám không tên',
+                amount: m.Id_GiaDichVu?.Giadichvu || 0,
+            }));
+
+        // Gộp và sắp xếp transactions
+        const allTransactions = [...prescriptionTransactions, ...testRequestTransactions, ...medicalTransactions].sort(
+            (a, b) => {
+                const dateA = new Date(`${a.date} ${a.time}`);
+                const dateB = new Date(`${b.date} ${b.time}`);
+                return dateB.getTime() - dateA.getTime();
+            }
+        );
+
+        console.log('All transactions:', allTransactions);
+        setFilteredTransactions(allTransactions);
+        setCurrentPage(1);
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        setFilteredTransactions([]);
+    }
+}, [filterStartDate, filterEndDate, filterMonth, filterQuarter, filterYear]);
 
     useEffect(() => {
         fetchTransactions();

@@ -1,14 +1,19 @@
+import { paraclinicalType } from "../patientTypes/patient";
+
 export interface medicineGroupType {
   _id?: string;
   TenNhomThuoc?: string;
 }
 
+
+// Thuốc
 export interface medicineType {
   _id?: string;
   Id_NhomThuoc?: medicineGroupType;
   TenThuoc?: string;
   Gia?: number;
   __v?: number;
+  DonVi ? : string
 }
 
 export interface MedicinePaginationResponse {
@@ -36,13 +41,15 @@ interface EquipmentType {
 }
 
 
+
+
 // Loại xét nghiệm
 export interface Testtype {
     _id: string;
     Id_PhongThietBi: EquipmentType;
     TenXetNghiem: string;
+    Id_GiaDichVu : ServicePriceType
 } 
-
 
 export interface PrescriptionStatsType {
   _id?: string;
@@ -139,3 +146,24 @@ export interface MedicalRecordPaginationResponse {
   totalPages: number;
   data: MedicalRecordType[];
 }
+
+// Dũ liệu phân trang
+export type ParaclinicalResponse = {
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+    TongTien: number;
+    data: paraclinicalType[];
+};
+
+
+
+// đơn thuốc chi tiết
+// export interface detailedPrescriptionType {
+//   _id : string;
+//   Id_DonThuoc : string;
+//   Id_Thuoc : medicineType;
+//   SoLuong : number;
+//   NhacNho : string;
+// }
+
