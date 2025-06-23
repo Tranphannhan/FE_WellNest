@@ -128,11 +128,11 @@ export default function Prescription (){
                         {dataPrescription.map((record , index) => (
                             <tr key={record._id}>
                                 <td>{1 + index}</td>
-                                <td>{record.Id_PhieuKhamBenh.Id_TheKhamBenh.HoVaTen}</td>
-                                <td>{record.Id_PhieuKhamBenh.Id_TheKhamBenh.SoDienThoai}</td>
-                                <td>{record.TenDonThuoc}</td>
-                                <td>{record.Id_PhieuKhamBenh.Id_Bacsi.TenBacSi}</td>
-                                <td>{record.Id_PhieuKhamBenh.Ngay}</td>
+                                <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</td>
+                                <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</td>
+                                <td>{record?.TenDonThuoc}</td>
+                                <td>{record?.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi}</td>
+                                <td>{record?.Id_PhieuKhamBenh?.Ngay}</td>
                                 <td >{formatTime (record.Gio)}</td>
                                 
                                 <td style={{color : 'red' , fontWeight : 'bold'}}>
@@ -155,7 +155,7 @@ export default function Prescription (){
 
                                         <button className="button--red"
                                                onClick={() => handlePaymenConfirmation(
-                                                record.Id_PhieuKhamBenh.Id_TheKhamBenh.HoVaTen as string,
+                                                record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen as string,
                                                 9999
                                             )}
                                         >

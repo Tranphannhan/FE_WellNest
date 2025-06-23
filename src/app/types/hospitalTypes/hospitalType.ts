@@ -1,3 +1,5 @@
+import { paraclinicalType } from "../patientTypes/patient";
+
 export interface medicineGroupType {
   _id?: string;
   TenNhomThuoc?: string;
@@ -27,7 +29,7 @@ export interface prescriptionType{
     
 } 
 
-<<<<<<< HEAD
+
 
 // Phòng thiết bị
 interface EquipmentType {
@@ -38,16 +40,17 @@ interface EquipmentType {
 }
 
 
+
+
 // Loại xét nghiệm
 export interface Testtype {
     _id: string;
     Id_PhongThietBi: EquipmentType;
     TenXetNghiem: string;
+    Id_GiaDichVu : ServicePriceType
 } 
 
 
-
-=======
 //Type Don thuoc thong ke
 export interface PrescriptionStatsType {
   _id?: string;
@@ -116,4 +119,11 @@ export interface TestRequestPaginationResponse {
   currentPage: number;
   totalPages: number;
 }
->>>>>>> 83eab1754ff43b959b443118f93fbc6cfbb6de41
+
+export type ParaclinicalResponse = {
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+    TongTien: number;
+    data: paraclinicalType[];
+};

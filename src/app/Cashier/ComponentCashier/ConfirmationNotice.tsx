@@ -64,7 +64,6 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
  
 
         <Modal.Footer className="confirmationNotice-confirmationNotice-footer">          
-            
           <button
                   onClick={Data_information.handleClose} 
                 className="bigButton--red"

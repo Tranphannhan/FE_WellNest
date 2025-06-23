@@ -56,14 +56,10 @@ export interface MedicalExaminationCard {
   TrangThaiHoatDong ? : string;
   GioKetThucKham ? :string;
   __v: number;
-<<<<<<< HEAD
-  SoLanKhongCoMat ? :number;
-=======
   SoLanKhongCoMat:number;
 
   // là dữ liệu phát sinh trên FE
   results?:string;
->>>>>>> 83eab1754ff43b959b443118f93fbc6cfbb6de41
 }
 
 // chỉ số sinh tồn 
@@ -149,16 +145,17 @@ export interface prescriptionType {
 
 // cận lâm sàng 
 export interface paraclinicalType {
-    _id: string;
-    Id_PhieuKhamBenh: MedicalExaminationCard;
-    Id_LoaiXetNghiem: Testtype;
-    Gio: string;
-    TrangThaiThanhToan: boolean;
-    Ngay: string;
-    STT: string;
-    TrangThai: boolean;
-    TrangThaiHoatDong: boolean;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
+  _id: string;
+  Id_PhieuKhamBenh: MedicalExaminationCard;
+  Id_LoaiXetNghiem: Testtype;
+  Gio: string;
+  TrangThaiThanhToan: boolean;
+  Ngay: string;
+  STT: string;
+  TrangThai: boolean;
+  TrangThaiHoatDong: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  TongTien? : number
 }
