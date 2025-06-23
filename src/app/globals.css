@@ -112,6 +112,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  white-space: nowrap;
 }
 .button--blue:hover {
   background-color: #1f78d1; 
@@ -129,6 +130,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  white-space: nowrap;
 }
 .button--green:hover {
   background-color: #00a62a; /* màu hover đậm hơn */
@@ -148,6 +150,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 }
 .button--viewDetail:hover {
   background-color: #a1d8f7;
@@ -166,6 +169,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 }
 .bigButton--add:hover {
   background-color: #a1d8f7;
@@ -183,6 +187,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  white-space: nowrap;
 }
 .button--red:hover {
   background-color: rgb(176, 0, 0);
@@ -201,6 +206,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 }
 .bigButton--blue:hover {
   background-color: rgb(32, 131, 229); /* màu hover đậm hơn */
@@ -217,6 +223,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 }
 .bigButton--green:hover {
   background-color: rgb(15, 154, 0); /* màu hover đậm hơn */
@@ -233,6 +240,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 }
 .bigButton--red:hover {
   background-color: rgb(205, 0, 0); /* màu hover đậm hơn */
@@ -251,6 +259,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 }
 .bigButton--redType2:hover {
   background-color: rgb(255, 0, 0); /* màu hover đậm hơn */

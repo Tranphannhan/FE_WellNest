@@ -212,7 +212,7 @@ export default function DiagnosisComponent ({reLoad}:{reLoad:()=>void}) {
               </div>
             </div>
 
-            <div className='CreateResults-bodyFrame__title2'>Chuẩn đoán sơ bộ</div>
+            <div className='CreateResults-bodyFrame__title2'>Chẩn đoán sơ bộ</div>
             <div className="CreateResults-bodyFrame__formVitalSigns">
                <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer">
                   <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
@@ -238,7 +238,7 @@ export default function DiagnosisComponent ({reLoad}:{reLoad:()=>void}) {
 
   
                   <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
-                      <div>Chuẩn đoán</div>
+                      <div>Chẩn đoán sơ bộ</div>
                       <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
                         <textarea 
                           onChange={(e) => {

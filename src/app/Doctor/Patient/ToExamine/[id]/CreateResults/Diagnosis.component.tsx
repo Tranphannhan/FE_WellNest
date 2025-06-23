@@ -8,6 +8,7 @@ interface DiagnosisProps {
 
 export default function Diagnosiscomponent({ handlePage , page}: DiagnosisProps) {
     const tabs = ["Chuẩn đoán sơ bộ", "Cận lâm sàng", "Chuẩn đoán kết quả", "Đơn thuốc"];
+    const content = ["Chẩn đoán sơ bộ", "Cận lâm sàng", "Chẩn đoán kết quả", "Đơn thuốc"]
     const handleClick = (index: number) => {
         handlePage(tabs[index]);
     };
@@ -20,7 +21,7 @@ export default function Diagnosiscomponent({ handlePage , page}: DiagnosisProps)
                     className={`diagnosisComponent-navigationBar__childBox ${page === tab ? 'active' : ''}`}
                     onClick={() => handleClick(index)}
                 >
-                    {tab}
+                    {content[index]}
                 </div>  
             ))}
         </div>

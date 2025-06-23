@@ -48,7 +48,7 @@ export default function PrescriptionDetails() {
             <Tabbar
                 tabbarItems={{
                     tabbarItems: [
-                        { text: 'Chi tiết cận lâm sàng', link: '/Cashier/PaymentWaitingList/ParaclinicalDetails' },
+                        { text: 'Chi tiết cận lâm sàng', link: `/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${id}` },
                     ],
                 }}
             />  
@@ -58,14 +58,14 @@ export default function PrescriptionDetails() {
                 {/* Thông tin bệnh nhân */}
                 <div className="PrescriptionDetails-container__Box1">
                     <h3>Thông tin bệnh nhân</h3>
-                    <div className="PrescriptionDetails-container__Box1__patient-info">
+                    <div className="PrescriptionDetails-container__Box1__patient-info" style={{color:'black'}}>
                         <p><strong>Bệnh nhân: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</p>
                         <p><strong>Ngày sinh: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh}</p>
                         <p><strong>Giới tính: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh}</p>
                         <p><strong>Ngày: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Ngay}</p>
                         <p><strong>Số điện thoại: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</p>
                         <p><strong style={{fontSize : '18px'}}>Tổng tiền : </strong>
-                            <span style={{color : 'red' , fontSize : '16px'}}>
+                            <span style={{color : 'red' , fontSize : '16px', fontWeight:600}}>
                                 {formatCurrencyVND(totalPrice)}
                             </span>
                         </p>
@@ -113,7 +113,7 @@ export default function PrescriptionDetails() {
                                     <td>{item?.Id_LoaiXetNghiem.TenXetNghiem}</td>
                                     <td>{formatTime (item.Gio)}</td>
                                     <td>{item.Id_PhieuKhamBenh.Id_Bacsi?.TenBacSi}</td>
-                                    <td style={{ color: 'red', fontWeight: 'bold' }}>
+                                    <td style={{ color: 'red'}}>
                                         {formatCurrencyVND (item?.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu || 0)}
                                     </td>
                                 </tr>
