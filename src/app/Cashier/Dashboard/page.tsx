@@ -5,114 +5,37 @@ import Chart from 'chart.js/auto';
 import './RevenueDashboard.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import Pagination from '@/app/components/ui/Pagination/Pagination';
+import { PrescriptionStatsPaginationResponse, TestRequestPaginationResponse, PrescriptionStatsType, TestRequestType } from '@/app/types/hospitalTypes/hospitalType';
+import { fetchPrescriptionsByDateRange, fetchTestRequestsByDateRange } from '@/app/services/FileTam';
 
 interface Transaction {
     date: string;
     time: string;
-    type: 'Đơn thuốc' | 'Cận lâm sàng';
+    type: 'Đơn thuốc' | 'Cận lâm sàng' | 'Khám';
     description: string;
     amount: number;
 }
 
-const allTransactions: Transaction[] = [
-    // Data for 2024
-    { date: '2024-01-10', time: '08:30', type: 'Đơn thuốc', description: 'Đơn thuốc khám tổng quát', amount: 1500000 },
-    { date: '2024-01-10', time: '09:15', type: 'Cận lâm sàng', description: 'Xét nghiệm máu', amount: 800000 },
-    { date: '2024-01-12', time: '10:00', type: 'Đơn thuốc', description: 'Đơn thuốc tái khám', amount: 750000 },
-    { date: '2024-01-15', time: '11:30', type: 'Cận lâm sàng', description: 'Siêu âm bụng', amount: 1200000 },
-    { date: '2024-02-05', time: '10:00', type: 'Đơn thuốc', description: 'Đơn thuốc tái khám', amount: 750000 },
-    { date: '2024-03-20', time: '11:30', type: 'Cận lâm sàng', description: 'Siêu âm bụng', amount: 1200000 },
-    { date: '2024-04-12', time: '14:00', type: 'Đơn thuốc', description: 'Đơn thuốc cảm cúm', amount: 400000 },
-    { date: '2024-05-18', time: '15:45', type: 'Cận lâm sàng', description: 'Chụp X-quang', amount: 950000 },
-    { date: '2024-06-25', time: '16:20', type: 'Đơn thuốc', description: 'Đơn thuốc dạ dày', amount: 600000 },
-    { date: '2024-07-01', time: '09:00', type: 'Đơn thuốc', description: 'Đơn thuốc viêm họng', amount: 300000 },
-    { date: '2024-08-15', time: '13:00', type: 'Cận lâm sàng', description: 'Điện tâm đồ', amount: 700000 },
-    { date: '2024-09-03', time: '11:00', type: 'Đơn thuốc', description: 'Đơn thuốc sốt xuất huyết', amount: 1800000 },
-    { date: '2024-10-22', time: '10:30', type: 'Cận lâm sàng', description: 'Nội soi dạ dày', amount: 2500000 },
-    { date: '2024-11-01', time: '08:00', type: 'Đơn thuốc', description: 'Đơn thuốc tiểu đường', amount: 900000 },
-    { date: '2024-12-10', time: '14:30', type: 'Cận lâm sàng', description: 'Kiểm tra chức năng gan', amount: 1100000 },
-    { date: '2024-01-15', time: '10:30', type: 'Đơn thuốc', description: 'Khám tổng quát định kỳ', amount: 1200000 },
-    { date: '2024-02-20', time: '14:00', type: 'Cận lâm sàng', description: 'Xét nghiệm nước tiểu', amount: 350000 },
-    { date: '2024-03-01', time: '09:00', type: 'Đơn thuốc', description: 'Đơn thuốc viêm phế quản', amount: 500000 },
-    { date: '2024-04-05', time: '16:00', type: 'Cận lâm sàng', description: 'Đo điện não đồ', amount: 1800000 },
-    { date: '2024-05-10', time: '11:00', type: 'Đơn thuốc', description: 'Đơn thuốc điều trị mụn', amount: 250000 },
-    { date: '2024-06-15', time: '13:30', type: 'Cận lâm sàng', description: 'Siêu âm tim', amount: 1500000 },
-    { date: '2024-07-20', time: '08:45', type: 'Đơn thuốc', description: 'Đơn thuốc giảm đau', amount: 180000 },
-    { date: '2024-08-25', time: '10:15', type: 'Cận lâm sàng', description: 'Chụp CT ngực', amount: 3000000 },
-    { date: '2024-09-30', time: '12:00', type: 'Đơn thuốc', description: 'Đơn thuốc bổ sung vitamin', amount: 300000 },
-    { date: '2024-10-01', time: '15:00', type: 'Cận lâm sàng', description: 'Xét nghiệm chức năng thận', amount: 600000 },
-    { date: '2024-11-10', time: '09:30', type: 'Đơn thuốc', description: 'Đơn thuốc kháng sinh', amount: 700000 },
-    { date: '2024-12-05', time: '11:45', type: 'Cận lâm sàng', description: 'MRI cột sống', amount: 4000000 },
-    // Data for 2023
-    { date: '2023-01-01', time: '10:00', type: 'Đơn thuốc', description: 'Đơn thuốc cũ 2023', amount: 1000000 },
-    { date: '2023-04-15', time: '11:00', type: 'Cận lâm sàng', description: 'Xét nghiệm 2023', amount: 500000 },
-    { date: '2023-07-20', time: '15:00', type: 'Đơn thuốc', description: 'Đơn thuốc khác 2023', amount: 800000 },
-    { date: '2023-10-05', time: '09:00', type: 'Cận lâm sàng', description: 'Siêu âm 2023', amount: 1000000 },
-    { date: '2023-02-14', time: '14:00', type: 'Đơn thuốc', description: 'Đơn thuốc ho 2023', amount: 300000 },
-    { date: '2023-05-22', time: '16:00', type: 'Cận lâm sàng', description: 'CT Scan 2023', amount: 2000000 },
-    { date: '2023-08-01', time: '10:00', type: 'Đơn thuốc', description: 'Đơn thuốc dị ứng 2023', amount: 450000 },
-    { date: '2023-11-11', time: '12:00', type: 'Cận lâm sàng', description: 'MRI não 2023', amount: 3500000 },
-    // Data for June 19, 2025 (current date for testing)
-    { date: '2025-06-16', time: '09:00', type: 'Đơn thuốc', description: 'Đơn thuốc đầu tuần này', amount: 2000000 },
-    { date: '2025-06-17', time: '09:30', type: 'Cận lâm sàng', description: 'Xét nghiệm hôm qua', amount: 1000000 },
-    { date: '2025-06-18', time: '10:00', type: 'Đơn thuốc', description: 'Đơn thuốc hôm qua 2', amount: 1200000 },
-    { date: '2025-06-19', time: '10:30', type: 'Cận lâm sàng', description: 'Siêu âm hôm nay 1', amount: 800000 },
-    { date: '2025-06-19', time: '11:00', type: 'Đơn thuốc', description: 'Đơn thuốc hôm nay 3', amount: 900000 },
-    { date: '2025-06-19', time: '11:30', type: 'Cận lâm sàng', description: 'Điện tim hôm nay 1', amount: 400000 },
-    { date: '2025-06-19', time: '12:00', type: 'Đơn thuốc', description: 'Đơn thuốc hôm nay 4', amount: 600000 },
-    { date: '2025-06-19', time: '13:00', type: 'Cận lâm sàng', description: 'Chụp X-quang hôm nay 1', amount: 700000 },
-    { date: '2025-06-19', time: '13:30', type: 'Đơn thuốc', description: 'Đơn thuốc hôm nay 5', amount: 500000 },
-    { date: '2025-06-19', time: '14:00', type: 'Cận lâm sàng', description: 'Xét nghiệm hôm nay 2', amount: 1500000 },
-    { date: '2025-06-19', time: '14:30', type: 'Đơn thuốc', description: 'Đơn thuốc hôm nay 6', amount: 1100000 },
-    { date: '2025-06-19', time: '15:00', type: 'Cận lâm sàng', description: 'Siêu âm hôm nay 2', amount: 900000 },
-    { date: '2025-06-19', time: '15:30', type: 'Đơn thuốc', description: 'Đơn thuốc hôm nay 7', amount: 300000 },
-    { date: '2025-06-19', time: '16:00', type: 'Cận lâm sàng', description: 'Điện tim hôm nay 2', amount: 600000 },
-    { date: '2025-06-19', time: '16:30', type: 'Đơn thuốc', description: 'Đơn thuốc hôm nay 8', amount: 750000 },
-    { date: '2025-06-19', time: '17:00', type: 'Cận lâm sàng', description: 'Chụp X-quang hôm nay 2', amount: 1100000 },
-];
-
-const transactionsPerPage = 10;
+const transactionsPerPage = 7; // Giới hạn 7 bản ghi mỗi trang
 
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
-// const getStartOfWeek = (date: Date) => {
-//     const d = new Date(date);
-//     const day = d.getDay();
-//     const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-//     d.setDate(diff);
-//     d.setHours(0, 0, 0, 0);
-//     return d;
-// };
-
-// const getEndOfWeek = (date: Date) => {
-//     const d = new Date(getStartOfWeek(date));
-//     d.setDate(d.getDate() + 6);
-//     d.setHours(23, 59, 59, 999);
-//     return d;
-// };
-
-// const formatDateForInput = (date: Date) => {
-//     const year = date.getFullYear();
-//     const month = String(date.getMonth() + 1).padStart(2, '0');
-//     const day = String(date.getDate()).padStart(2, '0');
-//     return `${year}-${month}-${day}`;
-// };
-
 const RevenueDashboard: React.FC = () => {
     const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
     const [displayPrescriptionRevenue, setDisplayPrescriptionRevenue] = useState(0);
     const [displayClinicalRevenue, setDisplayClinicalRevenue] = useState(0);
+    const [displayExaminationRevenue, setDisplayExaminationRevenue] = useState(0); // Thêm state cho tiền khám
     const [chartPrescriptionRevenue, setChartPrescriptionRevenue] = useState(0);
     const [chartClinicalRevenue, setChartClinicalRevenue] = useState(0);
+    const [chartExaminationRevenue, setChartExaminationRevenue] = useState(0); // Thêm state cho biểu đồ tiền khám
     const [currentPage, setCurrentPage] = useState(1);
 
     const [filterStartDate, setFilterStartDate] = useState('');
     const [filterEndDate, setFilterEndDate] = useState('');
     const [filterMonth, setFilterMonth] = useState('');
     const [filterQuarter, setFilterQuarter] = useState('');
-    // Khởi tạo mặc định là 2025
     const [filterYear, setFilterYear] = useState('2025');
 
     const barChartRef = useRef<HTMLCanvasElement>(null);
@@ -120,7 +43,6 @@ const RevenueDashboard: React.FC = () => {
     const myBarChart = useRef<Chart | null>(null);
     const myPieChart = useRef<Chart | null>(null);
 
-    // Hàm để chạy số từ từ
     const animateCounter = (
         start: number,
         end: number,
@@ -134,11 +56,11 @@ const RevenueDashboard: React.FC = () => {
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
             const easedProgress = progress < 0.5
                 ? 2 * progress * progress
-                : 1 - Math.pow(-2 * progress + 2, 2) / 2; // Ease in-out
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
             const current = Math.floor(start + (end - start) * easedProgress);
             setDisplayValue(current);
             if (progress === 1) {
-                setChartValue(end); // Chỉ cập nhật giá trị biểu đồ khi animation hoàn tất
+                setChartValue(end);
             }
             if (progress < 1) {
                 requestAnimationFrame(step);
@@ -148,80 +70,108 @@ const RevenueDashboard: React.FC = () => {
     };
 
     const populateYears = useCallback(() => {
-        const years = Array.from(new Set(allTransactions.map(t => new Date(t.date).getFullYear())));
-        return years.sort((a, b) => b - a);
+        return [2025, 2024, 2023];
     }, []);
 
-    const applyFilters = useCallback(() => {
-        if (filterStartDate && filterEndDate && new Date(filterEndDate) < new Date(filterStartDate)) {
-            alert('Ngày kết thúc không thể trước ngày bắt đầu!');
-            return;
-        }
-
-        const currentFiltered = allTransactions.filter(transaction => {
-            const transactionDateObj = new Date(transaction.date);
-            const transactionYear = transactionDateObj.getFullYear();
-            const transactionMonth = transactionDateObj.getMonth() + 1;
+    const fetchTransactions = useCallback(async () => {
+        try {
+            let prescriptions: PrescriptionStatsType[] = [];
+            let testRequests: TestRequestType[] = [];
+            const limit = 10000; // Giới hạn 10,000 bản ghi
 
             if (filterStartDate && filterEndDate) {
-                const startDateObj = new Date(filterStartDate);
-                const endDateObj = new Date(filterEndDate);
-                endDateObj.setHours(23, 59, 59, 999);
-                return transactionDateObj >= startDateObj && transactionDateObj <= endDateObj;
+                const prescriptionResponse = await fetchPrescriptionsByDateRange(filterStartDate, filterEndDate);
+                const testRequestResponse = await fetchTestRequestsByDateRange(filterStartDate, filterEndDate);
+                prescriptions = prescriptionResponse.data.slice(0, limit);
+                testRequests = testRequestResponse.data.slice(0, limit);
+                console.log('Test requests for date range:', testRequests);
+            } else if (filterMonth) {
+                const [year, month] = filterMonth.split('-').map(Number);
+                const fromDate = `${year}-${month.toString().padStart(2, '0')}-01`;
+                const toDate = new Date(year, month, 0).toISOString().split('T')[0];
+                const prescriptionResponse = await fetchPrescriptionsByDateRange(fromDate, toDate);
+                const testRequestResponse = await fetchTestRequestsByDateRange(fromDate, toDate);
+                prescriptions = prescriptionResponse.data.slice(0, limit);
+                testRequests = testRequestResponse.data.slice(0, limit);
+                console.log('Test requests for month:', testRequests);
+            } else if (filterQuarter && filterYear) {
+                const quarterStartMonth = (Number(filterQuarter) - 1) * 3 + 1;
+                const fromDate = `${filterYear}-${quarterStartMonth.toString().padStart(2, '0')}-01`;
+                const toDate = `${filterYear}-${(quarterStartMonth + 2).toString().padStart(2, '0')}-${new Date(Number(filterYear), quarterStartMonth + 2, 0).getDate()}`;
+                const prescriptionResponse = await fetchPrescriptionsByDateRange(fromDate, toDate);
+                const testRequestResponse = await fetchTestRequestsByDateRange(fromDate, toDate);
+                prescriptions = prescriptionResponse.data.slice(0, limit);
+                testRequests = testRequestResponse.data.slice(0, limit);
+                console.log('Test requests for quarter:', testRequests);
+            } else if (filterYear) {
+                const prescriptionResponse = await fetchPrescriptionsByDateRange(undefined, undefined, Number(filterYear));
+                const testRequestResponse = await fetchTestRequestsByDateRange(undefined, undefined, Number(filterYear));
+                prescriptions = prescriptionResponse.data.slice(0, limit);
+                testRequests = testRequestResponse.data.slice(0, limit);
+                console.log('Test requests for year:', testRequests);
+            } else {
+                const prescriptionResponse = await fetchPrescriptionsByDateRange(undefined, undefined, 2025);
+                const testRequestResponse = await fetchTestRequestsByDateRange(undefined, undefined, 2025);
+                prescriptions = prescriptionResponse.data.slice(0, limit);
+                testRequests = testRequestResponse.data.slice(0, limit);
+                console.log('Test requests for default 2025:', testRequests);
             }
 
-            if (filterMonth) {
-                const [filterYearNum, filterMonthNum] = filterMonth.split('-').map(Number);
-                return transactionYear === filterYearNum && transactionMonth === filterMonthNum;
-            }
+            const prescriptionTransactions: Transaction[] = prescriptions
+                .filter(p => p.TrangThaiThanhToan)
+                .map(p => ({
+                    date: p.Ngay || new Date(p.createdAt!).toISOString().split('T')[0],
+                    time: p.Gio || new Date(p.createdAt!).toLocaleTimeString('vi-VN', { hour12: false }),
+                    type: 'Đơn thuốc' as const,
+                    description: p.TenDonThuoc || 'Đơn thuốc không tên',
+                    amount: p.TongTien || 0,
+                }));
 
-            if (filterQuarter && filterYear) {
-                const quarter = Math.ceil(transactionMonth / 3);
-                return transactionYear === parseInt(filterYear) && quarter.toString() === filterQuarter;
-            }
+            const testRequestTransactions: Transaction[] = testRequests
+                .filter(t => t.TrangThaiThanhToan && t.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu)
+                .map(t => {
+                    console.log('Mapping test request:', t);
+                    return {
+                        date: t.Ngay || new Date(t.createdAt!).toISOString().split('T')[0],
+                        time: t.Gio || new Date(t.createdAt!).toLocaleTimeString('vi-VN', { hour12: false }),
+                        type: 'Cận lâm sàng' as const,
+                        description: t.Id_LoaiXetNghiem?.TenXetNghiem || 'Xét nghiệm không tên',
+                        amount: t.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu || 0,
+                    };
+                });
 
-            if (filterQuarter && !filterYear) {
-                const quarter = Math.ceil(transactionMonth / 3);
-                return quarter.toString() === filterQuarter;
-            }
+            const allTransactions = [...prescriptionTransactions, ...testRequestTransactions].sort((a, b) => {
+                const dateA = new Date(a.date + ' ' + a.time);
+                const dateB = new Date(b.date + ' ' + b.time);
+                return dateB.getTime() - dateA.getTime();
+            });
 
-            if (filterYear) {
-                return transactionYear === parseInt(filterYear);
-            }
-
-            // If no specific filters are active, show all transactions (this means filterYear is empty string)
-            return true;
-        });
-
-        // Sắp xếp từ ngày gần nhất đến xa nhất
-        currentFiltered.sort((a, b) => {
-            const dateA = new Date(a.date + ' ' + a.time);
-            const dateB = new Date(b.date + ' ' + b.time);
-            return dateB.getTime() - dateA.getTime();
-        });
-
-        setFilteredTransactions(currentFiltered);
-        setCurrentPage(1);
+            console.log('All transactions:', allTransactions);
+            setFilteredTransactions(allTransactions);
+            setCurrentPage(1);
+        } catch (error) {
+            console.error('Error fetching transactions:', error);
+            setFilteredTransactions([]);
+        }
     }, [filterStartDate, filterEndDate, filterMonth, filterQuarter, filterYear]);
 
-    // Sử dụng useEffect để áp dụng bộ lọc lần đầu khi component mount
-    // Điều này sẽ đảm bảo dữ liệu hiển thị theo filterYear mặc định '2025'
     useEffect(() => {
-        applyFilters();
-    }, []); // Dependency array rỗng, chỉ chạy một lần khi mount
+        fetchTransactions();
+    }, []); // Gọi một lần khi mount
 
     useEffect(() => {
         let prescriptionRev = 0;
         let clinicalRev = 0;
+        let examinationRev = 0; // Thêm biến cho tiền khám
         filteredTransactions.forEach(transaction => {
             if (transaction.type === 'Đơn thuốc') {
                 prescriptionRev += transaction.amount;
+                examinationRev += transaction.amount; // Dùng dữ liệu đơn thuốc cho tiền khám
             } else if (transaction.type === 'Cận lâm sàng') {
                 clinicalRev += transaction.amount;
             }
         });
 
-        // Animate counters and update chart values after animation
         animateCounter(
             displayPrescriptionRevenue,
             prescriptionRev,
@@ -236,6 +186,13 @@ const RevenueDashboard: React.FC = () => {
             setDisplayClinicalRevenue,
             setChartClinicalRevenue
         );
+        animateCounter(
+            displayExaminationRevenue,
+            examinationRev,
+            300,
+            setDisplayExaminationRevenue,
+            setChartExaminationRevenue
+        );
     }, [filteredTransactions]);
 
     useEffect(() => {
@@ -246,10 +203,10 @@ const RevenueDashboard: React.FC = () => {
             myPieChart.current.destroy();
         }
 
-        const chartLabels = ['Đơn Thuốc', 'Cận Lâm Sàng'];
-        const chartData = [chartPrescriptionRevenue, chartClinicalRevenue];
+        const chartLabels = ['Đơn Thuốc', 'Cận Lâm Sàng', 'Tiền Khám'];
+        const chartData = [chartPrescriptionRevenue, chartClinicalRevenue, chartExaminationRevenue];
 
-        if (barChartRef.current && (chartPrescriptionRevenue > 0 || chartClinicalRevenue > 0)) {
+        if (barChartRef.current && (chartPrescriptionRevenue > 0 || chartClinicalRevenue > 0 || chartExaminationRevenue > 0)) {
             const barCtx = barChartRef.current.getContext('2d');
             if (barCtx) {
                 myBarChart.current = new Chart(barCtx, {
@@ -259,8 +216,16 @@ const RevenueDashboard: React.FC = () => {
                         datasets: [{
                             label: 'Doanh thu (VND)',
                             data: chartData,
-                            backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(22, 163, 74, 0.7)'],
-                            borderColor: ['rgba(59, 130, 246, 1)', 'rgba(22, 163, 74, 1)'],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)', // Đơn thuốc: Xanh dương
+                                'rgba(22, 163, 74, 0.7)', // Cận lâm sàng: Xanh lá
+                                'rgba(147, 51, 234, 0.7)' // Tiền khám: Tím
+                            ],
+                            borderColor: [
+                                'rgba(59, 130, 246, 1)',
+                                'rgba(22, 163, 74, 1)',
+                                'rgba(147, 51, 234, 1)'
+                            ],
                             borderWidth: 1
                         }]
                     },
@@ -283,7 +248,7 @@ const RevenueDashboard: React.FC = () => {
             }
         }
 
-        if (pieChartRef.current && (chartPrescriptionRevenue > 0 || chartClinicalRevenue > 0)) {
+        if (pieChartRef.current && (chartPrescriptionRevenue > 0 || chartClinicalRevenue > 0 || chartExaminationRevenue > 0)) {
             const pieCtx = pieChartRef.current.getContext('2d');
             if (pieCtx) {
                 myPieChart.current = new Chart(pieCtx, {
@@ -293,8 +258,16 @@ const RevenueDashboard: React.FC = () => {
                         datasets: [{
                             label: 'Tỷ lệ Doanh thu',
                             data: chartData,
-                            backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(22, 163, 74, 0.7)'],
-                            borderColor: ['rgba(59, 130, 246, 1)', 'rgba(22, 163, 74, 1)'],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.7)', // Đơn thuốc: Xanh dương
+                                'rgba(22, 163, 74, 0.7)', // Cận lâm sàng: Xanh lá
+                                'rgba(147, 51, 234, 0.7)' // Tiền khám: Tím
+                            ],
+                            borderColor: [
+                                'rgba(59, 130, 246, 1)',
+                                'rgba(22, 163, 74, 1)',
+                                'rgba(147, 51, 234, 1)'
+                            ],
                             borderWidth: 1
                         }]
                     },
@@ -330,7 +303,7 @@ const RevenueDashboard: React.FC = () => {
                 myPieChart.current = null;
             }
         };
-    }, [chartPrescriptionRevenue, chartClinicalRevenue]);
+    }, [chartPrescriptionRevenue, chartClinicalRevenue, chartExaminationRevenue]);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -369,22 +342,19 @@ const RevenueDashboard: React.FC = () => {
                 setFilterStartDate('');
                 setFilterEndDate('');
                 setFilterMonth('');
-                // Không xóa filterYear ở đây vì filter quý thường đi kèm với năm
                 break;
             case 'filterYear':
                 setFilterYear(value);
                 setFilterStartDate('');
                 setFilterEndDate('');
                 setFilterMonth('');
-                // Không xóa filterQuarter ở đây vì filter năm có thể kết hợp với quý
                 break;
             default:
                 break;
         }
-        // applyFilters(); // Loại bỏ dòng này để không tự động lọc
     };
 
-    const grandTotal = displayPrescriptionRevenue + displayClinicalRevenue;
+    const grandTotal = displayPrescriptionRevenue + displayClinicalRevenue + displayExaminationRevenue;
 
     return (
         <>
@@ -397,8 +367,8 @@ const RevenueDashboard: React.FC = () => {
             />
 
             <div className="revenue-dashboard-container">
-                <div className="card_Container   mb-5">
-                    <h4 className="text-2xl font-bold text-gray-700 mb-5 text-center">Thống Kê Doanh Thu</h4>
+                <div className="card_Container mb-5">
+                    <h4 className="text-3xl font-bold text-gray-700 mb-5 text-center">Thống Kê Doanh Thu</h4>
                     <div className="grid grid-cols-1 md:grid-cols-6 gap-6 items-end">
                         <div>
                             <label htmlFor="filterStartDate" className="block text-gray-600 text-sm font-medium mb-2">Ngày bắt đầu:</label>
@@ -461,8 +431,7 @@ const RevenueDashboard: React.FC = () => {
                             </select>
                         </div>
                         <div className="flex justify-center">
-                            {/* Gọi applyFilters khi nút được nhấn */}
-                            <button id="applyFilterBtn" className="btn-filter w-1/2 md:w-auto" onClick={applyFilters}>
+                            <button id="applyFilterBtn" className="btn-filter w-1/2 md:w-auto" onClick={fetchTransactions}>
                                 Áp dụng bộ lọc
                             </button>
                         </div>
@@ -471,29 +440,33 @@ const RevenueDashboard: React.FC = () => {
 
                 <div className="w-full flex justify-between">
                     <div className="flex flex-col md:flex-row justify-between gap-6 mb-5 flex-1">
-                        <div className="card_Container   text-center flex-1">
+                        <div className="card_Container text-center flex-1">
                             <h2 className="text-2xl font-bold text-gray-700 mb-5">Tổng Doanh Thu</h2>
                             <p id="totalRevenueDisplay" className="text-2xl font-extrabold text-red-500">{formatCurrency(grandTotal)}</p>
                         </div>
-                        <div className="card_Container   text-center flex-1">
+                        <div className="card_Container text-center flex-1">
                             <h2 className="text-2xl font-bold text-gray-700 mb-5">Doanh Thu Đơn Thuốc</h2>
                             <p id="prescriptionRevenueDisplay" className="text-2xl font-extrabold text-blue-500">{formatCurrency(displayPrescriptionRevenue)}</p>
                         </div>
-                        <div className="card_Container   text-center flex-1">
+                        <div className="card_Container text-center flex-1">
                             <h2 className="text-2xl font-bold text-gray-700 mb-5">Doanh Thu Cận Lâm Sàng</h2>
                             <p id="clinicalRevenueDisplay" className="text-2xl font-extrabold text-green-500">{formatCurrency(displayClinicalRevenue)}</p>
+                        </div>
+                        <div className="card_Container text-center flex-1">
+                            <h2 className="text-2xl font-bold text-gray-700 mb-5">Doanh Thu Tiền Khám</h2>
+                            <p id="examinationRevenueDisplay" className="text-2xl font-extrabold text-purple-500">{formatCurrency(displayExaminationRevenue)}</p>
                         </div>
                     </div>
                 </div>
 
                 <div className="charts-section">
-                    <div className="card_Container   chart-card_Container ">
+                    <div className="card_Container chart-card_Container">
                         <h3 className="chart-title">So Sánh Doanh Thu Theo Loại</h3>
                         <div className="chart-container">
                             <canvas ref={barChartRef}></canvas>
                         </div>
                     </div>
-                    <div className="card_Container   chart-card_Container ">
+                    <div className="card_Container chart-card_Container">
                         <h3 className="chart-title">Tỷ Lệ Phân Bổ Doanh Thu</h3>
                         <div className="chart-container">
                             <canvas ref={pieChartRef}></canvas>
@@ -501,7 +474,7 @@ const RevenueDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="card_Container  ">
+                <div className="card_Container">
                     <h2 className="text-2xl font-bold text-gray-700 mb-5 text-center">Bảng Thống Kê Chi Tiết Giao Dịch</h2>
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white rounded-lg overflow-hidden border border-gray-200">
