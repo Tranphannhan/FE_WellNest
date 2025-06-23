@@ -74,7 +74,7 @@ export default function Prescription (){
                     handleClose: handleClose,
                     handleShow: handleShow,
                     show: showModal,
-                    callBack: handlePaymenConfirmation,
+                    callBack: () => {},
                     paymentConfirmation: paymentConfirmation
                 }}
             />
@@ -117,6 +117,7 @@ export default function Prescription (){
                             <th>Số điện thoại</th>
                             <th>Tên Đơn Thuốc</th>
                             <th>Tên bác sĩ</th>
+                           
                             <th>Thời gian</th>
                             <th>Tổng tiền</th>
                             <th>Hành động</th>
@@ -132,11 +133,10 @@ export default function Prescription (){
                                 <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</td>
                                 <td>{record?.TenDonThuoc}</td>
                                 <td>{record?.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi}</td>
-                                <td>{record?.Id_PhieuKhamBenh?.Ngay}</td>
                                 <td >{formatTime (record.Gio)}</td>
                                 
                                 <td style={{color : 'red' , fontWeight : 'bold'}}>
-                                    {formatCurrencyVND (9999)}
+                                    {formatCurrencyVND (record.TongTien || 0)}
                                 </td>
 
                                  <td>
@@ -145,7 +145,7 @@ export default function Prescription (){
                                             style={{
                                                 marginRight : '10px'
                                             }}
-                                            onClick={() => router.push('/Cashier/PaymentWaitingList/ParaclinicalDetails')}
+                                            onClick={() => router.push(`/Cashier/PaymentWaitingList/${record._id}`)}
                                             
                                             >
                                             <i className="bi bi-eye-fill"></i>
@@ -156,7 +156,7 @@ export default function Prescription (){
                                         <button className="button--red"
                                                onClick={() => handlePaymenConfirmation(
                                                 record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen as string,
-                                                9999
+                                                record.TongTien || 0
                                             )}
                                         >
                                             <FaMoneyCheckDollar/>

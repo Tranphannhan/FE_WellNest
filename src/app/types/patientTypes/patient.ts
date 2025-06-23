@@ -42,8 +42,8 @@ export interface medicalExaminationBook {
 
 // phiếu khám bệnh 
 export interface MedicalExaminationCard {
-  _id ? : string;
-  Id_TheKhamBenh ? : medicalExaminationBook;
+  _id  : string;
+  Id_TheKhamBenh  : medicalExaminationBook;
   Id_Bacsi ? : DoctorType;
   Id_NguoiTiepNhan ? : string;
   Id_GiaDichVu ?: string;
@@ -140,6 +140,7 @@ export interface prescriptionType {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  TongTien ? : number
 }
 
 

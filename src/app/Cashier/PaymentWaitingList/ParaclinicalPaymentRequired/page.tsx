@@ -142,6 +142,7 @@ export default function Prescription (){
                                                 style={{
                                                     marginRight : '10px'
                                                 }}>
+
                                                 
                                                 <i className="bi bi-eye-fill"></i>
                                                 Xem chi tiết

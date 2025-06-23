@@ -5,12 +5,15 @@ export interface medicineGroupType {
   TenNhomThuoc?: string;
 }
 
+
+// Thuốc
 export interface medicineType {
   _id?: string;
   Id_NhomThuoc?: medicineGroupType;
   TenThuoc?: string;
   Gia?: number;
   __v?: number;
+  DonVi ? : string
 }
 
 export interface MedicinePaginationResponse {
@@ -28,7 +31,6 @@ export interface prescriptionType{
     _id?:string;
     
 } 
-
 
 
 // Phòng thiết bị
@@ -120,6 +122,8 @@ export interface TestRequestPaginationResponse {
   totalPages: number;
 }
 
+
+// Dũ liệu phân trang
 export type ParaclinicalResponse = {
     totalItems: number;
     currentPage: number;
@@ -127,3 +131,18 @@ export type ParaclinicalResponse = {
     TongTien: number;
     data: paraclinicalType[];
 };
+
+
+
+// đơn thuốc chi tiết
+// export interface detailedPrescriptionType {
+//   _id : string;
+//   Id_DonThuoc : string;
+//   Id_Thuoc : medicineType;
+//   SoLuong : number;
+//   NhacNho : string;
+// }
+
+
+
+

@@ -1,7 +1,7 @@
 
 
 'use client';
-import '../../PrescriptionDetails/PrescriptionDetails.css';
+import '../../PrescriptionDetails.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import { formatCurrencyVND, formatTime } from '@/app/lib/Format';
 import { getDetailParaclinicalAwaitingPayment } from '@/app/services/Cashier';
@@ -34,7 +34,7 @@ export default function PrescriptionDetails() {
         setdataDetail(response.data as paraclinicalType[]);
     }
 
-
+ 
 
     useEffect (() => {
         console.log('id : ' + id);

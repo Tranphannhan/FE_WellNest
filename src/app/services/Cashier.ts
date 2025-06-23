@@ -3,6 +3,7 @@ import { ParaclinicalResponse } from "../types/hospitalTypes/hospitalType";
 import { paraclinicalType, prescriptionType } from "../types/patientTypes/patient";
 
 
+
 export async function getPrescriptionPendingPayment (): Promise<prescriptionType | null> {
   try {
     const response = await fetch(`http://localhost:5000/Donthuoc/DonThuocThuNgan/Pagination?TrangThaiThanhToan=false&gidzl=kEmFJg2atsUrzmz1hBhQQR3r2Ksoi8nfh_u96hkttZAagLeKkEEBPgEcMqwyxDjgzg0AIZCiVU4HfwNVRG`);
@@ -40,6 +41,34 @@ export async function getDetailParaclinicalAwaitingPayment (id : string): Promis
   } catch (error) {
     console.error("Fetch lỗi:", error);
     return null;
+  }  
+}
+
+
+// Thông tin bẹnh nhân
+export async function getDetailPatientInformation (id : string): Promise<prescriptionType | null> {
+  try {
+    const response = await fetch(`http://localhost:5000/Donthuoc/Detail/${id}`);
+    if (!response.ok) return null;
+    const data =await response.json();
+    return data
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
   }
 }
 
+
+
+// Thông tin đơn thuóc
+export async function getDetailPrescription(id : string) {
+  try {
+    const response = await fetch(`http://localhost:5000/Donthuoc_Chitiet/LayTheoDonThuoc/${id}`);
+    if (!response.ok) return null;
+    const data =await response.json();
+    return data
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return null;
+  }
+}

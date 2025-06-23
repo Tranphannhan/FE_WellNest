@@ -74,7 +74,7 @@ const PopupHistory = () => {
 
       const converted = res.map((item: diseaseHistory, index: number) => ({
         key: item._id || index,
-        date: new Date(item.Id_PhieuKhamBenh?.Ngay).toLocaleDateString('vi-VN'),
+        date: item.Id_PhieuKhamBenh?.Ngay,
         doctor: item.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi || 'Không rõ',
         room: item.Id_PhieuKhamBenh?.Id_Bacsi?.Id_PhongKham?.SoPhongKham || 'Không rõ',
         result: item.KetQua || 'Không ghi',
