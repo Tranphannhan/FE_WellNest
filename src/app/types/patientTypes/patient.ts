@@ -42,8 +42,8 @@ export interface medicalExaminationBook {
 
 // phiếu khám bệnh 
 export interface MedicalExaminationCard {
-  _id ? : string;
-  Id_TheKhamBenh ? : medicalExaminationBook;
+  _id  : string;
+  Id_TheKhamBenh  : medicalExaminationBook;
   Id_Bacsi ? : DoctorType;
   Id_NguoiTiepNhan ? : string;
   Id_GiaDichVu ?: string;
@@ -56,14 +56,10 @@ export interface MedicalExaminationCard {
   TrangThaiHoatDong ? : string;
   GioKetThucKham ? :string;
   __v: number;
-<<<<<<< HEAD
-  SoLanKhongCoMat ? :number;
-=======
   SoLanKhongCoMat:number;
 
   // là dữ liệu phát sinh trên FE
   results?:string;
->>>>>>> 83eab1754ff43b959b443118f93fbc6cfbb6de41
 }
 
 // chỉ số sinh tồn 
