@@ -73,23 +73,28 @@ const PrescriptionPopup = ({
   const { id } = useParams();
 
   // Initialize prescription name and reset patient notes when entering step 1
-  useEffect(() => {
-    if (showPrescriptionPopup && medicalCardInfo) {
-      const defaultName = `Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}`;
+useEffect(() => {
+  if (showPrescriptionPopup && medicalCardInfo) {
+    const defaultName = `Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}`;
+
+    if (step === 1) {
+      // Bắt đầu đơn mới -> reset tên và ghi đè lại session
+      sessionStorage.removeItem("PrescriptionName");
       setPrescriptionName(defaultName);
-      sessionStorage.setItem("PrescriptionName", defaultName);
-      
-      if (step === 1) {
-        // Reset PatientNotes when entering step 1
-        setPatientNotes("");
-        sessionStorage.setItem("PatientNotes", "");
-      } else {
-        // Load existing PatientNotes for step 2
-        const storedNotes = sessionStorage.getItem("PatientNotes") || "";
-        setPatientNotes(storedNotes);
-      }
+
+      setPatientNotes("");
+      sessionStorage.setItem("PatientNotes", "");
+    } else {
+      // Các bước sau vẫn giữ tên đã sửa
+      const storedPrescriptionName = sessionStorage.getItem("PrescriptionName") || defaultName;
+      setPrescriptionName(storedPrescriptionName);
+
+      const storedNotes = sessionStorage.getItem("PatientNotes") || "";
+      setPatientNotes(storedNotes);
     }
-  }, [showPrescriptionPopup, medicalCardInfo, step]);
+  }
+}, [showPrescriptionPopup, medicalCardInfo, step]);
+
 
   // Fetch all matching medicines
   const fetchAllMatchingMedicines = useCallback(async () => {
@@ -485,7 +490,7 @@ const PrescriptionPopup = ({
                     <Input.TextArea
                       placeholder="Nhập nhắc nhở"
                       className="form-control"
-                      rows={1}
+                      rows={4}
                       onChange={(e) => {
                         setInputPrescriptionDetail((prev) => ({
                           ...prev,
