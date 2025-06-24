@@ -2,11 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Modal, Table } from "antd";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  CheckOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, CheckOutlined } from "@ant-design/icons";
 import { diagnosisType } from "@/app/types/patientTypes/patient";
 
 interface DataType {
@@ -27,7 +23,7 @@ export default function DiagnosisPopup({
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
 
-  // Fetch API khi mở modal
+  // Fetch data when modal opens
   useEffect(() => {
     if (!open) return;
 
@@ -36,9 +32,10 @@ export default function DiagnosisPopup({
         const res = await fetch(
           `http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/LayTheoPhieuKhamBenh?Id_PhieuKhamBenh=${id}`
         );
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
 
-        const formatted = data.map((item:diagnosisType ) => ({
+        const formatted = data.map((item: diagnosisType) => ({
           key: item._id,
           symptom: item.TrieuChung,
           diagnosis: item.ChuanDoanSoBo,
@@ -53,17 +50,60 @@ export default function DiagnosisPopup({
     fetchData();
   }, [id, open]);
 
-  const handleEditSave = (key: string) => {
-    if (editingKey === key) {
-      setEditingKey(null);
-    } else {
-      setEditingKey(key);
+  // Start editing a row
+  const handleEdit = (key: string) => {
+    setEditingKey(key);
+  };
+
+  // Save changes to a row
+  const handleSave = async (key: string) => {
+    const editedItem = dataSource.find((item) => item.key === key);
+    if (!editedItem) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/Update/${key}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            TrieuChung: editedItem.symptom,
+            ChuanDoanSoBo: editedItem.diagnosis,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setEditingKey(null); // Exit editing mode
+    } catch (error) {
+      console.error("Lỗi khi cập nhật:", error);
     }
   };
 
-  const handleDelete = (key: string) => {
-    const newData = dataSource.filter((item) => item.key !== key);
-    setDataSource(newData);
+  // Delete a row
+  const handleDelete = async (key: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/Delete/${key}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const newData = dataSource.filter((item) => item.key !== key);
+      setDataSource(newData);
+    } catch (error) {
+      console.error("Lỗi khi xóa:", error);
+    }
   };
 
   const handleInputChange = (
@@ -165,7 +205,7 @@ export default function DiagnosisPopup({
                   color: "#1890ff",
                   cursor: "pointer",
                 }}
-                onClick={() => handleEditSave(record.key)}
+                onClick={() => handleSave(record.key)}
               />
             ) : (
               <EditOutlined
@@ -174,7 +214,7 @@ export default function DiagnosisPopup({
                   color: "#1890ff",
                   cursor: "pointer",
                 }}
-                onClick={() => handleEditSave(record.key)}
+                onClick={() => handleEdit(record.key)}
               />
             )}
           </span>
@@ -200,7 +240,7 @@ export default function DiagnosisPopup({
 
   return (
     <Modal open={open} onCancel={onClose} footer={null} width={800}>
-      <div style={{ textAlign: "left" , fontSize:16, marginBottom:10}}>
+      <div style={{ textAlign: "left", fontSize: 16, marginBottom: 10 }}>
         Danh sách triệu chứng & chuẩn đoán sơ bộ
       </div>
       <Table

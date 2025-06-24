@@ -1,6 +1,6 @@
 'use client'
-import { FaSave } from 'react-icons/fa'; 
-import './Diagnosis.css';   
+import { FaEye, FaSave } from 'react-icons/fa';
+import './Diagnosis.css';
 import { useEffect, useState } from 'react';
 import { diagnosisType, survivalIndexType } from '@/app/types/patientTypes/patient';
 import { addDiagnosis, getVitalSignsByExaminationId, updateSurvivalIndex } from '@/app/services/DoctorSevices';
@@ -8,9 +8,9 @@ import { useParams } from 'next/navigation';
 import { showToast, ToastType } from '@/app/lib/Toast';
 import DiagnosisPopup from '@/app/components/diagnosis/DiagnosisPopup';
 
-export default function DiagnosisComponent ({reLoad}:{reLoad:()=>void}) {
+export default function DiagnosisComponent({ reLoad }: { reLoad: () => void }) {
   const { id } = useParams();
-const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [datasurvivalIndexRender, setDatasurvivalIndexRender] = useState<survivalIndexType>({});
   const [initialSurvivalIndex, setInitialSurvivalIndex] = useState<survivalIndexType>({});
   const [diagnosis, setDiagnosis] = useState<diagnosisType>({});
@@ -70,227 +70,231 @@ const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     getData();
   }, []);
-  
-
-    return (
-       <>
-          <div className="CreateResults-bodyFrame__vitalSigns">
-              <div className="vital-signs-container">
-                <h2>Chỉ số sinh tồn</h2>
-  
-                <div className="CreateResults-bodyFrame__vitalSigns__formRow">
-                  <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
-                    <label htmlFor="temperature">Nhiệt độ</label>
-                    <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
-                      <input value={datasurvivalIndexRender.NhietDo ? datasurvivalIndexRender.NhietDo : ''}
-                        onChange={(e) => {
-                          setDatasurvivalIndexRender ((prev)=>(
-                            {...prev,NhietDo:e.target.value}
-                          ))
-                        }}
-                      type="text" id="temperature" />
-                      <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">°C</span>
-                    </div>
-                  </div>  
-
-                  <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
-                    <label htmlFor="temperature">Nhịp thở</label>
-                    <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
-                      <input type="text" id="temperature" 
-                         value={datasurvivalIndexRender.NhipTho ? datasurvivalIndexRender.NhipTho : ''}
-                          onChange={(e) => {
-                          setDatasurvivalIndexRender ((prev)=>(
-                            {...prev,NhipTho :e.target.value}
-                          ))
-                        }}
-                      /> 
-                      <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">L/P</span>
-                    </div>
-                  </div>
 
 
-                  <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
-                    <label htmlFor="temperature">Huyết áp</label>
-                    <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
-                      <input type="text" id="temperature" 
-                         value={datasurvivalIndexRender.HuyetAp? datasurvivalIndexRender.HuyetAp : ''}
-                          onChange={(e) => {
-                          setDatasurvivalIndexRender ((prev)=>(
-                            {...prev,HuyetAp :e.target.value}
-                          ))
-                        }}
-                      />
-                      <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">mmHg</span>
-                    </div>
-                  </div>
+  return (
+    <>
+      <div className="CreateResults-bodyFrame__vitalSigns">
+        <div className="vital-signs-container">
+          <h2>Chỉ số sinh tồn</h2>
 
-
-                  <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
-                    <label htmlFor="temperature">Mạch</label>
-                    <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
-                      <input type="text" id="temperature" 
-                         value={datasurvivalIndexRender.Mach? datasurvivalIndexRender.Mach : ''}
-                          onChange={(e) => {
-                          setDatasurvivalIndexRender ((prev)=>(
-                            {...prev,Mach :e.target.value}
-                          ))
-                        }}
-                      />
-                      <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">L/P</span>
-                    </div>
-                  </div>
-
-                </div>
-
-
-                <div className="CreateResults-bodyFrame__vitalSigns__formRow">
-                  <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
-                    <label htmlFor="temperature">Chiều cao</label>
-                    <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
-                      <input type="text" id="temperature" 
-                        value={datasurvivalIndexRender.ChieuCao? datasurvivalIndexRender.ChieuCao : ''}
-                          onChange={(e) => {
-                          setDatasurvivalIndexRender ((prev)=>(
-                            {...prev,ChieuCao : e.target.value}
-                          ))
-                        }}
-                      />
-                      <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">°C</span>
-                    </div>
-                  </div>
-
-                  <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
-                    <label htmlFor="temperature">Cân nặng</label>
-                    <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
-                      <input type="text" id="temperature" 
-                         value={datasurvivalIndexRender.CanNang? datasurvivalIndexRender.CanNang : ''}
-                          onChange={(e) => {
-                          setDatasurvivalIndexRender ((prev)=>(
-                            {...prev,CanNang : e.target.value}
-                          ))
-                        }}
-                      />
-                      <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">Kg</span>
-                    </div>
-                  </div>
-
-
-                  <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
-                    <label htmlFor="temperature">BMI</label>
-                    <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
-                      <input type="text" id="temperature" 
-                         value={datasurvivalIndexRender.BMI? datasurvivalIndexRender.BMI : ''}
-                          onChange={(e) => {
-                          setDatasurvivalIndexRender ((prev)=>(
-                            {...prev,BMI : e.target.value}
-                          ))
-                        }}
-                      />
-                      <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">Kg/m2</span>
-                    </div>
-                  </div>
-
-
-                  <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
-                    <label htmlFor="temperature">SP02</label>
-                    <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
-                      <input type="text" id="temperature" 
-                          value={datasurvivalIndexRender.SP02? datasurvivalIndexRender.SP02 : ''}
-                          onChange={(e) => {
-                          setDatasurvivalIndexRender ((prev)=>(
-                            {...prev,SP02 : e.target.value}
-                          ))
-                        }}
-                      />
-                      <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">%</span>
-                    </div>
-                  </div>
-
-
-                </div>
-
-
+          <div className="CreateResults-bodyFrame__vitalSigns__formRow">
+            <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
+              <label htmlFor="temperature">Nhiệt độ</label>
+              <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
+                <input value={datasurvivalIndexRender.NhietDo ? datasurvivalIndexRender.NhietDo : ''}
+                  onChange={(e) => {
+                    setDatasurvivalIndexRender((prev) => (
+                      { ...prev, NhietDo: e.target.value }
+                    ))
+                  }}
+                  type="text" id="temperature" />
+                <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">°C</span>
               </div>
             </div>
 
-            <div className='CreateResults-bodyFrame__title2'>Chẩn đoán sơ bộ</div>
-            <div className="CreateResults-bodyFrame__formVitalSigns">
-               <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer">
-                  <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
-                      <div>Triệu chứng</div>
-                      <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-                        <textarea  
-                          onChange={(e) => {
-                            setDiagnosis ((prev) => (
-                              {...prev , TrieuChung : e.target.value}
-                            ))
-                          }}
- 
-                          value={diagnosis.TrieuChung ? diagnosis.TrieuChung : ''}
-
-                        className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập triệu chứng..."></textarea>
-                          <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
-                              <span></span>
-                              <span></span>
-                              <span></span>
-                          </div>
-                      </div>  
-                  </div>
-
-  
-                  <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
-                      <div>Chẩn đoán sơ bộ</div>
-                      <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-                        <textarea 
-                          onChange={(e) => {
-                            setDiagnosis ((prev) => (
-                              {...prev , ChuanDoanSoBo : e.target.value}
-                            ))
-                          }}
- 
-                          value={diagnosis.ChuanDoanSoBo ? diagnosis.ChuanDoanSoBo : ''}
-                          className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập chuẩn đoán...">
-                        </textarea>
-                          <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
-                              <span></span>
-                              <span></span>
-                              <span></span>
-                          </div>
-                      </div>  
-                  </div>
-                      
-                          
-                              <div className="p-6">
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Xem chi tiết
-      </button>
-
-      <DiagnosisPopup
-        id={id as string}
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
-    </div>
-
-              <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer">
-                      <button
-                        className={`bigButton--green ${isSaveEnabled || 'disabled'}`}
-                        onClick={handleSave}
-                        disabled={!isSaveEnabled}
-                      >
-                        <FaSave />
-                        Lưu
-                      </button>
-                    </div>
-
-
-                </div>
+            <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
+              <label htmlFor="temperature">Nhịp thở</label>
+              <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
+                <input type="text" id="temperature"
+                  value={datasurvivalIndexRender.NhipTho ? datasurvivalIndexRender.NhipTho : ''}
+                  onChange={(e) => {
+                    setDatasurvivalIndexRender((prev) => (
+                      { ...prev, NhipTho: e.target.value }
+                    ))
+                  }}
+                />
+                <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">L/P</span>
+              </div>
             </div>
-       </>
-    )
+
+
+            <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
+              <label htmlFor="temperature">Huyết áp</label>
+              <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
+                <input type="text" id="temperature"
+                  value={datasurvivalIndexRender.HuyetAp ? datasurvivalIndexRender.HuyetAp : ''}
+                  onChange={(e) => {
+                    setDatasurvivalIndexRender((prev) => (
+                      { ...prev, HuyetAp: e.target.value }
+                    ))
+                  }}
+                />
+                <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">mmHg</span>
+              </div>
+            </div>
+
+
+            <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
+              <label htmlFor="temperature">Mạch</label>
+              <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
+                <input type="text" id="temperature"
+                  value={datasurvivalIndexRender.Mach ? datasurvivalIndexRender.Mach : ''}
+                  onChange={(e) => {
+                    setDatasurvivalIndexRender((prev) => (
+                      { ...prev, Mach: e.target.value }
+                    ))
+                  }}
+                />
+                <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">L/P</span>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div className="CreateResults-bodyFrame__vitalSigns__formRow">
+            <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
+              <label htmlFor="temperature">Chiều cao</label>
+              <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
+                <input type="text" id="temperature"
+                  value={datasurvivalIndexRender.ChieuCao ? datasurvivalIndexRender.ChieuCao : ''}
+                  onChange={(e) => {
+                    setDatasurvivalIndexRender((prev) => (
+                      { ...prev, ChieuCao: e.target.value }
+                    ))
+                  }}
+                />
+                <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">°C</span>
+              </div>
+            </div>
+
+            <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
+              <label htmlFor="temperature">Cân nặng</label>
+              <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
+                <input type="text" id="temperature"
+                  value={datasurvivalIndexRender.CanNang ? datasurvivalIndexRender.CanNang : ''}
+                  onChange={(e) => {
+                    setDatasurvivalIndexRender((prev) => (
+                      { ...prev, CanNang: e.target.value }
+                    ))
+                  }}
+                />
+                <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">Kg</span>
+              </div>
+            </div>
+
+
+            <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
+              <label htmlFor="temperature">BMI</label>
+              <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
+                <input type="text" id="temperature"
+                  value={datasurvivalIndexRender.BMI ? datasurvivalIndexRender.BMI : ''}
+                  onChange={(e) => {
+                    setDatasurvivalIndexRender((prev) => (
+                      { ...prev, BMI: e.target.value }
+                    ))
+                  }}
+                />
+                <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">Kg/m2</span>
+              </div>
+            </div>
+
+
+            <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup">
+              <label htmlFor="temperature">SP02</label>
+              <div className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith">
+                <input type="text" id="temperature"
+                  value={datasurvivalIndexRender.SP02 ? datasurvivalIndexRender.SP02 : ''}
+                  onChange={(e) => {
+                    setDatasurvivalIndexRender((prev) => (
+                      { ...prev, SP02: e.target.value }
+                    ))
+                  }}
+                />
+                <span className="CreateResults-bodyFrame__vitalSigns__formRow__formGroup__inputWith_unit">%</span>
+              </div>
+            </div>
+
+
+          </div>
+
+
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center w-[98%]">
+        <div className="CreateResults-bodyFrame__title2">Chẩn đoán sơ bộ</div>
+
+       <button
+        onClick={() => setIsModalOpen(true)}
+        className="button--viewDetail" // Added flex and gap for icon and text
+    >
+        <FaEye /> Xem chuẩn đoán
+    </button>
+
+        <DiagnosisPopup
+          id={id as string}
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      </div>
+
+      <div className="CreateResults-bodyFrame__formVitalSigns">
+        <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer">
+          <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
+            <div>Triệu chứng</div>
+
+            <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
+              <textarea
+                onChange={(e) => {
+                  setDiagnosis((prev) => (
+                    { ...prev, TrieuChung: e.target.value }
+                  ))
+                }}
+
+                value={diagnosis.TrieuChung ? diagnosis.TrieuChung : ''}
+
+                className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập triệu chứng..."></textarea>
+              <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+
+
+          <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection">
+            <div>Chẩn đoán sơ bộ</div>
+            <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
+              <textarea
+                onChange={(e) => {
+                  setDiagnosis((prev) => (
+                    { ...prev, ChuanDoanSoBo: e.target.value }
+                  ))
+                }}
+
+                value={diagnosis.ChuanDoanSoBo ? diagnosis.ChuanDoanSoBo : ''}
+                className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput" rows={3} placeholder="Nhập chuẩn đoán...">
+              </textarea>
+              <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+
+
+
+
+          <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__saveButtonContainer">
+            <button
+              className={`bigButton--green ${isSaveEnabled || 'disabled'}`}
+              onClick={handleSave}
+              disabled={!isSaveEnabled}
+            >
+              <FaSave />
+              Lưu
+            </button>
+          </div>
+
+
+        </div>
+      </div>
+    </>
+  )
 }
 
 
