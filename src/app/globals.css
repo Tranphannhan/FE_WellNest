@@ -118,6 +118,24 @@ body {
   background-color: #1f78d1; 
 }
 
+/* Loại chữ xanh không background */
+.button--blueType2 {
+  background-color: #ffffff;
+  color: #3497f9;
+  padding: 4px 13px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+.button--blue:hover {
+  background-color: #ffffff; 
+  color: #1489ff;
+}
+
 
 /* nút nhỏ màu xanh */
 .button--green {
