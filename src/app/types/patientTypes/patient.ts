@@ -80,6 +80,7 @@ export interface survivalIndexType{
 
 // chuẩn đoán chi tiết lâm sang
 export interface diagnosisType {
+  _id?:string,
   Id_KhamLamSang?  : string,
   TrieuChung? : string,
   ChuanDoanSoBo? : string

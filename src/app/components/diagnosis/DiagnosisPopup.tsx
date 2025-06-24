@@ -7,6 +7,7 @@ import {
   DeleteOutlined,
   CheckOutlined,
 } from "@ant-design/icons";
+import { diagnosisType } from "@/app/types/patientTypes/patient";
 
 interface DataType {
   key: string;
@@ -37,7 +38,7 @@ export default function DiagnosisPopup({
         );
         const data = await res.json();
 
-        const formatted = data.map((item: any) => ({
+        const formatted = data.map((item:diagnosisType ) => ({
           key: item._id,
           symptom: item.TrieuChung,
           diagnosis: item.ChuanDoanSoBo,
@@ -199,9 +200,9 @@ export default function DiagnosisPopup({
 
   return (
     <Modal open={open} onCancel={onClose} footer={null} width={800}>
-      <h3 style={{ textAlign: "center" }}>
+      <div style={{ textAlign: "left" , fontSize:16, marginBottom:10}}>
         Danh sách triệu chứng & chuẩn đoán sơ bộ
-      </h3>
+      </div>
       <Table
         dataSource={dataSource}
         columns={columns}

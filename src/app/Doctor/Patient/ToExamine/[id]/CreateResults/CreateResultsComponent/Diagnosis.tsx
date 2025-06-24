@@ -269,7 +269,7 @@ const [isModalOpen, setIsModalOpen] = useState(false);
       </button>
 
       <DiagnosisPopup
-        id="68592939bdd3a1f09a7874c0"
+        id={id as string}
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
