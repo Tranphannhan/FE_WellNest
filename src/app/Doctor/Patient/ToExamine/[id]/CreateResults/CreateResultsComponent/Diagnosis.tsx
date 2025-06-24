@@ -218,9 +218,9 @@ export default function DiagnosisComponent({ reLoad }: { reLoad: () => void }) {
 
        <button
         onClick={() => setIsModalOpen(true)}
-        className="button--viewDetail" // Added flex and gap for icon and text
+        className="button--blueType2" // Added flex and gap for icon and text
     >
-        <FaEye /> Xem chuẩn đoán
+        <FaEye /> Xem chẩn đoán
     </button>
 
         <DiagnosisPopup

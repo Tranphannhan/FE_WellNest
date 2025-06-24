@@ -6,9 +6,9 @@ import Modal from 'react-bootstrap/Modal';
 import './ConfirmationNotice.css';
 import React from 'react';
 
-import { FaMoneyCheckAlt } from "react-icons/fa";
 import { TbCreditCardPay } from "react-icons/tb";
 import { LiaMoneyCheckAltSolid } from "react-icons/lia";  
+import PaymentMethodSelector from '@/app/components/ui/Pay/Pay';
 
 
 interface Type_Data_information {
@@ -25,10 +25,6 @@ interface Type_Data_information {
  
 export default function ConfirmationNotice({ Data_information }: { Data_information: Type_Data_information }) {
   const [paymentType, setPaymentType] = React.useState('Cash');
-  const handlePay = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const Value = e.target.value;
-    setPaymentType(Value == 'Cash' ? 'Cash' : 'transfer');
-  }
 
 
   return (
@@ -50,15 +46,7 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
             <p style={{display : 'flex' , alignItems : 'center' , gap : '10px'}}>< LiaMoneyCheckAltSolid  style={{marginTop : '2px'}} /> Tổng tiền: <span className="total-price">{Data_information.totalPrice} VNĐ</span></p>
             <p style={{display : 'flex' , alignItems : 'center' , gap : '10px'}}><TbCreditCardPay  style={{marginTop : '2px'}}/> Phương thức thanh toán</p>
             
-
-            <select className="form-select confirmationNotice-body__select"  onChange={(e) => handlePay(e)}>
-              <option value="Cash">
-                <FaMoneyCheckAlt/>
-                Tiền mặt
-              </option>
-              
-              <option value="transfer">Chuyển khoản</option>
-            </select>
+            <PaymentMethodSelector callBack ={setPaymentType}></PaymentMethodSelector>
           </div>
         </Modal.Body>
  
