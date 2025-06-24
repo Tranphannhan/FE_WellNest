@@ -89,7 +89,7 @@ export default function PrescriptionDetails() {
                     <div className='PrescriptionDetails-container__Box2__title'>Đơn thuốc chi tiết</div>
 
                     <table className="Prescription-container_table">
-                        <thead>
+                        <thead style={{backgroundColor:'#f7fafc', fontWeight:600}}>
                             <tr>
                                 <th>Tên thuốc</th>
                                 <th>Đơn vị</th>

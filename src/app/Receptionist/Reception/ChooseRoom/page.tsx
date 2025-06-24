@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
 import NoData from "@/app/components/ui/Nodata/Nodata";
 import { Badge } from 'antd';
+import { GiClick } from "react-icons/gi";
+
  
 interface createExaminationCardInformationType{
   Id_TheKhamBenh?: string;
@@ -268,9 +270,10 @@ async function HandleCreate() {
                                 <td>{doctor.Id_PhongKham?.SoPhongKham || 'Không rõ'}</td>
                                 <td
                                     style={{
+                                    fontWeight:600,
                                     color:
                                         doctor.SoNguoiDangKham < 4
-                                        ? 'green'
+                                        ? '#00ce0'
                                         : doctor.SoNguoiDangKham < 8
                                         ? 'orange'
                                         : 'red',
@@ -319,13 +322,13 @@ async function HandleCreate() {
                                                     }));
                                                 }
                                             }}
-                                            className="chooseRoom-container__btn-choose"
+                                            className="button--blue"
                                             style={{
                                                 background: isFull ? '#313131' : '',
                                                 cursor: isFull ? 'not-allowed' : 'pointer',
                                             }}
                                         >
-                                            {isFull ? 'Đã đầy' : 'Chọn phòng'}
+                                            <GiClick />{isFull ? 'Đã đầy' : 'Chọn phòng'}
                                         </button>
 
                                   }
