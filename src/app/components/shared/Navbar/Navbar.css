@@ -1,4 +1,4 @@
-.Nav{
+.Nav {
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -6,19 +6,24 @@
     height: 100vh;
     padding-top: 30px;
     position: fixed;
-    box-shadow: rgba(14, 63, 126, 0.04) 0px 0px 0px 1px, rgba(42, 51, 69, 0.04) 0px 1px 1px -0.5px, rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px, rgba(42, 51, 70, 0.04) 0px 6px 6px -3px, rgba(14, 63, 126, 0.04) 0px 12px 12px -6px, rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
+    box-shadow: rgba(14, 63, 126, 0.04) 0px 0px 0px 1px,
+                rgba(42, 51, 69, 0.04) 0px 1px 1px -0.5px,
+                rgba(42, 51, 70, 0.04) 0px 3px 3px -1.5px,
+                rgba(42, 51, 70, 0.04) 0px 6px 6px -3px,
+                rgba(14, 63, 126, 0.04) 0px 12px 12px -6px,
+                rgba(14, 63, 126, 0.04) 0px 24px 24px -12px;
 }
 
-.Nav__logo{
+.Nav__logo {
     width: 65%;
     margin-left: 30px;
 }
 
-.Nav__content{
+.Nav__content {
     margin-top: 40px;
 }
 
-.Nav__item{
+.Nav__item {
     width: 100%;
     padding-left: 25px;
     height: 50px;
@@ -27,14 +32,21 @@
     font-size: 20px;
     display: flex;
     align-items: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.Nav-active{
+.Nav__item:hover {
+    background-color: #f5faff;
+    color: #3497f9;
+    cursor: pointer;
+}
+
+.Nav-active {
     background-color: #3496f92f;
     color: #3497f9;
 }
 
-.Nav__item__text{
+.Nav__item__text {
     font-size: 16px;
     margin-left: 15px;
 }

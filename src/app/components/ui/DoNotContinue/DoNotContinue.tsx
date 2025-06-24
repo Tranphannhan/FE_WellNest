@@ -1,22 +1,35 @@
-import { FC } from 'react';
-import { Ban  } from "lucide-react"; // Biểu tượng cảnh báo
+import { Box, Typography, Stack } from '@mui/material';
+import BlockIcon from '@mui/icons-material/Block';
 
 interface NoDataProps {
   message?: string;
   remind?: string;
 }
 
-const DoNotContinue: FC<NoDataProps> = ({
+export default function DoNotContinue({
   message = 'Không được phép tiếp tục',
   remind = 'Vui lòng hoàn tất các bước trước đó hoặc liên hệ quản trị viên.',
-}) => {
+}: NoDataProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-6 rounded-lg text-red-600">
-      <Ban  className="w-12 h-12 mb-4 text-red-500" />
-      <p className="text-lg font-semibold">{message}</p>
-      <p className="text-sm text-red-400 mt-1">{remind}</p>
-    </div>
+    <Box
+      sx={{
+        py: 6,
+        px: 2,
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Stack spacing={1} alignItems="center" textAlign="center">
+        <BlockIcon sx={{ fontSize: 56, color: 'error.main' }} />
+        <Typography variant="h6" fontWeight={600} color="error.main">
+          {message}
+        </Typography>
+        <Typography variant="body2" color="error.light" sx={{ maxWidth: 400 }}>
+          {remind}
+        </Typography>
+      </Stack>
+    </Box>
   );
-};
-
-export default DoNotContinue;
+}

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import './Navbar.css'
 import { conTentNavigationType } from '@/app/types/componentTypes/NavTypes';
 import { usePathname } from 'next/navigation';
+import { MdLogout } from "react-icons/md";
 
 
 export default function Navbar ({conTentNavigation}:{conTentNavigation:conTentNavigationType}){
@@ -36,7 +37,7 @@ export default function Navbar ({conTentNavigation}:{conTentNavigation:conTentNa
             )}
             <button style={{width:'100%'}}>
                     <div className='Nav__item'>
-                        <i className="bi bi-box-arrow-right"></i>
+                        <MdLogout />
                         <span className='Nav__item__text'>Đăng xuất</span>
                     </div>
                 </button>

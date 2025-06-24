@@ -1,18 +1,35 @@
-import { FC } from 'react';
-import { FileSearch } from "lucide-react"; // hoặc LucideIcon bạn muốn
+import { Box, Typography, Stack } from '@mui/material';
+import { FileSearch } from 'lucide-react'; // Giữ lại icon bạn muốn
+
 interface NoDataProps {
   message?: string;
-  remind?:string;
+  remind?: string;
 }
 
-const NoData: FC<NoDataProps> = ({ message = 'Không có dữ liệu để hiển thị' ,remind = 'Không có thông tin để hiển thị'}) => {
+export default function NoData({
+  message = 'Không có dữ liệu để hiển thị',
+  remind = 'Không có thông tin để hiển thị',
+}: NoDataProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-6 px-6 rounded-lg text-gray-600">
-      <FileSearch className="w-12 h-12 mb-4 text-gray-400" />
-      <p className="text-lg font-medium">{message}</p>
-      <p className="text-sm text-gray-500 mt-1">{remind}</p>
-    </div>
+    <Box
+      sx={{
+        py: 6,
+        px: 2,
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Stack spacing={1} alignItems="center" textAlign="center">
+        <FileSearch size={48} style={{ color: '#9ca3af' }} /> {/* gray-400 */}
+        <Typography variant="h6" fontWeight={500} color="text.primary">
+          {message}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {remind}
+        </Typography>
+      </Stack>
+    </Box>
   );
-};
-
-export default NoData;
+}

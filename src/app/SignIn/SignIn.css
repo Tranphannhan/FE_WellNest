@@ -74,7 +74,7 @@
     overflow: hidden; /* overflow-hidden */
     width: 90%; /* w-[90%] */
     max-width: 1000px; /* max-w-[1000px] */
-    gap: 25px;
+    gap: 20px;
 }
 
 /* Responsive adjustments for login-card */
@@ -104,7 +104,7 @@
     display: none; /* hidden */
     align-items: center; /* items-center */
     justify-content: center; /* justify-center */
-    padding: 5px 0 5px 5px ; /* p-6 */
+    padding: 10px 0 10px 10px ; /* p-6 */
     overflow: hidden; /* Để clip-path hoạt động */
     /* clip-path: polygon(0% 0%, 98% 0%, 93% 100%, 0% 100%); inner-image-angled */
 }
@@ -179,7 +179,7 @@
 
 .input-label {
     display: block; /* block */
-    font-size: 0.875rem; /* text-sm */
+    font-size: 16px; /* text-sm */
     font-weight: 500; /* font-medium */
     color: #4b5563; /* text-gray-700 */
     margin-bottom: 0.5rem; /* mb-2 */
@@ -261,10 +261,10 @@
 
 
 .helper-text {
-  color: red;
-  font-size: 18px;
-  padding: 10px 5px;
-  text-align: right;
+    color: red;
+    text-align: right;
+    padding: 10px 5px;
+    font-size: 16px;
 }
 
 .system-title {

@@ -1,27 +1,31 @@
-// App.jsx
-import React from 'react';
-import './SignIn.css'; // Import tệp CSS riêng biệt
-import { FaLock, FaPhoneAlt } from 'react-icons/fa';
+'use client';
+import React, { useState } from 'react';
+import './SignIn.css';
+import {
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  MenuItem,
+  Select,
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { FaLock, FaPhoneAlt, FaUserMd } from 'react-icons/fa';
+import { FaCapsules, FaMoneyBillWave, FaUserCheck, FaUserShield, FaVials  } from 'react-icons/fa6';
 
 const App = () => {
+  const [role, setRole] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    // Container chính của toàn bộ trang đăng nhập
     <div className="main-app-container">
-      {/* Phần Background chính với hiệu ứng cắt góc */}
-      <div
-        className="main-angled-bg"
-        // Sử dụng ảnh nền placeholder trực tiếp trong CSS để dễ quản lý hơn
-        // style={{ backgroundImage: `url('https://img.lovepik.com/photo/50075/1891.jpg_wh860.jpg')` }}
-      >
-        {/* Lớp phủ màu đen để làm tối ảnh nền, tạo độ sâu */}
+      <div className="main-angled-bg" />
 
-      </div>
-
-      {/* Container của Form Đăng nhập - Đặt ở giữa và có bóng đổ */}
       <div className="login-card">
-        {/* Phần bên trái: Ảnh minh họa bên trong thẻ đăng nhập (chỉ hiển thị trên màn hình lớn hơn md) */}
         <div className="inner-image-section">
-          {/* [Image of a stylized graphic for login illustration] */}
           <img
             src="https://saobacdautelecom.vn/wp-content/uploads/2021/08/Be%CC%A3%CC%82nh-vie%CC%A3%CC%82n-Pho%CC%80ng-kha%CC%81m_1920x772-e1633608427676.png"
             alt="Creative illustration for login"
@@ -29,69 +33,96 @@ const App = () => {
           />
         </div>
 
-        {/* Phần bên phải: Form Đăng nhập */}
         <div className="login-form-section">
-            <div className="system-title">
-    <h1 className="system-title-main">HỆ THỐNG WELL NEST</h1>
-    <p className="system-title-sub">Hãy vui lòng đăng nhập để vào hệ thống</p>
-  </div>
-  <div className="form-content-wrapper">
-    <div className='form-content-wrapper-title'>
-        <h2 className="form-title">ĐĂNG NHẬP</h2>
-    <div className="separator-line"></div>
-    </div>
-    
+          <div className="system-title">
+            <h1 className="system-title-main">HỆ THỐNG WELL NEST</h1>
+            <p className="system-title-sub">Hãy vui lòng đăng nhập để vào hệ thống</p>
+          </div>
 
-    {/* Dropdown chọn quyền */}
-    <div className="input-group">
-      <label htmlFor="role" className="input-label">Chọn quyền:</label>
-      <select id="role" className="select-field">
-        <option value="">-- Chọn quyền --</option>
-        <option value="admin">Quản trị viên</option>
-        <option value="doctor">Bác sĩ</option>
-        <option value="reception">Lễ tân</option>
-      </select>
-    </div>
+          <div className="form-content-wrapper">
+            <div className="form-content-wrapper-title">
+              <h2 className="form-title">ĐĂNG NHẬP</h2>
+              <div className="separator-line"></div>
+            </div>
 
-    {/* Số điện thoại */}
-<div className="input-group input-with-icon">
-  <label htmlFor="phone" className="input-label">Số điện thoại:</label>
-  <div className="input-icon-wrapper">
-    <FaPhoneAlt className="input-icon" />
-    <input
-      type="text"
-      id="phone"
-      className="input-field with-icon"
-      placeholder="Nhập số điện thoại"
-    />
-  </div>
-</div>
+            {/* Dropdown chọn quyền */}
+            <FormControl fullWidth size="small" variant="outlined" sx={{ width: '50%', mb: 2 }}>
+              <InputLabel id="role-label">Chọn quyền</InputLabel>
+              <Select
+                labelId="role-label"
+                id="role"
+                value={role}
+                label="Chọn quyền"
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <MenuItem value="admin"> <div style={{display:'flex', alignItems:'center'}}><FaUserShield style={{ marginRight: 8 }}/>Quản trị viên</div></MenuItem>
+                <MenuItem value="doctor"><div style={{display:'flex', alignItems:'center'}}><FaUserMd  style={{ marginRight: 8 }}/>Bác sĩ</div></MenuItem>
+                <MenuItem value="reception"><div style={{display:'flex', alignItems:'center'}}><FaUserCheck style={{ marginRight: 8 }}/>Tiếp nhận</div></MenuItem>
+                <MenuItem value="testing"> <div style={{display:'flex', alignItems:'center'}}><FaVials style={{ marginRight: 8 }}/>Xét nghiệm</div></MenuItem>
+                <MenuItem value="cashier"><div style={{display:'flex', alignItems:'center'}}><FaMoneyBillWave style={{ marginRight: 8 }}/>Thu ngân</div></MenuItem>
+                <MenuItem value="pharmacist"><div style={{display:'flex', alignItems:'center'}}><FaCapsules style={{ marginRight: 8 }}/>Dược sĩ</div></MenuItem>
+              </Select>
+            </FormControl>
 
-{/* Mật khẩu */}
-<div className="input-group input-with-icon">
-  <label htmlFor="password" className="input-label">Mật khẩu:</label>
-  <div className="input-icon-wrapper">
-    <FaLock className="input-icon" />
-    <input
-      type="password"
-      id="password"
-      className="input-field with-icon"
-      placeholder="Nhập mật khẩu"
-    />
-  </div>
-</div>
+            {/* Số điện thoại */}
+            <label htmlFor="phone" className="input-label">Số điện thoại:</label>
+            <FormControl fullWidth size="small" variant="outlined" sx={{ mb: 2 }}>
+              <InputLabel sx={phone?{marginLeft:0}:{marginLeft:3}} htmlFor="phone" shrink={phone !== ''}>
+                Số điện thoại
+              </InputLabel>
+              <OutlinedInput
+                autoComplete="off" 
+                id="phone"
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                label={phone ? "Số điện thoại" :''}
+                
+                startAdornment={
+                  <InputAdornment position="start">
+                    <FaPhoneAlt />
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
 
-<p className="helper-text">
-      <a href="#">Quên mật khẩu</a>
-    </p>
-    {/* Nút đăng nhập */}
-    <button className="login-button">Đăng nhập</button>
+            {/* Mật khẩu */}
+            <label htmlFor="password" className="input-label">Mật khẩu:</label>
+            <FormControl fullWidth size="small" variant="outlined" sx={{ mb: 0 }}>
+              <InputLabel sx={password?{marginLeft:0}:{marginLeft:3}} htmlFor="password" shrink={password !== ''}>
+                Mật khẩu
+              </InputLabel>
+              <OutlinedInput
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="off"
+                label={password ? "Mật khẩu" :''}
+                startAdornment={
+                  <InputAdornment position="start">
+                    <FaLock />
+                  </InputAdornment>
+                }
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
 
-    {/* Gợi ý khi quên thông tin */}
-    
-  </div>
+            <p className="helper-text">
+              <a href="#">Quên mật khẩu</a>
+            </p>
+            <button className="login-button">Đăng nhập</button>
+          </div>
         </div>
-
       </div>
     </div>
   );
