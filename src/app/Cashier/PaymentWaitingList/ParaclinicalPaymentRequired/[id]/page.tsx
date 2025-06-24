@@ -16,32 +16,21 @@ export default function PrescriptionDetails() {
     const router = useRouter();
     const params = useParams();
     const { id } = params;
-
     const [dataDetail , setdataDetail ] = useState <paraclinicalType []> ([]);
-    const [totalPrice , setTotalPrice] = useState <number> (0)
+    const [totalPrice , setTotalPrice] = useState <number>(0);
 
-  const loaddingApi = async () => {
+    const loaddingApi = async () => {
         const response : {totalItems : number , currentPage : number , totalPages : number , TongTien : number , data : paraclinicalType [] }| null  = await getDetailParaclinicalAwaitingPayment(String(id) );
-
-        // Kiểm tra response tồn tại
         if (!response) return;
         setTotalPrice (response.TongTien)
-
-        // Kiểm tra response.data có phải là mảng không
         if (!Array.isArray(response.data)) return;
-
-        // Nếu hợp lệ, set state
         setdataDetail(response.data as paraclinicalType[]);
     }
 
- 
-
     useEffect (() => {
-        console.log('id : ' + id);
         loaddingApi ();
-
     }, []);
- 
+
 
     return (
         <>
@@ -51,20 +40,20 @@ export default function PrescriptionDetails() {
                         { text: 'Chi tiết cận lâm sàng', link: `/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${id}` },
                     ],
                 }}
-            />  
+            />
 
 
             <div className="PrescriptionDetails-container">
                 {/* Thông tin bệnh nhân */}
-                <div className="PrescriptionDetails-container__Box1">
+                <div className="PrescriptionDetails-container__Box1" style={{height : 'auto'}}>
                     <h3>Thông tin bệnh nhân</h3>
                     <div className="PrescriptionDetails-container__Box1__patient-info" style={{color:'black'}}>
-                        <p><strong>Bệnh nhân: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</p>
-                        <p><strong>Ngày sinh: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh}</p>
-                        <p><strong>Giới tính: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh}</p>
-                        <p><strong>Ngày: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Ngay}</p>
-                        <p><strong>Số điện thoại: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</p>
-                        <p><strong style={{fontSize : '18px'}}>Tổng tiền : </strong>
+                        <p style={{margin : '8px 0px'}}><strong>Bệnh nhân: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</p>
+                        <p style={{margin : '8px 0px'}}><strong>Ngày sinh: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh}</p>
+                        <p style={{margin : '8px 0px'}}><strong>Giới tính: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh}</p>
+                        <p style={{margin : '8px 0px'}}><strong>Ngày: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Ngay}</p>
+                        <p style={{margin : '8px 0px'}}><strong>Số điện thoại: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</p>
+                        <p style={{margin : '8px 0px'}}><strong style={{fontSize : '18px'}}>Tổng tiền : </strong>
                             <span style={{color : 'red' , fontSize : '16px', fontWeight:600}}>
                                 {formatCurrencyVND(totalPrice)}
                             </span>
@@ -87,7 +76,6 @@ export default function PrescriptionDetails() {
                     </div>
 
                 </div>  
-
 
 
                  
