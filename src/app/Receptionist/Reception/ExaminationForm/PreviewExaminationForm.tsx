@@ -170,7 +170,7 @@ export default function PreviewExaminationForm({
 
           <div className="patient-info-grid">
             <p><strong>Họ tên:</strong> {patientData.fullName}</p>
-            <p><strong>Cân nặng:</strong> {patientData.weight}kg</p>
+            <p><strong>Cân nặng:</strong> {patientData.weight === 'undefined'?'':patientData.weight + 'kg'}</p>
             <p><strong>Giới tính:</strong> {patientData.gender}</p>
             <p><strong>Ngày Sinh:</strong> {patientData.dob}</p>
             <p style={{ gridColumn: 'span 3' }}><strong>Địa chỉ liên hệ:</strong> {patientData.address}</p>

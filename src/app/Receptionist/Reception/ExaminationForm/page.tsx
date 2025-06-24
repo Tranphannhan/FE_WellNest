@@ -21,25 +21,36 @@ export default function ExaminationForm() {
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
 
-async function Pay(){
-    if(!valueRender?.Id_PhieuKhamBenh){
-        return showToast('Chưa có mã phiếu khám bệnh',ToastType.error);
-    }
-    const result =await handlePay(valueRender?.Id_PhieuKhamBenh);
-    if(result?.status === true && result?.QueueNumber){
-        showToast(result.message,ToastType.success);
-        setValueRender((prev) => {
-          if (!prev) return prev; 
-          return { ...prev, QueueNumber: result.QueueNumber };
-        });
-
-        setStatusPay(true)
-        setShowModal(false)
-          return
-    }else if(result){
-        return showToast(result.message,ToastType.error);
-    }    
+async function Pay() {
+  if (!valueRender?.Id_PhieuKhamBenh) {
+    return showToast('Chưa có mã phiếu khám bệnh', ToastType.error);
   }
+
+  const result = await handlePay(valueRender.Id_PhieuKhamBenh);
+
+  if (result?.status === true && result?.QueueNumber) {
+    showToast(result.message, ToastType.success);
+
+    // Cập nhật giá trị mới
+    const newValue = {
+      ...valueRender,
+      QueueNumber: result.QueueNumber,
+    };
+
+    // Gán lại vào state
+    setValueRender(newValue);
+
+    // 🔥 Lưu lại vào sessionStorage
+    sessionStorage.setItem('ThongTinPhieuKham', JSON.stringify(newValue));
+
+    setStatusPay(true);
+    setShowModal(false);
+    return;
+  } else if (result) {
+    return showToast(result.message, ToastType.error);
+  }
+}
+
 
  function cancelPayment(){
     showToast('Đã hủy thanh toán',ToastType.warn)
@@ -154,14 +165,14 @@ async function checkRender (id:string){
               <div className="ExaminationForm-Container__form__group">
                 <label htmlFor="height">Chiều cao:</label>
                 <div className="ExaminationForm-Container__input__unit">
-                  <input type="text" id="height" defaultValue={valueRender.height} readOnly />
+                  <input type="text" id="height" defaultValue={valueRender.height === 'undefined'?'Không có':valueRender.weight} readOnly />
                   <span>Cm</span>
                 </div>
               </div>
               <div className="ExaminationForm-Container__form__group">
                 <label htmlFor="weight">Cân nặng:</label>
                 <div className="ExaminationForm-Container__input__unit">
-                  <input type="text" id="weight" defaultValue={valueRender.weight} readOnly />
+                  <input type="text" id="weight" defaultValue={valueRender.weight === 'undefined'?'Không có':valueRender.weight} readOnly />
                   <span>Kg</span>
                 </div>
               </div>

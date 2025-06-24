@@ -27,7 +27,6 @@ export default function PaymentMethodSelector({
 
   return (
     <div className="grid gap-2">
-      <h5 className="text-lg font-semibold">Chọn phương thức thanh toán</h5>
       <div className="grid grid-cols-2 gap-4">
         {paymentMethods.map((method) => (
           <button

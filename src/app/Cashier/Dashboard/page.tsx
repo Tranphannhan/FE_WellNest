@@ -7,6 +7,7 @@ import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import Pagination from '@/app/components/ui/Pagination/Pagination';
 import { PrescriptionStatsType, TestRequestType, MedicalRecordType } from '@/app/types/hospitalTypes/hospitalType';
 import { fetchPrescriptionsByDateRange, fetchTestRequestsByDateRange, fetchMedicalRecordsByDateRange } from '@/app/services/FileTam';
+import { FaFilterCircleDollar } from 'react-icons/fa6';
 
 interface Transaction {
     date: string;
@@ -452,11 +453,11 @@ const fetchTransactions = useCallback(async () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="flex justify-center">
-                            <button id="applyFilterBtn" className="btn-filter w-1/2 md:w-auto" onClick={fetchTransactions}>
-                                Áp dụng bộ lọc
+
+                            <button id="applFyilterBtn" className='bigButton--blue' onClick={fetchTransactions}>
+                                <FaFilterCircleDollar/>Áp dụng lọc
                             </button>
-                        </div>
+
                     </div>
                 </div>
 

@@ -9,6 +9,7 @@ import React from 'react';
 import { TbCreditCardPay } from "react-icons/tb";
 import { LiaMoneyCheckAltSolid } from "react-icons/lia";  
 import PaymentMethodSelector from '@/app/components/ui/Pay/Pay';
+import { formatCurrencyVND } from '@/app/lib/Format';
 
 
 interface Type_Data_information {
@@ -43,7 +44,7 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
         <Modal.Body>
           <div className="confirmationNotice-body">
             <p> Tên bệnh nhân: <span className="patient-name">{Data_information.name}</span></p> 
-            <p style={{display : 'flex' , alignItems : 'center' , gap : '10px'}}>< LiaMoneyCheckAltSolid  style={{marginTop : '2px'}} /> Tổng tiền: <span className="total-price">{Data_information.totalPrice} VNĐ</span></p>
+            <p style={{display : 'flex' , alignItems : 'center' , gap : '10px'}}>< LiaMoneyCheckAltSolid  style={{marginTop : '2px'}} /> Tổng tiền: <span className="total-price">{formatCurrencyVND(Number(Data_information?.totalPrice)||0)}</span></p>
             <p style={{display : 'flex' , alignItems : 'center' , gap : '10px'}}><TbCreditCardPay  style={{marginTop : '2px'}}/> Phương thức thanh toán</p>
             
             <PaymentMethodSelector callBack ={setPaymentType}></PaymentMethodSelector>
