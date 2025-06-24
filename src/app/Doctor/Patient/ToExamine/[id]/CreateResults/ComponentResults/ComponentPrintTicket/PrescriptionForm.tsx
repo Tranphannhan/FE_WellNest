@@ -1,41 +1,43 @@
-// File: PreviewExaminationForm.tsx
 'use client';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import './PrescriptionForm.css'; // Import the CSS file (for prescription)
-// Assuming PrescriptionDetail is correctly imported from its actual path.
-// Adjust this import path if 'Prescription' is not the correct file for PrescriptionDetail.
+import './PrescriptionForm.css';
 import { PrescriptionDetail } from '../../CreateResultsComponent/Prescription';
 import { MedicalExaminationCard } from '@/app/types/patientTypes/patient';
-
 
 interface PreviewExaminationFormProps {
     isOpen: boolean;
     onClose: () => void;
     patientData?: MedicalExaminationCard;
-    prescriptionMedicines?: PrescriptionDetail[]; // NEW PROP: Array of PrescriptionDetail
+    prescriptionMedicines?: PrescriptionDetail[];
 }
 
 export default function PreviewExaminationForm({
     isOpen,
     onClose,
     patientData,
-    prescriptionMedicines = [] // Default to an empty array if not provided
+    prescriptionMedicines = []
 }: PreviewExaminationFormProps) {
     const [pdfPreviewImg, setPdfPreviewImg] = useState('');
-    const [totalMedicinePrice, setTotalMedicinePrice] = useState(0); // NEW: State for total medicine price
+    const [totalMedicinePrice, setTotalMedicinePrice] = useState(0);
+    const [patientNotes, setPatientNotes] = useState(''); // NEW: State for patient notes
     const prescriptionRef = useRef(null);
 
-    // NEW: Function to calculate total medicine price
+    // Load patient notes from sessionStorage
+    useEffect(() => {
+        if (isOpen) {
+            const storedNotes = sessionStorage.getItem('PatientNotes') || '';
+            setPatientNotes(storedNotes);
+        }
+    }, [isOpen]);
+
     const calculateTotalMedicinePrice = useCallback(() => {
         const total = prescriptionMedicines.reduce((sum, item) => {
-            // Ensure Id_Thuoc and Gia exist before calculating
             const price = item.Id_Thuoc?.Gia || 0;
             const quantity = item.SoLuong || 0;
             return sum + (price * quantity);
         }, 0);
         setTotalMedicinePrice(total);
     }, [prescriptionMedicines]);
-
 
     const captureAndShowPreview = useCallback(() => {
         const input = prescriptionRef.current;
@@ -83,7 +85,7 @@ export default function PreviewExaminationForm({
     useEffect(() => {
         if (isOpen) {
             setPdfPreviewImg('');
-            calculateTotalMedicinePrice(); // NEW: Calculate total price when the modal opens
+            calculateTotalMedicinePrice();
             const loadScript = (src: string, globalName: string, callback?: () => void) => {
                 if (typeof window[globalName as keyof Window] === 'undefined') {
                     const script = document.createElement('script');
@@ -99,7 +101,7 @@ export default function PreviewExaminationForm({
             loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'html2canvas', () => { captureAndShowPreview(); });
             loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'jspdf');
         }
-    }, [isOpen, captureAndShowPreview, calculateTotalMedicinePrice]); // Add calculateTotalMedicinePrice to dependencies
+    }, [isOpen, captureAndShowPreview, calculateTotalMedicinePrice]);
 
     if (!isOpen) return null;
 
@@ -133,7 +135,6 @@ export default function PreviewExaminationForm({
                     </div>
                 </div>
 
-                {/* Hidden prescription for PDF export */}
                 <div ref={prescriptionRef} className="a4-container" style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
                     <div className="prescription-header">
                         <div>
@@ -156,7 +157,7 @@ export default function PreviewExaminationForm({
                         <p><strong>Phòng Khám:</strong> {patientData?.Id_Bacsi?.Id_PhongKham?.SoPhongKham}</p>
                         <p style={{ gridColumn: 'span 2' }}><strong>Địa chỉ liên hệ:</strong> {patientData?.Id_TheKhamBenh?.DiaChi}</p>
                         <p style={{ gridColumn: 'span 3' }}><strong>Chẩn đoán:</strong> {patientData?.results || 'Không có'}</p>
-
+                       
                     </div>
 
                     <h3 className="fee-heading">Toa Thuốc Dịch Vụ</h3>
@@ -165,7 +166,7 @@ export default function PreviewExaminationForm({
                             prescriptionMedicines.map((item, i) => (
                                 <div key={item._id} className="medicine-item">
                                     <div>
-                                        <p>{i + 1}. {item.Id_Thuoc?.TenThuoc} -{item.DonVi || item.Id_Thuoc?.DonVi}</p>
+                                        <p>{i + 1}. {item.Id_Thuoc?.TenThuoc} - {item.DonVi || item.Id_Thuoc?.DonVi}</p>
                                         <p>Uống: {item.NhacNho || "Sử dụng theo hướng dẫn"}</p>
                                     </div>
                                     <div className="pill-count">
@@ -175,7 +176,7 @@ export default function PreviewExaminationForm({
                                         </div>
                                         <div className='pill-count-text'>
                                             <span>Giá tổng:</span>
-                                            <span>{(item.Id_Thuoc?.Gia || 0 * item.SoLuong)?.toLocaleString()} ₫</span>
+                                            <span>{((item.Id_Thuoc?.Gia || 0) * item.SoLuong)?.toLocaleString()} ₫</span>
                                         </div>
                                     </div>
                                 </div>
@@ -184,16 +185,16 @@ export default function PreviewExaminationForm({
                             <p>Chưa có thuốc trong đơn.</p>
                         )}
                     </div>
-
-                    {/* NEW: Display total medicine price here */}
+ <p style={{ gridColumn: 'span 3' }}><strong>Lưu ý cho bệnh nhân:</strong> {patientNotes || 'Không có'}</p>
                     <div className="total-price-section">
+                        
                         <p><strong>Tổng tiền thuốc:</strong> <span style={{color:'red', fontWeight:'600'}}>{totalMedicinePrice.toLocaleString()} ₫</span></p>
                     </div>
 
                     <div className="receipt-signatures">
                         <div className="signature-block signature-payer">
                             <p className="signature-label">Người bệnh</p>
-                            <div className="signature-placeholder"></div> {/* Placeholder for actual signature */}
+                            <div className="signature-placeholder"></div>
                         </div>
 
                         <div className="collector-info-block">

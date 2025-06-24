@@ -65,7 +65,9 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
           {
             paymentType == 'Cash' ? (
               <Button  variant="primary" 
-                  onClick={() => {Data_information.callBack()}} 
+                  onClick={() => 
+                    {Data_information.callBack()}
+                  } 
                   className="btn-confirm  confirmationNotice-confirmationNotice-footer__iconCheck"
                 >
               
