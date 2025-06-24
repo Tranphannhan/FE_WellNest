@@ -1,0 +1,108 @@
+
+.Prescription-container {
+    padding: 20px 0;
+}
+
+.Prescription-container_table {
+    width: 100%;
+    overflow: hidden;
+}
+ 
+.Prescription-container_table th,
+.Prescription-container_table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+
+.Prescription-container_table th {
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+}
+
+.Prescription-container_table td{
+    color: #595959;
+}
+
+.Prescription-container_table tbody tr:last-child td {
+    border-bottom: none; 
+}  
+
+.Prescription-container_table__btn-primary ,
+.btn-primary {
+    background-color: #07bc0c !important;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 13px;
+    font-style: normal;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+
+.Prescription-container .btn-danger {
+    background-color: tomato !important;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+
+/* ---------- */
+
+.Prescription-searchReceptionContainer
+.Prescription_searchBoxWrapper {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    width: 55%;
+    padding-left:20px;
+}
+
+.Prescription-searchReceptionContainer 
+.Prescription_searchBox {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 2px solid #d2e9ff;
+    border-radius: 999px;
+    padding: 0px 10px;
+    flex: 1;
+}
+
+
+.Prescription-searchReceptionContainer 
+.search-input {
+    border: none;
+    background: transparent;
+    padding: 10px;
+    width: 100%;
+    outline: none;
+    font-size: 16px;
+    color: black;
+}
+
+.Prescription-searchReceptionContainer 
+.search-btn {
+    background-color: #D1F3FF;
+    border: none;
+    border-radius: 999px;
+    padding: 4px 8px;   
+    cursor: pointer;
+    color: #3497F9;
+    font-size: 16px;
+    position: relative;
+    left: 8px;
+}
+
+.Prescription-searchReceptionContainer 
+.search-btn i {
+    font-size: 18px;
+}
