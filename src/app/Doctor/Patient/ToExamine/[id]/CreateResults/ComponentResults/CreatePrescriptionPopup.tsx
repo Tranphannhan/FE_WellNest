@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect, useCallback } from "react";
 import { Modal, Button, Input, Select, Pagination, Spin, Alert } from "antd";
 import "./CreatePrescriptionPopup.css";
@@ -19,6 +20,7 @@ import {
 import { calculateAge } from "@/app/lib/Format";
 import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 import { useParams } from "next/navigation";
+import { EditOutlined, CheckOutlined } from "@ant-design/icons";
 
 interface inputPrescriptionDetail {
   Quantity?: number;
@@ -29,7 +31,6 @@ interface inputPrescriptionDetail {
 
 const { Option } = Select;
 
-// Updated props to accept 'step' and 'setStep' from parent
 const PrescriptionPopup = ({
   showPrescriptionPopup,
   handleClosePrescriptionPopup,
@@ -43,18 +44,14 @@ const PrescriptionPopup = ({
   setStep: React.Dispatch<React.SetStateAction<number>>;
   reload: () => void;
 }) => {
-  // Removed internal 'step' state, now controlled by prop
   const [isSelectingMedicine, setIsSelectingMedicine] = useState(false);
-  const [selectedMedicine, setSelectedMedicine] = useState<medicineType | null>(
-    null
-  );
-  const [medicalCardInfo, setMedicalCardInfo] =
-    useState<MedicalExaminationCard | null>(null);
-  const [prescription, setPrescription] = useState<prescriptionType | null>(
-    null
-  );
-  const [inputPrescriptionDetail, setInputPrescriptionDetail] =
-    useState<inputPrescriptionDetail | null>(null);
+  const [selectedMedicine, setSelectedMedicine] = useState<medicineType | null>(null);
+  const [medicalCardInfo, setMedicalCardInfo] = useState<MedicalExaminationCard | null>(null);
+  const [prescription, setPrescription] = useState<prescriptionType | null>(null);
+  const [inputPrescriptionDetail, setInputPrescriptionDetail] = useState<inputPrescriptionDetail | null>(null);
+  const [prescriptionName, setPrescriptionName] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [patientNotes, setPatientNotes] = useState("");
 
   const [selectedGroup, setSelectedGroup] = useState("all");
   const [confirmedSearchTerm, setConfirmedSearchTerm] = useState("");
@@ -63,9 +60,7 @@ const PrescriptionPopup = ({
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
 
-  const [allFilteredMedicines, setAllFilteredMedicines] = useState<
-    medicineType[]
-  >([]);
+  const [allFilteredMedicines, setAllFilteredMedicines] = useState<medicineType[]>([]);
   const [medicines, setMedicines] = useState<medicineType[]>([]);
   const [totalMedicines, setTotalMedicines] = useState(0);
 
@@ -77,10 +72,27 @@ const PrescriptionPopup = ({
   const [errorGroups, setErrorGroups] = useState<string | null>(null);
   const { id } = useParams();
 
-  // --- Function to fetch ALL medicines matching current filter/search from backend ---
-  // (Then paginated on the frontend)
+  // Initialize prescription name and reset patient notes when entering step 1
+  useEffect(() => {
+    if (showPrescriptionPopup && medicalCardInfo) {
+      const defaultName = `Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}`;
+      setPrescriptionName(defaultName);
+      sessionStorage.setItem("PrescriptionName", defaultName);
+      
+      if (step === 1) {
+        // Reset PatientNotes when entering step 1
+        setPatientNotes("");
+        sessionStorage.setItem("PatientNotes", "");
+      } else {
+        // Load existing PatientNotes for step 2
+        const storedNotes = sessionStorage.getItem("PatientNotes") || "";
+        setPatientNotes(storedNotes);
+      }
+    }
+  }, [showPrescriptionPopup, medicalCardInfo, step]);
+
+  // Fetch all matching medicines
   const fetchAllMatchingMedicines = useCallback(async () => {
-    // Only fetch if currently selecting medicine
     if (!isSelectingMedicine) return;
 
     setLoadingMedicines(true);
@@ -88,11 +100,10 @@ const PrescriptionPopup = ({
 
     try {
       let dataResponse;
-      const backendFetchLimit = 100000; // A large number to fetch all data for client-side pagination
+      const backendFetchLimit = 100000;
       const backendFetchPage = 1;
 
       if (confirmedSearchTerm) {
-        // If there's a search term, regardless of selected group, search for medicine names within that group (or all if 'all').
         dataResponse = await searchMedicinesByName(
           confirmedSearchTerm,
           backendFetchLimit,
@@ -100,14 +111,12 @@ const PrescriptionPopup = ({
           selectedGroup
         );
       } else if (selectedGroup !== "all") {
-        // If no search term, and a specific group is selected, load ALL medicines belonging to that group.
         dataResponse = await fetchMedicinesByGroupId(
           selectedGroup,
           backendFetchLimit,
           backendFetchPage
         );
       } else {
-        // If no search term and group is 'all', load ALL medicines from all groups.
         dataResponse = await fetchMedicines(
           backendFetchLimit,
           backendFetchPage,
@@ -127,7 +136,7 @@ const PrescriptionPopup = ({
     } finally {
       setLoadingMedicines(false);
     }
-  }, [isSelectingMedicine, selectedGroup, confirmedSearchTerm]); // Dependencies
+  }, [isSelectingMedicine, selectedGroup, confirmedSearchTerm]);
 
   // Effect to trigger fetching all matching medicines
   useEffect(() => {
@@ -144,35 +153,28 @@ const PrescriptionPopup = ({
     setTotalMedicines(allFilteredMedicines.length);
   }, [currentPage, pageSize, allFilteredMedicines]);
 
-  // Effect to load medical card info from session storage
+  // Effect to load medical card info and prescription from session storage
   useEffect(() => {
     if (!showPrescriptionPopup) return;
 
-    const medicalCardInfoStr = sessionStorage.getItem(
-      "ThongTinBenhNhanDangKham"
-    );
+    const medicalCardInfoStr = sessionStorage.getItem("ThongTinBenhNhanDangKham");
     if (medicalCardInfoStr) {
-      const medicalCardInfo: MedicalExaminationCard =
-        JSON.parse(medicalCardInfoStr);
+      const medicalCardInfo: MedicalExaminationCard = JSON.parse(medicalCardInfoStr);
       setMedicalCardInfo(medicalCardInfo);
     }
 
     const storedPrescription = sessionStorage.getItem("DonThuocDaTao");
     if (storedPrescription) {
       try {
-        const parsedPrescription: prescriptionType =
-          JSON.parse(storedPrescription);
+        const parsedPrescription: prescriptionType = JSON.parse(storedPrescription);
         setPrescription(parsedPrescription);
         console.log("Đơn thuốc đã lấy từ sessionStorage:", parsedPrescription);
       } catch (error) {
-        console.error(
-          "Lỗi khi parse dữ liệu đơn thuốc từ sessionStorage:",
-          error
-        );
+        console.error("Lỗi khi parse dữ liệu đơn thuốc từ sessionStorage:", error);
         sessionStorage.removeItem("DonThuocDaTao");
       }
     }
-  }, [showPrescriptionPopup]); // chạy lại mỗi khi modal được mở
+  }, [showPrescriptionPopup]);
 
   // Effect to fetch medicine groups
   useEffect(() => {
@@ -180,15 +182,13 @@ const PrescriptionPopup = ({
       setLoadingGroups(true);
       setErrorGroups(null);
       try {
-        const data = await fetchMedicineGroupsPaginated(100, 1); // Fetch all groups
+        const data = await fetchMedicineGroupsPaginated(100, 1);
 
         if (data && data.data) {
           setMedicineGroups(data.data as medicineGroupType[]);
         } else {
           setMedicineGroups([]);
-          setErrorGroups(
-            "Cannot load medicine groups. Data is empty or invalid."
-          );
+          setErrorGroups("Cannot load medicine groups. Data is empty or invalid.");
         }
       } catch (error) {
         console.error("Error fetching medicine groups:", error);
@@ -199,7 +199,6 @@ const PrescriptionPopup = ({
       }
     };
 
-    // Only fetch groups if the popup is shown, no groups are loaded, and no loading/error is in progress
     if (
       showPrescriptionPopup &&
       medicineGroups.length === 0 &&
@@ -208,29 +207,16 @@ const PrescriptionPopup = ({
     ) {
       getMedicineGroups();
     }
-  }, [
-    showPrescriptionPopup,
-    medicineGroups.length,
-    loadingGroups,
-    errorGroups,
-  ]);
+  }, [showPrescriptionPopup, medicineGroups.length, loadingGroups, errorGroups]);
 
-  // --- Event Handlers ---
-
+  // Event Handlers
   const handleNextStep = async () => {
-    // Only create prescription if it's the first step
     if (step === 1) {
-      const responseCreatePrescription = await createPrescription(
-        id as string,
-        `Đơn thuốc của ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}`
-      );
+      const responseCreatePrescription = await createPrescription(id as string, prescriptionName);
 
       if (responseCreatePrescription?.data) {
         console.log("Prescription created:", responseCreatePrescription.data);
-        sessionStorage.setItem(
-          "DonThuocDaTao",
-          JSON.stringify(responseCreatePrescription.data)
-        );
+        sessionStorage.setItem("DonThuocDaTao", JSON.stringify(responseCreatePrescription.data));
         setPrescription(responseCreatePrescription?.data);
       }
     }
@@ -239,18 +225,17 @@ const PrescriptionPopup = ({
 
   const handleOpenMedicineSelectionView = () => {
     setIsSelectingMedicine(true);
-    setCurrentPage(1); // Reset page to 1 when opening medicine selection view
-    setSelectedGroup("all"); // Reset group to 'all'
-    setConfirmedSearchTerm(""); // Clear confirmed search term
-    setCurrentSearchInput(""); // Clear search input
-    setAllFilteredMedicines([]); // Clear old filtered data
-    setMedicines([]); // Clear old displayed data
-    setTotalMedicines(0); // Reset total medicines
+    setCurrentPage(1);
+    setSelectedGroup("all");
+    setConfirmedSearchTerm("");
+    setCurrentSearchInput("");
+    setAllFilteredMedicines([]);
+    setMedicines([]);
+    setTotalMedicines(0);
   };
 
   const handleBackToStep3Form = () => {
     setIsSelectingMedicine(false);
-    // Reset all medicine selection related states when returning to the form
     setCurrentPage(1);
     setSelectedGroup("all");
     setConfirmedSearchTerm("");
@@ -262,7 +247,7 @@ const PrescriptionPopup = ({
 
   const handleSelectMedicine = (medicine: medicineType) => {
     setSelectedMedicine(medicine);
-    setIsSelectingMedicine(false); // Return to the form after selecting a medicine
+    setIsSelectingMedicine(false);
   };
 
   const handlePageChange = (page: number) => {
@@ -286,10 +271,7 @@ const PrescriptionPopup = ({
 
   const handleGroupChange = (value: string) => {
     setSelectedGroup(value);
-    setCurrentPage(1); // Reset page to 1 when changing group
-    // Important: Always clear search term and input when changing group
-    // to ensure that when a new group is selected, we start with that group's medicine list,
-    // unaffected by previous searches.
+    setCurrentPage(1);
     setConfirmedSearchTerm("");
     setCurrentSearchInput("");
   };
@@ -305,6 +287,21 @@ const PrescriptionPopup = ({
     setSelectedMedicine(null);
     setInputPrescriptionDetail(null);
     reload();
+  };
+
+  const handleEditName = () => {
+    setIsEditingName(true);
+  };
+
+  const handleConfirmName = () => {
+    setIsEditingName(false);
+    sessionStorage.setItem("PrescriptionName", prescriptionName);
+  };
+
+  const handlePatientNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setPatientNotes(value);
+    sessionStorage.setItem("PatientNotes", value);
   };
   return (
     <>
@@ -341,11 +338,10 @@ const PrescriptionPopup = ({
         </div>
 
         <div className="prescription-popup__body">
-          {/* Render basic prescription info for step 1 and 2 */}
           {step !== 3 && (
             <>
               <div className="presscription-popup__title">
-                Thông tin đơn thuốc
+                thông tin đơn thuốc
               </div>
               <div className="prescription-popup__content">
                 <div className="prescription-popup__column">
@@ -359,13 +355,45 @@ const PrescriptionPopup = ({
                       ? calculateAge(medicalCardInfo?.Id_TheKhamBenh.NgaySinh)
                       : "Chưa có"}
                   </p>
-                  <p>
-                    <strong>Tên đơn thuốc:</strong>{" "}
-                    {`Đơn thuốc ${medicalCardInfo?.Id_TheKhamBenh.HoVaTen} - ${medicalCardInfo?.Ngay}` ||
-                      "Đơn thuốc"}
-                  </p>
+                  <div style={{ display: "flex",flexDirection:'column' ,gap: 8 }}>
+                    <strong>Tên đơn thuốc:</strong>
+                    {isEditingName ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <Input
+                          value={prescriptionName}
+                          onChange={(e) => setPrescriptionName(e.target.value)}
+                          style={{ width: 300 }}
+                        />
+                        <Button
+                          type="primary"
+                          icon={<CheckOutlined />}
+                          onClick={handleConfirmName}
+                        />
+                      </div>
+                    ) : (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span>{prescriptionName || "Đơn thuốc"}</span>
+                        {step === 1 && (
+                          <Button
+                            type="text"
+                            icon={<EditOutlined />}
+                            onClick={handleEditName}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <label>Lưu ý cho bệnh nhân</label>
+                    <Input.TextArea
+                      placeholder="Nhập lưu ý cho bệnh nhân"
+                      className="form-control"
+                      rows={1}
+                      onChange={handlePatientNotesChange}
+                      value={patientNotes}
+                    />
+                  </div>
 
-                  {/* Button to navigate to step 3 from step 2 */}
                   {step === 2 && (
                     <Button
                       type="default"
@@ -394,10 +422,9 @@ const PrescriptionPopup = ({
             </>
           )}
 
-          {/* Render content for step 3 */}
           {step === 3 && (
             <>
-              {!isSelectingMedicine ? ( // Show form to add medicine detail
+              {!isSelectingMedicine ? (
                 <div className="prescription-popup__step3">
                   <div className="form-row">
                     <div className="form-group qty">
@@ -453,12 +480,12 @@ const PrescriptionPopup = ({
                     </div>
                   </div>
 
-                  <div className="form-group">
+                  <div className="form-group-Note">
                     <label>Nhắc nhở</label>
                     <Input.TextArea
                       placeholder="Nhập nhắc nhở"
                       className="form-control"
-                      rows={4}
+                      rows={1}
                       onChange={(e) => {
                         setInputPrescriptionDetail((prev) => ({
                           ...prev,
@@ -476,7 +503,6 @@ const PrescriptionPopup = ({
                   </div>
                 </div>
               ) : (
-                // Show medicine selection view
                 <div className="medicine-selection-layout">
                   <h3 className="text-xl font-semibold mb-4">Chọn thuốc</h3>
                   <div className="flex items-center gap-4 mb-4">

@@ -283,3 +283,23 @@ body {
   background-color: rgb(255, 0, 0); /* màu hover đậm hơn */
   color: white;
 }
+
+/* nut xám to */
+.bigButton--gray{
+  background-color: gray;
+  border: 1px solid gray;
+  color: rgb(255, 255, 255);
+  padding: 8px 30px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+.bigButton--gray:hover {
+  background-color:rgb(96, 95, 95); /* màu hover đậm hơn */
+  color: white;
+}
