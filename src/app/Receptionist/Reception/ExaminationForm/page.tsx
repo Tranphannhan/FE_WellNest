@@ -165,14 +165,14 @@ async function checkRender (id:string){
               <div className="ExaminationForm-Container__form__group">
                 <label htmlFor="height">Chiều cao:</label>
                 <div className="ExaminationForm-Container__input__unit">
-                  <input type="text" id="height" defaultValue={valueRender.height === 'undefined'?'Không có':valueRender.weight} readOnly />
+                  <input type="text" id="height" defaultValue={valueRender.height === 'undefined' || !valueRender.height?'Không có':valueRender.weight} readOnly />
                   <span>Cm</span>
                 </div>
               </div>
               <div className="ExaminationForm-Container__form__group">
                 <label htmlFor="weight">Cân nặng:</label>
                 <div className="ExaminationForm-Container__input__unit">
-                  <input type="text" id="weight" defaultValue={valueRender.weight === 'undefined'?'Không có':valueRender.weight} readOnly />
+                  <input type="text" id="weight" defaultValue={valueRender.weight === 'undefined' || !valueRender.weight?'Không có':valueRender.weight} readOnly />
                   <span>Kg</span>
                 </div>
               </div>

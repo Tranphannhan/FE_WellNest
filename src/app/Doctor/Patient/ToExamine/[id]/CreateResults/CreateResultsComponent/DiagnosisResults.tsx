@@ -8,6 +8,8 @@ import { createExaminationResults, getDoctorTemporaryTypes, getExaminationResult
 import PreviewExaminationResult from '../ComponentResults/ComponentPrintTicket/PreviewExaminationResult';
 import { BsFillPrinterFill } from 'react-icons/bs';
 import DoNotContinue from '@/app/components/ui/DoNotContinue/DoNotContinue';
+import { Box, TextField, Button } from '@mui/material';
+
 
 // Types for Examination Result
 interface DiagnosisTreatmentPair {
@@ -202,97 +204,70 @@ export default function DiagnosisResultsComponent({reLoad, allowsGeneratingResul
       >
         <BsFillPrinterFill /> Kết quả
       </button>
-        {continueRender || allowsGeneratingResults ? <>
-                <div className="DiagnosisResults-Container">
-        <span className="DiagnosisResults-Body__Title">Tạo kết quả khám</span>
+        {continueRender || allowsGeneratingResults ?  <>
+    {/* Vùng nhập dữ liệu kết quả khám */}
+    <Box p={2} display="flex" flexDirection="column" gap={3}>
+      {/* Kết quả & Ghi chú */}
+      <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2}>
+        <TextField
+          label="Kết quả"
+          multiline
+          rows={3}
+          fullWidth
+          value={dataGenerateTestResults.KetQua}
+          onChange={(e) =>
+            setDataGenerateTestResults((prev) => ({
+              ...prev,
+              KetQua: e.target.value,
+            }))
+          }
+        />
 
-        {/* Ô Kết quả */}
-        <div className="DiagnosisResults-createResultsRow">
-          <div className="DiagnosisResults-createResultsRow__create__Column">
-            <div style={{ font: '24px', color: '#696969', marginLeft: '10px', fontWeight: '600' }}>Kết quả</div>
-            <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-              <textarea
-                className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput"
-                rows={3}
-                placeholder="Nhập kết quả ..."
-                onChange={(e) =>
-                  setDataGenerateTestResults((prev) => ({
-                    ...prev,
-                    KetQua: e.target.value,
-                  }))
-                }
-                value={dataGenerateTestResults.KetQua}
-              />
-              <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          </div>
+        <TextField
+          label="Ghi chú"
+          multiline
+          rows={3}
+          fullWidth
+          value={dataGenerateTestResults.GhiChu}
+          onChange={(e) =>
+            setDataGenerateTestResults((prev) => ({
+              ...prev,
+              GhiChu: e.target.value,
+            }))
+          }
+        />
+      </Box>
 
-          {/* Ô Ghi chú */}
-          <div className="DiagnosisResults-createResultsRow__create__Column">
-            <div style={{ font: '24px', color: '#696969', marginLeft: '10px', fontWeight: '600' }}>Ghi chú</div>
-            <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-              <textarea
-                className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput"
-                rows={3}
-                placeholder="Nhập ghi chú..."
-                onChange={(e) =>
-                  setDataGenerateTestResults((prev) => ({
-                    ...prev,
-                    GhiChu: e.target.value,
-                  }))
-                }
-                value={dataGenerateTestResults.GhiChu}
-              />
-              <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Hướng xử lý */}
+      <TextField
+        label="Hướng xử lý"
+        multiline
+        rows={3}
+        fullWidth
+        value={dataGenerateTestResults.HuongSuLy}
+        onChange={(e) =>
+          setDataGenerateTestResults((prev) => ({
+            ...prev,
+            HuongSuLy: e.target.value,
+          }))
+        }
+      />
 
-        {/* Ô Hướng xử lý */}
-        <div className="DiagnosisResults-Body__create__footer">
-          <div style={{ font: '24px', color: '#696969', marginLeft: '10px', fontWeight: '600' }}>Hướng xử lý</div>
-          <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__inputArea">
-            <textarea
-              className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__textInput"
-              rows={3}
-              placeholder="Nhập hướng xử lý..."
-              onChange={(e) =>
-                setDataGenerateTestResults((prev) => ({
-                  ...prev,
-                  HuongSuLy: e.target.value,
-                }))
-              }
-              value={dataGenerateTestResults.HuongSuLy}
-            />
-            <div className="CreateResults-bodyFrame__formVitalSigns__DiagnosisContainer__FormSection__dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Nút Lưu */}
-      <div className="DiagnosisResults-Body__Button">
-        <button
-          disabled={!statusSave}
+      {/* Nút lưu */}
+      <Box textAlign="right">
+        <Button
+          variant="contained"
+             sx={{backgroundColor:'#00d335'}}
+          color="success"
+          startIcon={<FaSave />}
           onClick={handleSave}
-          className={`bigButton--green ${statusSave||'disabled'}`}
+          disabled={!statusSave}
         >
-          <FaSave />
           Lưu
-        </button>
-      </div>
-        </>:<DoNotContinue
+        </Button>
+      </Box>
+    </Box>
+  </>:<DoNotContinue
               message="Không thể tạo kết quả"
             remind="Vui lòng chỉ định lâm sàng hoặc bỏ qua để tiếp tục"
         ></DoNotContinue>}

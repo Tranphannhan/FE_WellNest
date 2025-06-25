@@ -1,7 +1,6 @@
 .DiagnosisResults-Body {
     width: 100%;
-    background-color: white;
-    padding: 20px 0;
+    padding: 20px 0 0 0;
     box-sizing: border-box;
     position: relative;
 }
