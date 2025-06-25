@@ -52,7 +52,7 @@ export default function RootLayout({
                  <Header
                     conTentHeader = {
                       {
-                        title : 'Thuốc',
+                        title : 'Dược sĩ',
                         navItems : {
                           name : 'Nguyễn Đình Huân',
                           role : 'Thuốc',

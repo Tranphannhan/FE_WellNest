@@ -147,6 +147,7 @@ export interface MedicalRecordPaginationResponse {
   data: MedicalRecordType[];
 }
 
+
 // Dũ liệu phân trang
 export type ParaclinicalResponse = {
     totalItems: number;

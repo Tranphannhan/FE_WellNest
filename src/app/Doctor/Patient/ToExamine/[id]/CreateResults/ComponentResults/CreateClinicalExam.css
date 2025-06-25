@@ -25,7 +25,6 @@
 .clinical-modal .ant-modal-content {
   border-radius: 12px; /* rounded-xl */
   overflow: hidden;
-  font-family: 'Inter', sans-serif;
   padding: 0;
 }
 

@@ -144,7 +144,7 @@ export interface prescriptionType {
   TongTien ? : number
 }
 
-
+ 
 // cận lâm sàng 
 export interface paraclinicalType {
   _id: string;

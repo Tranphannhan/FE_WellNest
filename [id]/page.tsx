@@ -48,7 +48,7 @@ export default function PrescriptionDetails() {
             <Tabbar
                 tabbarItems={{
                     tabbarItems: [
-                        { text: 'Chi tiết chờ xét nghiệm', link: `/Cashier/PaymentWaitingList` },
+                        { text: 'Chi tiết đơn thuốc', link: `/Cashier/PaymentWaitingList/${id}` },
                     ],
                 }}
             />
@@ -65,7 +65,7 @@ export default function PrescriptionDetails() {
                         <p style={{margin : '8px 0px'}}><strong>Ngày: </strong>12/12/2023</p>
                         <p style={{margin : '8px 0px'}}><strong>Số điện thoại: </strong>123456789</p>
                         <p style={{margin : '8px 0px'}}><strong>Tiền sử bệnh: </strong>Chua có </p>
-                        <p style={{margin : '8px 0px'}}><strong>Lịch sử khám bệnh: </strong><span style={{color : 'blue'}}> Xem chi tiết</span></p>
+                        <p style={{margin : '8px 0px'}}><strong>Lịch sử khám bệnh: </strong></p>
                     </div>
                 </div>
 
