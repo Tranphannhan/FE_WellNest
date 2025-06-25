@@ -9,6 +9,7 @@ import { formatCurrencyVND, formatTime } from '@/app/lib/Format';
 import { showToast, ToastType } from '@/app/lib/Toast';
 import { PrescriptionDetail } from '@/app/Doctor/Patient/ToExamine/[id]/CreateResults/CreateResultsComponent/Prescription';
 import ConfirmationNotice from '../../ComponentCashier/ConfirmationNotice';
+import MedicineFees from '../../ComponentCashier/MedicineFees';
 
 export default function PrescriptionDetails() {
     const params = useParams();
@@ -19,6 +20,7 @@ export default function PrescriptionDetails() {
     const [detailedPrescription, setDetailedPrescription] = useState<PrescriptionDetail[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [dataPendingPayment, setDataPendingPayment] = useState<{ HoVaTen?: string, TongTien?: number }>({});
+    const [isMedicineFeesOpen, setIsMedicineFeesOpen] = useState(false);
 
     const loadAPI = async () => {
         try {
@@ -70,7 +72,7 @@ export default function PrescriptionDetails() {
     };
 
     const handlePrint = () => {
-        window.print();
+        setIsMedicineFeesOpen(true);
     };
 
     return (
@@ -94,6 +96,11 @@ export default function PrescriptionDetails() {
                     callBack: paymentConfirmation,
                     paymentConfirmation: paymentConfirmation
                 }}
+            />
+
+            <MedicineFees
+                isOpen={isMedicineFeesOpen}
+                onClose={() => setIsMedicineFeesOpen(false)}
             />
 
             <div className="print-container">
@@ -126,7 +133,7 @@ export default function PrescriptionDetails() {
                                         Quay lại
                                     </button>
                                     <button
-                                        className="bigButton--blue  PrescriptionDetails-container__Box1__boxPage__print"
+                                        className="bigButton--blue PrescriptionDetails-container__Box1__boxPage__print"
                                         onClick={handlePrint}
                                     >
                                         <i className="bi bi-printer-fill"></i>
