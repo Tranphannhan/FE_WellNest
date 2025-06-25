@@ -13,9 +13,9 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPage
       onPageChange(page);
     }
   };
-
+  
   // Hàm tạo mảng page hiển thị
-  const getPages = () => {
+  const getPages = () => { 
     const pages = [];
 
     if (totalPages <= 5) {

@@ -1,16 +1,19 @@
 'use client'
-
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import { formatTime } from "@/app/lib/Format";
 import './SkipTheTest.css';
+import Pagination from '@/app/components/ui/Pagination/Pagination';
+import { useState } from 'react';
+
 
 export default function Prescription() {
     const router = useRouter();
 
+
+
     // ✅ Dữ liệu giả lập
-    const [dataPrescription, setDataPrescription] = useState([
+    const [dataPrescription, setDataPrescription] = useState ([
         {
             _id: '1',
             HoVaTen: 'Nguyễn Văn A',
@@ -19,7 +22,7 @@ export default function Prescription() {
             PhongKham: 'Phòng 101',
             TenBacSi: 'Bác sĩ B',
             Ngay: new Date().toISOString()
-        },
+        }, 
         {
             _id: '2',
             HoVaTen: 'Trần Thị B',
@@ -57,7 +60,13 @@ export default function Prescription() {
             Ngay: new Date().toISOString()
         }
     ]);
+   
 
+    // 
+    const totalPages = 8;
+    const [currentPage , setCurrentPage] = useState <number> (1);
+
+ 
     return (
         <>
             <Tabbar
@@ -65,7 +74,7 @@ export default function Prescription() {
                     tabbarItems: [
                         { text: 'Chờ xét nghiệm', link: '/LaboratoryDoctor/TestWaitingList' },
                         { text: 'Bỏ qua xét nghiệm', link: '/LaboratoryDoctor/SkipTheTest' },
-                        { text: 'Đã xét nghiệm', link: '/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired' }
+                        { text: 'Đã xét nghiệm', link: '#' }
                     ],
                 }}
             />
@@ -104,14 +113,15 @@ export default function Prescription() {
                         <tr>
                             <th>STT</th>
                             <th>Họ và tên</th>
+                            <th>Giới tính</th>
+                            <th>Ngày sinh</th>
                             <th>Số điện thoại</th>
-                            <th>Loại xét nghiệm</th>
-                            <th>Phòng khám</th>
-                            <th>Tên bác sĩ</th>
                             <th>Ngày</th>
                             <th>Hành động</th>
                         </tr>
                     </thead>
+
+
 
 
                     <tbody>
@@ -121,7 +131,6 @@ export default function Prescription() {
                                 <td style={{ whiteSpace: 'nowrap' }}>{record.HoVaTen}</td>
                                 <td>{record.SoDienThoai}</td>
                                 <td>{record.LoaiXetNghiem}</td>
-                                <td>{record.PhongKham}</td>
                                 <td style={{ whiteSpace: 'nowrap' }}>{record.TenBacSi}</td>
                                 <td style={{ whiteSpace: 'nowrap' }}>{formatTime(record.Ngay)}</td>
                                 <td>
@@ -144,7 +153,18 @@ export default function Prescription() {
 
 
                 </table>
+
+
+                <Pagination
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                />
+
+
             </div>
+
+
         </>
     )
 }
