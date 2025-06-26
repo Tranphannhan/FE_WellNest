@@ -10,14 +10,12 @@ import { useParams } from 'next/navigation';
 import PreviewExaminationForm from '../ComponentResults/ComponentPrintTicket/PrescriptionForm';
 import { formatCurrencyVND } from '@/app/lib/Format';
 import { generateTestResultsType, MedicalExaminationCard } from '@/app/types/patientTypes/patient';
-import { BsFillPrinterFill, BsPencilFill } from 'react-icons/bs';
+import { BsFillPrinterFill } from 'react-icons/bs';
 import ModalComponent from '@/app/components/shared/Modal/Modal';
-import { FaCheck, FaEdit } from 'react-icons/fa';
+import { FaCheck } from 'react-icons/fa';
 import DoNotContinue from '@/app/components/ui/DoNotContinue/DoNotContinue';
 import { medicineType } from '@/app/types/hospitalTypes/hospitalType';
-import { EditOutlined } from '@mui/icons-material';
 import ListofDrugsPopup from '../ComponentPharmacist/ListofDrugsPopup';
-import { BiSolidEditAlt } from 'react-icons/bi';
 import { MdEditDocument } from 'react-icons/md';
 
 
