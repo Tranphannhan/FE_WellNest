@@ -501,7 +501,7 @@ useEffect(() => {
                     />
                   </div>
 
-                  <div style={{ textAlign: "right", marginTop: "20px" }}>
+                  <div style={{ textAlign: "right"}}>
                     <Button type="primary" onClick={handleCreatePrescription}>
                       Tạo
                     </Button>

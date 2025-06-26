@@ -10,6 +10,8 @@ import { PrescriptionDetail } from '@/app/Doctor/Patient/ToExamine/[id]/CreateRe
 import { ConfirmationOfDispensing, getPrescriptionListDetail } from '@/app/services/Pharmacist';
 import { getDetailPatientInformation } from '@/app/services/Cashier';
 import { prescriptionType } from '@/app/types/patientTypes/patient';
+import { EditOutlined } from '@mui/icons-material';
+
 
 
 
@@ -18,29 +20,36 @@ export default function PrescriptionDetails() {
     const router = useRouter();
     const params = useParams();
     const { id } = params;
-    const [dataDrugInformation , setDataDrugInformation] = useState <prescriptionType > ()
-    const [detailedPrescription , setDetailedPrescription] = useState  <PrescriptionDetail []> ([]);
+    const [dataDrugInformation, setDataDrugInformation] = useState<prescriptionType>()
+    const [detailedPrescription, setDetailedPrescription] = useState<PrescriptionDetail[]>([]);
 
+    const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
+    const [selectedMedication, setSelectedMedication] = useState<PrescriptionDetail | null>(null);
+
+    const handleEditClick = (medication: PrescriptionDetail) => {
+        setSelectedMedication(medication);
+        setIsPopupOpen(true);
+    };
 
     const loadAPI = async () => {
-        const datadetailedPrescription  = await  getPrescriptionListDetail (String (id));
+        const datadetailedPrescription = await getPrescriptionListDetail(String(id));
         if (!datadetailedPrescription) return;
-        setDetailedPrescription (datadetailedPrescription);
-        const DataDrugInformation = await getDetailPatientInformation (String (id));
+        setDetailedPrescription(datadetailedPrescription);
+        const DataDrugInformation = await getDetailPatientInformation(String(id));
         console.log(DataDrugInformation);
         if (!DataDrugInformation) return;
-        setDataDrugInformation (DataDrugInformation)
+        setDataDrugInformation(DataDrugInformation)
     }
-    
-    useEffect (() => {
-        loadAPI ();
-    }, []);
+
+    useEffect(() => {
+  if (!isPopupOpen) loadAPI(); // reload đơn thuốc sau khi đóng popup
+}, [isPopupOpen]);
 
 
     // xác nhận thanh toán
-    const handleConfirmationDispensing = (idDonthuoc : string) => {
+    const handleConfirmationDispensing = (idDonthuoc: string) => {
         console.log(idDonthuoc);
-        ConfirmationOfDispensing (idDonthuoc , '68272d28b4cfad70da810025');
+        ConfirmationOfDispensing(idDonthuoc, '68272d28b4cfad70da810025');
     }
 
     return (
@@ -56,28 +65,28 @@ export default function PrescriptionDetails() {
 
             <div className="PrescriptionDetails-container">
                 {/* Thông tin bệnh nhân */}
-                <div className="PrescriptionDetails-container__Box1" style={{height : 'auto'}}>
+                <div className="PrescriptionDetails-container__Box1" style={{ height: 'auto' }}>
                     <h3>Thông tin thuốc</h3>
-                    <div className="patient-info" style={{color:'black'}}>
-                        <p style={{margin : '8px 0px'}}><strong>Tên đơn thuốc: </strong>{dataDrugInformation?.TenDonThuoc}</p>
-                        <p style={{margin : '8px 0px'}}><strong>Bệnh nhân:</strong> {dataDrugInformation?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</p>
-                        <p style={{margin : '8px 0px'}}><strong>Số điện thoại:</strong> {dataDrugInformation?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</p>
-                        <p style={{margin : '8px 0px'}}><strong>Bác sĩ:</strong>  {dataDrugInformation?.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi}</p>
-                        <p style={{margin : '8px 0px'}}><strong>Thời gian:</strong> {formatTime (dataDrugInformation?.Gio as string)}</p>
-                        <p style={{margin : '8px 0px'}}><strong>Ngày:</strong> {dataDrugInformation?.Id_PhieuKhamBenh?.Ngay}</p>
+                    <div className="patient-info" style={{ color: 'black' }}>
+                        <p style={{ margin: '8px 0px' }}><strong>Tên đơn thuốc: </strong>{dataDrugInformation?.TenDonThuoc}</p>
+                        <p style={{ margin: '8px 0px' }}><strong>Bệnh nhân:</strong> {dataDrugInformation?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</p>
+                        <p style={{ margin: '8px 0px' }}><strong>Số điện thoại:</strong> {dataDrugInformation?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</p>
+                        <p style={{ margin: '8px 0px' }}><strong>Bác sĩ:</strong>  {dataDrugInformation?.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi}</p>
+                        <p style={{ margin: '8px 0px' }}><strong>Thời gian:</strong> {formatTime(dataDrugInformation?.Gio as string)}</p>
+                        <p style={{ margin: '8px 0px' }}><strong>Ngày:</strong> {dataDrugInformation?.Id_PhieuKhamBenh?.Ngay}</p>
                     </div>
 
 
                     <div className="PrescriptionDetails-container__Box1__boxPage">
                         <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer"
                             onClick={() => router.push('/Pharmacist/ListofDrugs')}
-                        >   
-                            <i className ="bi bi-x-circle-fill"></i>
+                        >
+                            <i className="bi bi-x-circle-fill"></i>
                             Hủy
                         </button>
 
-                        <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__check" 
-                            onClick={() => handleConfirmationDispensing (dataDrugInformation?._id as string)}
+                        <button className="confirm-button PrescriptionDetails-container__Box1__boxPage__check"
+                            onClick={() => handleConfirmationDispensing(dataDrugInformation?._id as string)}
                         >
                             <i className="bi bi-check-circle-fill"></i>
                             Xác nhận phát thuốc
@@ -86,7 +95,7 @@ export default function PrescriptionDetails() {
                 </div>
 
 
- 
+
                 {/* Bảng chi tiết đơn thuốc */}
                 <div className="PrescriptionDetails-container__Box2">
                     <div className='PrescriptionDetails-container__Box2__title'>Đơn thuốc chi tiết</div>
@@ -98,24 +107,25 @@ export default function PrescriptionDetails() {
                                 <th>Đơn vị</th>
                                 <th>Số lượng</th>
                                 <th>Ghi chú</th>
+                                <th>Cách sử dụng</th>
+                                <th>Hành động</th>
                             </tr>
                         </thead>
-   
+
                         <tbody>
                             {detailedPrescription.map((item, index) => (
                                 <tr key={index}>
                                     <td>{item.Id_Thuoc.TenThuoc}</td>
                                     <td>{item.Id_Thuoc.DonVi}</td>
                                     <td>{item.SoLuong}</td>
+                                    <td>{item.SoLuong}</td>
                                     <td>{item.NhacNho}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-
-
-                    
                 </div>
+                
             </div>
         </>
     );
