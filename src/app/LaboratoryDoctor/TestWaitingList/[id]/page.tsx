@@ -22,7 +22,7 @@ export default function PrescriptionDetails() {
 
     const [value , setValue] = useState <paraclinicalType []> ([])
     const loaddingAPI = async () => {
-        const getData = await getWaitingForTestDetail (String (id));
+        const getData = await getWaitingForTestDetail (String (id),null);
         console.log(getData);
         if (!getData) return;
         console.log(getData);

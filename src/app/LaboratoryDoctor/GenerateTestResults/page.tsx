@@ -61,7 +61,6 @@ export default function GenerateTestResults() {
   const handleResultTest = async () => {
     setShowModal(false);
     const {
-      TenXetNghiem,
       MaXetNghiem,
       ChiSoBinhThuong,
       DonViTinh,
@@ -70,7 +69,6 @@ export default function GenerateTestResults() {
     } = dataForm || {};
 
     if (
-      !TenXetNghiem?.trim() ||
       !MaXetNghiem?.trim() ||
       !ChiSoBinhThuong?.trim() ||
       !DonViTinh?.trim() ||
@@ -90,7 +88,8 @@ export default function GenerateTestResults() {
       ...dataForm,
       Id_YeuCauXetNghiem: parsed.Id_YeuCauXetNghiem,
       Id_PhieuKhamBenh: parsed.Id_PhieuKhamBenh,
-      Id_NguoiXetNghiem: parsed.Id_NguoiXetNghiem
+      Id_NguoiXetNghiem: parsed.Id_NguoiXetNghiem,
+      TenXetNghiem: parsed.TenXetNghiem
     };
 
     await generateTestResults(fullForm);
@@ -106,13 +105,9 @@ export default function GenerateTestResults() {
     const parsed = JSON.parse(localData);
 
     const result = await handleCompleteTheTests(parsed.Id_YeuCauXetNghiem);
+    console.log('result',result)
     if (result) {
-      showToast('Xác nhận trạng thái thành công', ToastType.success);
-      setTimeout(() => {
         router.push(`/LaboratoryDoctor/TestWaitingList/${parsed.Id_PhieuKhamBenh}`);
-      }, 1);
-    } else {
-      showToast('Xác nhận trạng thái thất bại', ToastType.error);
     }
   };
 

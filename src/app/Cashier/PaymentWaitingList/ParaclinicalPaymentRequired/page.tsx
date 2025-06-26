@@ -4,7 +4,7 @@ import '../Prescription.css';
 import { useRouter } from 'next/navigation';
 import ConfirmationNotice from '../../ComponentCashier/ConfirmationNotice';
 import React, { useEffect, useState } from 'react';
-import { formatCurrencyVND, formatTime } from "@/app/lib/Format";
+import { formatCurrencyVND } from "@/app/lib/Format";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { paraclinicalType } from "@/app/types/patientTypes/patient";
 import { getParaclinicalAwaitingPayment, confirmTestRequestPayment } from "@/app/services/Cashier";
@@ -50,7 +50,7 @@ export default function ParaclinicalPaymentRequired() {
             } else {
                 showToast('Xác nhận thanh toán thất bại', ToastType.error);
             }
-        } catch (error) {
+        } catch {
             showToast('Đã có lỗi xảy ra khi xác nhận thanh toán', ToastType.error);
         }
     };
