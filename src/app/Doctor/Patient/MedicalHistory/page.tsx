@@ -2,29 +2,48 @@
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import "../Patient.css";
 import { useEffect, useState } from "react";
-import { getAllPatient } from "@/app/services/DoctorSevices";
+import { searchPatientsByDoctor } from "@/app/services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import moment from "moment";
 import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 import { FaEye } from "react-icons/fa";
 import NoData from "@/app/components/ui/Nodata/Nodata";
+import Pagination from "@/app/components/ui/Pagination/Pagination";
 
 export default function Patient() {
   const [dataRender, setDataRender] = useState<MedicalExaminationCard[]>([]);
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
+
   function handleExamination(id: string) {
     router.push(`/Doctor/Patient/ToExamine/${id}`);
   }
 
-  const LoaddingPatient = async () => {
-    const Data = await getAllPatient("6807397b4a1e320062ce2b20", true, "");
-    console.log(Data);
-    setDataRender(Data.data);
+  const loadPatients = async () => {
+    const res = await searchPatientsByDoctor({
+      idBacSi: "6807397b4a1e320062ce2b20",
+      trangThai: true,
+      trangThaiThanhToan: true,
+      soDienThoai: phone,
+      hoVaTen: name,
+      page: currentPage,
+      limit: 7,
+    });
+    setDataRender(res?.data || []);
+    setTotalPages(res?.totalPages || 1);
   };
 
   useEffect(() => {
-    LoaddingPatient();
-  }, []);
+    loadPatients();
+  }, [currentPage]);
+
+  const handleSearch = () => {
+    setCurrentPage(1); // reset về trang đầu tiên khi tìm
+    loadPatients();
+  };
 
   return (
     <>
@@ -52,8 +71,10 @@ export default function Patient() {
                 type="text"
                 placeholder="Hãy nhập số điện thoại"
                 className="search-input"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={handleSearch}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
@@ -62,56 +83,65 @@ export default function Patient() {
                 type="text"
                 placeholder="Hãy nhập tên"
                 className="search-input"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={handleSearch}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
           </div>
         </div>
-        {dataRender.length > 0 ? (
-          <table className="Patient-container_table">
-            <thead>
-              <tr>
-                <th>Thời gian tiếp nhận</th>
-                <th>Thời gian kết thúc khám</th>
-                <th>Họ và tên</th>
-                <th>Số điện thoại</th>
-                <th>SĐT người thân</th>
-                <th>Số Căn Cước</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
 
-            <tbody>
-              {dataRender.map((record: MedicalExaminationCard) => (
-                <tr key={record._id}>
-                  <td>{moment(record.Gio, "HH:mm:ss").format("hh:mm:ss A")}</td>
-                  <td>
-                    {moment(record.GioKetThucKham, "HH:mm:ss").format(
-                      "hh:mm:ss A"
-                    )}
-                  </td>
-                  <td>{record.Id_TheKhamBenh.HoVaTen}</td>
-                  <td>{record.Id_TheKhamBenh.SoDienThoai}</td>
-                  <td>{record.Id_TheKhamBenh.SDT_NguoiThan}</td>
-                  <td>{record.Id_TheKhamBenh.SoCCCD}</td>
-                  <td>
-                    <button
-                      className="button--viewDetail"
-                      style={{ color: "#3497F9" }}
-                      onClick={() => handleExamination(record._id)}
-                    >
-                      <FaEye /> Xem Chi Tiết
-                    </button>
-                    {/* <button className="btn-danger">Không có mặt</button> */}
-                  </td>
+        {dataRender.length > 0 ? (
+          <>
+            <table className="Patient-container_table">
+              <thead>
+                <tr>
+                  <th>Thời gian tiếp nhận</th>
+                  <th>Thời gian kết thúc khám</th>
+                  <th>Họ và tên</th>
+                  <th>Số điện thoại</th>
+                  <th>SĐT người thân</th>
+                  <th>Số Căn Cước</th>
+                  <th>Hành động</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {dataRender.map((record) => (
+                  <tr key={record._id}>
+                    <td>{moment(record.Gio, "HH:mm:ss").format("hh:mm:ss A")}</td>
+                    <td>
+                      {moment(record.GioKetThucKham, "HH:mm:ss").format(
+                        "hh:mm:ss A"
+                      )}
+                    </td>
+                    <td>{record.Id_TheKhamBenh?.HoVaTen}</td>
+                    <td>{record.Id_TheKhamBenh?.SoDienThoai}</td>
+                    <td>{record.Id_TheKhamBenh?.SDT_NguoiThan}</td>
+                    <td>{record.Id_TheKhamBenh?.SoCCCD}</td>
+                    <td>
+                      <button
+                        className="button--viewDetail"
+                        style={{ color: "#3497F9" }}
+                        onClick={() => handleExamination(record._id)}
+                      >
+                        <FaEye /> Xem Chi Tiết
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
+          </>
         ) : (
-          <NoData></NoData>
+          <NoData />
         )}
       </div>
     </>

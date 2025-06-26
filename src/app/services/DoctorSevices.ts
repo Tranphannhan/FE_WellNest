@@ -6,10 +6,10 @@ import { DoctorTemporaryTypes } from "../types/doctorTypes/doctorTestTypes";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function getAllPatient (Id_Bacsi : string , TrangThai : boolean , TrangThaiHoatDong : string) {
+export async function getAllPatient (Id_Bacsi : string , TrangThai : boolean , TrangThaiHoatDong : string, page:number) {
         try {
           if (TrangThaiHoatDong == '' || TrangThaiHoatDong === null){
-            const result = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/GetById_CaKham_Date/Pagination?Id_Bacsi=${Id_Bacsi}&TrangThai=${TrangThai}`);
+            const result = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/GetById_CaKham_Date/Pagination?Id_Bacsi=${Id_Bacsi}&TrangThai=${TrangThai}&page=${page}`);
               if (result.ok){
                   const Data = await result.json ();
                   return Data.data;
@@ -18,7 +18,7 @@ export async function getAllPatient (Id_Bacsi : string , TrangThai : boolean , T
               }
 
           } else {
-              const result = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/GetById_CaKham_Date/Pagination?Id_Bacsi=${Id_Bacsi}&TrangThai=${TrangThai}&TrangThaiHoatDong=${TrangThaiHoatDong}`);
+              const result = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/GetById_CaKham_Date/Pagination?Id_Bacsi=${Id_Bacsi}&TrangThai=${TrangThai}&TrangThaiHoatDong=${TrangThaiHoatDong}&page=${page}`);
               if (result.ok){
                   const Data = await result.json ();
                   return Data.data;
@@ -587,4 +587,45 @@ export async function getResultsByRequestTesting(id: string){
         console.error("Lỗi Khi Lấy kết quả xét nghiệm:", error);
         throw error;
     }
+}
+
+export async function searchPatientsByDoctor({
+  soDienThoai = "",
+  hoVaTen = "",
+  trangThai = false,
+  trangThaiHoatDong = "",
+  trangThaiThanhToan = true,
+  idBacSi="",
+  page = 1,
+  limit = 7
+}) {
+  try {
+    const queryParams = new URLSearchParams({
+      soDienThoai,
+      hoVaTen,
+      TrangThai: String(trangThai),
+      TrangThaiHoatDong: String(trangThaiHoatDong),
+      TrangThaiThanhToan: String(trangThaiThanhToan),
+      idBacSi: String(idBacSi),
+      page: String(page),
+      limit: String(limit)
+    });
+
+    const url = `http://localhost:5000/Phieu_Kham_Benh/TimKiemBenhNhanBangTenHoacSDT/Pagination?${queryParams.toString()}`;
+
+    const result = await fetch(url);
+
+    if (!result.ok) {
+      const errorText = await result.text();
+      console.error(`Error fetching patient list: ${result.status} - ${errorText}`);
+      throw new Error(`Server responded with ${result.status}`);
+    }
+
+    const response = await result.json();
+    console.log('Danh sách bệnh nhân theo bác sĩ:', response);
+    return response.data; // Nếu response là { data: { totalItems, data, ... } }
+  } catch (error) {
+    console.error("Lỗi khi tìm kiếm bệnh nhân:", error);
+    throw error;
+  }
 }

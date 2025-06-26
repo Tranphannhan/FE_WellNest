@@ -40,7 +40,6 @@ export default function RootLayout({
                   logo:'/images/logoWebsite.png',
                   navItems:[
                     {icon:`bi bi-file-earmark-text-fill`,text:"Đơn thuốc", link:'/Pharmacist/ListofDrugs'},
-                    {icon:`bi bi-clipboard2-pulse-fill`,text:"Thuốc", link:'/Pharmacist/Listofs'}
                   ]
                 }
               }

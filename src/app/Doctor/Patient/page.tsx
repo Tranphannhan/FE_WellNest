@@ -24,7 +24,7 @@ export default function Patient() {
   }
 
   const LoaddingPatient = async () => {
-    const Data = await getAllPatient("6807397b4a1e320062ce2b20", false, "Kham");
+    const Data = await getAllPatient("6807397b4a1e320062ce2b20", false, "Kham",1);
     console.log(Data);
     setDataRender(Data.data);
   };
@@ -38,7 +38,7 @@ export default function Patient() {
       <Tabbar
         tabbarItems={{
           tabbarItems: [
-            { text: "Thông tin bệnh nhân", link: "/Doctor/Patient" },
+            { text: "Danh sách bệnh nhân", link: "/Doctor/Patient" },
             {
               text: "Danh sách bệnh nhân bỏ qua",
               link: "/Doctor/Patient/ListPatientsMissed",
@@ -52,7 +52,7 @@ export default function Patient() {
       />
 
       <div className="Patient-container">
-        <div className="search-reception-container">
+        {/* <div className="search-reception-container">
           <div className="search-box-wrapper">
             <div className="search-box">
               <input
@@ -75,7 +75,7 @@ export default function Patient() {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
         {dataRender.length > 0 ? (
           <table className="Patient-container_table">
             <thead>
