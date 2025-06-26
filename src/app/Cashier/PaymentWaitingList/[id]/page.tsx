@@ -72,8 +72,14 @@ export default function PrescriptionDetails() {
     };
 
     const handlePrint = () => {
-        setIsMedicineFeesOpen(true);
-    };
+  if (!data || detailedPrescription.length === 0) {
+    showToast('Dữ liệu chưa sẵn sàng để in đơn thuốc', ToastType.warn);
+    return;
+  }
+
+  setIsMedicineFeesOpen(true);
+};
+
 
     return (
         <>
@@ -99,9 +105,11 @@ export default function PrescriptionDetails() {
             />
 
             <MedicineFees
-                isOpen={isMedicineFeesOpen}
-                onClose={() => setIsMedicineFeesOpen(false)}
-            />
+  isOpen={isMedicineFeesOpen}
+  onClose={() => setIsMedicineFeesOpen(false)}
+  data={data}
+  detailedPrescription={detailedPrescription}
+/>
 
             <div className="print-container">
                 <div className="PrescriptionDetails-container">
@@ -143,7 +151,7 @@ export default function PrescriptionDetails() {
                             ) : (
                                 <>
                                     <button
-                                        className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer"
+                                        className="confirm-button PresfcriptionDetails-container__Box1__boxPage__cancer"
                                         onClick={() => router.push('/Cashier/PaymentWaitingList')}
                                     >
                                         <i className="bi bi-x-circle-fill"></i>
