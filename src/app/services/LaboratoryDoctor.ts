@@ -1,6 +1,5 @@
 import { valueForm } from "../LaboratoryDoctor/GenerateTestResults/page";
 import { showToast, ToastType } from "../lib/Toast";
-
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
@@ -62,4 +61,29 @@ export async function generateTestResults (fullForm:valueForm){
         console.error("Fetch lỗi:", error);
         return null;
     }
+}
+
+
+ 
+// xác nhận trạng thái xét nghiệm
+export async function handleCompleteTheTests (id: string) {
+  try {
+    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/XacNhanTrangThai/${id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) return null;
+    const data = await response.json();
+    console.log(data);
+    return true;
+
+  } catch (error) {
+    console.error("Fetch lỗi:", error);
+    return false;
+  }
 }

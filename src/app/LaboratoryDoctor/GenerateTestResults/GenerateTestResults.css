@@ -4,11 +4,24 @@
     background-color: white;
 }
 
-.title {
+.generate-test-results-container-title {
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 2px;
+    margin-left: 35px;
 }
+
+
+.generate-test-results-container__boxClick1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    gap: 20px;
+
+}
+
+
+
 
 .form-container {
     display: flex;
@@ -18,7 +31,11 @@
     border-radius: 8px;
 }
 
-.upload-section {
+
+
+
+
+.form-container-uploadSection {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -34,8 +51,10 @@
     align-items: center;
     cursor: pointer;
     border-radius: 8px;
+    position: relative; /* để input phủ lên toàn bộ khối */
+    overflow: hidden;
+    margin-right: 22px;
 }
-
 
 .upload-box i {
     font-size: 40px;
@@ -43,10 +62,30 @@
     margin-bottom: 10px;
 }
 
+.upload-box p {
+    margin: 0;
+    color: #4096ff;
+}
+
+/* Input được ẩn nhưng vẫn click được */
+.upload-box input[type="file"] {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0; cursor: pointer;
+}
+
 .upload-warning {
     color: red;
     margin-top: 10px;
+    width: 250px; display: flex;
+    justify-content: center;  
+    align-items: center;      
+    text-align: center;
+    word-break: break-word;   
+    min-height: 20px;       
 }
+
 
 .input-section {
     flex: 1;

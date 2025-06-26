@@ -1,4 +1,3 @@
-
 'use client';
 import '../TestWaitingListDetail.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
@@ -6,48 +5,60 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getWaitingForTestDetail } from '@/app/services/LaboratoryDoctor';
 import { paraclinicalType } from '@/app/types/patientTypes/patient';
-import { FaPlus } from 'react-icons/fa6';
+import { FaEye, FaPlus } from 'react-icons/fa6';
 import { useRouter } from 'next/navigation';
 import { showToast, ToastType } from '@/app/lib/Toast';
+import ViewParaclinicalResults, { NormalTestResult } from '@/app/Doctor/Patient/ToExamine/[id]/CreateResults/CreateResultsComponent/ViewParaclinicalResults';
+import { getResultsByRequestTesting } from '@/app/services/DoctorSevices';
+
 
 export default function PrescriptionDetails() {
-     const router = useRouter();
+    const router = useRouter();
     const params = useParams();
     const { id } = params;
+    const [showResultsPopup , SetShowResultsPopup] = useState <boolean> (false);
+    const [dataResule , setDataResule] = useState <NormalTestResult []> ([]);
+    
 
     const [value , setValue] = useState <paraclinicalType []> ([])
     const loaddingAPI = async () => {
         const getData = await getWaitingForTestDetail (String (id));
-                console.log('itada',getData);
+        console.log(getData);
         if (!getData) return;
-
+        console.log(getData);
         setValue (getData.data);
     }
-
 
     useEffect (() => {
         loaddingAPI ();
     }, []);
 
 
-
-    const update = (Id_YeuCauXetNghiem : string , Id_PhieuKhamBenh : string , Id_NguoiXetNghiem : string) => {
-        console.log('Id_YeuCauXetNghiem' + Id_YeuCauXetNghiem);
-        console.log('Id_PhieuKhamBenh' + Id_PhieuKhamBenh);
-        console.log('Id_NguoiXetNghiem' + Id_NguoiXetNghiem);
-
+    const update = (Id_YeuCauXetNghiem : string , Id_PhieuKhamBenh : string , Id_NguoiXetNghiem : string , TenXetNghiem : string) => {
         if (Id_YeuCauXetNghiem == '' && Id_PhieuKhamBenh === '' && Id_NguoiXetNghiem == '') return showToast('Thiếu id truyền vào', ToastType.warn);
        
         const saveDataLocostorage = {
+            TenXetNghiem : TenXetNghiem,
             Id_YeuCauXetNghiem : Id_YeuCauXetNghiem,
             Id_PhieuKhamBenh : Id_PhieuKhamBenh,
             Id_NguoiXetNghiem : Id_NguoiXetNghiem
         }
 
+        
         sessionStorage.setItem('idGenerateTestResult', JSON.stringify(saveDataLocostorage));
-        router.push('/LaboratoryDoctor/GenerateTestResults');      
+        router.push('/LaboratoryDoctor/GenerateTestResults');    
             return  
     }
+    
+
+    // View Result
+    const handleView = async (id : string) => {
+        const getDataResult = await getResultsByRequestTesting (id);
+        setDataResule (getDataResult);
+        SetShowResultsPopup (true);
+    }
+
+
 
 
     return (
@@ -60,6 +71,9 @@ export default function PrescriptionDetails() {
                 }}
             />
 
+
+            {showResultsPopup && <ViewParaclinicalResults dataFromOutside={dataResule} onClose={() => {SetShowResultsPopup (!showResultsPopup)}} />}
+            
 
             <div className="PrescriptionDetails-container">
                 {/* Thông tin bệnh nhân */}
@@ -84,7 +98,6 @@ export default function PrescriptionDetails() {
                 <div className="PrescriptionDetails-container__Box2">
                     <div className='PrescriptionDetails-container__Box2__title'>Đơn thuốc chi tiết</div>
 
-
                     <table className="Prescription-container_table">
                         <thead>
                             <tr>
@@ -97,6 +110,7 @@ export default function PrescriptionDetails() {
                         </thead>
 
 
+
                         <tbody>
                             {value.map((item, index) => (
                                 <tr key={index}>
@@ -106,14 +120,26 @@ export default function PrescriptionDetails() {
                                     <td>{item.TrangThai ? 'Đã xét nghiệm' : 'Chưa xét nghiệm'}</td>
                                     <td>
                                         <button 
-                                            onClick={() => update (item._id , item?.Id_PhieuKhamBenh._id  , '68272ec1b4cfad70da81002f')}
-                                            className='button--blue'>
-                                                <FaPlus 
-                                            />Tạo kết quả
+                                            style={{background: item.TrangThai ? '#00d335' : ''}}
+
+                                            onClick= {() =>
+                                                !item.TrangThai
+                                                    ? update(item._id, item?.Id_PhieuKhamBenh._id, '68272ec1b4cfad70da81002f' , item.Id_LoaiXetNghiem.TenXetNghiem)
+                                                    : handleView (item._id)
+                                            }
+
+
+                                            className='button--blue'
+                                        >
+                                            {item.TrangThai ? <FaEye /> : <FaPlus/>}
+                                            {item.TrangThai ? 'Xem kết quả' : 'Tạo kết quả'}
+
                                         </button>
                                     </td>
                                 </tr>
                             ))}
+
+
                         </tbody>
                     </table>
 
