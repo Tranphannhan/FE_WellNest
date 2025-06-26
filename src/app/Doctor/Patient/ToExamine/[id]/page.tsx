@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './ToExamine.css';
 import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
-import { getDetailMedicalExaminationCard } from "@/app/services/DoctorSevices";
+import { fetchMedicalExaminationCardDetail, getDetailMedicalExaminationCard } from "@/app/services/DoctorSevices";
 import PopupHistory from "../../HistoryOfEx/PopupHistory";
 
 export default function Patient() {
@@ -14,9 +14,19 @@ export default function Patient() {
     const WaitClinicalExamination = searchParams.get('WaitClinicalExamination') === 'true';
     const [data, setData] = useState<MedicalExaminationCard | null>(null);
 
+    const handleRander = async ()=>{
+                const res: MedicalExaminationCard | null = await fetchMedicalExaminationCardDetail(id as string);
+                if (res) {
+                    console.log(res);
+                    sessionStorage.setItem("ThongTinBenhNhanDangKham", JSON.stringify(res));
+                } else {
+                    console.warn("Không lấy được dữ liệu chi tiết phiếu khám bệnh.");
+                }
+    }
 
     useEffect(() => {
         if (!id) return;
+        handleRander()
 
         const fetchData = async () => {
             const res = await getDetailMedicalExaminationCard(id as string);

@@ -70,7 +70,7 @@ export default function ParaclinicalDetails() {
 
             showToast("Không rõ trạng thái thanh toán", ToastType.error);
             handleClose();
-        } catch (error) {
+        } catch {
             showToast("Đã có lỗi xảy ra khi xác nhận thanh toán", ToastType.error);
             handleClose();
         }

@@ -60,9 +60,15 @@ export default function ParaclinicalComponent({hiddenButton,shouldContinue,callB
 
 const allConfirmed =
   data.length > 0 &&
-  data.every(item => item.TrangThaiHoatDong === true) &&  // Tất cả đã xác nhận
+  data.every(item => item.TrangThaiHoatDong === true && item.TrangThai === false) &&  // Tất cả đã xác nhận
   data.some(item => item.TrangThai === false);            // Có ít nhất một cái chưa xét nghiệm
 
+const print =
+  data.length > 0 &&
+  data.every(item => item.TrangThaiHoatDong === true 
+    && item.TrangThai === false 
+    && item.TrangThaiThanhToan === false) &&  // Tất cả đã xác nhận
+  data.some(item => item.TrangThai === false);            // Có ít nhất một cái chưa xét nghiệm
 
   const [continueRender, setContinueRender] = useState<boolean>(false);
   const checkRender = async () => {
@@ -183,9 +189,9 @@ const allConfirmed =
       {" "}
       <button
         onClick={() => setIsPhieuChiDinhModalOpen(true)}
-        disabled={!allConfirmed}
+        disabled={!print}
         style={
-          !allConfirmed
+          !print
             ? {
                 color: "gray",
                 border: "1px solid gray",
