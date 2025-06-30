@@ -1,0 +1,60 @@
+.MuiDrawer-paper {
+    position: absolute;
+    width: 270px !important;
+    box-sizing: border-box;
+    background-image: none;
+    -webkit-transition: width 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+    transition: width 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+    overflow-x: hidden;
+}
+
+.toolpad-demo-app-bmrxdq-MuiDrawer-docked .MuiDrawer-paper{
+    width: 84px !important;
+}
+
+.MuiListItemIcon-root.toolpad-demo-app-12zuami-MuiListItemIcon-root {
+    font-size: 20px;
+}
+
+.toolpad-demo-app-1g0zqb1::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.toolpad-demo-app-4uxqju-MuiSvgIcon-root {
+    font-size: 30px !important;
+}
+
+.toolpad-demo-app-9z93tp{
+    height: 45px !important;
+}
+
+.toolpad-demo-app-m69qwo-MuiStack-root{
+    gap: 14px;
+}
+
+.MuiDrawer-root.MuiDrawer-anchorLeft.MuiDrawer-docked.toolpad-demo-app-1y8nxit-MuiDrawer-docked {
+      width: 270px !important;
+}
+
+.toolpad-demo-app-oc2eyy-MuiPaper-root-MuiDrawer-paper{
+ border: none !important;
+}
+
+.toolpad-demo-app-23htwk{
+    background-color: #F1F8FF !important;
+}
+
+.toolpad-demo-app-1y8nxit-MuiDrawer-docked .MuiDrawer-paper{
+       width: 270px !important;
+}
+.toolpad-demo-app-9vjljl-MuiDrawer-docked .MuiDrawer-paper {
+    width: 84px !important;
+}
+
+.toolpad-demo-app-9vjljl-MuiDrawer-docked{
+    width: 270px;
+}
+
+/* button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.toolpad-demo-app-1sv69n2-MuiButtonBase-root-MuiIconButton-root {
+    display: none;
+} */
