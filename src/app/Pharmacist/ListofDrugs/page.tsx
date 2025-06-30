@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import {prescriptionType } from "@/app/types/patientTypes/patient";
 import Link from 'next/link';
 import { getPrescriptionList } from "@/app/services/Pharmacist";
+import NoData from "@/app/components/ui/Nodata/Nodata";
    
 
  
@@ -34,7 +35,7 @@ export default function Prescription (){
                 tabbarItems={{
                         tabbarItems: [
                         { text: 'Đơn thuốc chờ phát', link: '/Pharmacist/ListofDrugs' },
-                        { text: 'Đơn thuốc đã phát', link: '/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired'}
+                        { text: 'Đơn thuốc đã phát', link: '/Pharmacist/ListofDrugs/'}
                     ],
                     
                 }}
@@ -68,8 +69,9 @@ export default function Prescription (){
                     </div>
                 </div>
 
- 
-
+                {dataPrescription.length >0 ?
+                <>
+                
                 <table className="Prescription-container_table">
                     <thead>
                         <tr>
@@ -123,6 +125,10 @@ export default function Prescription (){
 
 
                 </table>
+                </>
+                :<NoData>
+                </NoData>}
+
 
                   
 

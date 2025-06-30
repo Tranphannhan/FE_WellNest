@@ -9,9 +9,10 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 interface DiagnosisProps {
   handlePage: (page: string) => void;
   page: string;
+  reload: ()=>void;
 }
 
-export default function Diagnosiscomponent({ handlePage, page }: DiagnosisProps) {
+export default function Diagnosiscomponent({ handlePage, page, reload}: DiagnosisProps) {
   const tabs = ["Chuẩn đoán sơ bộ", "Cận lâm sàng", "Chuẩn đoán kết quả", "Đơn thuốc"];
   const content = ["Chẩn đoán sơ bộ", "Cận lâm sàng", "Chẩn đoán kết quả", "Đơn thuốc"];
 
@@ -25,7 +26,11 @@ export default function Diagnosiscomponent({ handlePage, page }: DiagnosisProps)
     <div className="diagnosisComponent-navigationBar">
       <Tabs
         value={currentIndex}
-        onChange={handleChange}
+        onChange={(event, newValue) => {
+          handleChange(event, newValue);
+          reload();
+        }}
+
         aria-label="Diagnosis Tabs"
         variant="scrollable"
         scrollButtons="auto"

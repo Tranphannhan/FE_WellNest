@@ -6,21 +6,48 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './TestWaitingList.css';
 import Pagination from '@/app/components/ui/Pagination/Pagination';
 import { paraclinicalType } from '@/app/types/patientTypes/patient';
-import { getWaitingForTest } from '@/app/services/LaboratoryDoctor';
+import { changeBoQuaStatus, getWaitingForTest } from '@/app/services/LaboratoryDoctor';
+import NoData from '@/app/components/ui/Nodata/Nodata';
+import { showToast, ToastType } from '@/app/lib/Toast';
+import ModalComponent from '@/app/components/shared/Modal/Modal';
 
 export default function Prescription() {
     const router = useRouter();
     const [totalPages , setTotalPages] = useState <number> (1);
     const [currentPage , setCurrentPage] = useState <number> (1);
     const [data , setData] = useState <paraclinicalType []> ([]);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedSkipId, setSelectedSkipId] = useState<string | null>(null);
 
     const loaddingAPI = async () => {
-        const getData = await getWaitingForTest ('6803bf3070cd96d5cde6d824' , 1);
+        const getData = await getWaitingForTest ('6803bf3070cd96d5cde6d824' , 1,true);
         if (!getData) return;
         setData (getData.data);
         setTotalPages (getData.totalPages);
         setCurrentPage (getData.currentPage)
     }
+
+    const openSkipModal = (id: string) => {
+    setSelectedSkipId(id);
+    setShowModal(true);
+    };
+
+    const confirmSkip = async () => {
+    if (!selectedSkipId) return;
+
+    const result = await changeBoQuaStatus(selectedSkipId, false);
+    setShowModal(false);
+    setSelectedSkipId(null);
+
+    if (result) {
+        showToast('Đã chuyển sang danh sách bỏ qua', ToastType.success);
+        loaddingAPI();
+    } else {
+        showToast('Lỗi khi cập nhật trạng thái bỏ qua', ToastType.error);
+    }
+    };
+
+
 
     useEffect (() => {
         loaddingAPI ();
@@ -34,42 +61,28 @@ export default function Prescription() {
                 tabbarItems={{
                     tabbarItems: [
                         { text: 'Chờ xét nghiệm', link: '/LaboratoryDoctor/TestWaitingList' },
-                        { text: 'Bỏ qua xét nghiệm', link: '/LaboratoryDoctor/SkipTheTest' },
+                        { text: 'Bỏ qua xét nghiệm', link: '/LaboratoryDoctor/TestWaitingList/SkipTheTest' },
                         { text: 'Đã xét nghiệm', link: '#' }
                     ],
                 }}
             />
 
-
-            <div className="Prescription-container">
-                <div className="Prescription-searchReceptionContainer">
-                    <div className="Prescription_searchBoxWrapper">
-                        <div className="Prescription_searchBox">
-                            <input
-                                type="text"
-                                placeholder="Hãy nhập số điện thoại"
-                                className="search-input"
-                            />
-                            <button className="search-btn">
-                                <i className="bi bi-search"></i>
-                            </button>
-                        </div>
-
-                        <div className="Prescription_searchBox">
-                            <input
-                                type="text"
-                                placeholder="Hãy nhập tên"
-                                className="search-input"
-                            />
-                            <button className="search-btn">
-                                <i className="bi bi-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <ModalComponent
+  Data_information={{
+    content: 'Bạn có chắc muốn bỏ qua bệnh nhân này không?',
+    remid: 'Sau khi bỏ qua, bệnh nhân sẽ không hiển thị trong danh sách chờ.',
+    handleClose: () => setShowModal(false),
+    show: showModal,
+    handleShow: () => {},
+    callBack: confirmSkip
+  }}
+/>
 
 
-                <table className="Prescription-container_table">
+
+      <div className="TestWaitingList-container">
+                {data.length >0 ?<>
+                 <table className="TestWaitingList-container_table">
                     <thead>
                         <tr>
                             <th>STT</th>
@@ -108,9 +121,10 @@ export default function Prescription() {
                                             Thực hiện
                                         </button>
 
-                                        <button className="button--red">
+                                            <button className="button--red" onClick={() => openSkipModal(record._id)}>
                                             Bỏ qua
-                                        </button>
+                                            </button>
+
                                     </div>
                                 </td>
 
@@ -130,6 +144,10 @@ export default function Prescription() {
                     onPageChange={setCurrentPage}
                 />
 
+                </> :<NoData>
+                
+                </NoData>}
+                
             </div>
         </>
     )

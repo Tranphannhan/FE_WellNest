@@ -15,10 +15,7 @@
     border-radius: 8px;
     background-color: white;
     padding: 20px;
-    /* display: flex; */
-    /* flex-direction: column;
-    justify-content: space-between; */
-    height: auto;
+    height: fit-content !important;
 }
 
 
@@ -184,3 +181,5 @@
 .Prescription-container .btn-danger:hover {
     background-color: #b02a37;
 }
+
+

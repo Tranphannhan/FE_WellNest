@@ -34,7 +34,7 @@ export async function getParaclinicalAwaitingPayment (): Promise<paraclinicalTyp
 // chi tiết xét nghiệm chưa thanh toán
 export async function getDetailParaclinicalAwaitingPayment (id : string): Promise<ParaclinicalResponse | null> {
   try {
-    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Detail?Id_PhieuKhamBenh=${id}&TrangThai=false`);
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Detail?Id_PhieuKhamBenh=${id}&TrangThai=false&limit=1000`);
     if (!response.ok) return null;
     const data =await response.json();
     return data
@@ -100,7 +100,7 @@ export async function confirmTestRequestPayment(id: string){
         'Content-Type': 'application/json',
       },
     });
-    if (!response.ok) return null;
+    
     const data = await response.json();
     return data;
   } catch (error) {

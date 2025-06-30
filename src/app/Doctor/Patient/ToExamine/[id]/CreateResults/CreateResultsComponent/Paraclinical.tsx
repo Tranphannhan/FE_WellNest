@@ -186,7 +186,6 @@ const print =
 
   return (
     <div className="Paraclinical-Body">
-      {" "}
       <button
         onClick={() => setIsPhieuChiDinhModalOpen(true)}
         disabled={!print}

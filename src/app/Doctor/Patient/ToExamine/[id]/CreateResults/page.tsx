@@ -1,4 +1,4 @@
-'use client'; 
+'use client';
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import './CreateResults.css';
 import Diagnosiscomponent from "./Diagnosis.component";
@@ -11,38 +11,33 @@ import ViewParaclinicalResults, { NormalTestResult } from "./CreateResultsCompon
 import PrescriptionPopup from "./ComponentResults/CreatePrescriptionPopup";
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ClinicalExamPage from "./ComponentResults/CreateClinicalExam";
-import { CheckPrescription, confirmCompletion, fetchMedicalExaminationCardDetail, getExaminationResults, getResultsByRequestTesting, latestDiagnosis } from "@/app/services/DoctorSevices";
+import { CheckPrescription, confirmCompletion, fetchMedicalExaminationCardDetail, getExaminationResults, getResultsByRequestTesting, latestDiagnosis, getDoctorTemporaryTypes } from "@/app/services/DoctorSevices";
 import { generateTestResultsType, MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 import ModalComponent from "@/app/components/shared/Modal/Modal";
 
-
-
-
-export default function Patient(){
-    const [page , setPage] = useState <string> ('Chuẩn đoán sơ bộ');
-    const [showPrescriptionPopup,setShowPrescriptionPopup] = useState<boolean>(false)
-    const [prescriptionStep, setPrescriptionStep] = useState(1); // New state to control PrescriptionPopup step
+export default function Patient() {
+    const [page, setPage] = useState<string>('Chuẩn đoán sơ bộ');
+    const [showPrescriptionPopup, setShowPrescriptionPopup] = useState<boolean>(false);
+    const [prescriptionStep, setPrescriptionStep] = useState(1);
     const [paraclinicalKey, setParaclinicalKey] = useState(0);
     const [isPrescriptionCreating, setIsPrescriptionCreating] = useState(false);
-    const [prescriptionComponentKey,setprescriptionComponentKey] = useState(0);
-    const [beFinished, setBeFinished] = useState <boolean>(false);
-    const [showModalCompletion, setShowModalCompletion] = useState <boolean>(false);
-    const [testResults, setTestResults] = useState <NormalTestResult []>([])
-    const [allowsGeneratingResults, setAllowsGeneratingResults] = useState<boolean>(false)
-    const [hiddenButton, setHiddenButton]= useState<boolean>(false)
-    const router = useRouter()
-    
+    const [prescriptionComponentKey, setprescriptionComponentKey] = useState(0);
+    const [beFinished, setBeFinished] = useState<boolean>(false);
+    const [showModalCompletion, setShowModalCompletion] = useState<boolean>(false);
+    const [testResults, setTestResults] = useState<NormalTestResult[]>([]);
+    const [allowsGeneratingResults, setAllowsGeneratingResults] = useState<boolean>(false);
+    const [hiddenButton, setHiddenButton] = useState<boolean>(false);
+    const [hasPendingExamRequest, setHasPendingExamRequest] = useState<boolean>(false); // New state for pending exam requests
+    const router = useRouter();
+    const { id } = useParams();
+    const searchParams = useSearchParams();
+    const WaitClinicalExamination = searchParams.get('WaitClinicalExamination') === 'true';
+
     // Function to close the prescription popup and reset its step
     const handleClosePrescriptionPopup = () => {
         setShowPrescriptionPopup(false);
-        setPrescriptionStep(1); // Reset step to 1 when closing the popup
+        setPrescriptionStep(1);
     };
-
-    const { id } = useParams(); // Get ID from URL
-
-    // ---
-    const searchParams = useSearchParams();
-    const WaitClinicalExamination = searchParams.get('WaitClinicalExamination') === 'true';
 
     // State and handlers for viewing paraclinical results popup
     const [showResultsPopup, setShowResultsPopup] = useState(false);
@@ -53,19 +48,19 @@ export default function Patient(){
         setShowResultsPopup(false);
     };
 
-    const checkPrescription = async()=>{
-         const resCheckPrescription = await CheckPrescription(id as string);
-         console.log('đơn thuốc:',resCheckPrescription)
-         if(resCheckPrescription && resCheckPrescription.data?.data?.TrangThai==='DaXacNhan'){
-            setBeFinished(true)
-         }
-    }
+    // Function to check prescription status
+    const checkPrescription = async () => {
+        const resCheckPrescription = await CheckPrescription(id as string);
+        console.log('đơn thuốc:', resCheckPrescription);
+        if (resCheckPrescription && resCheckPrescription.data?.data?.TrangThai === 'DaXacNhan') {
+            setBeFinished(true);
+        }
+    };
 
     // Function to check prescription status and update state
     async function checkPrescriptionStatus() {
         const resCheck = await CheckPrescription(id as string);
         if (resCheck && !resCheck.status) {
-            // If a prescription is being created, disable the button
             setIsPrescriptionCreating(true);
             if (resCheck.data?._id) {
                 sessionStorage.setItem("DonThuocDaTao", JSON.stringify(resCheck.data));
@@ -98,183 +93,209 @@ export default function Patient(){
 
     // Handler for the "+ Thêm thuốc" button in SelectedMedicineComponent
     const handleAddMedicineFromTable = () => {
-        setShowPrescriptionPopup(true); // Open the prescription popup
-        setPrescriptionStep(3); // Set step directly to 3 (Chọn thuốc)
+        setShowPrescriptionPopup(true);
+        setPrescriptionStep(3);
     };
 
-    const [continueRender, setContinueRender] = useState <boolean>(false)
-    const checkRender = async() =>{
-            const data  = await latestDiagnosis(id as string)
-            console.log(data)
-            if(data.continueRender){
-              setContinueRender(true)
-            }
-            
-    }
-
-          const [continueRenderExaminationResults, setContinueRenderExaminationResults] = useState <boolean>(false)
-          const checkRenderContinueExaminationResults = async() =>{
-              const data:generateTestResultsType |null = await getExaminationResults(id as string)
-              if(data && data.TrangThaiHoanThanh){
-                setContinueRenderExaminationResults(true)
-                setAllowsGeneratingResults(true)
-                setHiddenButton(true)
-              }
-              
-          }
-    
-
-    const HandleConfirmCompletion = async() =>{
-        const res =await confirmCompletion(id as string)
-        if(res){
-            router.push('http://localhost:3000/Doctor/Patient')
+    const [continueRender, setContinueRender] = useState<boolean>(false);
+    const checkRender = async () => {
+        const data = await latestDiagnosis(id as string);
+        console.log(data);
+        if (data.continueRender) {
+            setContinueRender(true);
         }
-    }
+    };
 
-       const handleGetResultsByMedicalExaminationFormId = async () => {
-            setTestResults([])
-            handleOpenResultsPopup()
-      };
+    const [continueRenderExaminationResults, setContinueRenderExaminationResults] = useState<boolean>(false);
+    const checkRenderContinueExaminationResults = async () => {
+        const data: generateTestResultsType | null = await getExaminationResults(id as string);
+        if (data && data.TrangThaiHoanThanh) {
+            setContinueRenderExaminationResults(true);
+            setAllowsGeneratingResults(true);
+            setHiddenButton(true);
+        }
+    };
 
-      const handleGetResultsByRequestTesting = async (id:string) => {
+    // New function to check for pending examination requests
+    const checkPendingExaminationRequests = async () => {
+        const examRequests = await getDoctorTemporaryTypes(id as string);
+        if (examRequests && Array.isArray(examRequests)) {
+            const hasPending = examRequests.some(
+                (request) => request.TrangThai === false && request.TrangThaiThanhToan === true
+            );
+            setHasPendingExamRequest(hasPending);
+        } else {
+            setHasPendingExamRequest(false);
+        }
+    };
+
+    const HandleConfirmCompletion = async () => {
+        const res = await confirmCompletion(id as string);
+        if (res) {
+            router.push('/Doctor/Patient');
+        }
+    };
+
+    const handleGetResultsByMedicalExaminationFormId = async () => {
+        setTestResults([]);
+        handleOpenResultsPopup();
+    };
+
+    const handleGetResultsByRequestTesting = async (id: string) => {
         const res = await getResultsByRequestTesting(id);
         if (res) {
-            setTestResults(res)
-            handleOpenResultsPopup()
+            setTestResults(res);
+            handleOpenResultsPopup();
         }
-      };
+    };
 
     // Effects to run on component mount
-    useEffect(()=>{
+    useEffect(() => {
         getValueRender();
         checkRender();
         checkRenderContinueExaminationResults();
         checkPrescriptionStatus();
         checkPrescription();
-    },[prescriptionComponentKey]);
+        checkPendingExaminationRequests(); // Call the new function
+    }, [prescriptionComponentKey]);
 
-    return(
-        <>  
+    return (
+        <>
             <Tabbar
                 tabbarItems={{
                     tabbarItems: [
-                        { text: 'Thông tin bệnh nhân', link: `/Doctor/Patient/ToExamine/${id}${WaitClinicalExamination?'?WaitClinicalExamination=true':''}` },
+                        { text: 'Thông tin bệnh nhân', link: `/Doctor/Patient/ToExamine/${id}${WaitClinicalExamination ? '?WaitClinicalExamination=true' : ''}` },
                         { text: 'Tạo kết quả', link: `/Doctor/Patient/ToExamine/${id}/CreateResults` },
                     ],
                 }}
             />
 
-            {/* Prescription Popup, now controlled by prescriptionStep */}
             <PrescriptionPopup 
                 showPrescriptionPopup={showPrescriptionPopup} 
                 handleClosePrescriptionPopup={handleClosePrescriptionPopup} 
-                step={prescriptionStep} // Pass the step state
-                setStep={setPrescriptionStep} // Pass the setStep function
-                reload ={()=>setprescriptionComponentKey(prev => prev + 1)}
+                step={prescriptionStep}
+                setStep={setPrescriptionStep}
+                reload={() => setprescriptionComponentKey(prev => prev + 1)}
             />
 
             <div className="CreateResults-redirectFrame">
                 <div className="CreateResults-redirectFrame__actionButtonsContainer">
                     <div className="CreateResults-redirectFrame__actionButtonsContainer__leftButtons">
-                            <button
+                        <button
                             className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
                             onClick={() => setShowPrescriptionPopup(true)}
                             disabled={!continueRenderExaminationResults || isPrescriptionCreating}
                             style={{
-                                borderRadius:'8px',
+                                borderRadius: '8px',
                                 cursor: !continueRenderExaminationResults || isPrescriptionCreating ? 'not-allowed' : 'pointer',
                                 color: !continueRenderExaminationResults || isPrescriptionCreating ? '#cacaca' : undefined,
-                                border: '1px solid ' + (!continueRenderExaminationResults || isPrescriptionCreating ? '#cacaca' : ''), // hoặc undefined
+                                border: '1px solid ' + (!continueRenderExaminationResults || isPrescriptionCreating ? '#cacaca' : ''),
                                 backgroundColor: !continueRenderExaminationResults || isPrescriptionCreating ? '#f5faff' : undefined,
                             }}
-                            >
+                        >
                             + Tạo đơn thuốc
                         </button>
 
-                        <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
-                            disabled={!continueRender || allowsGeneratingResults}
-                            style={!continueRender || allowsGeneratingResults? {
-                                borderRadius:'8px',
-                                color:'#cacaca',
-                                border:'#cacaca 1px solid',
-                                cursor:'not-allowed',
-                                backgroundColor:'#f5faff',
-                            }:{
+                        <button
+                            className="CreateResults-redirectFrame__actionButtonsContainer__buttonOutline"
+                            disabled={!continueRender || allowsGeneratingResults || hasPendingExamRequest} // Add hasPendingExamRequest to disabled condition
+                            style={!continueRender || allowsGeneratingResults || hasPendingExamRequest ? {
+                                borderRadius: '8px',
+                                color: '#cacaca',
+                                border: '#cacaca 1px solid',
+                                cursor: 'not-allowed',
+                                backgroundColor: '#f5faff',
+                            } : {
                                 cursor: 'pointer',
-                                borderRadius:'8px',
+                                borderRadius: '8px',
                             }}
                             onClick={handleOpenExaminationRequestPopup}
-                        >+ Tạo yêu cầu xét nghiệm</button>
+                        >
+                            + Tạo yêu cầu xét nghiệm
+                        </button>
                     </div>
 
-                    
                     <div className="CreateResults-redirectFrame__actionButtonsContainer__rightButtons">
-                        {
-                            WaitClinicalExamination && (
-                                <button style={{display : 'block',
-                                    borderRadius:'8px',
-                                }}
-                                    className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
-                                    onClick={handleGetResultsByMedicalExaminationFormId}
-                                >
-                                    Xem kết quả xét nghiệm
-                                </button>
-                            )
-                        }
+                        {WaitClinicalExamination && (
+                            <button
+                                style={{ display: 'block', borderRadius: '8px' }}
+                                className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
+                                onClick={handleGetResultsByMedicalExaminationFormId}
+                            >
+                                Xem kết quả xét nghiệm
+                            </button>
+                        )}
 
-                        <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
+                        <button
+                            className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
                             disabled={false}
                             style={{
-                                backgroundColor:'gray',
-                                cursor:'not-allowed',
-                                borderRadius:'8px',
+                                backgroundColor: 'gray',
+                                cursor: 'not-allowed',
+                                borderRadius: '8px',
                             }}
-                        >Yêu cầu chuyển khoa</button>
-                        <button className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
+                        >
+                            Yêu cầu chuyển khoa
+                        </button>
+                        <button
+                            className="CreateResults-redirectFrame__actionButtonsContainer__buttonSolid"
                             disabled={!beFinished}
-                            onClick={()=>setShowModalCompletion(true)}
-                            style={!beFinished?{backgroundColor:'gray',cursor:'not-allowed',borderRadius:'8px'
-                                
-                                }:{
-                                borderRadius:'8px'
+                            onClick={() => setShowModalCompletion(true)}
+                            style={!beFinished ? {
+                                backgroundColor: 'gray',
+                                cursor: 'not-allowed',
+                                borderRadius: '8px'
+                            } : {
+                                borderRadius: '8px'
                             }}
-                        >Hoàn thành khám</button>
+                        >
+                            Hoàn thành khám
+                        </button>
                     </div>
                 </div>
             </div>
 
-        
             <div className="CreateResults-bodyFrame">
                 <div className="CreateResults-bodyFrame__navigationBar">
-                    <Diagnosiscomponent handlePage={setPage} page={page} />
+                    <Diagnosiscomponent handlePage={setPage} page={page} reload={()=>{setprescriptionComponentKey(prev=>prev+1)}}/>
                 </div>
 
                 <div>
-                    {page === 'Chuẩn đoán sơ bộ' && <DiagnosisComponent reLoad={()=>{
-                        checkRender()
+                    {page === 'Chuẩn đoán sơ bộ' && <DiagnosisComponent reLoad={() => {
+                        checkRender();
                     }} />}
                 </div>
 
                 <div>
-                    {page === 'Cận lâm sàng' && <ParaclinicalComponent hiddenButton={hiddenButton} shouldContinue = {allowsGeneratingResults} AllowsGeneratingResults={()=>{setAllowsGeneratingResults(true)
-                        setPage('Chuẩn đoán kết quả')
-                    }} 
-                    notAllowsGeneratingResults={()=>{setAllowsGeneratingResults(false)
-                    }}
-                    callBack = {handleGetResultsByRequestTesting} key={paraclinicalKey}/>}
+                    {page === 'Cận lâm sàng' && <ParaclinicalComponent
+                        hiddenButton={hiddenButton}
+                        shouldContinue={allowsGeneratingResults}
+                        AllowsGeneratingResults={() => {
+                            setAllowsGeneratingResults(true);
+                            setPage('Chuẩn đoán kết quả');
+                        }}
+                        notAllowsGeneratingResults={() => {
+                            setAllowsGeneratingResults(false);
+                        }}
+                        callBack={handleGetResultsByRequestTesting}
+                        key={paraclinicalKey}
+                    />}
                 </div>
 
                 <div>
-                    {page === 'Chuẩn đoán kết quả' && <DiagnosisResultsComponent allowsGeneratingResults={allowsGeneratingResults} reLoad={checkRenderContinueExaminationResults}/>}
+                    {page === 'Chuẩn đoán kết quả' && <DiagnosisResultsComponent
+                        allowsGeneratingResults={allowsGeneratingResults}
+                        reLoad={checkRenderContinueExaminationResults}
+                    />}
                 </div>
 
                 <div>
-                    {/* Pass the new handler to PrescriptionComponent */}
                     {page === 'Đơn thuốc' && 
-                    <PrescriptionComponent 
-                        onAddMedicineClick={handleAddMedicineFromTable} 
-                        key={prescriptionComponentKey} 
-                        reload={()=>{setprescriptionComponentKey(prev => prev+1)}}/> }
+                        <PrescriptionComponent 
+                            onAddMedicineClick={handleAddMedicineFromTable} 
+                            key={prescriptionComponentKey} 
+                            reload={() => { setprescriptionComponentKey(prev => prev + 1) }}
+                        />}
                 </div>
             </div>
 
@@ -286,13 +307,13 @@ export default function Patient(){
                 callback={() => setPage('Cận lâm sàng')} 
             />
             <ModalComponent Data_information={{
-                callBack:HandleConfirmCompletion,
-                content:'Xác nhận kết thúc khám',
-                remid:'Kết thúc khám sẽ trở về danh sách bệnh nhân',
-                show:showModalCompletion,
-                handleClose:()=>{setShowModalCompletion(false)},
-                handleShow:()=>{setShowModalCompletion(true)}
+                callBack: HandleConfirmCompletion,
+                content: 'Xác nhận kết thúc khám',
+                remid: 'Kết thúc khám sẽ trở về danh sách bệnh nhân',
+                show: showModalCompletion,
+                handleClose: () => { setShowModalCompletion(false) },
+                handleShow: () => { setShowModalCompletion(true) }
             }}></ModalComponent>
         </>
-    )
+    );
 }

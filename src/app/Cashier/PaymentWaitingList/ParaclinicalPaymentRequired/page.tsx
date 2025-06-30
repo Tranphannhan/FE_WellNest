@@ -1,7 +1,7 @@
 'use client';
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import '../Prescription.css';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import ConfirmationNotice from '../../ComponentCashier/ConfirmationNotice';
 import React, { useEffect, useState } from 'react';
 import { formatCurrencyVND } from "@/app/lib/Format";
@@ -9,11 +9,13 @@ import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { paraclinicalType } from "@/app/types/patientTypes/patient";
 import { getParaclinicalAwaitingPayment, confirmTestRequestPayment } from "@/app/services/Cashier";
 import { showToast, ToastType } from '@/app/lib/Toast';
+import payment from "@/app/services/Pay";
 
 export default function ParaclinicalPaymentRequired() {
     const router = useRouter();
     const [dataPrescription, setDataPrescription] = useState<paraclinicalType[]>([]);
     const [idPhieuKhamBenh, setIdPhieuKhamBenh] = useState<string>('');
+    const { id } = useParams(); // lấy id từ URL
     const [showModal, setShowModal] = useState(false);
     const [dataPendingPayment, setDataPendingPayment] = useState<{ HoVaTen?: string, TongTien?: number }>({});
 
@@ -25,6 +27,10 @@ export default function ParaclinicalPaymentRequired() {
         } else {
             setDataPrescription([getData]);
         }
+    };
+
+    const PayMoMo = async () => {
+        await payment(100000,'Đơn thuốc','http://localhost:3000/Cashier/PaymentWaitingList/685e2266f80a121de596ce55',id as string)
     };
 
     useEffect(() => {
@@ -75,7 +81,7 @@ export default function ParaclinicalPaymentRequired() {
                     handleShow: handleShow,
                     show: showModal,
                     callBack: paymentConfirmation,
-                    paymentConfirmation: paymentConfirmation
+                    paymentConfirmation: PayMoMo
                 }}
             />
 

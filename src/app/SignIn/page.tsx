@@ -13,12 +13,46 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { FaLock, FaPhoneAlt, FaUserMd } from 'react-icons/fa';
 import { FaCapsules, FaMoneyBillWave, FaUserCheck, FaUserShield, FaVials  } from 'react-icons/fa6';
+import { showToast, ToastType } from '../lib/Toast';
+import { ToastContainer } from 'react-toastify';
+import { signInUnified } from './services/SignIn';
 
 const App = () => {
   const [role, setRole] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  const roleMap: Record<string, string> = {
+  admin: '68272c6238063782b57d3868',
+  doctor: '',
+  reception: '6623a1b10b29f66dfbeef003',
+  testing: '6623a1b10b29f66dfbeef004',
+  cashier: '6623a1b10b29f66dfbeef005',
+  pharmacist: '6623a1b10b29f66dfbeef006',
+};
+
+const handleLogin = async () => {
+  const idLoaiTaiKhoan = roleMap[role];
+
+  if (!idLoaiTaiKhoan && role !== 'doctor') {
+    showToast('Vui lòng chọn quyền đăng nhập', ToastType.warn);
+    return;
+  }
+
+  try {
+    const result = await signInUnified(phone, password, idLoaiTaiKhoan || '', role);
+    showToast('Đăng nhập thành công!', ToastType.success);
+    console.log('✅ Đăng nhập thành công:', result);
+
+    // router.push('/dashboard'); // Hoặc chuyển hướng theo role
+  } catch (err: any) {
+    showToast(err.message || 'Đăng nhập thất bại', ToastType.error);
+    console.error('❌ Đăng nhập thất bại:', err.message);
+  }
+};
+
+
 
   return (
     <div className="main-app-container">
@@ -120,10 +154,14 @@ const App = () => {
             <p className="helper-text">
               <a href="#">Quên mật khẩu</a>
             </p>
-            <button className="login-button">Đăng nhập</button>
+            <button className="login-button" onClick={handleLogin}>
+  Đăng nhập
+</button>
+
           </div>
         </div>
       </div>
+       <ToastContainer />
     </div>
   );
 };

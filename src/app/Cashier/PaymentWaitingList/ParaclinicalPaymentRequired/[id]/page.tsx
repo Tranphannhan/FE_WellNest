@@ -8,6 +8,10 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { showToast, ToastType } from '@/app/lib/Toast';
 import ConfirmationNotice from '@/app/Cashier/ComponentCashier/ConfirmationNotice';
+import ParaclinicalPayment from '@/app/Cashier/ComponentCashier/ParaclinicalPayment';
+import { FaDotCircle } from 'react-icons/fa';
+// import payment from '@/app/services/Pay';
+import { FaCcAmazonPay } from 'react-icons/fa6';
 
 export default function ParaclinicalDetails() {
     const router = useRouter();
@@ -20,10 +24,11 @@ export default function ParaclinicalDetails() {
     const [dataPendingPayment, setDataPendingPayment] = useState<{ HoVaTen?: string, TongTien?: number }>({});
     const [idPhieuKhamBenh, setIdPhieuKhamBenh] = useState<string>('');
     const [isPaid, setIsPaid] = useState<boolean>(false); // Track payment status
+    const [isParaclinicalPaymentOpen, setIsParaclinicalPaymentOpen] = useState(false);
 
     const loaddingApi = async () => {
         const response: { totalItems: number, currentPage: number, totalPages: number, TongTien: number, data: paraclinicalType[] } | null = await getDetailParaclinicalAwaitingPayment(String(id));
-
+        console.log(response)
         if (!response) return;
         setTotalPrice(response.TongTien);
 
@@ -31,8 +36,12 @@ export default function ParaclinicalDetails() {
         setDataDetail(response.data as paraclinicalType[]);
 
         // Check TrangThaiThanhToan and TrangThai
-        const isPaymentCompleted = response.data.some(item => item.TrangThaiThanhToan === true && item.TrangThai === false);
+        const isPaymentCompleted = response.data.every(item => item.TrangThaiThanhToan === true);
         setIsPaid(isPaymentCompleted);
+    };
+
+    const PayMoMo = async () => {
+        // await payment(100000,'Đơn thuốc','http://localhost:3000/Cashier/PaymentWaitingList/685e2266f80a121de596ce55')
     };
 
     useEffect(() => {
@@ -52,19 +61,22 @@ export default function ParaclinicalDetails() {
     const paymentConfirmation = async () => {
         try {
             const result = await confirmTestRequestPayment(idPhieuKhamBenh);
+            console.log('result', result);
             const message = result?.message || "Xác nhận không rõ";
 
             if (message.includes("đã được thanh toán trước đó")) {
                 showToast(message, ToastType.info);
                 handleClose();
-                setIsPaid(true); // Update payment status
+                setIsPaid(true);
+                await loaddingApi(); // ✅ Gọi lại API để render lại trang
                 return;
             }
 
             if (message.includes("thành công")) {
                 showToast(message, ToastType.success);
                 handleClose();
-                setIsPaid(true); // Update payment status
+                setIsPaid(true);
+                await loaddingApi(); // ✅ Gọi lại API để render lại trang
                 return;
             }
 
@@ -76,9 +88,12 @@ export default function ParaclinicalDetails() {
         }
     };
 
-    const handlePrintInvoice = () => {
-        // Implement print invoice logic here
-        window.print(); // Basic print functionality; replace with actual invoice printing logic if needed
+    const handleOpenParaclinicalPayment = () => {
+        setIsParaclinicalPaymentOpen(true);
+    };
+
+    const handleCloseParaclinicalPayment = () => {
+        setIsParaclinicalPaymentOpen(false);
     };
 
     return (
@@ -89,19 +104,25 @@ export default function ParaclinicalDetails() {
                         { text: 'Chi tiết cận lâm sàng', link: `/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${id}` },
                     ],
                 }}
-            />  
+            />
 
-            <ConfirmationNotice 
+            <ConfirmationNotice
                 Data_information={{
-                    name: dataPendingPayment.HoVaTen || '', 
+                    name: dataPendingPayment.HoVaTen || '',
                     totalPrice: dataPendingPayment.TongTien !== undefined ? `${dataPendingPayment.TongTien}` : '',
                     paymentMethod: '',
                     handleClose: handleClose,
                     handleShow: handleShow,
                     show: showModal,
                     callBack: paymentConfirmation,
-                    paymentConfirmation: paymentConfirmation
+                    paymentConfirmation: PayMoMo
                 }}
+            />
+
+            <ParaclinicalPayment
+                isOpen={isParaclinicalPaymentOpen}
+                onClose={handleCloseParaclinicalPayment}
+                dataDetail={dataDetail}  
             />
 
             <div className="PrescriptionDetails-container">
@@ -109,11 +130,11 @@ export default function ParaclinicalDetails() {
                 <div className="PrescriptionDetails-container__Box1">
                     <h3>Thông tin bệnh nhân</h3>
                     <div className="PrescriptionDetails-container__Box1__patient-info" style={{ color: 'black' }}>
-                        <p><strong>Bệnh nhân: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen}</p>
-                        <p><strong>Ngày sinh: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh}</p>
-                        <p><strong>Giới tính: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh}</p>
-                        <p><strong>Ngày: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Ngay}</p>
-                        <p><strong>Số điện thoại: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai}</p>
+                        <p><strong>Bệnh nhân: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen || 'Không có dữ liệu'}</p>
+                        <p><strong>Ngày sinh: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh || 'Không có dữ liệu'}</p>
+                        <p><strong>Giới tính: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh || 'Không có dữ liệu'}</p>
+                        <p><strong>Ngày: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Ngay || 'Không có dữ liệu'}</p>
+                        <p><strong>Số điện thoại: </strong>{dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai || 'Không có dữ liệu'}</p>
                         <p><strong style={{ fontSize: '18px' }}>Tổng tiền : </strong>
                             <span style={{ color: 'red', fontSize: '16px', fontWeight: 600 }}>
                                 {formatCurrencyVND(totalPrice)}
@@ -124,17 +145,16 @@ export default function ParaclinicalDetails() {
                     <div className="PrescriptionDetails-container__Box1__boxPage">
                         {isPaid ? (
                             <>
-                                
-                                <button 
+                                <button
                                     className="bigButton--gray PrescriptionDetails-container__Box1__boxPage__back"
                                     onClick={() => router.push('/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired')}
                                 >
                                     <i className="bi bi-arrow-left-circle-fill"></i>
                                     Quay lại
                                 </button>
-                                <button 
+                                <button
                                     className="bigButton--blue PrescriptionDetails-container__Box1__boxPage__print"
-                                    onClick={handlePrintInvoice}
+                                    onClick={handleOpenParaclinicalPayment}
                                 >
                                     <i className="bi bi-printer-fill"></i>
                                     In Hóa Đơn
@@ -142,28 +162,28 @@ export default function ParaclinicalDetails() {
                             </>
                         ) : (
                             <>
-                                <button 
-                                    className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer"
+                                <button
+                                    className="bigButton--red"
                                     onClick={() => router.push('/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired')}
                                 >
                                     <i className="bi bi-x-circle-fill"></i>
                                     Hủy
                                 </button>
-                                <button 
-                                    className="confirm-button PrescriptionDetails-container__Box1__boxPage__check"
+                                <button
+                                    className="bigButton--blue"
                                     onClick={() => handlePaymenConfirmation(
-                                        dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen as string,
+                                        dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen as string || 'Không có dữ liệu',
                                         totalPrice,
                                         String(id)
                                     )}
                                 >
-                                    <i className="bi bi-check-circle-fill"></i>
-                                    Xác nhận thanh toán
+                                        <FaCcAmazonPay />
+                                       Thanh toán
                                 </button>
                             </>
                         )}
                     </div>
-                </div>  
+                </div>
 
                 <div className="PrescriptionDetails-container__Box2">
                     <div className='PrescriptionDetails-container__Box2__title'>Chi tiết cận lâm sàng</div>
@@ -176,21 +196,37 @@ export default function ParaclinicalDetails() {
                                 <th>Thời gian</th>
                                 <th>Bác sĩ</th>
                                 <th>Giá</th>
+                                <th>Trạng thái</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {dataDetail.map((item, index) => (
-                                <tr key={index}>
-                                    <td>{item.Id_LoaiXetNghiem.Id_PhongThietBi.TenPhongThietBi}</td>
-                                    <td>{item?.Id_LoaiXetNghiem.TenXetNghiem}</td>
-                                    <td>{formatTime(item.Gio)}</td>
-                                    <td>{item.Id_PhieuKhamBenh.Id_Bacsi?.TenBacSi}</td>
-                                    <td style={{ color: 'red' }}>
-                                        {formatCurrencyVND(item?.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu || 0)}
-                                    </td>
-                                </tr>
-                            ))}
+                            {dataDetail.map((item, index) => {
+                                let trangThaiText = "Chưa thanh toán";
+                                let trangThaiClass = "red";
+                                if(item.TrangThaiThanhToan === true){
+                                    trangThaiText ="Đã thanh toán";
+                                    trangThaiClass = "green";
+                                }
+                                return (
+                                    <tr key={index}>
+                                        <td>{item.Id_LoaiXetNghiem.Id_PhongThietBi.TenPhongThietBi || 'Không xác định'}</td>
+                                        <td>{item?.Id_LoaiXetNghiem.TenXetNghiem || 'Không xác định'}</td>
+                                        <td>{formatTime(item.Gio) || 'Không có dữ liệu'}</td>
+                                        <td>{item.Id_PhieuKhamBenh.Id_Bacsi?.TenBacSi || 'Không có dữ liệu'}</td>
+                                        <td style={{ color: 'red' }}>
+                                            {formatCurrencyVND(item?.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu || 0)}
+                                        </td>
+                                        <td>
+
+                                            <div className={`tatusTable ${trangThaiClass}`} >
+                                                <FaDotCircle className="dot" />
+                                                {trangThaiText}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                         </tbody>
                     </table>
                 </div>

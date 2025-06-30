@@ -10,6 +10,9 @@ import { showToast, ToastType } from '@/app/lib/Toast';
 import { PrescriptionDetail } from '@/app/Doctor/Patient/ToExamine/[id]/CreateResults/CreateResultsComponent/Prescription';
 import ConfirmationNotice from '../../ComponentCashier/ConfirmationNotice';
 import MedicineFees from '../../ComponentCashier/MedicineFees';
+import payment from '@/app/services/Pay';
+import { FaCcAmazonPay } from 'react-icons/fa6';
+import { useSearchParams } from 'next/navigation'; // đã dùng useParams rồi
 
 export default function PrescriptionDetails() {
     const params = useParams();
@@ -21,6 +24,9 @@ export default function PrescriptionDetails() {
     const [showModal, setShowModal] = useState(false);
     const [dataPendingPayment, setDataPendingPayment] = useState<{ HoVaTen?: string, TongTien?: number }>({});
     const [isMedicineFeesOpen, setIsMedicineFeesOpen] = useState(false);
+    const searchParams = useSearchParams()
+
+
 
     const loadAPI = async () => {
         try {
@@ -43,7 +49,17 @@ export default function PrescriptionDetails() {
         }
     };
 
+      const PayMoMo = async () => {
+
+        await payment(Number(dataPendingPayment.TongTien),'Đơn thuốc',`http://localhost:3000/Cashier/PaymentWaitingList/${id}`,id as string)
+    };
+
     useEffect(() => {
+        const resultCode = searchParams.get('resultCode');
+
+            if (resultCode === '0') {
+                showToast('Thanh toán thành công',ToastType.success)
+            }
         console.log('id:', id);
         loadAPI();
     }, []);
@@ -68,12 +84,19 @@ export default function PrescriptionDetails() {
             }
         } catch (error) {
             showToast('Đã có lỗi xảy ra khi xác nhận thanh toán', ToastType.error);
+            console.error(error)
         }
     };
 
     const handlePrint = () => {
-        setIsMedicineFeesOpen(true);
-    };
+  if (!data || detailedPrescription.length === 0) {
+    showToast('Dữ liệu chưa sẵn sàng để in đơn thuốc', ToastType.warn);
+    return;
+  }
+
+  setIsMedicineFeesOpen(true);
+};
+
 
     return (
         <>
@@ -94,19 +117,21 @@ export default function PrescriptionDetails() {
                     handleShow: handleShow,
                     show: showModal,
                     callBack: paymentConfirmation,
-                    paymentConfirmation: paymentConfirmation
+                    paymentConfirmation: PayMoMo
                 }}
             />
 
             <MedicineFees
-                isOpen={isMedicineFeesOpen}
-                onClose={() => setIsMedicineFeesOpen(false)}
-            />
+  isOpen={isMedicineFeesOpen}
+  onClose={() => setIsMedicineFeesOpen(false)}
+  data={data}
+  detailedPrescription={detailedPrescription}
+/>
 
             <div className="print-container">
                 <div className="PrescriptionDetails-container">
                     {/* Thông tin bệnh nhân */}
-                    <div className="PrescriptionDetails-container__Box1" style={{ height: '450px' }}>
+                    <div className="PrescriptionDetails-container__Box1" style={{ height:'fit-content !impotent'}}>
                         <h3>Thông tin bệnh nhân</h3>
                         <div className="patient-info" style={{ color: 'black' }}>
                             <p><strong>Tên đơn thuốc: </strong>{data?.TenDonThuoc}</p>
@@ -115,7 +140,7 @@ export default function PrescriptionDetails() {
                             <p><strong>Bác sĩ:</strong> {data?.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi}</p>
                             <p><strong>Thời gian:</strong> {formatTime(data?.Gio as string)}</p>
                             <p><strong>Ngày:</strong> {data?.Id_PhieuKhamBenh?.Ngay}</p>
-                            <p><strong style={{ fontSize: '18px' }}>Tổng tiền :</strong> 
+                            <p><strong style={{ fontSize: '18px' }}>Tổng tiền: </strong> 
                                 <span style={{ color: 'red', fontSize: '16px', fontWeight: 600 }}>
                                     {formatCurrencyVND(data?.TongTien || 0)}
                                 </span>
@@ -143,21 +168,21 @@ export default function PrescriptionDetails() {
                             ) : (
                                 <>
                                     <button
-                                        className="confirm-button PrescriptionDetails-container__Box1__boxPage__cancer"
+                                        className="bigButton--red"
                                         onClick={() => router.push('/Cashier/PaymentWaitingList')}
                                     >
                                         <i className="bi bi-x-circle-fill"></i>
                                         Hủy
                                     </button>
                                     <button
-                                        className="confirm-button PrescriptionDetails-container__Box1__boxPage__check"
+                                        className="bigButton--blue"
                                         onClick={() => handlePaymenConfirmation(
                                             data?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen as string,
                                             data?.TongTien || 0
                                         )}
                                     >
-                                        <i className="bi bi-check-circle-fill"></i>
-                                        Xác nhận thanh toán
+                                        <FaCcAmazonPay />
+                                       Thanh toán
                                     </button>
                                 </>
                             )}

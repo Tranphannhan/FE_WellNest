@@ -18,7 +18,7 @@
     /* display: flex; */
     /* flex-direction: column;
     justify-content: space-between; */
-    height: auto;
+    height: fit-content;
 }
 
 
@@ -116,9 +116,12 @@
 .Prescription-container_table td {
     padding: 12px 15px;
     text-align: left;
-    border-bottom: 1px solid #e0e0e0;
 }
 
+
+.Prescription-container_table tr{
+border-bottom: 1px solid #e0e0e0;
+}
 
 .Prescription-container_table th {
     font-weight: 600;

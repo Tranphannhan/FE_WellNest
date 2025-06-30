@@ -41,9 +41,6 @@ export default function RootLayout({
                     logo:'/images/logoWebsite.png',
                     navItems:[
                       {icon:`bi bi-file-earmark-text-fill`,text:"Chờ xét nghiệm", link:'/LaboratoryDoctor/TestWaitingList'},
-                      // {icon:`bi bi-clipboard2-pulse-fill`,text:"Danh sách thanh toán", link:'/Cashier/PaymentWaitingList'}
-
-
                     ]
                   }
                 }

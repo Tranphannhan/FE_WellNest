@@ -1,68 +1,44 @@
 'use client';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import './ParaclinicalPayment.css'; // Import the CSS file for ParaclinicalPayment
+import './ParaclinicalPayment.css';
+import { paraclinicalType } from '@/app/types/patientTypes/patient';
 
 interface ParaclinicalPaymentProps {
     isOpen: boolean;
     onClose: () => void;
+    dataDetail?: paraclinicalType[];
 }
 
-export default function ParaclinicalPayment({ isOpen, onClose }: ParaclinicalPaymentProps) {
-    const paraclinicalPaymentRef = useRef<HTMLDivElement>(null); // Specify type for useRef
+const ParaclinicalPayment: React.FC<ParaclinicalPaymentProps> = ({ isOpen, onClose, dataDetail = [] }) => {
+    const paraclinicalPaymentRef = useRef<HTMLDivElement>(null);
     const [pdfPreviewImg, setPdfPreviewImg] = useState('');
 
-    // Static Data for the Paraclinical Payment Confirmation
-    const patientName = "NGUYỄN VĂN A"; // Example patient name
-    const patientId = "BN0012345"; // Example patient ID
-    const gender = "Nam";
-    const dateOfBirth = "1990";
-    const patientAddress = "123 Đường ABC, Quận XYZ, TP.HCM";
-    const doctorName = "BS. Trần Thị Hạnh"; // Example referring doctor
+    // Dynamic data from props with fallbacks
+    const patientName = dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen || 'Không có dữ liệu';
+    const gender = dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh || 'Không có dữ liệu';
+    const dateOfBirth = dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh || 'Không có dữ liệu';
+    const patientAddress = dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.DiaChi || 'Không có dữ liệu';
+    const doctorName = dataDetail[0]?.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi || 'Không có dữ liệu';
+    const testDate = dataDetail[0]?.Ngay || 'Không có dữ liệu';
+    const testTime = dataDetail[0]?.Gio || 'Không có dữ liệu';
 
-    // Sample data for services
-    const services = [
-        {
-            id: 1,
-            name: "Xét nghiệm máu tổng quát",
-            unitPrice: 250000,
-            room: "Phòng Xét nghiệm Hóa sinh",
-            selfQueueNo: 6, // Số thứ tự của bản thân (số nguyên)
-            waitingCount: 5, // Số người đang chờ
-        },
-        {
-            id: 2,
-            name: "Xét nghiệm nước tiểu",
-            unitPrice: 100000,
-            room: "Phòng Xét nghiệm Nước tiểu",
-            selfQueueNo: 3,
-            waitingCount: 2,
-        },
-        {
-            id: 3,
-            name: "Siêu âm bụng tổng quát",
-            unitPrice: 300000,
-            room: "Phòng Siêu âm 1",
-            selfQueueNo: 4,
-            waitingCount: 3,
-        },
-        {
-            id: 4,
-            name: "Chụp X-quang ngực",
-            unitPrice: 200000,
-            room: "Phòng Chụp X-quang",
-            selfQueueNo: 2,
-            waitingCount: 1,
-        }
-    ];
+    const services = dataDetail.map((item, index) => ({
+        id: index + 1,
+        name: item.Id_LoaiXetNghiem?.TenXetNghiem || 'Không xác định',
+        unitPrice: item.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu || 0,
+        room: item.Id_LoaiXetNghiem?.Id_PhongThietBi?.TenPhongThietBi || 'Không xác định',
+        selfQueueNo: item.STT ?? 'N/A',
+        waitingCount: 0,
+    }));
 
     const calculatedTotalServicePrice = services.reduce((sum, item) => sum + item.unitPrice, 0);
 
     const currentDate = new Date();
     const formattedTime = currentDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 
-    // Barcode generation (similar to MedicineFees)
+    // Barcode generation
     const barcodeBars = Array.from({ length: 60 }).map((_, index) => {
-        const fixedHeight = 50;
+        const fixedHeight = 60;
         const randomWidth = 1 + Math.floor(Math.random() * 4);
         const isSpace = Math.random() < 0.3;
         return isSpace ? (
@@ -75,11 +51,7 @@ export default function ParaclinicalPayment({ isOpen, onClose }: ParaclinicalPay
     const captureAndShowPreview = useCallback(() => {
         const input = paraclinicalPaymentRef.current;
         if (!input) return console.error("Không tìm thấy nội dung để chụp!");
-
-        if (typeof window.html2canvas === 'undefined') {
-            console.warn("html2canvas chưa sẵn sàng.");
-            return;
-        }
+        if (typeof window.html2canvas === 'undefined') return console.warn("html2canvas chưa sẵn sàng.");
 
         setTimeout(() => {
             window.html2canvas(input, { scale: 2, logging: true, useCORS: true })
@@ -90,11 +62,7 @@ export default function ParaclinicalPayment({ isOpen, onClose }: ParaclinicalPay
 
     const handleExportPdf = useCallback(() => {
         if (!pdfPreviewImg) return console.error("Chưa có ảnh để xuất PDF.");
-
-        if (typeof window.jspdf === 'undefined') {
-            console.warn("jspdf chưa sẵn sàng.");
-            return;
-        }
+        if (typeof window.jspdf === 'undefined') return console.warn("jspdf chưa sẵn sàng.");
 
         setTimeout(() => {
             const { jsPDF } = window.jspdf;
@@ -125,7 +93,7 @@ export default function ParaclinicalPayment({ isOpen, onClose }: ParaclinicalPay
 
     useEffect(() => {
         if (isOpen) {
-            setPdfPreviewImg(''); // Clear previous preview when opening
+            setPdfPreviewImg('');
             const loadScript = (src: string, globalName: string, callback?: () => void) => {
                 if (typeof window[globalName as keyof Window] === 'undefined') {
                     const script = document.createElement('script');
@@ -138,11 +106,7 @@ export default function ParaclinicalPayment({ isOpen, onClose }: ParaclinicalPay
                     callback?.();
                 }
             };
-
-            // Load html2canvas and jspdf
-            loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'html2canvas', () => {
-                captureAndShowPreview();
-            });
+            loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'html2canvas', () => { captureAndShowPreview(); });
             loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'jspdf');
         }
     }, [isOpen, captureAndShowPreview]);
@@ -164,50 +128,50 @@ export default function ParaclinicalPayment({ isOpen, onClose }: ParaclinicalPay
                 </div>
             </div>
 
-            {/* Đây là phần nội dung sẽ được chụp và xuất ra PDF */}
             <div ref={paraclinicalPaymentRef} className="a4-container" style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
-                <div className="paraclinical-header">
+                <div className="examination-result-header">
                     <div>
-                        <p><strong >GIẤY XÁC NHẬN THANH TOÁN</strong></p>
-                        <h1 style={{color:"blue"}}>BỆNH VIỆN ĐA KHOA WELLNEST</h1>
-                        <p>171/3 đường Trường Chinh, phường Tân Thới Nhất, Quận Tân Bình, TP.HCM</p>
-                        <p>Điện thoại : +84 28 6260 1100 | DĐ:0974.508.479</p>
+                        <p><strong>Mã phiếu thu</strong></p>
+                        <h1>Bệnh viện đa khoa WellNest</h1>
+                        <p>171 Đường Trường Chinh Tân Thới Nhất Quận 12 HCM</p>
+                        <p>Điện thoại: +84 123456789</p>
                     </div>
                     <div className="barcode">
                         {barcodeBars}
                     </div>
                 </div>
 
-                <h2 className="paraclinical-title" style={{color:"blue"}}>PHIẾU THU TIỀN DỊCH VỤ CẬN LÂM SÀNG</h2>
+                <h2 className="examination-result-title">Phiếu Thu Tiền Dịch Vụ Cận Lâm Sàng</h2>
 
                 <div className="patient-info-grid">
-                    <p><strong>Mã bệnh nhân:</strong> {patientId}</p>
                     <p><strong>Họ tên:</strong> {patientName}</p>
                     <p><strong>Giới tính:</strong> {gender}</p>
-                    <p><strong>Năm sinh:</strong> {dateOfBirth}</p>
-                    <p style={{ gridColumn: '1 / span 3' }}><strong>Địa chỉ:</strong> {patientAddress}</p>
-                    <p style={{ gridColumn: '1 / span 3' }}><strong>Bác sĩ chỉ định:</strong> {doctorName}</p>
+                    <p><strong>Ngày sinh:</strong> {dateOfBirth}</p>
+                    <p style={{ gridColumn: 'span 3' }}><strong>Địa chỉ:</strong> {patientAddress}</p>
+                    <p><strong>Bác sĩ chỉ định:</strong> {doctorName}</p>
+                    <p><strong>Ngày xét nghiệm:</strong> {testDate}</p>
+                    <p><strong>Giờ xét nghiệm:</strong> {testTime}</p>
                 </div>
 
-                <h3 className="service-heading">Chi tiết Dịch vụ Cận lâm sàng</h3>
-                <div className="service-table-container">
-                    <table>
+                <h3 className="section-heading">Chi tiết Dịch vụ Cận lâm sàng</h3>
+                <div className="diagnosis-treatment-table-container">
+                    <table className="diagnosis-treatment-table">
                         <thead>
                             <tr>
                                 <th>STT</th>
                                 <th>Tên dịch vụ</th>
                                 <th>Giá</th>
                                 <th>Phòng thực hiện</th>
-                                <th>STT của bạn</th>
+                                <th>Số thứ tự</th>
                                 <th>Số người chờ</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {services.map((item, index) => (
+                            {services.map((item) => (
                                 <tr key={item.id}>
-                                    <td>{index + 1}</td>
+                                    <td>{item.id}</td>
                                     <td>{item.name}</td>
-                                    <td>{item.unitPrice.toLocaleString('vi-VN')} VNĐ</td>
+                                    <td>{item.unitPrice.toLocaleString('vi-VN')} ₫</td>
                                     <td>{item.room}</td>
                                     <td>{item.selfQueueNo}</td>
                                     <td>{item.waitingCount}</td>
@@ -217,31 +181,29 @@ export default function ParaclinicalPayment({ isOpen, onClose }: ParaclinicalPay
                     </table>
                 </div>
 
-                <div className="total-price-section discount-line-underline">
-                    <p><strong>Tổng cộng:</strong> <span>{calculatedTotalServicePrice.toLocaleString('vi-VN')} VNĐ</span></p>
-                </div>
-                <div className="total-price-section ">
-                    <p><strong>Đã thanh toán:</strong> <span>{calculatedTotalServicePrice.toLocaleString('vi-VN')} VNĐ</span></p>
+                <div className="total-price-section">
+                    <p><strong>Tổng tiền:</strong> <span style={{ color: 'red', fontWeight: '600' }}>{calculatedTotalServicePrice.toLocaleString('vi-VN')} ₫</span></p>
                 </div>
 
                 <div className="receipt-signatures">
-                    <div className="signature-block signature-payer">
+                    <div className="signature-block signature-patient">
                         <p className="signature-label">Người thanh toán</p>
-                        <p>(Ký, ghi rõ họ tên)</p>
+                        <div className="signature-placeholder"></div>
                     </div>
 
-                    <div className="collector-info-block">
+                    <div className="doctor-info-block">
                         <div className="signature-date">
-                            <p>Ngày {currentDate.getDate()} tháng {currentDate.getMonth() + 1} năm {currentDate.getFullYear()} lúc {formattedTime}</p>
+                            <p>{formattedTime} Ngày {currentDate.getDate()}, Tháng {currentDate.getMonth() + 1}, Năm {currentDate.getFullYear()}</p>
                         </div>
                         <div className="signature-block signature-collector">
                             <p className="signature-label">Người thu tiền</p>
-                            <p className="signature-name">TRẦN THỊ BÍCH THỦY</p>
-                            <p>(Ký, ghi rõ họ tên)</p>
+                            <p className="signature-name">Trần Thị Bích Thủy</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+};
+
+export default ParaclinicalPayment;

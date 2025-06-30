@@ -5,9 +5,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
 // lấy danh sách chờ xét nghiệm
-export async function getWaitingForTest (id : string , page : number) {
+export async function getWaitingForTest (id : string , page : number, BoQua:boolean | null) {
     try{
-        const respone = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/GetById_PhongTB_date/Pagination/?Id_PhongThietBi=${id}&TrangThai=false&page=${page}`);
+        const respone = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/GetById_PhongTB_date/Pagination/?Id_PhongThietBi=${id}&TrangThai=false&page=${page}${BoQua?'&BoQua='+BoQua:""}`);
         if(respone.ok){
         return (await respone.json())
         }else{
@@ -30,7 +30,7 @@ export async function getWaitingForTestDetail(id: string, TrangThai: boolean | n
       query += `&TrangThaiThanhToan=${TrangThai}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Detail?${query}`);
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Detail?${query}&limit=1000`);
 
     if (!response.ok) return null;
 
@@ -65,11 +65,13 @@ export async function generateTestResults (fullForm:valueForm){
         }
 
         const data = await response.json();
-        showToast ('Tạo thành công', ToastType.success);
-        return data;
+        showToast ('Tạo kết quả thành công', ToastType.success);
+        console.log('Dữ liệu trả về từ hàm tạo kết quả: ',data)
+        return true;
     } catch (error) {
         console.error("Fetch lỗi:", error);
-        return null;
+        showToast ('Tạo kết quả thất bại', ToastType.error);
+        return false;
     }
 }
 
@@ -98,3 +100,25 @@ export async function handleCompleteTheTests (id: string) {
     showToast('Xác nhận trạng thái thất bại',ToastType.error)
   }
 }
+
+export const changeBoQuaStatus = async (id: string, boQua: boolean) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/ThayDoiBoQua?id=${id}&BoQua=${boQua}`,
+      {
+        method: 'PATCH'
+      }
+    );
+    console.log(response)
+
+    if (!response.ok) {
+      console.error('Lỗi khi gọi API ThayDoiBoQua:', await response.text());
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Lỗi kết nối tới API ThayDoiBoQua:', error);
+    return false;
+  }
+};

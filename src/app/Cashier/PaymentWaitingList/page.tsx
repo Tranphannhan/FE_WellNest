@@ -9,6 +9,7 @@ import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { prescriptionType } from "@/app/types/patientTypes/patient";
 import { getPrescriptionPendingPayment, confirmPrescriptionPayment } from "@/app/services/Cashier";
 import { showToast, ToastType } from '@/app/lib/Toast';
+import payment from "@/app/services/Pay";
 
 export default function Prescription() {
     const router = useRouter();
@@ -25,6 +26,10 @@ export default function Prescription() {
         } else {
             setDataPrescription([getData]);
         }
+    };
+
+    const PayMoMo = async () => {
+        await payment(100000,'Đơn thuốc','http://localhost:3000/Cashier/PaymentWaitingList/685e2266f80a121de596ce55',idPrescription)
     };
 
     useEffect(() => {
@@ -52,6 +57,7 @@ export default function Prescription() {
             }
         } catch (error) {
             showToast('Đã có lỗi xảy ra khi xác nhận thanh toán', ToastType.error);
+            console.error(error)
         }
     };
 
@@ -75,7 +81,7 @@ export default function Prescription() {
                     handleShow: handleShow,
                     show: showModal,
                     callBack: paymentConfirmation,
-                    paymentConfirmation: paymentConfirmation
+                    paymentConfirmation: PayMoMo
                 }}
             />
 

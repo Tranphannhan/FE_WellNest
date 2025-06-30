@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './GenerateTestResults.css';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import { showToast, ToastType } from '@/app/lib/Toast';
@@ -8,7 +8,6 @@ import { generateTestResults, handleCompleteTheTests } from '@/app/services/Labo
 import { useRouter } from 'next/navigation';
 import ViewParaclinicalResults, { NormalTestResult } from '@/app/Doctor/Patient/ToExamine/[id]/CreateResults/CreateResultsComponent/ViewParaclinicalResults';
 import { getResultsByRequestTesting } from '@/app/services/DoctorSevices';
-
 
 export interface valueForm {
   Id_YeuCauXetNghiem?: string;
@@ -29,33 +28,32 @@ export default function GenerateTestResults() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<boolean>(false);
   const [showResultsPopup, setShowResultsPopup] = useState<boolean>(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [dataResule, setDataResule] = useState<NormalTestResult[]>([]);
+  const [hasResults, setHasResults] = useState<boolean>(false);
 
+  // Load tên xét nghiệm
+  const [tenXetNghiem, setTenXetNghiem] = useState<string>('');
 
-    // Loadd tênn xét nghiệm
-    const [tenXetNghiem , setTenXetNghiem] = useState<string>('');
-
-    useEffect(() => {
+  useEffect(() => {
     const loaddingtenXetNghiem = async () => {
-        const localData = sessionStorage.getItem('idGenerateTestResult');
-        if (!localData) return showToast('Thiếu dữ liệu id Form', ToastType.error);
-        
-        try {
-            const parsed = JSON.parse(localData);
-            setTenXetNghiem(parsed.TenXetNghiem || '');
-        } 
-        
-        catch (error) {
-            console.error('Lỗi parse JSON:', error);
-            showToast('Lỗi dữ liệu trong sessionStorage', ToastType.error);
-        }
+      const localData = sessionStorage.getItem('idGenerateTestResult');
+      if (!localData) return showToast('Thiếu dữ liệu id Form', ToastType.error);
+      
+      try {
+        const parsed = JSON.parse(localData);
+        setTenXetNghiem(parsed.TenXetNghiem || '');
+        // Check for existing results on load
+        const data = await getResultsByRequestTesting(parsed.Id_YeuCauXetNghiem);
+        setHasResults(data && data.length > 0);
+      } catch (error) {
+        console.error('Lỗi parse JSON:', error);
+        showToast('Lỗi dữ liệu trong sessionStorage', ToastType.error);
+      }
     };
 
     loaddingtenXetNghiem();
-    }, []);
-
-
-
+  }, []);
 
   // Xử lý tạo kết quả xét nghiệm
   const handleResultTest = async () => {
@@ -78,8 +76,6 @@ export default function GenerateTestResults() {
       return showToast('Thiếu dữ liệu Form', ToastType.error);
     }
 
-
-
     const localData = sessionStorage.getItem('idGenerateTestResult');
     if (!localData) return showToast('Thiếu dữ liệu id Form', ToastType.error);
     const parsed = JSON.parse(localData);
@@ -92,27 +88,31 @@ export default function GenerateTestResults() {
       TenXetNghiem: parsed.TenXetNghiem
     };
 
-    await generateTestResults(fullForm);
-    showToast('Tạo kết quả thành công', ToastType.success);
+    const data = await generateTestResults(fullForm);
+    if (data) {
+      setDataForm({});
+      if (imageInputRef.current) imageInputRef.current.value = '';
+      // Update hasResults after creating a new result
+      setHasResults(true);
+    }
   };
-
-
 
   // Xử lý hoàn tất xét nghiệm
   const completeTheTest = async () => {
+    if (!hasResults) {
+      showToast('Không thể hoàn thành khi chưa có kết quả xét nghiệm', ToastType.error);
+      return;
+    }
+
     const localData = sessionStorage.getItem('idGenerateTestResult');
     if (!localData) return showToast('Thiếu dữ liệu id Form', ToastType.error);
     const parsed = JSON.parse(localData);
 
     const result = await handleCompleteTheTests(parsed.Id_YeuCauXetNghiem);
-    console.log('result',result)
     if (result) {
-        router.push(`/LaboratoryDoctor/TestWaitingList/${parsed.Id_PhieuKhamBenh}`);
+      router.push(`/LaboratoryDoctor/TestWaitingList/${parsed.Id_PhieuKhamBenh}`);
     }
   };
-
-
-
 
   // Xem kết quả xét nghiệm
   const handleView = async () => {
@@ -125,10 +125,8 @@ export default function GenerateTestResults() {
 
     setDataResule(data);
     setShowResultsPopup(true);
+    setHasResults(true);
   };
-
-
-
 
   return (
     <>
@@ -178,7 +176,14 @@ export default function GenerateTestResults() {
 
         <div className="generate-test-results-container__boxClick1">
           <button className="bigButton--blue" onClick={handleView}>Xem kết quả</button>
-          <button className="bigButton--blue" onClick={() => setShowResult(true)}>Hoàn thành xét nghiệm</button>
+          <button 
+            className={`bigButton--blue ${hasResults?'':'disabled'}`}
+            onClick={() => setShowResult(true)} 
+            disabled={!hasResults}
+            title={!hasResults ? 'Cần có kết quả xét nghiệm trước khi hoàn thành' : ''}
+          >
+            Hoàn thành xét nghiệm
+          </button>
         </div>
 
         <div className="form-container">
@@ -188,6 +193,7 @@ export default function GenerateTestResults() {
               <p>Chọn ảnh</p>
               <input
                 type="file"
+                ref={imageInputRef}
                 onChange={(e) =>
                   setDataForm((prev) => ({
                     ...prev,
@@ -209,7 +215,6 @@ export default function GenerateTestResults() {
                   type="text"
                   value={tenXetNghiem}
                   readOnly 
-                  
                   onChange={(e) =>
                     setDataForm((prev) => ({
                       ...prev,
@@ -223,6 +228,7 @@ export default function GenerateTestResults() {
                 <label>Mã xét nghiệm</label>
                 <input
                   type="text"
+                  value={dataForm?.MaXetNghiem || ''}
                   onChange={(e) =>
                     setDataForm((prev) => ({
                       ...prev,
@@ -238,6 +244,7 @@ export default function GenerateTestResults() {
                 <label>Chỉ số bình thường</label>
                 <input
                   type="text"
+                  value={dataForm?.ChiSoBinhThuong || ''}
                   onChange={(e) =>
                     setDataForm((prev) => ({
                       ...prev,
@@ -250,6 +257,7 @@ export default function GenerateTestResults() {
               <div className="input-box">
                 <label>Đơn vị tính</label>
                 <input
+                  value={dataForm?.DonViTinh || ''}
                   type="text"
                   onChange={(e) =>
                     setDataForm((prev) => ({
@@ -265,6 +273,7 @@ export default function GenerateTestResults() {
               <label>Kết quả</label>
               <textarea
                 rows={3}
+                value={dataForm?.KetQua || ''}
                 onChange={(e) =>
                   setDataForm((prev) => ({
                     ...prev,
@@ -277,6 +286,7 @@ export default function GenerateTestResults() {
             <div className="input-box full-width">
               <label>Ghi chú</label>
               <textarea
+                value={dataForm?.GhiChu || ''}
                 rows={3}
                 onChange={(e) =>
                   setDataForm((prev) => ({

@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import './ConfirmationNotice.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { TbCreditCardPay } from "react-icons/tb";
 import { LiaMoneyCheckAltSolid } from "react-icons/lia";  
@@ -27,6 +27,9 @@ interface Type_Data_information {
 export default function ConfirmationNotice({ Data_information }: { Data_information: Type_Data_information }) {
   const [paymentType, setPaymentType] = React.useState('Cash');
 
+  useEffect(()=>{
+    setPaymentType('Cash')
+  },[Data_information.show])
 
   return (
     <>
@@ -64,11 +67,11 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
 
           {
             paymentType == 'Cash' ? (
-              <Button  variant="primary" 
+              <Button 
                   onClick={() => 
                     {Data_information.callBack()}
                   } 
-                  className="btn-confirm  confirmationNotice-confirmationNotice-footer__iconCheck"
+                  className="bigButton--green"
                 >
               
                 <i className ="bi bi-check-circle-fill"></i>
@@ -82,9 +85,9 @@ export default function ConfirmationNotice({ Data_information }: { Data_informat
 
           {
             paymentType == 'transfer' ? (
-             <Button  variant="primary" 
-                onClick={Data_information.callBack} 
-                  className="btn-confirm  confirmationNotice-confirmationNotice-footer__iconCheck"
+             <Button 
+                onClick={Data_information.paymentConfirmation} 
+                  className="bigButton--green"
                 >
                 
               <i className="bi bi-qr-code-scan"></i>
