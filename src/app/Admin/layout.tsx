@@ -3,8 +3,9 @@
 import * as React from 'react';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { DemoProvider, useDemoRouter } from '@toolpad/core/internal';
+import { DemoProvider } from '@toolpad/core/internal';
 import { createTheme } from '@mui/material/styles';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Box from '@mui/material/Box';
 
@@ -30,13 +31,27 @@ const demoTheme = createTheme({
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const isClient = typeof window !== 'undefined';
-  const router = useDemoRouter();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const customRouter = {
+    pathname: pathname || (isClient ? window.location.pathname : '/'),
+    searchParams: searchParams || (isClient ? new URLSearchParams(window.location.search) : new URLSearchParams()),
+    navigate: (url: string | URL) => {
+      const newUrl = typeof url === 'string' ? url : url.toString();
+      router.push(newUrl);
+    },
+  };
+
+  console.log('Router pathname:', customRouter.pathname);
+  console.log('Window location:', isClient ? window.location.pathname : 'N/A');
 
   return (
     <DemoProvider window={isClient ? window : undefined}>
       <AppProvider
         navigation={NAVIGATION}
-        router={router}
+        router={customRouter}
         theme={demoTheme}
         window={isClient ? window : undefined}
         branding={{

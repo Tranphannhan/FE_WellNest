@@ -38,7 +38,7 @@ const NAVIGATION: Navigation = [
   },
 
   {
-    segment: 'human-resources',
+    segment: 'Admin/human-resources',
     title: 'Nhân sự',
     icon: <MdPeopleAlt />,
     children: [
@@ -47,7 +47,7 @@ const NAVIGATION: Navigation = [
     ],
   },
   {
-    segment: 'room',
+    segment: 'Admin/room',
     title: 'Phòng',
     icon: <BsHousesFill />,
     children: [
@@ -56,7 +56,7 @@ const NAVIGATION: Navigation = [
     ],
   },
   {
-    segment: 'list',
+    segment: 'Admin/list',
     title: 'Danh mục',
     icon: <FaClipboardList />,
     children: [
@@ -67,7 +67,7 @@ const NAVIGATION: Navigation = [
     ],
   },
   {
-    segment: 'price',
+    segment: 'Admin/price',
     title: 'Giá dịch vụ',
     icon: <RiMoneyDollarBoxFill />,
     children: [
@@ -76,7 +76,7 @@ const NAVIGATION: Navigation = [
     ],
   },
   {
-    segment: 'bill',
+    segment: 'Admin/bill',
     title: 'Hóa đơn',
     icon: <MdReceiptLong />,
     children: [
