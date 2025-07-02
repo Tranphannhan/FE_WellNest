@@ -54,7 +54,7 @@ export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedKhoa, setSelectedKhoa] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
   const getAPI = async () => {

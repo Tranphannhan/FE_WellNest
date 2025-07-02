@@ -1,4 +1,6 @@
+
 "use client";
+
 import CustomTable from "../../component/CustomTable";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -12,10 +14,11 @@ import {
   InputLabel,
   Chip,
 } from "@mui/material";
-import { useState, useMemo } from "react";
-
-import "./Staff.css";
+import { useState, useMemo, useEffect } from "react";
 import BreadcrumbComponent from "../../component/Breadcrumb";
+import getstaffAdmin from "../../services/staffSevices";
+import "./Staff.css";
+import { Staff } from "@/app/types/hospitalTypes/hospitalType";
 
 const columns = [
   { id: "Image", label: "Ảnh", sortable: false, Outstanding: false },
@@ -36,41 +39,59 @@ const columns = [
   },
 ];
 
-const rows = [
-  {
-    _id: "1",
-    TenTaiKhoan: "Nguyễn Văn A",
-    GioiTinh: "Nam",
-    SoDienThoai: "0912345678",
-    TrangThaiHoatDong: true,
-    Image: "https://i.pravatar.cc/100?img=1",
-    TenLoai: "Thu ngân",
-  },
-  {
-    _id: "2",
-    TenTaiKhoan: "Trần Thị B",
-    GioiTinh: "Nữ",
-    SoDienThoai: "0987654321",
-    TrangThaiHoatDong: false,
-    Image: "https://i.pravatar.cc/100?img=2",
-    TenLoai: "Xét nghiệm",
-  },
-  {
-    _id: "3",
-    TenTaiKhoan: "Lê Văn C",
-    GioiTinh: "Nam",
-    SoDienThoai: "0900000000",
-    TrangThaiHoatDong: true,
-    Image: "https://i.pravatar.cc/100?img=3",
-    TenLoai: "Dược sĩ",
-  },
-];
-
-const TenLoaiOP = Array.from(new Set(rows.map((row) => row.TenLoai)));
+interface rowRenderType {
+  _id: string;
+  TenTaiKhoan: string;
+  GioiTinh: string;
+  SoDienThoai: string;
+  TrangThaiHoatDong: boolean;
+  Image: string;
+  TenLoai: string;
+}
 
 export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedLoai, setSelectedLoai] = useState("");
+  const [rows, setRows] = useState<rowRenderType[]>([]);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
+
+  const loaddingAPI = async () => {
+    const data = await getstaffAdmin();
+    if (!data?.data || data.data.length === 0) {
+      setRows([]);
+      return;
+    }
+
+    const mappedRows: rowRenderType[] = data.data.map((item: Staff) => ({
+      _id: item._id,
+      TenTaiKhoan: item.TenTaiKhoan || "Không rõ",
+      GioiTinh: item.GioiTinh || "Không rõ",
+      SoDienThoai: item.SoDienThoai || "",
+      TrangThaiHoatDong:
+        typeof item.TrangThaiHoatDong === "boolean"
+          ? item.TrangThaiHoatDong
+          : true,
+
+      Image: `${API_BASE_URL}/image/${item?.Image}`,
+      TenLoai: item?.Id_LoaiTaiKhoan?.TenLoaiTaiKhoan || "Không rõ",
+    }));
+
+    console.log('dulieu', mappedRows);
+    
+
+    setRows(mappedRows);
+  };
+
+  useEffect(() => {
+    loaddingAPI();
+  }, []);
+
+  const TenLoaiOP = useMemo(
+    () => Array.from(new Set(rows.map((row) => row.TenLoai))),
+    [rows]
+  );
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -80,7 +101,7 @@ export default function Page() {
       const matchLoai = selectedLoai ? row.TenLoai === selectedLoai : true;
       return matchSearch && matchLoai;
     });
-  }, [searchText, selectedLoai]);
+  }, [searchText, selectedLoai, rows]);
 
   return (
     <>
@@ -91,6 +112,7 @@ export default function Page() {
           { title: "Nhân viên" },
         ]}
       />
+
       <div className="AdminContent-Container">
         {/* FORM TÌM KIẾM & FILTER */}
         <Box
@@ -104,9 +126,9 @@ export default function Page() {
         >
           <TextField
             sx={{
-              width: 250, // Cố định chiều rộng
+              width: 250,
               "& .MuiInputBase-root": {
-                paddingRight: "8px", // Đảm bảo có khoảng trống cho nút xóa
+                paddingRight: "8px",
                 "& .MuiInputAdornment-root": {
                   color: "#9e9e9e",
                   transition: "color 0.3s",
@@ -120,7 +142,7 @@ export default function Page() {
               },
             }}
             size="small"
-            placeholder="Tìm theo tên bác sĩ..."
+            placeholder="Tìm theo tên nhân viên..."
             variant="outlined"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
@@ -142,12 +164,7 @@ export default function Page() {
           />
 
           <FormControl sx={{ minWidth: 200 }} size="small">
-            <InputLabel
-              sx={{
-                fontSize: 14,
-                top: 2,
-              }}
-            >
+            <InputLabel sx={{ fontSize: 14, top: 2 }}>
               Loại tài khoản
             </InputLabel>
             <Select
@@ -178,17 +195,18 @@ export default function Page() {
           columns={columns}
           rows={filteredRows.map((row) => ({
             ...row,
+            Image: row.Image,
             TenLoai: (
               <Chip
-                variant="filled" // ✅ filled để có nền màu
+                variant="filled"
                 label={row.TenLoai}
                 color="primary"
                 size="small"
                 sx={{
                   fontWeight: 500,
-                  backgroundColor: "#e3f2fd", // ✅ xanh nhạt (MUI light blue)
-                  color: "#1976d2", // ✅ xanh đậm cho chữ
-                  border: "none", // ✅ không viền
+                  backgroundColor: "#e3f2fd",
+                  color: "#1976d2",
+                  border: "none",
                 }}
               />
             ),
