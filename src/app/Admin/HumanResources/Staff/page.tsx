@@ -74,8 +74,6 @@ export default function Page() {
       TenLoai: item?.Id_LoaiTaiKhoan?.TenLoaiTaiKhoan || "Không rõ",
     }));
 
-    
-
     setRows(mappedRows);
   };
 

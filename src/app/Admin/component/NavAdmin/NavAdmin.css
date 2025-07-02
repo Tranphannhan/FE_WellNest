@@ -116,3 +116,15 @@ html[data-toolpad-color-scheme="dark"] .AdminContent-Container {
   box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 6px,
               rgba(255, 255, 255, 0.1) 0px 1px 2px inset;
 }
+
+
+.Admin-containerLayout{
+  background-color: #F1F8FF ;
+}
+
+html[data-toolpad-color-scheme="dark"] .Admin-containerLayout {
+  background-color: #000000;
+  color: white;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 6px,
+              rgba(255, 255, 255, 0.1) 0px 1px 2px inset;
+}

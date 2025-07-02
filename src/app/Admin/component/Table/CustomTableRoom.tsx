@@ -45,9 +45,9 @@ export interface Column {
 interface CustomTableProps {
   columns: Column[];
   rows: rowRenderType[];
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onDisable: () => void;
+  onEdit?: (row: rowRenderType) => void;
+  onDelete?: (row: rowRenderType) => void;
+  onDisable: (row: rowRenderType) => void;
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;

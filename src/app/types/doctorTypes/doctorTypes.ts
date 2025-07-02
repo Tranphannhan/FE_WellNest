@@ -27,8 +27,9 @@ export interface DoctorType {
   Matkhau?: string;
   TrangThaiHoatDong?: boolean;
   VaiTro?: string;
-  NamSinh?: number;
+  NamSinh?: string;
   Id_PhongKham?: ClinicType;
+  SoCCCD:string;
 }
 
 

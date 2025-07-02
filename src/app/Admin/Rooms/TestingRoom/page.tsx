@@ -16,6 +16,16 @@ import CustomTableRooms, {
   Column,
   rowRenderType,
 } from "../../component/Table/CustomTableRoom";
+import { getTestingRoom } from "../../services/Room";
+
+interface TestingRoom {
+  _id: string;
+  TenPhongThietBi: string;
+  TenXetNghiem: string;
+  MoTaXetNghiem?: string;
+  Image?: string;
+  TrangThaiHoatDong?: boolean;
+}
 
 const columns: Column[] = [
   {
@@ -45,70 +55,53 @@ const columns: Column[] = [
 ];
 
 export default function Page() {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [searchText, setSearchText] = useState("");
-  const [selectedLoai, setSelectedLoai] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState(""); // Trạng thái hoạt động
   const [rows, setRows] = useState<rowRenderType[]>([]);
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  // ✅ Load API
+  const LoaddingApi = async () => {
+    try {
+      const data = await getTestingRoom();
+      if (!data?.data || data.data.length === 0) {
+        setRows([]);
+        return;
+      }
 
-  const getAPI = async () => {
-    // ✅ Dữ liệu giả lập phòng xét nghiệm
-    const fakeLabs = [
-      {
-        _id: "lab001",
-        TenPhongThietBi: "Phòng sinh hóa",
-        TenXetNghiem: "Xét nghiệm máu",
-        Image: "lab1.jpg",
-        TrangThaiHoatDong: true,
-      },
-      {
-        _id: "lab002",
-        TenPhongThietBi: "Phòng miễn dịch",
-        TenXetNghiem: "Xét nghiệm kháng thể",
-        Image: "lab2.jpg",
-        TrangThaiHoatDong: false,
-      },
-      {
-        _id: "lab003",
-        TenPhongThietBi: "Phòng vi sinh",
-        TenXetNghiem: "Xét nghiệm PCR",
-        Image: "lab3.jpg",
-        TrangThaiHoatDong: true,
-      },
-    ];
+      const mappedData: rowRenderType[] = data.data.map((item: TestingRoom) => ({
+        _id: item._id,
+        TenPhongThietBi: item.TenPhongThietBi,
+        TenXetNghiem: item.TenXetNghiem,
+        Image: item.Image?.startsWith("http")
+          ? item.Image
+          : `${API_BASE_URL}/image/${item.Image || "default.png"}`,
+        TrangThaiHoatDong: item.TrangThaiHoatDong ?? true,
+      }));
 
-    const mappedData = fakeLabs.map((item) => ({
-      _id: item._id,
-      TenPhongThietBi: item.TenPhongThietBi,
-      TenXetNghiem: item.TenXetNghiem,
-      Image: item.Image?.startsWith("http")
-        ? item.Image
-        : `${API_BASE_URL}/image/${item.Image || "default.png"}`,
-      TrangThaiHoatDong: item.TrangThaiHoatDong,
-    }));
-
-    setRows(mappedData);
+      setRows(mappedData);
+    } catch (error) {
+      console.error("Lỗi khi load phòng xét nghiệm:", error);
+    }
   };
 
   useEffect(() => {
-    getAPI();
+    LoaddingApi();
   }, []);
-
-  const loaiXetNghiemOptions = useMemo(() => {
-    const loaiSet = new Set<string>();
-    rows.forEach((r) => loaiSet.add(r.TenXetNghiem || ''));
-    return Array.from(loaiSet);
-  }, [rows]);
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
       const matchSearch = row?.TenPhongThietBi?.toLowerCase().includes(
         searchText.toLowerCase()
       );
-      const matchLoai = selectedLoai ? row.TenXetNghiem === selectedLoai : true;
-      return matchSearch && matchLoai;
+
+      const matchStatus = selectedStatus
+        ? String(row.TrangThaiHoatDong) === selectedStatus
+        : true;
+
+      return matchSearch && matchStatus;
     });
-  }, [searchText, selectedLoai, rows]);
+  }, [searchText, selectedStatus, rows]);
 
   return (
     <div className="AdminContent-Container">
@@ -155,11 +148,11 @@ export default function Page() {
         />
 
         <FormControl sx={{ minWidth: 250 }} size="small">
-          <InputLabel sx={{ fontSize: 14, top: 2 }}>Loại xét nghiệm</InputLabel>
+          <InputLabel sx={{ fontSize: 14, top: 2 }}>Trạng thái</InputLabel>
           <Select
-            label="Loại xét nghiệm"
-            value={selectedLoai}
-            onChange={(e) => setSelectedLoai(e.target.value)}
+            label="Trạng thái"
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
             sx={{
               fontSize: 14,
               height: 40,
@@ -167,12 +160,9 @@ export default function Page() {
               "& .MuiSelect-icon": { right: 8 },
             }}
           >
-            <MenuItem value="">Tất cả</MenuItem>
-            {loaiXetNghiemOptions.map((loai, i) => (
-              <MenuItem key={i} value={loai}>
-                {loai}
-              </MenuItem>
-            ))}
+            
+            <MenuItem value="true">Đang hoạt động</MenuItem>
+            <MenuItem value="false">Ngừng hoạt động</MenuItem>
           </Select>
         </FormControl>
       </Box>

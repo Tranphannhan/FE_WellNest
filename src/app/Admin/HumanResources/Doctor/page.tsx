@@ -13,6 +13,7 @@ import CustomTableHumanResources, {
   Column,
 } from "../../component/Table/CustomTableHumanResources";
 import { getDoctorAdmin, getkhoaOptions } from "../../services/DoctorSevices";
+import { useRouter } from "next/navigation";
 
 // Cấu trúc sau khi chuẩn hoá dữ liệu
 export interface rowRenderType {
@@ -48,6 +49,7 @@ export default function Page() {
   const [selectedKhoa, setSelectedKhoa] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const router = useRouter();
 
   const getAPI = async () => {
     const data = await getDoctorAdmin();
@@ -191,7 +193,7 @@ export default function Page() {
         <CustomTableHumanResources
           columns={columns}
           rows={filteredRows}
-          onEdit={(id) => {}}
+          onEdit={(id) => {router.push(`/Admin/HumanResources/Doctor/Edit/${id}`)}}
           onDelete={() => {}}
           onDisable={(id) => {}}
           showEdit={true}
