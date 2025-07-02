@@ -16,7 +16,10 @@ import CustomTableRooms, {
   Column,
   rowRenderType,
 } from "../../component/Table/CustomTableRoom";
+import { getRommm } from "../../services/Room";
+import { getkhoaOptions } from "../../services/DoctorSevices";
 
+// Cột của bảng
 const columns: Column[] = [
   { id: "_id", label: "ID Phòng", sortable: false, Outstanding: false },
   { id: "SoPhongKham", label: "Số phòng", sortable: true, Outstanding: true },
@@ -29,9 +32,26 @@ const columns: Column[] = [
   },
 ];
 
+// Interface dữ liệu chuyên khoa
+interface Khoa {
+  _id: string;
+  TenKhoa: string;
+  TrangThaiHoatDong: boolean;
+  __v?: number;
+}
+
+// Interface dữ liệu phòng
+interface PhongKham {
+  _id: string;
+  Id_Khoa: Khoa;
+  SoPhongKham: string;
+}
+
+// Dùng cho Select chuyên khoa
 interface khoaOptionsType {
   _id: string;
   TenKhoa: string;
+  TrangThaiHoatDong: boolean;
 }
 
 export default function Page() {
@@ -40,66 +60,52 @@ export default function Page() {
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const [khoaOptions, setKhoaOptions] = useState<khoaOptionsType[]>([]);
 
-  // ✅ Giả lập dữ liệu phòng khám
-  const getAPI = async () => {
-    const fakeClinicRooms = [
-      {
-        _id: "phong001",
-        SoPhongKham: "102",
-        ID_Khoa: {
-          _id: "681637a4044132235e13b8ba",
-          TenKhoa: "Nội tổng quát",
-        },
-        TrangThaiHoatDong: true,
-      },
-      {
-        _id: "phong002",
-        SoPhongKham: "103",
-        ID_Khoa: {
-          _id: "681637a4044132235e13b8bb",
-          TenKhoa: "Ngoại thần kinh",
-        },
-        TrangThaiHoatDong: false,
-      },
-      {
-        _id: "phong003",
-        SoPhongKham: "104",
-        ID_Khoa: {
-          _id: "681637a4044132235e13b8bc",
-          TenKhoa: "Tai - Mũi - Họng",
-        },
-        TrangThaiHoatDong: true,
-      },
-    ];
+  
+  
+  const loaddingAPISelect = async () => {
+    try {
+      const data = await getkhoaOptions();
+      if (data?.data && data.data.length > 0) {
+        const activeKhoa = data.data.filter(
+          (item: khoaOptionsType) => item.TrangThaiHoatDong
+        );
+        setKhoaOptions(activeKhoa);
+      } else {
+        setKhoaOptions([]);
+      }
+    } catch (error) {
+      console.error("Lỗi khi load khoa options:", error);
+    }
+  };
 
-    const mappedData = fakeClinicRooms.map((item) => ({
-      _id: item._id,
-      SoPhongKham: item.SoPhongKham,
-      Khoa: item.ID_Khoa?.TenKhoa || "Không rõ",
-      TrangThaiHoatDong: item.TrangThaiHoatDong,
-    }));
+  // ✅ Lấy danh sách phòng khám từ API
+  const loaddingAPI = async () => {
+    try {
+      const data = await getRommm();
+      if (!data?.data || data.data.length === 0) {
+        setRows([]);
+        return;
+      }
 
-    setRows(mappedData);
+      const mappedRows: rowRenderType[] = data.data.map((item: PhongKham) => ({
+        _id: item._id,
+        SoPhongKham: item.SoPhongKham,
+        Khoa: item.Id_Khoa?.TenKhoa || "Không rõ",
+        TrangThaiHoatDong: item.Id_Khoa?.TrangThaiHoatDong ?? true,
+      }));
 
-    // Tự động tạo danh sách khoa từ dữ liệu giả
-    const uniqueKhoa = Array.from(
-      new Map(
-        fakeClinicRooms.map((item) => [
-          item.ID_Khoa._id,
-          {
-            _id: item.ID_Khoa._id,
-            TenKhoa: item.ID_Khoa.TenKhoa,
-          },
-        ])
-      ).values()
-    );
-    setKhoaOptions(uniqueKhoa);
+      setRows(mappedRows);
+    } catch (error) {
+      console.error("Lỗi khi load danh sách phòng:", error);
+    }
   };
 
   useEffect(() => {
-    getAPI();
+    loaddingAPI();
+    loaddingAPISelect();
   }, []);
 
+  // ✅ Lọc dữ liệu theo tìm kiếm + chuyên khoa
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
       const matchSearch = row?.SoPhongKham?.toLowerCase().includes(
@@ -120,7 +126,7 @@ export default function Page() {
         ]}
       />
 
-      {/* FORM TÌM KIẾM & LỌC */}
+      {/* Tìm kiếm & lọc */}
       <Box
         sx={{
           display: "flex",
@@ -138,12 +144,6 @@ export default function Page() {
               "& .MuiInputAdornment-root": {
                 color: "#9e9e9e",
               },
-            },
-            "&:hover .MuiInputAdornment-root": {
-              color: "#424242",
-            },
-            "& .Mui-focused .MuiInputAdornment-root": {
-              color: "#1976d2",
             },
           }}
           size="small"
@@ -191,13 +191,13 @@ export default function Page() {
         </FormControl>
       </Box>
 
-      {/* BẢNG HIỂN THỊ PHÒNG */}
+      {/* Bảng hiển thị */}
       <CustomTableRooms
         columns={columns}
         rows={filteredRows}
-        onEdit={() => {}}
-        onDelete={() => {}}
-        onDisable={() => {}}
+        onEdit={(row) => console.log("Edit", row)}
+        onDelete={(row) => console.log("Delete", row)}
+        onDisable={(row) => console.log("Disable", row)}
         showEdit={true}
         showDelete={false}
         showDisable={true}
