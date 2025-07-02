@@ -179,15 +179,15 @@ const App: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>(
     doctor.Image
       ? [
-          {
-            uid: "-1",
-            name: "Ảnh bác sĩ",
-            status: "done",
-            url: doctor.Image.startsWith("data:")
-              ? doctor.Image
-              : `${API_BASE_URL}/image/${doctor.Image}`,
-          },
-        ]
+        {
+          uid: "-1",
+          name: "Ảnh bác sĩ",
+          status: "done",
+          url: doctor.Image.startsWith("data:")
+            ? doctor.Image
+            : `${API_BASE_URL}/image/${doctor.Image}`,
+        },
+      ]
       : []
   );
 
@@ -317,12 +317,9 @@ const App: React.FC = () => {
     }
   }, [doctor.ID_Khoa?._id]);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
+  const handleChange = (e: { target: { name?: string; value: string } }) => {
     const { name, value } = e.target;
+
     if (name === "confirmPassword") {
       setConfirmPassword(value);
     } else if (name === "ID_Khoa") {
@@ -345,7 +342,7 @@ const App: React.FC = () => {
     } else {
       setDoctor((prevDoctor) => ({
         ...prevDoctor,
-        [name]: value,
+        [name as string]: value,
       }));
     }
     console.log(`Field ${name} updated to:`, value);
@@ -386,111 +383,111 @@ const App: React.FC = () => {
       setSelectedFile(latest.originFileObj); // nếu cần gửi lên server
     }
   };
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setMessage("");
-  setErrors({});
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage("");
+    setErrors({});
 
-  // Initialize errors object
-  const newErrors: Errors = {};
+    // Initialize errors object
+    const newErrors: Errors = {};
 
-  // Validate required fields
-  if (!doctor.TenBacSi) {
-    newErrors.TenBacSi = "Họ và tên là bắt buộc.";
-  }
-  if (!doctor.SoCCCD) {
-    newErrors.SoCCCD = "Số CCCD là bắt buộc.";
-  } else if (!/^\d{12}$/.test(doctor.SoCCCD)) {
-    newErrors.SoCCCD = "Số CCCD phải có đúng 12 chữ số.";
-  }
-  if (!doctor.SoDienThoai) {
-    newErrors.SoDienThoai = "Số điện thoại là bắt buộc.";
-  } else if (!/^\d{10}$/.test(doctor.SoDienThoai)) {
-    newErrors.SoDienThoai = "Số điện thoại phải có đúng 10 chữ số.";
-  }
-  if (!doctor.NamSinh) {
-    newErrors.NamSinh = "Năm sinh là bắt buộc.";
-  } else {
-    const year = parseInt(doctor.NamSinh, 10);
-    const currentYear = new Date().getFullYear();
-    if (isNaN(year) || year < 1900 || year > currentYear) {
-      newErrors.NamSinh = `Năm sinh phải nằm trong khoảng 1900 đến ${currentYear}.`;
+    // Validate required fields
+    if (!doctor.TenBacSi) {
+      newErrors.TenBacSi = "Họ và tên là bắt buộc.";
     }
-  }
-  if (!doctor.ID_Khoa?._id) {
-    newErrors.ID_Khoa = "Chọn chuyên khoa là bắt buộc.";
-  }
-  if (!doctor.Id_PhongKham?._id) {
-    newErrors.Id_PhongKham = "Chọn phòng khám là bắt buộc.";
-  }
-  if (!doctor.HocVi) {
-    newErrors.HocVi = "Chọn học vị là bắt buộc.";
-  }
-  if (!doctor.Image || doctor.Image === "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar") {
-    newErrors.Image = "Ảnh bác sĩ là bắt buộc.";
-  }
-
-  // Validate password only if entered
-  if (doctor.Matkhau) {
-    if (doctor.Matkhau.length < 6) {
-      newErrors.Matkhau = "Mật khẩu phải có ít nhất 6 ký tự.";
+    if (!doctor.SoCCCD) {
+      newErrors.SoCCCD = "Số CCCD là bắt buộc.";
+    } else if (!/^\d{12}$/.test(doctor.SoCCCD)) {
+      newErrors.SoCCCD = "Số CCCD phải có đúng 12 chữ số.";
     }
-    if (doctor.Matkhau !== confirmPassword) {
-      newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
+    if (!doctor.SoDienThoai) {
+      newErrors.SoDienThoai = "Số điện thoại là bắt buộc.";
+    } else if (!/^\d{10}$/.test(doctor.SoDienThoai)) {
+      newErrors.SoDienThoai = "Số điện thoại phải có đúng 10 chữ số.";
     }
-  }
+    if (!doctor.NamSinh) {
+      newErrors.NamSinh = "Năm sinh là bắt buộc.";
+    } else {
+      const year = parseInt(doctor.NamSinh, 10);
+      const currentYear = new Date().getFullYear();
+      if (isNaN(year) || year < 1900 || year > currentYear) {
+        newErrors.NamSinh = `Năm sinh phải nằm trong khoảng 1900 đến ${currentYear}.`;
+      }
+    }
+    if (!doctor.ID_Khoa?._id) {
+      newErrors.ID_Khoa = "Chọn chuyên khoa là bắt buộc.";
+    }
+    if (!doctor.Id_PhongKham?._id) {
+      newErrors.Id_PhongKham = "Chọn phòng khám là bắt buộc.";
+    }
+    if (!doctor.HocVi) {
+      newErrors.HocVi = "Chọn học vị là bắt buộc.";
+    }
+    if (!doctor.Image || doctor.Image === "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar") {
+      newErrors.Image = "Ảnh bác sĩ là bắt buộc.";
+    }
 
-  // If there are errors, set them and stop submission
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    setMessage("Vui lòng kiểm tra các trường thông tin.");
-    return;
-  }
+    // Validate password only if entered
+    if (doctor.Matkhau) {
+      if (doctor.Matkhau.length < 6) {
+        newErrors.Matkhau = "Mật khẩu phải có ít nhất 6 ký tự.";
+      }
+      if (doctor.Matkhau !== confirmPassword) {
+        newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
+      }
+    }
 
-  if (!doctorId) {
-    setMessage("Không tìm thấy ID bác sĩ.");
-    return;
-  }
-
-  setIsLoading(true);
-  try {
-    const formData = new FormData();
-    formData.append("TenBacSi", doctor.TenBacSi || "");
-    formData.append("SoDienThoai", doctor.SoDienThoai || "");
-    formData.append("SoCCCD", doctor.SoCCCD || "");
-    formData.append("NamSinh", doctor.NamSinh || "");
-    formData.append("GioiTinh", doctor.GioiTinh || "");
-    formData.append("HocVi", doctor.HocVi || "");
-    formData.append("ID_Khoa", doctor.ID_Khoa?._id || "");
-    formData.append("Id_PhongKham", doctor.Id_PhongKham?._id || "");
-    formData.append("address", doctor.address || "");
-    formData.append("TrangThaiHoatDong", String(doctor.TrangThaiHoatDong));
-    if (doctor.Matkhau) formData.append("Matkhau", doctor.Matkhau);
-    if (selectedFile) formData.append("Image", selectedFile);
-
-    const response = await fetch(`${API_BASE_URL}/Bacsi/Edit/${doctorId}`, {
-      method: "PUT",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(
-        `Update API error: Status ${response.status}, ${response.statusText}, Body:`,
-        errorText
-      );
-      setMessage("Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.");
+    // If there are errors, set them and stop submission
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setMessage("Vui lòng kiểm tra các trường thông tin.");
       return;
     }
 
-    setMessage("Cập nhật thông tin bác sĩ thành công!");
-  } catch (error) {
-    console.error("Lỗi khi cập nhật:", error);
-    setMessage("Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.");
-  } finally {
-    setIsLoading(false);
-  }
-};
+    if (!doctorId) {
+      setMessage("Không tìm thấy ID bác sĩ.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("TenBacSi", doctor.TenBacSi || "");
+      formData.append("SoDienThoai", doctor.SoDienThoai || "");
+      formData.append("SoCCCD", doctor.SoCCCD || "");
+      formData.append("NamSinh", doctor.NamSinh || "");
+      formData.append("GioiTinh", doctor.GioiTinh || "");
+      formData.append("HocVi", doctor.HocVi || "");
+      formData.append("ID_Khoa", doctor.ID_Khoa?._id || "");
+      formData.append("Id_PhongKham", doctor.Id_PhongKham?._id || "");
+      formData.append("address", doctor.address || "");
+      formData.append("TrangThaiHoatDong", String(doctor.TrangThaiHoatDong));
+      if (doctor.Matkhau) formData.append("Matkhau", doctor.Matkhau);
+      if (selectedFile) formData.append("Image", selectedFile);
+
+      const response = await fetch(`${API_BASE_URL}/Bacsi/Edit/${doctorId}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          `Update API error: Status ${response.status}, ${response.statusText}, Body:`,
+          errorText
+        );
+        setMessage("Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.");
+        return;
+      }
+
+      setMessage("Cập nhật thông tin bác sĩ thành công!");
+    } catch (error) {
+      console.error("Lỗi khi cập nhật:", error);
+      setMessage("Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="AdminContent-Container">
@@ -544,7 +541,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
           <div className="form-section">
             <div className="form-grid">
-              <div  className="form-control">
+              <div className="form-control">
                 <label htmlFor="TenBacSi" className="label">
                   Họ và tên <span className="red-star">*</span>:
                 </label>
