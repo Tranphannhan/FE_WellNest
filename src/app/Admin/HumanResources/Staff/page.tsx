@@ -16,9 +16,9 @@ import {
 } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 import BreadcrumbComponent from "../../component/Breadcrumb";
-import getstaffAdmin from "../../services/staffSevices";
 import "./Staff.css";
 import { Staff } from "@/app/types/hospitalTypes/hospitalType";
+import { getOptionstaffAdmin, getstaffAdmin } from "../../services/staffSevices";
 
 const columns = [
   { id: "Image", label: "Ảnh", sortable: false, Outstanding: false },
@@ -78,7 +78,6 @@ export default function Page() {
       TenLoai: item?.Id_LoaiTaiKhoan?.TenLoaiTaiKhoan || "Không rõ",
     }));
 
-    console.log('dulieu', mappedRows);
     
 
     setRows(mappedRows);
@@ -88,10 +87,35 @@ export default function Page() {
     loaddingAPI();
   }, []);
 
-  const TenLoaiOP = useMemo(
-    () => Array.from(new Set(rows.map((row) => row.TenLoai))),
-    [rows]
-  );
+
+  // --- 
+  interface TenLoaiOPType {
+    _id: string,
+    TenLoaiTaiKhoan: string,
+    VaiTro : string
+  }
+
+
+  const [TenLoaiOP , setTenLoaiOP] = useState <TenLoaiOPType []> ([]);
+    const loaddingAPISelect  = async () => {
+      const data = await getOptionstaffAdmin ();
+        if (!data) return;
+
+        console.log('chay');
+        console.log(data);
+
+
+        setTenLoaiOP (data)
+    }
+  
+
+  useEffect (() => {
+    loaddingAPISelect ();
+  }, []);
+
+
+
+  // ----
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -182,13 +206,14 @@ export default function Page() {
             >
               <MenuItem value="">Tất cả</MenuItem>
               {TenLoaiOP.map((TenLoai) => (
-                <MenuItem key={TenLoai} value={TenLoai}>
-                  {TenLoai}
+                <MenuItem key={TenLoai._id} value={TenLoai._id}>
+                  {TenLoai.TenLoaiTaiKhoan}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Box>
+
 
         {/* BẢNG DỮ LIỆU */}
         <CustomTable

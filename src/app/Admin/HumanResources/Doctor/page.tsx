@@ -18,7 +18,7 @@ import { useState, useMemo, useEffect } from "react";
 import "./Doctor.css";
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import { DoctorType } from "@/app/types/doctorTypes/doctorTypes";
-import getDoctorAdmin from "../../services/DoctorSevices";
+import { getDoctorAdmin, getkhoaOptions } from "../../services/DoctorSevices";
 
 
 // Cấu trúc sau khi chuẩn hoá dữ liệu
@@ -59,7 +59,6 @@ export default function Page() {
 
   const getAPI = async () => {
     const data = await getDoctorAdmin();
-
     if (!data?.data || data.data.length === 0) {
       setRows([]);
       return;
@@ -80,12 +79,11 @@ export default function Page() {
         typeof item.TrangThaiHoatDong === "boolean"
           ? item.TrangThaiHoatDong
           : true,
-Image:
-  item?.Image?.startsWith("http")
-    ? item.Image
-    : `${API_BASE_URL}/image/${item?.Image || "default.png"}`
-
-    }));
+      Image:
+        item?.Image?.startsWith("http")
+          ? item.Image
+          : `${API_BASE_URL}/image/${item?.Image || "default.png"}`
+      }));
 
     setRows(mappedData);
   };
@@ -94,10 +92,25 @@ Image:
     getAPI();
   }, []);
 
-  const khoaOptions = useMemo(
-    () => Array.from(new Set(rows.map((row) => row.Khoa))),
-    [rows]
-  );
+
+  interface khoaOptionsType {
+    _id : string,
+    TenKhoa : string,
+    TrangThaiHoatDong : boolean
+  }
+
+  const [khoaOptions , setKhoaOptions] = useState <khoaOptionsType []> ([]);
+  const loaddingAPISelect  = async () => {
+    const data = await getkhoaOptions ();
+    if (data.data.length === 0 ? [] : data.data)
+    setKhoaOptions (data.data)
+  }
+
+  useEffect (() => {
+    loaddingAPISelect ();
+  }, []);
+
+
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -183,8 +196,8 @@ Image:
             >
               <MenuItem value="">Tất cả</MenuItem>
               {khoaOptions.map((khoa) => (
-                <MenuItem key={khoa} value={khoa}>
-                  {khoa}
+                <MenuItem key={khoa._id} value={khoa._id}>
+                  {khoa.TenKhoa}
                 </MenuItem>
               ))}
             </Select>
