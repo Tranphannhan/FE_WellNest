@@ -1,4 +1,5 @@
 "use client";
+
 import CustomTable from "../../component/CustomTable";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -12,10 +13,26 @@ import {
   InputLabel,
   Chip,
 } from "@mui/material";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import "./Doctor.css";
 import BreadcrumbComponent from "../../component/Breadcrumb";
+import { DoctorType } from "@/app/types/doctorTypes/doctorTypes";
+import getDoctorAdmin from "../../services/DoctorSevices";
+
+
+// Cấu trúc sau khi chuẩn hoá dữ liệu
+interface rowRenderType {
+  _id: string;
+  TenBacSi: string;
+  GioiTinh: string;
+  HocVi: string;
+  SoDienThoai: string;
+  Khoa: string;
+  Phong: string;
+  TrangThaiHoatDong: boolean;
+  Image: string;
+}
 
 const columns = [
   { id: "Image", label: "Ảnh", sortable: false, Outstanding: false },
@@ -33,53 +50,55 @@ const columns = [
   },
 ];
 
-const rows = [
-  {
-    _id: "1",
-    TenBacSi: "BS. Nguyễn Văn A",
-    GioiTinh: "Nam",
-    HocVi: "Thạc sĩ",
-    SoDienThoai: "0912345678",
-    Khoa: "Chấn thương chỉnh hình",
-    Phong: "101",
-    TrangThaiHoatDong: true,
-    Image: "https://i.pravatar.cc/100?img=1",
-  },
-  {
-    _id: "2",
-    TenBacSi: "BS. Trần Thị B",
-    GioiTinh: "Nữ",
-    HocVi: "Tiến sĩ",
-    SoDienThoai: "0987654321",
-    Khoa: "Tai mũi họng",
-    Phong: "102",
-    TrangThaiHoatDong: false,
-    Image: "https://i.pravatar.cc/100?img=2",
-  },
-  {
-    _id: "3",
-    TenBacSi: "BS. Lê Văn C",
-    GioiTinh: "Nam",
-    HocVi: "Bác sĩ nội trú",
-    SoDienThoai: "0900000000",
-    Khoa: "Tai mũi họng",
-    Phong: "103",
-    TrangThaiHoatDong: true,
-    Image: "https://i.pravatar.cc/100?img=3",
-  },
-];
-
 export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedKhoa, setSelectedKhoa] = useState("");
+  const [rows, setRows] = useState<rowRenderType[]>([]);
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  // Danh sách chuyên khoa không trùng
+
+  const getAPI = async () => {
+    const data = await getDoctorAdmin();
+
+    if (!data?.data || data.data.length === 0) {
+      setRows([]);
+      return;
+    }
+
+    const mappedData = data.data.map((item: DoctorType) => ({
+      _id: item._id,
+      TenBacSi: item.TenBacSi || "Không rõ",
+      GioiTinh: item.GioiTinh || "Không rõ",
+      HocVi: item.HocVi || "Không rõ",
+      SoDienThoai: item.SoDienThoai || "",
+      Khoa:
+        item?.ID_Khoa?.TenKhoa ||
+        item?.ChuyenKhoa ||
+        "Không rõ",
+      Phong: item?.Id_PhongKham?.SoPhongKham || "N/A",
+      TrangThaiHoatDong:
+        typeof item.TrangThaiHoatDong === "boolean"
+          ? item.TrangThaiHoatDong
+          : true,
+Image:
+  item?.Image?.startsWith("http")
+    ? item.Image
+    : `${API_BASE_URL}/image/${item?.Image || "default.png"}`
+
+    }));
+
+    setRows(mappedData);
+  };
+
+  useEffect(() => {
+    getAPI();
+  }, []);
+
   const khoaOptions = useMemo(
     () => Array.from(new Set(rows.map((row) => row.Khoa))),
-    []
+    [rows]
   );
 
-  // Lọc dữ liệu theo từ khóa và chuyên khoa
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
       const matchSearch = row.TenBacSi.toLowerCase().includes(
@@ -88,7 +107,7 @@ export default function Page() {
       const matchKhoa = selectedKhoa ? row.Khoa === selectedKhoa : true;
       return matchSearch && matchKhoa;
     });
-  }, [searchText, selectedKhoa]);
+  }, [searchText, selectedKhoa, rows]);
 
   return (
     <>
@@ -99,6 +118,7 @@ export default function Page() {
           { title: "Bác sĩ" },
         ]}
       />
+
       <div className="AdminContent-Container">
         {/* FORM TÌM KIẾM & FILTER */}
         <Box
@@ -112,12 +132,11 @@ export default function Page() {
         >
           <TextField
             sx={{
-              width: 250, // Cố định chiều rộng
+              width: 250,
               "& .MuiInputBase-root": {
-                paddingRight: "8px", // Đảm bảo có khoảng trống cho nút xóa
+                paddingRight: "8px",
                 "& .MuiInputAdornment-root": {
                   color: "#9e9e9e",
-                  transition: "color 0.3s",
                 },
               },
               "&:hover .MuiInputAdornment-root": {
@@ -150,14 +169,7 @@ export default function Page() {
           />
 
           <FormControl sx={{ minWidth: 200 }} size="small">
-            <InputLabel
-              sx={{
-                fontSize: 14,
-                top: 2,
-              }}
-            >
-              Chuyên khoa
-            </InputLabel>
+            <InputLabel sx={{ fontSize: 14, top: 2 }}>Chuyên khoa</InputLabel>
             <Select
               label="Chuyên khoa"
               value={selectedKhoa}
@@ -165,10 +177,8 @@ export default function Page() {
               sx={{
                 fontSize: 14,
                 height: 40,
-                pl: 1, // padding-left
-                "& .MuiSelect-icon": {
-                  right: 8, // chỉnh khoảng cách icon
-                },
+                pl: 1,
+                "& .MuiSelect-icon": { right: 8 },
               }}
             >
               <MenuItem value="">Tất cả</MenuItem>
@@ -184,23 +194,26 @@ export default function Page() {
         {/* BẢNG DỮ LIỆU */}
         <CustomTable
           columns={columns}
-          rows={filteredRows.map((row) => ({
-            ...row,
-            Khoa: (
-              <Chip
-                label={row.Khoa}
-                color="primary"
-                size="small"
-                variant="filled" // ✅ filled để có nền màu
-                sx={{
-                  fontWeight: 500,
-                  backgroundColor: "#e3f2fd", // ✅ xanh nhạt (MUI light blue)
-                  color: "#1976d2", // ✅ xanh đậm cho chữ
-                  border: "none", // ✅ không viền
-                }}
-              />
-            ),
-          }))}
+rows={filteredRows.map((row) => ({
+  ...row,
+  Khoa: (
+    <Chip
+      label={row.Khoa}
+      color="primary"
+      size="small"
+      variant="filled"
+      sx={{
+        fontWeight: 500,
+        backgroundColor: "#e3f2fd",
+        color: "#1976d2",
+        border: "none",
+      }}
+    />
+  ),
+  // Đảm bảo Image là string URL
+  Image: row.Image || "https://i.pravatar.cc/100?img=11",
+}))}
+
           onEdit={(row) => console.log("Sửa:", row)}
           onDelete={(row) => console.log("Xóa:", row)}
           onDisable={(row) => console.log("Vô hiệu:", row)}

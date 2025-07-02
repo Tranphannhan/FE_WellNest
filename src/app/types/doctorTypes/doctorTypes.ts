@@ -7,6 +7,12 @@ export interface ClinicType {
   SoPhongKham?: string;
 }
 
+export interface Khoa {
+ _id: string,
+  TenKhoa : string ,
+  TrangThaiHoatDong : boolean
+}
+
 // Bác sĩ
 export interface DoctorType {
   _id?: string;
@@ -16,7 +22,7 @@ export interface DoctorType {
   ChuyenKhoa?: string;
   HocVi?: string;
   __v?: number;
-  ID_Khoa?: string;
+  ID_Khoa?: Khoa;
   Image?: string;
   Matkhau?: string;
   TrangThaiHoatDong?: boolean;
