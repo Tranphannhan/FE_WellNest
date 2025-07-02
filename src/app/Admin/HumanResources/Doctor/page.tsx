@@ -19,6 +19,7 @@ import "./Doctor.css";
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import { DoctorType } from "@/app/types/doctorTypes/doctorTypes";
 import getDoctorAdmin from "../../services/DoctorSevices";
+import { useRouter } from "next/navigation";
 
 
 // Cấu trúc sau khi chuẩn hoá dữ liệu
@@ -54,6 +55,8 @@ export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedKhoa, setSelectedKhoa] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
+
+  const router = useRouter();
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
@@ -214,7 +217,7 @@ rows={filteredRows.map((row) => ({
   Image: row.Image || "https://i.pravatar.cc/100?img=11",
 }))}
 
-          onEdit={(row) => console.log("Sửa:", row)}
+          onEdit={(row) => router.push(`/Admin/HumanResources/Doctor/Edit/${row._id}`)}
           onDelete={(row) => console.log("Xóa:", row)}
           onDisable={(row) => console.log("Vô hiệu:", row)}
           showEdit={true}
