@@ -1,5 +1,5 @@
 "use client";
-import CustomTable from "../../component/CustomTable";
+
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
@@ -10,14 +10,26 @@ import {
   FormControl,
   Select,
   InputLabel,
-  Chip,
 } from "@mui/material";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
-import "./Staff.css";
 import BreadcrumbComponent from "../../component/Breadcrumb";
+import "./Staff.css";
+import { Staff } from "@/app/types/hospitalTypes/hospitalType";
+import CustomTableHumanResources, { Column } from "../../component/Table/CustomTableHumanResources";
+import { getOptionstaffAdmin, getstaffAdmin } from "../../services/staffSevices";
 
-const columns = [
+export interface rowRenderType {
+  _id: string;
+  TenTaiKhoan: string;
+  GioiTinh: string;
+  SoDienThoai: string;
+  TrangThaiHoatDong: boolean;
+  Image: string;
+  TenLoai: string;
+}
+
+const columns:Column[]  = [
   { id: "Image", label: "Ảnh", sortable: false, Outstanding: false },
   { id: "TenTaiKhoan", label: "Họ tên", sortable: true, Outstanding: true },
   { id: "GioiTinh", label: "Giới tính", sortable: true, Outstanding: false },
@@ -34,43 +46,72 @@ const columns = [
     sortable: true,
     Outstanding: false,
   },
-];
-
-const rows = [
-  {
-    _id: "1",
-    TenTaiKhoan: "Nguyễn Văn A",
-    GioiTinh: "Nam",
-    SoDienThoai: "0912345678",
-    TrangThaiHoatDong: true,
-    Image: "https://i.pravatar.cc/100?img=1",
-    TenLoai: "Thu ngân",
-  },
-  {
-    _id: "2",
-    TenTaiKhoan: "Trần Thị B",
-    GioiTinh: "Nữ",
-    SoDienThoai: "0987654321",
-    TrangThaiHoatDong: false,
-    Image: "https://i.pravatar.cc/100?img=2",
-    TenLoai: "Xét nghiệm",
-  },
-  {
-    _id: "3",
-    TenTaiKhoan: "Lê Văn C",
-    GioiTinh: "Nam",
-    SoDienThoai: "0900000000",
-    TrangThaiHoatDong: true,
-    Image: "https://i.pravatar.cc/100?img=3",
-    TenLoai: "Dược sĩ",
-  },
-];
-
-const TenLoaiOP = Array.from(new Set(rows.map((row) => row.TenLoai)));
+] as const;
 
 export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedLoai, setSelectedLoai] = useState("");
+  const [rows, setRows] = useState<rowRenderType[]>([]);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  const loaddingAPI = async () => {
+    const data = await getstaffAdmin();
+    if (!data?.data || data.data.length === 0) {
+      setRows([]);
+      return;
+    }
+
+    const mappedRows: rowRenderType[] = data.data.map((item: Staff) => ({
+      _id: item._id,
+      TenTaiKhoan: item.TenTaiKhoan || "Không rõ",
+      GioiTinh: item.GioiTinh || "Không rõ",
+      SoDienThoai: item.SoDienThoai || "",
+      TrangThaiHoatDong:
+        typeof item.TrangThaiHoatDong === "boolean"
+          ? item.TrangThaiHoatDong
+          : true,
+      Image: `${API_BASE_URL}/image/${item?.Image || "default.png"}`,
+      TenLoai: item?.Id_LoaiTaiKhoan?.TenLoaiTaiKhoan || "Không rõ",
+    }));
+
+    
+
+    setRows(mappedRows);
+  };
+
+  useEffect(() => {
+    loaddingAPI();
+  }, []);
+
+
+  // --- 
+  interface TenLoaiOPType {
+    _id: string,
+    TenLoaiTaiKhoan: string,
+    VaiTro : string
+  }
+
+
+  const [TenLoaiOP , setTenLoaiOP] = useState <TenLoaiOPType []> ([]);
+    const loaddingAPISelect  = async () => {
+      const data = await getOptionstaffAdmin ();
+        if (!data) return;
+
+        console.log('chay');
+        console.log(data);
+
+
+        setTenLoaiOP (data)
+    }
+  
+
+  useEffect (() => {
+    loaddingAPISelect ();
+  }, []);
+
+
+
+  // ----
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -80,18 +121,20 @@ export default function Page() {
       const matchLoai = selectedLoai ? row.TenLoai === selectedLoai : true;
       return matchSearch && matchLoai;
     });
-  }, [searchText, selectedLoai]);
+  }, [searchText, selectedLoai, rows]);
 
   return (
     <>
-      <BreadcrumbComponent
+      
+
+      <div className="AdminContent-Container">
+        <BreadcrumbComponent
         items={[
           { title: "Trang chủ", href: "/Admin" },
           { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
           { title: "Nhân viên" },
         ]}
       />
-      <div className="AdminContent-Container">
         {/* FORM TÌM KIẾM & FILTER */}
         <Box
           sx={{
@@ -104,9 +147,9 @@ export default function Page() {
         >
           <TextField
             sx={{
-              width: 250, // Cố định chiều rộng
+              width: 250,
               "& .MuiInputBase-root": {
-                paddingRight: "8px", // Đảm bảo có khoảng trống cho nút xóa
+                paddingRight: "8px",
                 "& .MuiInputAdornment-root": {
                   color: "#9e9e9e",
                   transition: "color 0.3s",
@@ -120,7 +163,7 @@ export default function Page() {
               },
             }}
             size="small"
-            placeholder="Tìm theo tên bác sĩ..."
+            placeholder="Tìm theo tên nhân viên..."
             variant="outlined"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
@@ -141,13 +184,8 @@ export default function Page() {
             }}
           />
 
-          <FormControl sx={{ minWidth: 200 }} size="small">
-            <InputLabel
-              sx={{
-                fontSize: 14,
-                top: 2,
-              }}
-            >
+          <FormControl sx={{ minWidth: 250 }} size="small">
+            <InputLabel sx={{ fontSize: 14, top: 2 }}>
               Loại tài khoản
             </InputLabel>
             <Select
@@ -165,37 +203,22 @@ export default function Page() {
             >
               <MenuItem value="">Tất cả</MenuItem>
               {TenLoaiOP.map((TenLoai) => (
-                <MenuItem key={TenLoai} value={TenLoai}>
-                  {TenLoai}
+                <MenuItem key={TenLoai._id} value={TenLoai._id}>
+                  {TenLoai.TenLoaiTaiKhoan}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Box>
 
+
         {/* BẢNG DỮ LIỆU */}
-        <CustomTable
+        <CustomTableHumanResources
           columns={columns}
-          rows={filteredRows.map((row) => ({
-            ...row,
-            TenLoai: (
-              <Chip
-                variant="filled" // ✅ filled để có nền màu
-                label={row.TenLoai}
-                color="primary"
-                size="small"
-                sx={{
-                  fontWeight: 500,
-                  backgroundColor: "#e3f2fd", // ✅ xanh nhạt (MUI light blue)
-                  color: "#1976d2", // ✅ xanh đậm cho chữ
-                  border: "none", // ✅ không viền
-                }}
-              />
-            ),
-          }))}
-          onEdit={(row) => console.log("Sửa:", row)}
-          onDelete={(row) => console.log("Xóa:", row)}
-          onDisable={(row) => console.log("Vô hiệu:", row)}
+          rows={filteredRows}
+          onEdit={() => {}}
+          onDelete={() => {}}
+          onDisable={() => {}}
           showEdit={true}
           showDelete={false}
           showDisable={true}

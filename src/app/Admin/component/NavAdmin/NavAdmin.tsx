@@ -48,12 +48,12 @@ const NAVIGATION: Navigation = [
     ],
   },
   {
-    segment: 'Admin/room',
+    segment: 'Admin/Rooms',
     title: 'Phòng',
     icon: <BsHousesFill />,
     children: [
-      { segment: 'clinic', title: 'Phòng khám', icon: <FaHouseChimneyMedical /> },
-      { segment: 'testing-room', title: 'Phòng xét nhiệm', icon: <FaHouseMedicalCircleExclamation /> },
+      { segment: 'Clinic', title: 'Phòng khám', icon: <FaHouseChimneyMedical /> },
+      { segment: 'TestingRoom', title: 'Phòng xét nhiệm', icon: <FaHouseMedicalCircleExclamation /> },
     ],
   },
   {

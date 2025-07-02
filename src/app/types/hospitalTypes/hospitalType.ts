@@ -168,3 +168,26 @@ export type ParaclinicalResponse = {
 //   NhacNho : string;
 // }
 
+
+
+// Tài khoản
+export interface Accounttype {
+  _id: string;
+  TenLoaiTaiKhoan: string;
+  VaiTro: string;
+  __v: number;
+}
+
+
+export interface Staff {
+  _id: string;
+  Id_LoaiTaiKhoan: Accounttype;
+  TenTaiKhoan: string;
+  MatKhau: string;
+  SoDienThoai: string;
+  SoCCCD: string;
+  Image: string;
+  __v: number;
+  TrangThaiHoatDong: boolean;
+  GioiTinh : string
+}

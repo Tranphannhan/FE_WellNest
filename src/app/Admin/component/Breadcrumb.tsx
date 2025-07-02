@@ -28,7 +28,7 @@ const BreadcrumbComponent: React.FC<Props> = ({ items }) => {
   if (!isMounted || !items) return null;
 
   return (
-    <div style={{ position: 'absolute', top: 68, padding: '8px 0' }}>
+    <div style={{ position: 'absolute', top: -33, padding: '8px 0' }}>
       <Breadcrumb>
         <BreadcrumbList>
           {items.map((item, index) => {
