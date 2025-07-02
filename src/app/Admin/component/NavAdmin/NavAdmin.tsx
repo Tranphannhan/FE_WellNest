@@ -3,10 +3,11 @@ import { MdAdminPanelSettings, MdOutlineManageAccounts, MdOutlineReceiptLong, Md
 import { FaClipboardList, FaHouseChimneyMedical, FaHouseMedicalCircleExclamation, FaUserDoctor } from 'react-icons/fa6';
 import { GiMedicines } from 'react-icons/gi';
 import { LuLayoutDashboard, LuStethoscope } from "react-icons/lu";
-import { IoSettingsSharp } from "react-icons/io5";
+import { IoPricetagsOutline, IoSettingsSharp } from "react-icons/io5";
 import { BsHousesFill } from 'react-icons/bs';
 import { TbMicroscope } from 'react-icons/tb';
-import { RiMoneyDollarBoxFill, RiMoneyDollarBoxLine } from "react-icons/ri";
+import { ImPriceTags } from "react-icons/im";
+import { CiViewList } from "react-icons/ci";
 import type { Navigation } from '@toolpad/core/AppProvider';
 
 const NAVIGATION: Navigation = [
@@ -38,12 +39,12 @@ const NAVIGATION: Navigation = [
   },
 
   {
-    segment: 'Admin/human-resources',
+    segment: 'Admin/HumanResources',
     title: 'Nhân sự',
     icon: <MdPeopleAlt />,
     children: [
-      { segment: 'doctor', title: 'Bác sĩ', icon: <FaUserDoctor /> },
-      { segment: 'staff', title: 'Nhân viên', icon: <BiSolidGroup /> },
+      { segment: 'Doctor', title: 'Bác sĩ', icon: <FaUserDoctor /> },
+      { segment: 'Staff', title: 'Nhân viên', icon: <BiSolidGroup /> },
     ],
   },
   {
@@ -62,17 +63,16 @@ const NAVIGATION: Navigation = [
     children: [
       { segment: 'account-type', title: 'Loại tài khoản', icon: <MdOutlineManageAccounts /> },
       { segment: 'test-type', title: 'Loại xét nghiệm', icon: <TbMicroscope /> },
-      { segment: 'type-of-medicine', title: 'Loại thuốc', icon: <GiMedicines /> },
       { segment: 'department-type', title: 'Loại khoa', icon: <LuStethoscope /> },
     ],
   },
   {
     segment: 'Admin/price',
     title: 'Giá dịch vụ',
-    icon: <RiMoneyDollarBoxFill />,
+    icon: <ImPriceTags />,
     children: [
-      { segment: 'examination-invoice', title: 'Giá khám', icon: <RiMoneyDollarBoxLine /> },
-      { segment: 'test-invoice', title: 'Giá xét nghiệm', icon: <RiMoneyDollarBoxLine /> },
+      { segment: 'examination-invoice', title: 'Giá khám', icon: <IoPricetagsOutline /> },
+      { segment: 'test-invoice', title: 'Giá xét nghiệm', icon: <IoPricetagsOutline /> },
     ],
   },
   {
@@ -83,6 +83,15 @@ const NAVIGATION: Navigation = [
       { segment: 'examination-price', title: 'Khám', icon: <MdOutlineReceiptLong /> },
       { segment: 'medicine-price', title: 'Đơn thuốc', icon: <MdOutlineReceiptLong /> },
       { segment: 'test-price', title: 'Xét nghiệm', icon: <MdOutlineReceiptLong /> },
+    ],
+  },
+  {
+    segment: 'Admin/Medicine',
+    title: 'Thuốc',
+    icon: <GiMedicines />,
+    children: [
+      { segment: 'examination-price', title: 'Thuốc', icon: <GiMedicines /> },
+      { segment: 'type-of-medicine', title: 'Loại thuốc', icon: <CiViewList /> },
     ],
   },
   {

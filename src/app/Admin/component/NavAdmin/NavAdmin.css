@@ -13,7 +13,7 @@
 }
 
 .MuiListItemIcon-root.toolpad-demo-app-12zuami-MuiListItemIcon-root {
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .toolpad-demo-app-1g0zqb1::-webkit-scrollbar {
@@ -55,6 +55,35 @@
     width: 270px;
 }
 
-/* button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.toolpad-demo-app-1sv69n2-MuiButtonBase-root-MuiIconButton-root {
+button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.toolpad-demo-app-1sv69n2-MuiButtonBase-root-MuiIconButton-root {
     display: none;
+}
+
+.MuiBox-root.toolpad-demo-app-0 {
+    background-color: var(--mui-palette-action-hover);
+    padding: 8px 0;
+    border-radius: 4px;
+}
+
+.Admin-containerLayout {
+    height: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 35px;
+}
+
+/* .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorLeft.MuiDrawer-paperAnchorDockedLeft.toolpad-demo-app-oc2eyy-MuiPaper-root-MuiDrawer-paper {
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 } */
+
+nav.MuiBox-root.toolpad-demo-app-w1xzj3::-webkit-scrollbar{
+    display: none;
+}
+
+.MuiList-root MuiList-padding toolpad-demo-app-1ecfr0c-MuiList-root::-webkit-scrollbar{
+    display: none;
+}
+
+nav{
+    overflow: hidden !important;
+}

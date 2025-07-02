@@ -77,7 +77,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             <AccountMenu />
           </Box>
-          {children}
+          <main className='Admin-containerLayout'>
+              {children}
+          </main> 
         </DashboardLayout>
       </AppProvider>
     </DemoProvider>
