@@ -2,6 +2,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DoctorType, Khoa, ClinicType } from '@/app/types/doctorTypes/doctorTypes';
 import { useParams } from 'next/navigation';
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Button,
+  CircularProgress,
+  Alert,
+  Avatar,
+  IconButton,
+} from '@mui/material';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import './EditDoctor.css';
 
 interface Errors {
@@ -183,7 +199,7 @@ const App: React.FC = () => {
             if (clinicData) {
               setClinics(clinicData);
               if (typeof doctorData.Id_PhongKham === 'string') {
-                const foundClinic = clinicData.find(c => c._id === doctorData.Id_PhongKham);
+        const foundClinic = clinicData.find(c => c._id === doctorData.Id_PhongKham);
                 if (foundClinic) {
                   setDoctor(prev => ({
                     ...prev,
@@ -345,17 +361,16 @@ const App: React.FC = () => {
 
       {isLoading && (
         <div className="loading">
-          <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
+          <CircularProgress size={20} className="spinner" />
           Đang tải/lưu dữ liệu...
         </div>
       )}
 
       {message && (
         <div className={message.includes('thành công') ? 'message-success' : 'message-error'}>
-          {message}
+          <Alert severity={message.includes('thành công') ? 'success' : 'error'}>
+            {message}
+          </Alert>
         </div>
       )}
 
@@ -364,7 +379,7 @@ const App: React.FC = () => {
           <div className="avatar-container">
             <label className="avatar-label">Ảnh đại diện</label>
             <div className="avatar-box">
-              <img
+              <Avatar
                 src={
                   doctor.Image?.startsWith('data:')
                     ? doctor.Image
@@ -373,7 +388,7 @@ const App: React.FC = () => {
                 alt="Avatar"
                 className="avatar-image"
                 onError={(e) => {
-                  e.currentTarget.src = 'https://placehold.co/150x150/aabbcc/ffffff?text=Avatar';
+                  (e.target as HTMLImageElement).src = 'https://placehold.co/150x150/aabbcc/ffffff?text=Avatar';
                 }}
               />
               <input
@@ -382,18 +397,18 @@ const App: React.FC = () => {
                 onChange={handleAvatarChange}
                 accept="image/*"
                 className="hidden"
+                id="avatar-upload"
               />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="avatar-button"
-                aria-label="Chọn ảnh đại diện"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="avatar-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                </svg>
-                <span>Chọn ảnh</span>
-              </button>
+              <label htmlFor="avatar-upload">
+                <IconButton
+                  className="avatar-button"
+                  aria-label="Chọn ảnh đại diện"
+                  component="span"
+                >
+                  <PhotoCamera className="avatar-icon" />
+                  <span>Chọn ảnh</span>
+                </IconButton>
+              </label>
             </div>
           </div>
 
@@ -402,36 +417,36 @@ const App: React.FC = () => {
               <div>
                 <label htmlFor="TenBacSi" className="label">Họ và tên <span className="red-star">*</span>:</label>
                 <div className="input-container">
-                  <input
-                    type="text"
+                  <TextField
+                    fullWidth
                     id="TenBacSi"
                     name="TenBacSi"
                     value={doctor.TenBacSi || ''}
                     onChange={handleChange}
                     placeholder="Nhập họ và tên"
                     className={`input ${errors.TenBacSi ? 'input-error' : ''}`}
+                    error={!!errors.TenBacSi}
+                    helperText={errors.TenBacSi}
+                    required
                   />
-                  {errors.TenBacSi && (
-                    <p className="error-text">{errors.TenBacSi}</p>
-                  )}
                 </div>
               </div>
               <div>
                 <label htmlFor="cccd" className="label">Số CCCD <span className="red-star">*</span>:</label>
                 <div className="input-container">
-                  <input
-                    type="text"
+                  <TextField
+                    fullWidth
                     id="SoCCCD"
                     name="SoCCCD"
                     value={doctor.SoCCCD || ''}
-                    readOnly
                     onChange={handleChange}
                     placeholder="Nhập số CCCD"
                     className={`input ${errors.SoCCCD ? 'input-error' : ''}`}
+                    error={!!errors.SoCCCD}
+                    helperText={errors.cccd}
+                    disabled
+                    required
                   />
-                  {errors.SoCCCD && (
-                    <p className="error-text">{errors.cccd}</p>
-                  )}
                 </div>
               </div>
             </div>
@@ -439,62 +454,52 @@ const App: React.FC = () => {
               <div>
                 <label htmlFor="SoDienThoai" className="label">Số điện thoại <span className="red-star">*</span>:</label>
                 <div className="input-container">
-                  <input
-                    type="tel"
+                  <TextField
+                    fullWidth
                     id="SoDienThoai"
                     name="SoDienThoai"
                     value={doctor.SoDienThoai || ''}
                     onChange={handleChange}
                     placeholder="Nhập số điện thoại"
                     className={`input ${errors.SoDienThoai ? 'input-error' : ''}`}
+                    error={!!errors.SoDienThoai}
+                    helperText={errors.SoDienThoai}
+                    required
+                    type="tel"
                   />
-                  {errors.SoDienThoai && (
-                    <p className="error-text">{errors.SoDienThoai}</p>
-                  )}
                 </div>
               </div>
               <div>
                 <label htmlFor="NamSinh" className="label">Năm sinh <span className="red-star">*</span>:</label>
                 <div className="input-container">
-                  <input
-                    type="number"
+                  <TextField
+                    fullWidth
                     id="NamSinh"
                     name="NamSinh"
                     value={doctor.NamSinh || ''}
                     onChange={handleChange}
                     placeholder="Nhập năm sinh"
                     className={`input ${errors.NamSinh ? 'input-error' : ''}`}
+                    error={!!errors.NamSinh}
+                    helperText={errors.NamSinh}
+                    required
+                    type="number"
                   />
-                  {errors.NamSinh && (
-                    <p className="error-text">{errors.NamSinh}</p>
-                  )}
                 </div>
               </div>
               <div>
                 <label className="label">Giới tính:</label>
                 <div className="radio-group">
-                  <label className="radio-label">
-                    <input
-                      type="radio"
-                      name="GioiTinh"
-                      value="Nam"
-                      checked={doctor.GioiTinh === 'Nam'}
-                      onChange={handleChange}
-                      className="radio"
-                    />
-                    <span className="radio-text">Nam</span>
-                  </label>
-                  <label className="radio-label">
-                    <input
-                      type="radio"
-                      name="GioiTinh"
-                      value="Nữ"
-                      checked={doctor.GioiTinh === 'Nữ'}
-                      onChange={handleChange}
-                      className="radio"
-                    />
-                    <span className="radio-text">Nữ</span>
-                  </label>
+                  <RadioGroup
+                    row
+                    name="GioiTinh"
+                    value={doctor.GioiTinh || 'Nam'}
+                    onChange={handleChange}
+                    className="radio"
+                  >
+                    <FormControlLabel value="Nam" control={<Radio className="radio" />} label="Nam" />
+                    <FormControlLabel value="Nữ" control={<Radio className="radio" />} label="Nữ" />
+                  </RadioGroup>
                 </div>
               </div>
             </div>
@@ -502,35 +507,37 @@ const App: React.FC = () => {
               <div>
                 <label htmlFor="Matkhau" className="label">Mật khẩu <span className="red-star">*</span>:</label>
                 <div className="input-container">
-                  <input
-                    type="password"
+                  <TextField
+                    fullWidth
                     id="Matkhau"
                     name="Matkhau"
                     value={doctor.Matkhau || ''}
                     onChange={handleChange}
                     placeholder="Nhập mật khẩu"
                     className={`input ${errors.Matkhau ? 'input-error' : ''}`}
+                    error={!!errors.Matkhau}
+                    helperText={errors.Matkhau}
+                    required
+                    type="password"
                   />
-                  {errors.Matkhau && (
-                    <p className="error-text">{errors.Matkhau}</p>
-                  )}
                 </div>
               </div>
               <div>
                 <label htmlFor="confirmPassword" className="label">Xác nhận mật khẩu <span className="red-star">*</span>:</label>
                 <div className="input-container">
-                  <input
-                    type="password"
+                  <TextField
+                    fullWidth
                     id="confirmPassword"
                     name="confirmPassword"
                     value={confirmPassword}
                     onChange={handleChange}
                     placeholder="Nhập lại mật khẩu"
                     className={`input ${errors.confirmPassword ? 'input-error' : ''}`}
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword}
+                    required
+                    type="password"
                   />
-                  {errors.confirmPassword && (
-                    <p className="error-text">{errors.confirmPassword}</p>
-                  )}
                 </div>
               </div>
             </div>
@@ -540,108 +547,111 @@ const App: React.FC = () => {
         <hr className="hr" />
 
         <div className="form-grid-3">
-          <div>
-            <label htmlFor="HocVi" className="select-label">Học vị <span className="red-star">*</span>:</label>
-            <select
-              id="HocVi"
-              name="HocVi"
-              value={doctor.HocVi || ''}
-              onChange={handleChange}
-              className={`select ${errors.HocVi ? 'select-error' : ''}`}
-            >
-              <option value="">Chọn học vị</option>
-              <option value="Cử nhân">Cử nhân</option>
-              <option value="Thạc sĩ">Thạc sĩ</option>
-              <option value="Tiến sĩ">Tiến sĩ</option>
-              <option value="Phó giáo sư">Phó giáo sư</option>
-              <option value="Giáo sư">Giáo sư</option>
-            </select>
-            {errors.HocVi && <p className="error-text">{errors.HocVi}</p>}
+          <div className='form-grid-children'>
+            <FormControl fullWidth className={`select ${errors.HocVi ? 'select-error' : ''}`}>
+              <InputLabel id="HocVi-label">Chọn học vị</InputLabel>
+              <Select
+                labelId="HocVi-label"
+                id="HocVi"
+                name="HocVi"
+                value={doctor.HocVi || ''}
+                onChange={handleChange}
+                label="Chọn học vị"
+                error={!!errors.HocVi}
+              >
+                <MenuItem value="">Chọn học vị</MenuItem>
+                <MenuItem value="Cử nhân">Cử nhân</MenuItem>
+                <MenuItem value="Thạc sĩ">Thạc sĩ</MenuItem>
+                <MenuItem value="Tiến sĩ">Tiến sĩ</MenuItem>
+                <MenuItem value="Phó giáo sư">Phó giáo sư</MenuItem>
+                <MenuItem value="Giáo sư">Giáo sư</MenuItem>
+              </Select>
+              {errors.HocVi && <p className="error-text">{errors.HocVi}</p>}
+            </FormControl>
           </div>
           <div>
-            <label htmlFor="ID_Khoa" className="select-label">Chuyên khoa <span className="red-star">*</span>:</label>
-            <select
-              id="ID_Khoa"
-              name="ID_Khoa"
-              value={doctor.ID_Khoa?._id || ''}
-              onChange={handleChange}
-              className={`select ${errors.ID_Khoa ? 'select-error' : ''}`}
-            >
-              <option value="">Chọn chuyên khoa</option>
-              {specialties.map((specialty) => (
-                <option key={specialty._id} value={specialty._id}>
-                  {specialty.TenKhoa}
-                </option>
-              ))}
-            </select>
-            {errors.ID_Khoa && <p className="error-text">{errors.ID_Khoa}</p>}
+            <FormControl fullWidth className={`select ${errors.ID_Khoa ? 'select-error' : ''}`}>
+              <InputLabel id="ID_Khoa-label">Chọn chuyên khoa</InputLabel>
+              <Select
+                labelId="ID_Khoa-label"
+                id="ID_Khoa"
+                name="ID_Khoa"
+                value={doctor.ID_Khoa?._id || ''}
+                onChange={handleChange}
+                label="Chọn chuyên khoa"
+                error={!!errors.ID_Khoa}
+              >
+                <MenuItem value="">Chọn chuyên khoa</MenuItem>
+                {specialties.map((specialty) => (
+                  <MenuItem key={specialty._id} value={specialty._id}>
+                    {specialty.TenKhoa}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors.ID_Khoa && <p className="error-text">{errors.ID_Khoa}</p>}
+            </FormControl>
           </div>
           <div>
-            <label htmlFor="Id_PhongKham" className="select-label">Phòng khám <span className="red-star">*</span>:</label>
-            <select
-              id="Id_PhongKham"
-              name="Id_PhongKham"
-              value={doctor.Id_PhongKham?._id || ''}
-              onChange={handleChange}
-              className={`select ${errors.Id_PhongKham ? 'select-error' : ''}`}
-            >
-              <option value="">Chọn phòng khám</option>
-              {clinics.map((clinic) => (
-                <option key={clinic._id} value={clinic._id}>
-                  {clinic.SoPhongKham}
-                </option>
-              ))}
-            </select>
-            {errors.Id_PhongKham && <p className="error-text">{errors.Id_PhongKham}</p>}
+            <FormControl fullWidth className={`select ${errors.Id_PhongKham ? 'select-error' : ''}`}>
+              <InputLabel id="Id_PhongKham-label">Chọn phòng khám</InputLabel>
+              <Select
+                labelId="Id_PhongKham-label"
+                id="Id_PhongKham"
+                name="Id_PhongKham"
+                value={doctor.Id_PhongKham?._id || ''}
+                onChange={handleChange}
+                label="Chọn phòng khám"
+                error={!!errors.Id_PhongKham}
+              >
+                <MenuItem value="">Chọn phòng khám</MenuItem>
+                {clinics.map((clinic) => (
+                  <MenuItem key={clinic._id} value={clinic._id}>
+                    {clinic.SoPhongKham}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors.Id_PhongKham && <p className="error-text">{errors.Id_PhongKham}</p>}
+            </FormControl>
           </div>
           <div style={{ gridColumn: 'span 3' }}>
             <label className="select-label">Trạng thái tài khoản:</label>
             <div className="radio-group-status">
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="TrangThaiHoatDong"
-                  value="true"
-                  checked={doctor.TrangThaiHoatDong === true}
-                  onChange={() => setDoctor((prev) => ({ ...prev, TrangThaiHoatDong: true }))}
-                  className="radio-status"
-                />
-                <span className="radio-text">Hoạt động</span>
-              </label>
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="TrangThaiHoatDong"
-                  value="false"
-                  checked={doctor.TrangThaiHoatDong === false}
-                  onChange={() => setDoctor((prev) => ({ ...prev, TrangThaiHoatDong: false }))}
-                  className="radio-status"
-                />
-                <span className="radio-text">Khóa tài khoản</span>
-              </label>
+              <RadioGroup
+                row
+                name="TrangThaiHoatDong"
+                value={String(doctor.TrangThaiHoatDong)}
+                onChange={(e) => setDoctor((prev) => ({ ...prev, TrangThaiHoatDong: e.target.value === 'true' }))}
+                className="radio-status"
+              >
+                <FormControlLabel value="true" control={<Radio className="radio-status" />} label="Hoạt động" />
+                <FormControlLabel value="false" control={<Radio className="radio-status" />} label="Khóa tài khoản" />
+              </RadioGroup>
             </div>
           </div>
         </div>
 
         <div className="button-container">
-          <button
-            type="button"
+          <Button
+            variant="contained"
+            color="inherit"
+            className="cancel-button"
             onClick={() => {
               console.log('Hủy bỏ chỉnh sửa.');
               setMessage('Đã hủy bỏ chỉnh sửa.');
               setTimeout(() => setMessage(''), 3000);
             }}
-            className="cancel-button"
           >
             Quay lại
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
             type="submit"
             disabled={isLoading}
             className="submit-button"
           >
             {isLoading ? 'Đang cập nhật...' : 'Cập nhật'}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

@@ -216,9 +216,9 @@ export default function Page() {
         <CustomTableHumanResources
           columns={columns}
           rows={filteredRows}
-          onEdit={() => {}}
+          onEdit={(id) => {}}
           onDelete={() => {}}
-          onDisable={() => {}}
+          onDisable={(id) => {}}
           showEdit={true}
           showDelete={false}
           showDisable={true}

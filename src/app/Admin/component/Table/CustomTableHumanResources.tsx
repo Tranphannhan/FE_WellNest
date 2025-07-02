@@ -49,9 +49,9 @@ export interface Column {
 interface CustomTableProps {
   columns: Column[];
   rows: rowRenderType[];
-  onEdit?: () => void; // Updated to include row parameter
+  onEdit?: (id: string) => void; // Updated to include row parameter
   onDelete?: () => void; // Updated to include row parameter
-  onDisable?: () => void; // Updated to include row parameter
+  onDisable?: (id:string) => void; // Updated to include row parameter
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;
@@ -74,11 +74,16 @@ export default function CustomTableHumanResources({
   onPageChange,
 }: CustomTableProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedRow, setSelectedRow] = React.useState<rowRenderType | null>(null);
+  const [selectedRow, setSelectedRow] = React.useState<rowRenderType | null>(
+    null
+  );
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<string>("");
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, row: rowRenderType) => {
+  const handleOpenMenu = (
+    event: React.MouseEvent<HTMLElement>,
+    row: rowRenderType
+  ) => {
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
   };
@@ -251,28 +256,27 @@ export default function CustomTableHumanResources({
                       }}
                     >
                       {col.id === "Khoa" ? (
-  <Chip
-    label={row.Khoa}
-    color="primary"
-    size="small"
-    variant="filled"
-    sx={{
-      fontWeight: 500,
-      backgroundColor: "#e3f2fd",
-      color: "#1976d2",
-      border: "none",
-    }}
-  />
-) : (
-  <span
-    style={{
-      color: col.Outstanding ? "#3497F9" : undefined,
-    }}
-  >
-    {row[col.id] ?? "-"}
-  </span>
-)
-}
+                        <Chip
+                          label={row.Khoa}
+                          color="primary"
+                          size="small"
+                          variant="filled"
+                          sx={{
+                            fontWeight: 500,
+                            backgroundColor: "#e3f2fd",
+                            color: "#1976d2",
+                            border: "none",
+                          }}
+                        />
+                      ) : (
+                        <span
+                          style={{
+                            color: col.Outstanding ? "#3497F9" : undefined,
+                          }}
+                        >
+                          {row[col.id] ?? "-"}
+                        </span>
+                      )}
                     </span>
                   )}
                 </TableCell>
@@ -322,7 +326,7 @@ export default function CustomTableHumanResources({
           <MenuItem
             onClick={() => {
               if (selectedRow && onEdit) {
-                onEdit();
+                onEdit(selectedRow._id);
                 handleCloseMenu();
               }
             }}
@@ -372,7 +376,7 @@ export default function CustomTableHumanResources({
           <MenuItem
             onClick={() => {
               if (selectedRow && onDisable) {
-                onDisable();
+                onDisable(selectedRow._id);
                 handleCloseMenu();
               }
             }}
@@ -397,7 +401,7 @@ export default function CustomTableHumanResources({
           <MenuItem
             onClick={() => {
               if (selectedRow && onDisable) {
-                onDisable();
+                onDisable(selectedRow._id);
                 handleCloseMenu();
               }
             }}
