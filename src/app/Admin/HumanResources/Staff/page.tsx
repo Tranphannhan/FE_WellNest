@@ -37,7 +37,7 @@ const columns:Column[]  = [
   {
     id: "TenLoai",
     label: "Loại tài khoản",
-    sortable: true,
+    sortable: false,
     Outstanding: true,
   },
   {

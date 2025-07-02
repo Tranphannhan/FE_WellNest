@@ -255,9 +255,9 @@ export default function CustomTableHumanResources({
                         color: col.Outstanding ? "#3497F9" : undefined,
                       }}
                     >
-                      {col.id === "Khoa" ? (
+                      {col.id === "Khoa" || col.id === "TenLoai" ? (
                         <Chip
-                          label={row.Khoa}
+                          label={row.Khoa || row.TenLoai}
                           color="primary"
                           size="small"
                           variant="filled"
