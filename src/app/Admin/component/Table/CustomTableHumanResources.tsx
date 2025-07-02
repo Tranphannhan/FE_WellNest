@@ -14,6 +14,7 @@ import {
   TableSortLabel,
   TablePagination,
   Box,
+  Chip,
 } from "@mui/material";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -24,19 +25,33 @@ import { FaRegTrashCan } from "react-icons/fa6";
 
 type Order = "asc" | "desc";
 
-interface Column {
-  id: string;
+export interface rowRenderType {
+  _id: string;
+  TenBacSi?: string; // Optional for doctor-specific data
+  TenTaiKhoan?: string; // Optional for account-specific data
+  GioiTinh: string;
+  HocVi?: string; // Optional for doctor-specific data
+  SoDienThoai: string;
+  Khoa?: string; // Optional for doctor-specific data
+  Phong?: string; // Optional for doctor-specific data
+  TrangThaiHoatDong: boolean;
+  Image: string;
+  TenLoai?: string; // Optional for account-specific data
+}
+
+export interface Column {
+  id: keyof rowRenderType;
   label: string;
   sortable?: boolean;
-  Outstanding?: boolean; // ✅ thêm dòng này
+  Outstanding?: boolean;
 }
 
 interface CustomTableProps {
   columns: Column[];
-  rows: any[];
-  onEdit?: (row: any) => void;
-  onDelete?: (row: any) => void;
-  onDisable?: (row: any) => void;
+  rows: rowRenderType[];
+  onEdit?: () => void; // Updated to include row parameter
+  onDelete?: () => void; // Updated to include row parameter
+  onDisable?: () => void; // Updated to include row parameter
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;
@@ -45,7 +60,7 @@ interface CustomTableProps {
   onPageChange?: (newPage: number) => void;
 }
 
-export default function CustomTable({
+export default function CustomTableHumanResources({
   columns,
   rows,
   onEdit,
@@ -59,11 +74,11 @@ export default function CustomTable({
   onPageChange,
 }: CustomTableProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedRow, setSelectedRow] = React.useState<any>(null);
+  const [selectedRow, setSelectedRow] = React.useState<rowRenderType | null>(null);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<string>("");
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, row: any) => {
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, row: rowRenderType) => {
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
   };
@@ -82,8 +97,9 @@ export default function CustomTable({
   const sortedRows = React.useMemo(() => {
     if (!orderBy) return rows;
     return [...rows].sort((a, b) => {
-      const aVal = a[orderBy];
-      const bVal = b[orderBy];
+      const aVal = a[orderBy as keyof rowRenderType];
+      const bVal = b[orderBy as keyof rowRenderType];
+      if (aVal === undefined || bVal === undefined) return 0;
       if (aVal < bVal) return order === "asc" ? -1 : 1;
       if (aVal > bVal) return order === "asc" ? 1 : -1;
       return 0;
@@ -187,7 +203,6 @@ export default function CustomTable({
                       }}
                     />
                   ) : col.id === "TrangThaiHoatDong" ? (
-                    /* ... như cũ */
                     <span
                       style={{
                         display: "inline-flex",
@@ -235,7 +250,29 @@ export default function CustomTable({
                         color: col.Outstanding ? "#3497F9" : undefined,
                       }}
                     >
-                      {row[col.id]}
+                      {col.id === "Khoa" ? (
+  <Chip
+    label={row.Khoa}
+    color="primary"
+    size="small"
+    variant="filled"
+    sx={{
+      fontWeight: 500,
+      backgroundColor: "#e3f2fd",
+      color: "#1976d2",
+      border: "none",
+    }}
+  />
+) : (
+  <span
+    style={{
+      color: col.Outstanding ? "#3497F9" : undefined,
+    }}
+  >
+    {row[col.id] ?? "-"}
+  </span>
+)
+}
                     </span>
                   )}
                 </TableCell>
@@ -251,7 +288,6 @@ export default function CustomTable({
         </TableBody>
       </Table>
 
-      {/* Pagination */}
       {typeof page === "number" &&
         typeof totalItems === "number" &&
         onPageChange && (
@@ -265,7 +301,6 @@ export default function CustomTable({
           />
         )}
 
-      {/* Menu Actions */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -286,8 +321,10 @@ export default function CustomTable({
         {onEdit && showEdit && (
           <MenuItem
             onClick={() => {
-              onEdit?.(selectedRow);
-              handleCloseMenu();
+              if (selectedRow && onEdit) {
+                onEdit();
+                handleCloseMenu();
+              }
             }}
             sx={{
               color: "#1976d2",
@@ -309,8 +346,10 @@ export default function CustomTable({
         {onDelete && showDelete && (
           <MenuItem
             onClick={() => {
-              onDelete?.(selectedRow);
-              handleCloseMenu();
+              if (selectedRow && onDelete) {
+                onDelete();
+                handleCloseMenu();
+              }
             }}
             sx={{
               color: "#d32f2f",
@@ -332,8 +371,10 @@ export default function CustomTable({
         {onDisable && selectedRow?.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              onDisable?.({ ...selectedRow, TrangThaiHoatDong: false });
-              handleCloseMenu();
+              if (selectedRow && onDisable) {
+                onDisable();
+                handleCloseMenu();
+              }
             }}
             sx={{
               color: "#d32f2f",
@@ -355,8 +396,10 @@ export default function CustomTable({
         {showDisable && selectedRow?.TrangThaiHoatDong === false && (
           <MenuItem
             onClick={() => {
-              onDisable?.({ ...selectedRow, TrangThaiHoatDong: true });
-              handleCloseMenu();
+              if (selectedRow && onDisable) {
+                onDisable();
+                handleCloseMenu();
+              }
             }}
             sx={{
               color: "#388e3c",

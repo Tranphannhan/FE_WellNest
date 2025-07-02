@@ -1,7 +1,5 @@
-
 "use client";
 
-import CustomTable from "../../component/CustomTable";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
@@ -12,15 +10,26 @@ import {
   FormControl,
   Select,
   InputLabel,
-  Chip,
 } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
+
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import getstaffAdmin from "../../services/staffSevices";
 import "./Staff.css";
 import { Staff } from "@/app/types/hospitalTypes/hospitalType";
+import CustomTableHumanResources, { Column } from "../../component/Table/CustomTableHumanResources";
 
-const columns = [
+export interface rowRenderType {
+  _id: string;
+  TenTaiKhoan: string;
+  GioiTinh: string;
+  SoDienThoai: string;
+  TrangThaiHoatDong: boolean;
+  Image: string;
+  TenLoai: string;
+}
+
+const columns:Column[]  = [
   { id: "Image", label: "Ảnh", sortable: false, Outstanding: false },
   { id: "TenTaiKhoan", label: "Họ tên", sortable: true, Outstanding: true },
   { id: "GioiTinh", label: "Giới tính", sortable: true, Outstanding: false },
@@ -37,25 +46,13 @@ const columns = [
     sortable: true,
     Outstanding: false,
   },
-];
-
-interface rowRenderType {
-  _id: string;
-  TenTaiKhoan: string;
-  GioiTinh: string;
-  SoDienThoai: string;
-  TrangThaiHoatDong: boolean;
-  Image: string;
-  TenLoai: string;
-}
+] as const;
 
 export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedLoai, setSelectedLoai] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-
 
   const loaddingAPI = async () => {
     const data = await getstaffAdmin();
@@ -73,13 +70,9 @@ export default function Page() {
         typeof item.TrangThaiHoatDong === "boolean"
           ? item.TrangThaiHoatDong
           : true,
-
-      Image: `${API_BASE_URL}/image/${item?.Image}`,
+      Image: `${API_BASE_URL}/image/${item?.Image || "default.png"}`,
       TenLoai: item?.Id_LoaiTaiKhoan?.TenLoaiTaiKhoan || "Không rõ",
     }));
-
-    console.log('dulieu', mappedRows);
-    
 
     setRows(mappedRows);
   };
@@ -191,29 +184,12 @@ export default function Page() {
         </Box>
 
         {/* BẢNG DỮ LIỆU */}
-        <CustomTable
+        <CustomTableHumanResources
           columns={columns}
-          rows={filteredRows.map((row) => ({
-            ...row,
-            Image: row.Image,
-            TenLoai: (
-              <Chip
-                variant="filled"
-                label={row.TenLoai}
-                color="primary"
-                size="small"
-                sx={{
-                  fontWeight: 500,
-                  backgroundColor: "#e3f2fd",
-                  color: "#1976d2",
-                  border: "none",
-                }}
-              />
-            ),
-          }))}
-          onEdit={(row) => console.log("Sửa:", row)}
-          onDelete={(row) => console.log("Xóa:", row)}
-          onDisable={(row) => console.log("Vô hiệu:", row)}
+          rows={filteredRows}
+          onEdit={() => {}}
+          onDelete={() => {}}
+          onDisable={() => {}}
           showEdit={true}
           showDelete={false}
           showDisable={true}

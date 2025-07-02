@@ -16,9 +16,6 @@
     font-size: 18px;
 }
 
-.toolpad-demo-app-1g0zqb1::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
 
 .toolpad-demo-app-4uxqju-MuiSvgIcon-root {
     font-size: 30px !important;
@@ -60,9 +57,13 @@ button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.toolpad-de
 }
 
 .MuiBox-root.toolpad-demo-app-0 {
-    background-color: var(--mui-palette-action-hover);
+    background-color: rgba(0, 187, 255, 0.064);
     padding: 8px 0;
     border-radius: 4px;
+}
+
+.toolpad-demo-app-rizt0-MuiTypography-root{
+    font-size: 15px;
 }
 
 .Admin-containerLayout {
@@ -76,17 +77,30 @@ button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.toolpad-de
     box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 } */
 
-nav.MuiBox-root.toolpad-demo-app-w1xzj3::-webkit-scrollbar{
-    display: none;
-}
 
-.MuiList-root MuiList-padding toolpad-demo-app-1ecfr0c-MuiList-root::-webkit-scrollbar{
-    display: none;
-}
 
 nav{
-    overflow: hidden !important;
+   overflow-y: auto !important;
+     overflow-x: hidden !important;
 }
+
+nav::-webkit-scrollbar {
+  width: 6px; /* Chiều rộng thanh trượt dọc */
+}
+
+nav::-webkit-scrollbar-track {
+  background: transparent; /* Nền thanh trượt */
+}
+
+nav::-webkit-scrollbar-thumb {
+  background-color: rgba(33, 150, 243, 0.3); /* Xanh nước biển nhạt, mờ */
+  border-radius: 4px; /* Bo tròn */
+}
+
+nav::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(33, 150, 243, 0.5); /* Đậm hơn khi hover */
+}
+
 
 html[data-toolpad-color-scheme="dark"] .toolpad-demo-app-23htwk {
   background-color: #1e1e1e !important;

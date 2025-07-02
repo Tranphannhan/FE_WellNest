@@ -1,6 +1,4 @@
 "use client";
-
-import CustomTable from "../../component/CustomTable";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
@@ -11,7 +9,6 @@ import {
   FormControl,
   Select,
   InputLabel,
-  Chip,
 } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 
@@ -19,10 +16,10 @@ import "./Doctor.css";
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import { DoctorType } from "@/app/types/doctorTypes/doctorTypes";
 import getDoctorAdmin from "../../services/DoctorSevices";
-
+import CustomTableHumanResources, { Column } from "../../component/Table/CustomTableHumanResources";
 
 // Cấu trúc sau khi chuẩn hoá dữ liệu
-interface rowRenderType {
+export interface rowRenderType {
   _id: string;
   TenBacSi: string;
   GioiTinh: string;
@@ -34,7 +31,7 @@ interface rowRenderType {
   Image: string;
 }
 
-const columns = [
+const columns: Column[] = [
   { id: "Image", label: "Ảnh", sortable: false, Outstanding: false },
   { id: "TenBacSi", label: "Họ tên", sortable: true, Outstanding: true },
   { id: "GioiTinh", label: "Giới tính", sortable: true, Outstanding: false },
@@ -50,12 +47,12 @@ const columns = [
   },
 ];
 
+
 export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedKhoa, setSelectedKhoa] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
 
   const getAPI = async () => {
     const data = await getDoctorAdmin();
@@ -71,20 +68,15 @@ export default function Page() {
       GioiTinh: item.GioiTinh || "Không rõ",
       HocVi: item.HocVi || "Không rõ",
       SoDienThoai: item.SoDienThoai || "",
-      Khoa:
-        item?.ID_Khoa?.TenKhoa ||
-        item?.ChuyenKhoa ||
-        "Không rõ",
+      Khoa: item?.ID_Khoa?.TenKhoa || item?.ChuyenKhoa || "Không rõ",
       Phong: item?.Id_PhongKham?.SoPhongKham || "N/A",
       TrangThaiHoatDong:
         typeof item.TrangThaiHoatDong === "boolean"
           ? item.TrangThaiHoatDong
           : true,
-Image:
-  item?.Image?.startsWith("http")
-    ? item.Image
-    : `${API_BASE_URL}/image/${item?.Image || "default.png"}`
-
+      Image: item?.Image?.startsWith("http")
+        ? item.Image
+        : `${API_BASE_URL}/image/${item?.Image || "default.png"}`,
     }));
 
     setRows(mappedData);
@@ -192,31 +184,12 @@ Image:
         </Box>
 
         {/* BẢNG DỮ LIỆU */}
-        <CustomTable
+        <CustomTableHumanResources
           columns={columns}
-rows={filteredRows.map((row) => ({
-  ...row,
-  Khoa: (
-    <Chip
-      label={row.Khoa}
-      color="primary"
-      size="small"
-      variant="filled"
-      sx={{
-        fontWeight: 500,
-        backgroundColor: "#e3f2fd",
-        color: "#1976d2",
-        border: "none",
-      }}
-    />
-  ),
-  // Đảm bảo Image là string URL
-  Image: row.Image || "https://i.pravatar.cc/100?img=11",
-}))}
-
-          onEdit={(row) => console.log("Sửa:", row)}
-          onDelete={(row) => console.log("Xóa:", row)}
-          onDisable={(row) => console.log("Vô hiệu:", row)}
+          rows={filteredRows}
+          onEdit={()=>{}}
+          onDelete={() => {}}
+          onDisable={() => {}}
           showEdit={true}
           showDelete={false}
           showDisable={true}
