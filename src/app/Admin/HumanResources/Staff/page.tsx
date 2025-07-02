@@ -14,10 +14,10 @@ import {
 import { useState, useMemo, useEffect } from "react";
 
 import BreadcrumbComponent from "../../component/Breadcrumb";
-import getstaffAdmin from "../../services/staffSevices";
 import "./Staff.css";
 import { Staff } from "@/app/types/hospitalTypes/hospitalType";
 import CustomTableHumanResources, { Column } from "../../component/Table/CustomTableHumanResources";
+import { getOptionstaffAdmin, getstaffAdmin } from "../../services/staffSevices";
 
 export interface rowRenderType {
   _id: string;
@@ -74,6 +74,8 @@ export default function Page() {
       TenLoai: item?.Id_LoaiTaiKhoan?.TenLoaiTaiKhoan || "Không rõ",
     }));
 
+    
+
     setRows(mappedRows);
   };
 
@@ -81,10 +83,35 @@ export default function Page() {
     loaddingAPI();
   }, []);
 
-  const TenLoaiOP = useMemo(
-    () => Array.from(new Set(rows.map((row) => row.TenLoai))),
-    [rows]
-  );
+
+  // --- 
+  interface TenLoaiOPType {
+    _id: string,
+    TenLoaiTaiKhoan: string,
+    VaiTro : string
+  }
+
+
+  const [TenLoaiOP , setTenLoaiOP] = useState <TenLoaiOPType []> ([]);
+    const loaddingAPISelect  = async () => {
+      const data = await getOptionstaffAdmin ();
+        if (!data) return;
+
+        console.log('chay');
+        console.log(data);
+
+
+        setTenLoaiOP (data)
+    }
+  
+
+  useEffect (() => {
+    loaddingAPISelect ();
+  }, []);
+
+
+
+  // ----
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -98,15 +125,16 @@ export default function Page() {
 
   return (
     <>
-      <BreadcrumbComponent
+      
+
+      <div className="AdminContent-Container">
+        <BreadcrumbComponent
         items={[
           { title: "Trang chủ", href: "/Admin" },
           { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
           { title: "Nhân viên" },
         ]}
       />
-
-      <div className="AdminContent-Container">
         {/* FORM TÌM KIẾM & FILTER */}
         <Box
           sx={{
@@ -156,7 +184,7 @@ export default function Page() {
             }}
           />
 
-          <FormControl sx={{ minWidth: 200 }} size="small">
+          <FormControl sx={{ minWidth: 250 }} size="small">
             <InputLabel sx={{ fontSize: 14, top: 2 }}>
               Loại tài khoản
             </InputLabel>
@@ -175,13 +203,14 @@ export default function Page() {
             >
               <MenuItem value="">Tất cả</MenuItem>
               {TenLoaiOP.map((TenLoai) => (
-                <MenuItem key={TenLoai} value={TenLoai}>
-                  {TenLoai}
+                <MenuItem key={TenLoai._id} value={TenLoai._id}>
+                  {TenLoai.TenLoaiTaiKhoan}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Box>
+
 
         {/* BẢNG DỮ LIỆU */}
         <CustomTableHumanResources

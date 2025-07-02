@@ -3,20 +3,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
-import {
-  Box,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel,
-} from "@mui/material";
+import { Box, MenuItem, FormControl, Select, InputLabel } from "@mui/material";
 import { useState, useMemo, useEffect } from "react";
 
 import "./Doctor.css";
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import { DoctorType } from "@/app/types/doctorTypes/doctorTypes";
-import getDoctorAdmin from "../../services/DoctorSevices";
-import CustomTableHumanResources, { Column } from "../../component/Table/CustomTableHumanResources";
+import CustomTableHumanResources, {
+  Column,
+} from "../../component/Table/CustomTableHumanResources";
+import { getDoctorAdmin, getkhoaOptions } from "../../services/DoctorSevices";
 
 // Cấu trúc sau khi chuẩn hoá dữ liệu
 export interface rowRenderType {
@@ -47,7 +43,6 @@ const columns: Column[] = [
   },
 ];
 
-
 export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedKhoa, setSelectedKhoa] = useState("");
@@ -56,7 +51,6 @@ export default function Page() {
 
   const getAPI = async () => {
     const data = await getDoctorAdmin();
-
     if (!data?.data || data.data.length === 0) {
       setRows([]);
       return;
@@ -86,10 +80,21 @@ export default function Page() {
     getAPI();
   }, []);
 
-  const khoaOptions = useMemo(
-    () => Array.from(new Set(rows.map((row) => row.Khoa))),
-    [rows]
-  );
+  interface khoaOptionsType {
+    _id: string;
+    TenKhoa: string;
+    TrangThaiHoatDong: boolean;
+  }
+
+  const [khoaOptions, setKhoaOptions] = useState<khoaOptionsType[]>([]);
+  const loaddingAPISelect = async () => {
+    const data = await getkhoaOptions();
+    if (data.data.length === 0 ? [] : data.data) setKhoaOptions(data.data);
+  };
+
+  useEffect(() => {
+    loaddingAPISelect();
+  }, []);
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -103,15 +108,14 @@ export default function Page() {
 
   return (
     <>
-      <BreadcrumbComponent
-        items={[
-          { title: "Trang chủ", href: "/Admin" },
-          { title: "Nhân sự", href: "/Admin/HumanResources/Doctor" },
-          { title: "Bác sĩ" },
-        ]}
-      />
-
       <div className="AdminContent-Container">
+        <BreadcrumbComponent
+          items={[
+            { title: "Trang chủ", href: "/Admin" },
+            { title: "Nhân sự", href: "/Admin/HumanResources/Doctor" },
+            { title: "Bác sĩ" },
+          ]}
+        />
         {/* FORM TÌM KIẾM & FILTER */}
         <Box
           sx={{
@@ -160,7 +164,7 @@ export default function Page() {
             }}
           />
 
-          <FormControl sx={{ minWidth: 200 }} size="small">
+          <FormControl sx={{ minWidth: 250 }} size="small">
             <InputLabel sx={{ fontSize: 14, top: 2 }}>Chuyên khoa</InputLabel>
             <Select
               label="Chuyên khoa"
@@ -175,8 +179,8 @@ export default function Page() {
             >
               <MenuItem value="">Tất cả</MenuItem>
               {khoaOptions.map((khoa) => (
-                <MenuItem key={khoa} value={khoa}>
-                  {khoa}
+                <MenuItem key={khoa._id} value={khoa._id}>
+                  {khoa.TenKhoa}
                 </MenuItem>
               ))}
             </Select>
@@ -187,7 +191,7 @@ export default function Page() {
         <CustomTableHumanResources
           columns={columns}
           rows={filteredRows}
-          onEdit={()=>{}}
+          onEdit={() => {}}
           onDelete={() => {}}
           onDisable={() => {}}
           showEdit={true}

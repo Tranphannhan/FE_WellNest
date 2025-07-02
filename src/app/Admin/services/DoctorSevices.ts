@@ -1,7 +1,7 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export default async function getDoctorAdmin() {
+export async function getDoctorAdmin() {
   try {
     const result = await fetch(`${API_BASE_URL}/Bacsi/Pagination`);
     if (result.ok) {
@@ -14,6 +14,24 @@ export default async function getDoctorAdmin() {
     }
   } catch (error) {
     console.error("Exception khi lấy bác sĩ", error);
+    throw error;
+  }
+} 
+
+
+export async function getkhoaOptions (){
+   try {
+    const result = await fetch(`${API_BASE_URL}/Khoa/Pagination?Limit=100`);
+    if (result.ok) {
+      const Data = await result.json();
+      return Data;
+    } else {
+      const errorText = await result.text();
+      console.error(`Lỗi fetch Select Bác sĩ/Pagination: ${result.status} - ${errorText}`);
+      return 'Lỗi khi lấy bác sĩ';
+    }
+  } catch (error) {
+    console.error("Exception khi lấy danh mục bác sĩ", error);
     throw error;
   }
 }

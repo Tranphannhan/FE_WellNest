@@ -14,6 +14,7 @@ import {
   TableSortLabel,
   TablePagination,
   Box,
+  Chip,
 } from "@mui/material";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -24,19 +25,29 @@ import { FaRegTrashCan } from "react-icons/fa6";
 
 type Order = "asc" | "desc";
 
-interface Column {
-  id: string;
+export interface rowRenderType {
+  _id: string;
+  TenPhongThietBi?: string;
+  TenXetNghiem?: string;
+  Khoa?: string;
+  SoPhongKham?: string;
+  TrangThaiHoatDong: boolean;
+  Image?: string;
+}
+
+export interface Column {
+  id: keyof rowRenderType;
   label: string;
   sortable?: boolean;
-  Outstanding?: boolean; // ✅ thêm dòng này
+  Outstanding?: boolean;
 }
 
 interface CustomTableProps {
   columns: Column[];
-  rows: any[];
-  onEdit?: (row: any) => void;
-  onDelete?: (row: any) => void;
-  onDisable?: (row: any) => void;
+  rows: rowRenderType[];
+  onEdit?: () => void;
+  onDelete?: () => void;
+  onDisable: () => void;
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;
@@ -45,7 +56,7 @@ interface CustomTableProps {
   onPageChange?: (newPage: number) => void;
 }
 
-export default function CustomTable({
+export default function CustomTableRooms({
   columns,
   rows,
   onEdit,
@@ -59,11 +70,11 @@ export default function CustomTable({
   onPageChange,
 }: CustomTableProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedRow, setSelectedRow] = React.useState<any>(null);
+  const [selectedRow, setSelectedRow] = React.useState<rowRenderType | null>(null);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<string>("");
 
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, row: any) => {
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, row: rowRenderType) => {
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
   };
@@ -82,8 +93,9 @@ export default function CustomTable({
   const sortedRows = React.useMemo(() => {
     if (!orderBy) return rows;
     return [...rows].sort((a, b) => {
-      const aVal = a[orderBy];
-      const bVal = b[orderBy];
+      const aVal = a[orderBy as keyof rowRenderType];
+      const bVal = b[orderBy as keyof rowRenderType];
+      if (aVal === undefined || bVal === undefined) return 0;
       if (aVal < bVal) return order === "asc" ? -1 : 1;
       if (aVal > bVal) return order === "asc" ? 1 : -1;
       return 0;
@@ -91,12 +103,7 @@ export default function CustomTable({
   }, [rows, order, orderBy]);
 
   return (
-    <TableContainer
-      component={Paper}
-      sx={{
-        boxShadow: "none",
-      }}
-    >
+    <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
       <Table>
         <TableHead>
           <TableRow>
@@ -110,38 +117,20 @@ export default function CustomTable({
                     hideSortIcon
                     sx={{ "& .MuiTableSortLabel-icon": { display: "none" } }}
                   >
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        fontWeight: 600,
-                      }}
-                    >
+                    <span style={{ display: "flex", alignItems: "center", fontWeight: 600 }}>
                       {col.label}
-                      <span
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          marginLeft: 4,
-                        }}
-                      >
+                      <span style={{ display: "flex", flexDirection: "column", marginLeft: 4 }}>
                         <ArrowDropUpIcon
                           fontSize="small"
                           style={{
-                            color:
-                              orderBy === col.id && order === "asc"
-                                ? "#1976d2"
-                                : "#ccc",
+                            color: orderBy === col.id && order === "asc" ? "#1976d2" : "#ccc",
                             marginBottom: -6,
                           }}
                         />
                         <ArrowDropDownIcon
                           fontSize="small"
                           style={{
-                            color:
-                              orderBy === col.id && order === "desc"
-                                ? "#1976d2"
-                                : "#ccc",
+                            color: orderBy === col.id && order === "desc" ? "#1976d2" : "#ccc",
                             marginTop: -6,
                           }}
                         />
@@ -164,14 +153,12 @@ export default function CustomTable({
               hover
               sx={{
                 transition: "background-color 0.3s",
-                "&:hover": {
-                  backgroundColor: "#f5f5f5",
-                },
+                "&:hover": { backgroundColor: "#f5f5f5" },
               }}
             >
               {columns.map((col) => (
                 <TableCell key={col.id}>
-                  {col.id === "Image" ? (
+                  {col.id === "Image" && row[col.id] ? (
                     <Box
                       component="img"
                       src={row[col.id]}
@@ -187,7 +174,6 @@ export default function CustomTable({
                       }}
                     />
                   ) : col.id === "TrangThaiHoatDong" ? (
-                    /* ... như cũ */
                     <span
                       style={{
                         display: "inline-flex",
@@ -218,24 +204,30 @@ export default function CustomTable({
                             position: "absolute",
                             inset: 0,
                             borderRadius: "50%",
-                            backgroundColor: row[col.id]
-                              ? "#388e3c"
-                              : "#d84315",
-                            animation:
-                              "pulseRing 1.8s cubic-bezier(0.215,0.61,0.355,1) infinite",
+                            backgroundColor: row[col.id] ? "#388e3c" : "#d84315",
+                            animation: "pulseRing 1.8s cubic-bezier(0.215,0.61,0.355,1) infinite",
                             opacity: 0.6,
                           }}
                         />
                       </span>
                       {row[col.id] ? "Đang hoạt động" : "Ngừng hoạt động"}
                     </span>
-                  ) : (
-                    <span
-                      style={{
-                        color: col.Outstanding ? "#3497F9" : undefined,
+                  ) : col.id === "Khoa" ? (
+                    <Chip
+                      label={row.Khoa}
+                      color="primary"
+                      size="small"
+                      variant="filled"
+                      sx={{
+                        fontWeight: 500,
+                        backgroundColor: "#e3f2fd",
+                        color: "#1976d2",
+                        border: "none",
                       }}
-                    >
-                      {row[col.id]}
+                    />
+                  ) : (
+                    <span style={{ color: col.Outstanding ? "#3497F9" : undefined }}>
+                      {row[col.id] ?? "-"}
                     </span>
                   )}
                 </TableCell>
@@ -251,7 +243,6 @@ export default function CustomTable({
         </TableBody>
       </Table>
 
-      {/* Pagination */}
       {typeof page === "number" &&
         typeof totalItems === "number" &&
         onPageChange && (
@@ -265,7 +256,6 @@ export default function CustomTable({
           />
         )}
 
-      {/* Menu Actions */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -283,10 +273,10 @@ export default function CustomTable({
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {onEdit && showEdit && (
+        {onEdit && showEdit && selectedRow && (
           <MenuItem
             onClick={() => {
-              onEdit?.(selectedRow);
+              onEdit();
               handleCloseMenu();
             }}
             sx={{
@@ -296,9 +286,7 @@ export default function CustomTable({
               px: 2,
               py: 1,
               borderRadius: 1,
-              "&:hover": {
-                backgroundColor: "#e3f2fd",
-              },
+              "&:hover": { backgroundColor: "#e3f2fd" },
             }}
           >
             <FaEdit style={{ marginRight: 8 }} />
@@ -306,10 +294,10 @@ export default function CustomTable({
           </MenuItem>
         )}
 
-        {onDelete && showDelete && (
+        {onDelete && showDelete && selectedRow && (
           <MenuItem
             onClick={() => {
-              onDelete?.(selectedRow);
+              onDelete();
               handleCloseMenu();
             }}
             sx={{
@@ -319,9 +307,7 @@ export default function CustomTable({
               px: 2,
               py: 1,
               borderRadius: 1,
-              "&:hover": {
-                backgroundColor: "#ffebee",
-              },
+              "&:hover": { backgroundColor: "#ffebee" },
             }}
           >
             <FaRegTrashCan style={{ marginRight: 8 }} />
@@ -329,10 +315,10 @@ export default function CustomTable({
           </MenuItem>
         )}
 
-        {onDisable && selectedRow?.TrangThaiHoatDong && (
+        {showDisable && selectedRow && selectedRow.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              onDisable?.({ ...selectedRow, TrangThaiHoatDong: false });
+              onDisable();
               handleCloseMenu();
             }}
             sx={{
@@ -342,9 +328,7 @@ export default function CustomTable({
               px: 2,
               py: 1,
               borderRadius: 1,
-              "&:hover": {
-                backgroundColor: "#ffebee",
-              },
+              "&:hover": { backgroundColor: "#ffebee" },
             }}
           >
             <ImBlocked style={{ marginRight: 8 }} />
@@ -352,10 +336,10 @@ export default function CustomTable({
           </MenuItem>
         )}
 
-        {showDisable && selectedRow?.TrangThaiHoatDong === false && (
+        {onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              onDisable?.({ ...selectedRow, TrangThaiHoatDong: true });
+              onDisable();
               handleCloseMenu();
             }}
             sx={{
@@ -365,9 +349,7 @@ export default function CustomTable({
               px: 2,
               py: 1,
               borderRadius: 1,
-              "&:hover": {
-                backgroundColor: "#e8f5e9",
-              },
+              "&:hover": { backgroundColor: "#e8f5e9" },
             }}
           >
             <FaRegCheckCircle style={{ marginRight: 8 }} />
