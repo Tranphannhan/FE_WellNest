@@ -21,7 +21,7 @@ const NAVIGATION: Navigation = [
     icon: <BiSolidDashboard />,
     children: [
       {
-        segment: 'examination-statistics', // ✅ chỉ phần tiếp theo
+        segment: 'Examination', // ✅ chỉ phần tiếp theo
         title: 'Phiếu khám',
         icon: <LuLayoutDashboard />,
       },
@@ -31,7 +31,7 @@ const NAVIGATION: Navigation = [
         icon: <LuLayoutDashboard />,
       },
       {
-        segment: 'test-statistics',
+        segment: 'Testing',
         title: 'Xét nghiệm',
         icon: <LuLayoutDashboard />,
       },

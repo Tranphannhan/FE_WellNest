@@ -1,0 +1,9 @@
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.toolpad-demo-app-nekur4-MuiPaper-root-MuiTableContainer-root{
+    box-shadow: none !important;
+}

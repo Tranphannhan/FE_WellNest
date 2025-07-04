@@ -94,91 +94,118 @@ export async function searchMedicinesByName(searchTerm: string, limit: number, p
 
 // Dashboard thu ngân lọc theo ngày và năm
 
-export async function fetchPrescriptionsByDateRange(fromDate?: string, toDate?: string, year?: number): Promise<PrescriptionStatsPaginationResponse> {
-    try {
-        let url = `${API_BASE_URL}/Donthuoc/filter-by-date`;
-        const params = new URLSearchParams();
+export async function fetchPrescriptionsByDateRange(
+  fromDate?: string,
+  toDate?: string,
+  year?: number,
+  all: boolean = false
+): Promise<PrescriptionStatsPaginationResponse> {
+  try {
+    let url = `${API_BASE_URL}/Donthuoc/filter-by-date`;
+    const params = new URLSearchParams();
 
-        // Prioritize date range if provided
-        if (fromDate && toDate) {
-            params.append('fromDate', fromDate);
-            params.append('toDate', toDate);
-        } 
-        // Otherwise, use year if provided
-        else if (year) {
-            params.append('year', year.toString());
-        }
+    // Always append the 'all' parameter
+    params.append('all', all ? 'true' : 'false');
 
-        params.append('limit', '100000'); // Always append limit
-
-        const response = await fetch(`${url}?${params.toString()}`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data: PrescriptionStatsPaginationResponse = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching prescriptions:', error);
-        throw error;
+    // Always append filter parameters if provided, regardless of 'all'
+    if (fromDate && toDate) {
+      params.append('fromDate', fromDate);
+      params.append('toDate', toDate);
+    } else if (year) {
+      params.append('year', year.toString());
     }
+
+    params.append('limit', '100000');
+
+    const response = await fetch(`${url}?${params.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: PrescriptionStatsPaginationResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching prescriptions:', error);
+    throw error;
+  }
 }
+
 
 // Apply the same logic to fetchTestRequestsByDateRange and fetchMedicalRecordsByDateRange:
 
-export async function fetchTestRequestsByDateRange(fromDate?: string, toDate?: string, year?: number): Promise<TestRequestPaginationResponse> {
-    try {
-        let url = `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/filter-by-date`;
-        const params = new URLSearchParams();
+export async function fetchTestRequestsByDateRange(
+  fromDate?: string,
+  toDate?: string,
+  year?: number,
+  all: boolean = false
+): Promise<TestRequestPaginationResponse> {
+  try {
+    let url = `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/filter-by-date`;
+    const params = new URLSearchParams();
 
-        if (fromDate && toDate) {
-            params.append('fromDate', fromDate);
-            params.append('toDate', toDate);
-        } else if (year) {
-            params.append('year', year.toString());
-        }
-        params.append('limit', '100000');
-        const response = await fetch(`${url}?${params.toString()}`);
+    // Always append the 'all' parameter
+    params.append('all', all ? 'true' : 'false');
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data: TestRequestPaginationResponse = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching test requests:', error);
-        throw error;
+    // Always append filter parameters if provided
+    if (fromDate && toDate) {
+      params.append('fromDate', fromDate);
+      params.append('toDate', toDate);
+    } else if (year) {
+      params.append('year', year.toString());
     }
+
+    params.append('limit', '100000');
+
+    const response = await fetch(`${url}?${params.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: TestRequestPaginationResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching test requests:', error);
+    throw error;
+  }
 }
 
+
 export async function fetchMedicalRecordsByDateRange(
-    fromDate?: string,
-    toDate?: string,
-    year?: number
+  fromDate?: string,
+  toDate?: string,
+  year?: number,
+  all: boolean = false
 ): Promise<MedicalRecordPaginationResponse> {
-    try {
-        let url = `${API_BASE_URL}/Phieu_Kham_Benh/filter-phieu-kham-benh`;
-        const params = new URLSearchParams();
+  try {
+    let url = `${API_BASE_URL}/Phieu_Kham_Benh/filter-phieu-kham-benh`;
+    const params = new URLSearchParams();
 
-        if (fromDate && toDate) {
-            params.append('fromDate', fromDate);
-            params.append('toDate', toDate);
-        } else if (year) {
-            params.append('year', year.toString());
-        }
-        params.append('limit', '100000');
-        const response = await fetch(`${url}?${params.toString()}`);
+    // Always append 'all'
+    params.append('all', all ? 'true' : 'false');
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data: MedicalRecordPaginationResponse = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching medical records:', error);
-        throw error;
+    // Append date filters
+    if (fromDate && toDate) {
+      params.append('fromDate', fromDate);
+      params.append('toDate', toDate);
+    } else if (year) {
+      params.append('year', year.toString());
     }
+
+    // Always append limit
+    params.append('limit', '100000');
+
+    const response = await fetch(`${url}?${params.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: MedicalRecordPaginationResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching medical records:', error);
+    throw error;
+  }
 }
