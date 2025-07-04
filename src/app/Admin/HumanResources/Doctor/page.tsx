@@ -48,15 +48,18 @@ export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedKhoa, setSelectedKhoa] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
+  const [currentPage, setCurrentPage] = useState <number> (0);
+  const [totalItems , setTotalItems] = useState <number> (0)
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const router = useRouter();
 
   const getAPI = async () => {
-    const data = await getDoctorAdmin();
+    const data = await getDoctorAdmin(currentPage + 1);
     if (!data?.data || data.data.length === 0) {
       setRows([]);
       return;
     }
+     setTotalItems (data.totalItems)
 
     const mappedData = data.data.map((item: DoctorType) => ({
       _id: item._id,
@@ -80,7 +83,8 @@ export default function Page() {
 
   useEffect(() => {
     getAPI();
-  }, []);
+  }, [currentPage]);
+
 
   interface khoaOptionsType {
     _id: string;
@@ -195,13 +199,14 @@ export default function Page() {
           rows={filteredRows}
           onEdit={(id) => {router.push(`/Admin/HumanResources/Doctor/Edit/${id}`)}}
           onDelete={() => {}}
-          onDisable={(id) => {}}
+          onDisable={(id) => {console.log(id);
+          }}
           showEdit={true}
           showDelete={false}
           showDisable={true}
-          page={1}
-          totalItems={filteredRows.length}
-          onPageChange={() => {}}
+          page={currentPage}
+          totalItems={totalItems}
+          onPageChange={setCurrentPage}
         />
       </div>
     </>

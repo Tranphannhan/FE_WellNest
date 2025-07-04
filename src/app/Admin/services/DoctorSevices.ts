@@ -1,9 +1,9 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function getDoctorAdmin() {
+export async function getDoctorAdmin(page : number) {
   try {
-    const result = await fetch(`${API_BASE_URL}/Bacsi/Pagination`);
+    const result = await fetch(`${API_BASE_URL}/Bacsi/Pagination?page=${page}`);
     if (result.ok) {
       const Data = await result.json();
       return Data;
@@ -19,9 +19,9 @@ export async function getDoctorAdmin() {
 } 
 
 
-export async function getkhoaOptions (){
+export async function getkhoaOptions (page : number){
    try {
-    const result = await fetch(`${API_BASE_URL}/Khoa/Pagination?Limit=100`);
+    const result = await fetch(`${API_BASE_URL}/Khoa/Pagination?page=${page}`);
     if (result.ok) {
       const Data = await result.json();
       return Data;

@@ -54,21 +54,27 @@ const columns: Column[] = [
   },
 ];
 
+
 export default function Page() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(""); // Trạng thái hoạt động
   const [rows, setRows] = useState<rowRenderType[]>([]);
+    const [currentPage, setCurrentPage] = useState <number> (0);
+  const [totalItems , setTotalItems] = useState <number> (0)
+
 
   // ✅ Load API
   const LoaddingApi = async () => {
     try {
-      const data = await getTestingRoom();
+      const data = await getTestingRoom(currentPage + 1);
       if (!data?.data || data.data.length === 0) {
         setRows([]);
         return;
       }
 
+       setTotalItems (data.totalItems)
+      
       const mappedData: rowRenderType[] = data.data.map((item: TestingRoom) => ({
         _id: item._id,
         TenPhongThietBi: item.TenPhongThietBi,
@@ -87,7 +93,8 @@ export default function Page() {
 
   useEffect(() => {
     LoaddingApi();
-  }, []);
+  }, [currentPage]);
+  
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -177,9 +184,9 @@ export default function Page() {
         showEdit={true}
         showDelete={false}
         showDisable={true}
-        page={1}
-        totalItems={filteredRows.length}
-        onPageChange={() => {}}
+         page={currentPage}
+          totalItems={totalItems}
+          onPageChange={setCurrentPage}
       />
     </div>
   );

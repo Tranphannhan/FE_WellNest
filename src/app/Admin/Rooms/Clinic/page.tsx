@@ -1,4 +1,6 @@
+
 "use client";
+
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
@@ -19,7 +21,7 @@ import CustomTableRooms, {
 import { getRommm } from "../../services/Room";
 import { getkhoaOptions } from "../../services/DoctorSevices";
 
-// Cột của bảng
+// Cấu hình cột của bảng
 const columns: Column[] = [
   { id: "_id", label: "ID Phòng", sortable: false, Outstanding: false },
   { id: "SoPhongKham", label: "Số phòng", sortable: true, Outstanding: true },
@@ -32,22 +34,21 @@ const columns: Column[] = [
   },
 ];
 
-// Interface dữ liệu chuyên khoa
+// Interface chuyên khoa
 interface Khoa {
   _id: string;
   TenKhoa: string;
   TrangThaiHoatDong: boolean;
-  __v?: number;
 }
 
-// Interface dữ liệu phòng
+// Interface phòng
 interface PhongKham {
   _id: string;
   Id_Khoa: Khoa;
   SoPhongKham: string;
 }
 
-// Dùng cho Select chuyên khoa
+// Select chuyên khoa
 interface khoaOptionsType {
   _id: string;
   TenKhoa: string;
@@ -59,17 +60,19 @@ export default function Page() {
   const [selectedKhoa, setSelectedKhoa] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const [khoaOptions, setKhoaOptions] = useState<khoaOptionsType[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
-  
-  
+  // Lấy chuyên khoa
   const loaddingAPISelect = async () => {
     try {
-      const data = await getkhoaOptions();
-      if (data?.data && data.data.length > 0) {
+      const data = await getkhoaOptions(currentPage + 1);
+      if (data?.data?.length > 0) {
         const activeKhoa = data.data.filter(
           (item: khoaOptionsType) => item.TrangThaiHoatDong
         );
         setKhoaOptions(activeKhoa);
+        setTotalItems(data.totalItems);
       } else {
         setKhoaOptions([]);
       }
@@ -78,12 +81,13 @@ export default function Page() {
     }
   };
 
-  // ✅ Lấy danh sách phòng khám từ API
+  // Lấy danh sách phòng có phân trang
   const loaddingAPI = async () => {
     try {
-      const data = await getRommm();
+      const data = await getRommm(currentPage + 1);
       if (!data?.data || data.data.length === 0) {
         setRows([]);
+        setTotalItems(0);
         return;
       }
 
@@ -95,17 +99,25 @@ export default function Page() {
       }));
 
       setRows(mappedRows);
+      setTotalItems(data.totalItems || 0);
     } catch (error) {
       console.error("Lỗi khi load danh sách phòng:", error);
     }
   };
 
+  // Tải dữ liệu phòng mỗi khi đổi trang
   useEffect(() => {
     loaddingAPI();
+  }, [currentPage]);
+
+
+  // Tải chuyên khoa 1 lần duy nhất
+  useEffect(() => {
     loaddingAPISelect();
   }, []);
 
-  // ✅ Lọc dữ liệu theo tìm kiếm + chuyên khoa
+
+  // Lọc dữ liệu theo tìm kiếm + chuyên khoa
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
       const matchSearch = row?.SoPhongKham?.toLowerCase().includes(
@@ -150,7 +162,10 @@ export default function Page() {
           placeholder="Tìm theo số phòng..."
           variant="outlined"
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            setCurrentPage(0); // reset về trang đầu
+          }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -173,7 +188,10 @@ export default function Page() {
           <Select
             label="Chuyên khoa"
             value={selectedKhoa}
-            onChange={(e) => setSelectedKhoa(e.target.value)}
+            onChange={(e) => {
+              setSelectedKhoa(e.target.value);
+              setCurrentPage(0); // reset về trang đầu
+            }}
             sx={{
               fontSize: 14,
               height: 40,
@@ -201,9 +219,9 @@ export default function Page() {
         showEdit={true}
         showDelete={false}
         showDisable={true}
-        page={1}
-        totalItems={filteredRows.length}
-        onPageChange={() => {}}
+        page={currentPage}
+        totalItems={totalItems}
+        onPageChange={setCurrentPage}
       />
     </div>
   );

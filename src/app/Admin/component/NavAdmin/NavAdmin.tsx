@@ -57,13 +57,13 @@ const NAVIGATION: Navigation = [
     ],
   },
   {
-    segment: 'Admin/list',
+    segment: 'Admin/List',
     title: 'Danh mục',
     icon: <FaClipboardList />,
     children: [
-      { segment: 'account-type', title: 'Loại tài khoản', icon: <MdOutlineManageAccounts /> },
-      { segment: 'test-type', title: 'Loại xét nghiệm', icon: <TbMicroscope /> },
-      { segment: 'department-type', title: 'Loại khoa', icon: <LuStethoscope /> },
+      { segment: 'AccountType', title: 'Loại tài khoản', icon: <MdOutlineManageAccounts /> },
+      { segment: 'TestType', title: 'Loại xét nghiệm', icon: <TbMicroscope /> },
+      { segment: 'DepartmentType', title: 'Loại khoa', icon: <LuStethoscope /> },
     ],
   },
   {
@@ -71,8 +71,8 @@ const NAVIGATION: Navigation = [
     title: 'Giá dịch vụ',
     icon: <ImPriceTags />,
     children: [
-      { segment: 'examination-invoice', title: 'Giá khám', icon: <IoPricetagsOutline /> },
-      { segment: 'test-invoice', title: 'Giá xét nghiệm', icon: <IoPricetagsOutline /> },
+      { segment: 'AxaminationPrice', title: 'Giá khám', icon: <IoPricetagsOutline /> },
+      { segment: 'TestPrice', title: 'Giá xét nghiệm', icon: <IoPricetagsOutline /> },
     ],
   },
   {
@@ -90,8 +90,8 @@ const NAVIGATION: Navigation = [
     title: 'Thuốc',
     icon: <GiMedicines />,
     children: [
-      { segment: 'examination-price', title: 'Thuốc', icon: <GiMedicines /> },
-      { segment: 'type-of-medicine', title: 'Loại thuốc', icon: <CiViewList /> },
+      { segment: 'Medicine', title: 'Thuốc', icon: <GiMedicines /> },
+      { segment: 'DrugGroup', title: 'Loại thuốc', icon: <CiViewList /> },
     ],
   },
   {
