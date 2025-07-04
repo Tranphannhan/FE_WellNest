@@ -53,13 +53,17 @@ export default function Page() {
   const [selectedLoai, setSelectedLoai] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const [currentPage, setCurrentPage] = useState <number> (0);
+  const [totalItems , setTotalItems] = useState <number> (0)
 
   const loaddingAPI = async () => {
-    const data = await getstaffAdmin();
+    const data = await getstaffAdmin(currentPage + 1);
     if (!data?.data || data.data.length === 0) {
       setRows([]);
       return;
     }
+
+    setTotalItems (data.totalItems)
 
     const mappedRows: rowRenderType[] = data.data.map((item: Staff) => ({
       _id: item._id,
@@ -79,7 +83,8 @@ export default function Page() {
 
   useEffect(() => {
     loaddingAPI();
-  }, []);
+  }, [currentPage]);
+
 
 
   // --- 
@@ -89,17 +94,11 @@ export default function Page() {
     VaiTro : string
   }
 
-
   const [TenLoaiOP , setTenLoaiOP] = useState <TenLoaiOPType []> ([]);
     const loaddingAPISelect  = async () => {
       const data = await getOptionstaffAdmin ();
-        if (!data) return;
-
-        console.log('chay');
-        console.log(data);
-
-
-        setTenLoaiOP (data)
+      if (!data) return;
+      setTenLoaiOP (data)
     }
   
 
@@ -214,15 +213,15 @@ export default function Page() {
         <CustomTableHumanResources
           columns={columns}
           rows={filteredRows}
-          onEdit={(id) => {}}
+          onEdit={(id) => {console.log(id)}}
           onDelete={() => {}}
-          onDisable={(id) => {}}
+          onDisable={(id) => {console.log(id)}}
           showEdit={true}
           showDelete={false}
           showDisable={true}
-          page={1}
-          totalItems={filteredRows.length}
-          onPageChange={() => {}}
+            page={currentPage} // ✅ Dùng biến state
+          totalItems={totalItems}
+          onPageChange={setCurrentPage}
         />
       </div>
     </>

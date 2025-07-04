@@ -13,8 +13,7 @@ import {
   MenuItem,
   TableSortLabel,
   TablePagination,
-  Box,
-  Chip,
+
 } from "@mui/material";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -23,23 +22,18 @@ import { FaEdit, FaRegCheckCircle } from "react-icons/fa";
 import { ImBlocked } from "react-icons/im";
 import { FaRegTrashCan } from "react-icons/fa6";
 
-type Order = "asc" | "desc";
-
+// Interface hàng thuốc
 export interface rowRenderType {
   _id: string;
-  TenBacSi?: string; // Optional for doctor-specific data
-  TenTaiKhoan?: string; // Optional for account-specific data
-  GioiTinh: string;
-  HocVi?: string; // Optional for doctor-specific data
-  SoDienThoai: string;
-  Khoa?: string; // Optional for doctor-specific data
-  Phong?: string; // Optional for doctor-specific data
-  TrangThaiHoatDong: boolean;
-  Image: string;
-  TenLoai?: string; // Optional for account-specific data
+  TenThuoc?: string;
+  DonVi?: string;
+  Gia?: number;
+  TrangThaiHoatDong?: boolean;
+  TenNhomThuoc?: string;
 }
 
-export interface Column {
+// Cấu hình cột
+export interface ColumnMedicine {
   id: keyof rowRenderType;
   label: string;
   sortable?: boolean;
@@ -47,11 +41,11 @@ export interface Column {
 }
 
 interface CustomTableProps {
-  columns: Column[];
+  columns: ColumnMedicine[];
   rows: rowRenderType[];
-  onEdit?: (id: string) => void; // Updated to include row parameter
-  onDelete?: () => void; // Updated to include row parameter
-  onDisable?: (id:string) => void; // Updated to include row parameter
+  onEdit?: (row: rowRenderType) => void;
+  onDelete?: (row: rowRenderType) => void;
+  onDisable: (row: rowRenderType) => void;
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;
@@ -60,7 +54,7 @@ interface CustomTableProps {
   onPageChange?: (newPage: number) => void;
 }
 
-export default function CustomTableHumanResources({
+export default function CustomTableMedicine({
   columns,
   rows,
   onEdit,
@@ -74,16 +68,11 @@ export default function CustomTableHumanResources({
   onPageChange,
 }: CustomTableProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedRow, setSelectedRow] = React.useState<rowRenderType | null>(
-    null
-  );
-  const [order, setOrder] = React.useState<Order>("asc");
+  const [selectedRow, setSelectedRow] = React.useState<rowRenderType | null>(null);
+  const [order, setOrder] = React.useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = React.useState<string>("");
 
-  const handleOpenMenu = (
-    event: React.MouseEvent<HTMLElement>,
-    row: rowRenderType
-  ) => {
+  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, row: rowRenderType) => {
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
   };
@@ -112,12 +101,7 @@ export default function CustomTableHumanResources({
   }, [rows, order, orderBy]);
 
   return (
-    <TableContainer
-      component={Paper}
-      sx={{
-        boxShadow: "none",
-      }}
-    >
+    <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
       <Table>
         <TableHead>
           <TableRow>
@@ -131,38 +115,20 @@ export default function CustomTableHumanResources({
                     hideSortIcon
                     sx={{ "& .MuiTableSortLabel-icon": { display: "none" } }}
                   >
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        fontWeight: 600,
-                      }}
-                    >
+                    <span style={{ display: "flex", alignItems: "center", fontWeight: 600 }}>
                       {col.label}
-                      <span
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          marginLeft: 4,
-                        }}
-                      >
+                      <span style={{ display: "flex", flexDirection: "column", marginLeft: 4 }}>
                         <ArrowDropUpIcon
                           fontSize="small"
                           style={{
-                            color:
-                              orderBy === col.id && order === "asc"
-                                ? "#1976d2"
-                                : "#ccc",
+                            color: orderBy === col.id && order === "asc" ? "#1976d2" : "#ccc",
                             marginBottom: -6,
                           }}
                         />
                         <ArrowDropDownIcon
                           fontSize="small"
                           style={{
-                            color:
-                              orderBy === col.id && order === "desc"
-                                ? "#1976d2"
-                                : "#ccc",
+                            color: orderBy === col.id && order === "desc" ? "#1976d2" : "#ccc",
                             marginTop: -6,
                           }}
                         />
@@ -185,28 +151,19 @@ export default function CustomTableHumanResources({
               hover
               sx={{
                 transition: "background-color 0.3s",
-                "&:hover": {
-                  backgroundColor: "#f5f5f5",
-                },
+                "&:hover": { backgroundColor: "#f5f5f5" },
               }}
             >
               {columns.map((col) => (
                 <TableCell key={col.id}>
-                  {col.id === "Image" ? (
-                    <Box
-                      component="img"
-                      src={row[col.id]}
-                      alt="avatar"
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: "50%",
-                        transition: "transform 0.3s",
-                        "&:hover": {
-                          transform: "scale(1.2)",
-                        },
-                      }}
-                    />
+                  {col.id === "Gia" ? (
+                    <span>
+                      {row.Gia?.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                        minimumFractionDigits: 0,
+                      }) ?? "-"}
+                    </span>
                   ) : col.id === "TrangThaiHoatDong" ? (
                     <span
                       style={{
@@ -238,9 +195,7 @@ export default function CustomTableHumanResources({
                             position: "absolute",
                             inset: 0,
                             borderRadius: "50%",
-                            backgroundColor: row[col.id]
-                              ? "#388e3c"
-                              : "#d84315",
+                            backgroundColor: row[col.id] ? "#388e3c" : "#d84315",
                             animation:
                               "pulseRing 1.8s cubic-bezier(0.215,0.61,0.355,1) infinite",
                             opacity: 0.6,
@@ -250,38 +205,12 @@ export default function CustomTableHumanResources({
                       {row[col.id] ? "Đang hoạt động" : "Ngừng hoạt động"}
                     </span>
                   ) : (
-                    <span
-                      style={{
-                        color: col.Outstanding ? "#3497F9" : undefined,
-                      }}
-                    >
-                      {col.id === "Khoa" || col.id === "TenLoai" ? (
-                        <Chip
-                          label={row.Khoa || row.TenLoai}
-                          color="primary"
-                          size="small"
-                          variant="filled"
-                          sx={{
-                            fontWeight: 500,
-                            backgroundColor: "#e3f2fd",
-                            color: "#1976d2",
-                            border: "none",
-                          }}
-                        />
-                      ) : (
-                        <span
-                          style={{
-                            color: col.Outstanding ? "#3497F9" : undefined,
-                          }}
-                        >
-                          {row[col.id] ?? "-"}
-                        </span>
-                      )}
+                    <span style={{ color: col.Outstanding ? "#3497F9" : undefined }}>
+                      {row[col.id] ?? "-"}
                     </span>
                   )}
                 </TableCell>
               ))}
-
               <TableCell align="right">
                 <IconButton onClick={(e) => handleOpenMenu(e, row)}>
                   <MoreOutlined />
@@ -292,18 +221,16 @@ export default function CustomTableHumanResources({
         </TableBody>
       </Table>
 
-      {typeof page === "number" &&
-        typeof totalItems === "number" &&
-        onPageChange && (
-          <TablePagination
-            component="div"
-            count={totalItems}
-            page={page}
-            onPageChange={(event, newPage) => onPageChange(newPage)}
-            rowsPerPage={7}
-            rowsPerPageOptions={[]}
-          />
-        )}
+      {typeof page === "number" && typeof totalItems === "number" && onPageChange && (
+        <TablePagination
+          component="div"
+          count={totalItems}
+          page={page}
+          onPageChange={(e, newPage) => onPageChange(newPage)}
+          rowsPerPage={7}
+          rowsPerPageOptions={[]}
+        />
+      )}
 
       <Menu
         anchorEl={anchorEl}
@@ -322,13 +249,11 @@ export default function CustomTableHumanResources({
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        {onEdit && showEdit && (
+        {onEdit && showEdit && selectedRow && (
           <MenuItem
             onClick={() => {
-              if (selectedRow && onEdit) {
-                onEdit(selectedRow._id);
-                handleCloseMenu();
-              }
+              onEdit(selectedRow);
+              handleCloseMenu();
             }}
             sx={{
               color: "#1976d2",
@@ -337,23 +262,18 @@ export default function CustomTableHumanResources({
               px: 2,
               py: 1,
               borderRadius: 1,
-              "&:hover": {
-                backgroundColor: "#e3f2fd",
-              },
+              "&:hover": { backgroundColor: "#e3f2fd" },
             }}
           >
-            <FaEdit style={{ marginRight: 8 }} />
-            Sửa
+            <FaEdit style={{ marginRight: 8 }} /> Sửa
           </MenuItem>
         )}
 
-        {onDelete && showDelete && (
+        {onDelete && showDelete && selectedRow && (
           <MenuItem
             onClick={() => {
-              if (selectedRow && onDelete) {
-                onDelete();
-                handleCloseMenu();
-              }
+              onDelete(selectedRow);
+              handleCloseMenu();
             }}
             sx={{
               color: "#d32f2f",
@@ -362,23 +282,18 @@ export default function CustomTableHumanResources({
               px: 2,
               py: 1,
               borderRadius: 1,
-              "&:hover": {
-                backgroundColor: "#ffebee",
-              },
+              "&:hover": { backgroundColor: "#ffebee" },
             }}
           >
-            <FaRegTrashCan style={{ marginRight: 8 }} />
-            Xóa
+            <FaRegTrashCan style={{ marginRight: 8 }} /> Xóa
           </MenuItem>
         )}
 
-        {onDisable && selectedRow?.TrangThaiHoatDong && (
+        {showDisable && selectedRow && selectedRow.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              if (selectedRow && onDisable) {
-                onDisable(selectedRow._id);
-                handleCloseMenu();
-              }
+              onDisable(selectedRow);
+              handleCloseMenu();
             }}
             sx={{
               color: "#d32f2f",
@@ -387,23 +302,18 @@ export default function CustomTableHumanResources({
               px: 2,
               py: 1,
               borderRadius: 1,
-              "&:hover": {
-                backgroundColor: "#ffebee",
-              },
+              "&:hover": { backgroundColor: "#ffebee" },
             }}
           >
-            <ImBlocked style={{ marginRight: 8 }} />
-            Vô hiệu
+            <ImBlocked style={{ marginRight: 8 }} /> Vô hiệu
           </MenuItem>
         )}
 
-        {showDisable && selectedRow?.TrangThaiHoatDong === false && (
+        {onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              if (selectedRow && onDisable) {
-                onDisable(selectedRow._id);
-                handleCloseMenu();
-              }
+              onDisable(selectedRow);
+              handleCloseMenu();
             }}
             sx={{
               color: "#388e3c",
@@ -412,13 +322,10 @@ export default function CustomTableHumanResources({
               px: 2,
               py: 1,
               borderRadius: 1,
-              "&:hover": {
-                backgroundColor: "#e8f5e9",
-              },
+              "&:hover": { backgroundColor: "#e8f5e9" },
             }}
           >
-            <FaRegCheckCircle style={{ marginRight: 8 }} />
-            Kích hoạt 
+            <FaRegCheckCircle style={{ marginRight: 8 }} /> Kích hoạt
           </MenuItem>
         )}
       </Menu>

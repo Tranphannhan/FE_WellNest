@@ -1,1 +1,0 @@
-export default function Page() { return <div>Loại khoa</div>; } 

@@ -13,7 +13,8 @@ export interface medicineType {
   TenThuoc?: string;
   Gia?: number;
   __v?: number;
-  DonVi ? : string
+  DonVi ? : string;
+  TrangThaiHoatDong ? : boolean
 }
 
 export interface MedicinePaginationResponse {
@@ -86,7 +87,7 @@ export interface ServicePriceType {
 //Loại cận lâm sàng
 export interface ParaclinicalType {
   _id?: string;
-  Id_PhongThietBi?: string;
+  Id_PhongThietBi?: EquipmentType;
   Id_GiaDichVu?: ServicePriceType;
   TenXetNghiem?: string;
   MoTaXetNghiem?: string;
@@ -160,7 +161,7 @@ export type ParaclinicalResponse = {
 
 
 // đơn thuốc chi tiết
-// export interface detailedPrescriptionType {
+// export interface detailedPrescriptionType 
 //   _id : string;
 //   Id_DonThuoc : string;
 //   Id_Thuoc : medicineType;
@@ -170,7 +171,7 @@ export type ParaclinicalResponse = {
 
 
 
-// Tài khoản
+// Loại Tài khoản
 export interface Accounttype {
   _id: string;
   TenLoaiTaiKhoan: string;
@@ -179,6 +180,7 @@ export interface Accounttype {
 }
 
 
+// Tài khoản nhân viên
 export interface Staff {
   _id: string;
   Id_LoaiTaiKhoan: Accounttype;
@@ -190,4 +192,12 @@ export interface Staff {
   __v: number;
   TrangThaiHoatDong: boolean;
   GioiTinh : string
+}
+
+
+// Khoa
+export interface departmentType {
+  _id : string,
+  TenKhoa : string,
+  TrangThaiHoatDong : boolean 
 }

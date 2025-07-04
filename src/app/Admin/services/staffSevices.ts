@@ -1,9 +1,9 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function getstaffAdmin() {
+export async function getstaffAdmin(page : number) {
   try {
-    const result = await fetch(`${API_BASE_URL}/Tai_Khoan/Pagination`);
+    const result = await fetch(`${API_BASE_URL}/Tai_Khoan/Pagination?page=${page}`);
     if (result.ok) {
       const Data = await result.json();
       return Data;
@@ -17,7 +17,6 @@ export async function getstaffAdmin() {
     throw error;
   }
 }
-
 
 
 export async function getOptionstaffAdmin() {

@@ -3,10 +3,10 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
-export async function getRommm () {
+export async function getRommm (page : number) {
   try {
-    const result = await fetch(`${API_BASE_URL}/Phong_Kham/Pagination`);
-    if (result.ok) {
+    const result = await fetch(`${API_BASE_URL}/Phong_Kham/Pagination?page=${page}`);
+    if (result.ok){
       const Data = await result.json();
       return Data;
     } else {
@@ -20,10 +20,10 @@ export async function getRommm () {
   }   
 }   
 
-
-export async function getTestingRoom () {
+ 
+export async function getTestingRoom (page : number) {
   try {
-    const result = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination`);
+    const result = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination?page=${page}`);
     if (result.ok) {
       const Data = await result.json();
       return Data;
