@@ -137,3 +137,25 @@ export async function getExaminationPrice (page : number) {
   }
 } 
 
+
+
+// lấy danh sách hóa đơn 
+export async function getBill(page: number , category  : string) {
+  try {
+    const result = await fetch(
+      `${API_BASE_URL}/Hoadon/LayTheoLoai?LoaiHoaDon=${category}&page=${page}`
+    );
+
+    if (result.ok) {
+      const data = await result.json();
+      return data;
+    } else {
+      const errorText = await result.text();
+      console.error(`Lỗi fetch: ${result.status} - ${errorText}`);
+      return { data: [], totalItems: 0 };
+    }
+  } catch (error) {
+    console.error("Exception khi gọi API:", error);
+    return { data: [], totalItems: 0 };
+  }
+}
