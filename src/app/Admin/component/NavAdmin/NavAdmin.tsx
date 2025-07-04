@@ -80,11 +80,13 @@ const NAVIGATION: Navigation = [
     title: 'Hóa đơn',
     icon: <MdReceiptLong />,
     children: [
-      { segment: 'examination-price', title: 'Khám', icon: <MdOutlineReceiptLong /> },
-      { segment: 'medicine-price', title: 'Đơn thuốc', icon: <MdOutlineReceiptLong /> },
-      { segment: 'test-price', title: 'Xét nghiệm', icon: <MdOutlineReceiptLong /> },
+      { segment: 'ExaminationPrice', title: 'Khám', icon: <MdOutlineReceiptLong /> },
+      { segment: 'MedicinePrice', title: 'Đơn thuốc', icon: <MdOutlineReceiptLong /> },
+      { segment: 'TestPrice', title: 'Xét nghiệm', icon: <MdOutlineReceiptLong /> },
     ],
   },
+
+
   {
     segment: 'Admin/Medicine',
     title: 'Thuốc',
