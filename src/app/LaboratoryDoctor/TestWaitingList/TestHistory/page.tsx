@@ -8,6 +8,7 @@ import Pagination from '@/app/components/ui/Pagination/Pagination';
 import { paraclinicalType } from '@/app/types/patientTypes/patient';
 import { getWaitingForTest } from '@/app/services/LaboratoryDoctor';
 import NoData from '@/app/components/ui/Nodata/Nodata';
+import { FaEye } from 'react-icons/fa6';
 
 export default function Prescription() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function Prescription() {
   const [data, setData] = useState<paraclinicalType[]>([]);
 
   const loaddingAPI = async () => {
-    const getData = await getWaitingForTest('6803bf3070cd96d5cde6d824', currentPage, false);
+    const getData = await getWaitingForTest('6803bf3070cd96d5cde6d824', currentPage, false, true);
     if (!getData) return;
     setData(getData.data);
     setTotalPages(getData.totalPages);
@@ -86,10 +87,10 @@ export default function Prescription() {
                     <td style={{ whiteSpace: 'nowrap' }}>{record?.Ngay || ''}</td>
                     <td>
                       <button
-                        className="button--green"
+                        className="button--blue"
                         onClick={() => router.push(`/LaboratoryDoctor/TestWaitingList/${record.Id_PhieuKhamBenh._id}`)}
                       >
-                        Thực hiện
+                        <FaEye />Xem chi tiết
                       </button>
                     </td>
                   </tr>

@@ -24,7 +24,12 @@ export default function Patient() {
   }
 
   const LoaddingPatient = async () => {
-    const Data = await getAllPatient("6807397b4a1e320062ce2b20", false, "Kham",1);
+    const Data = await getAllPatient(
+      "6807397b4a1e320062ce2b20",
+      false,
+      "Kham",
+      1
+    );
     console.log(Data);
     setDataRender(Data.data);
   };
@@ -107,8 +112,8 @@ export default function Patient() {
                           record.SoLanKhongCoMat === 0
                             ? "tatusTable green"
                             : record.SoLanKhongCoMat === 1
-                            ? "tatusTable yellow"
-                            : "tatusTable red"
+                              ? "tatusTable yellow"
+                              : "tatusTable red"
                         }
                       >
                         {record.SoLanKhongCoMat} đợt
@@ -119,7 +124,7 @@ export default function Patient() {
                     <button
                       className="button--blue"
                       onClick={() => {
-                        handleExamination(record._id || '');
+                        handleExamination(record._id || "");
                       }}
                     >
                       <FaNotesMedical />
@@ -128,7 +133,7 @@ export default function Patient() {
                     <button
                       className="button--red"
                       onClick={() => {
-                        Absences(record._id || '');
+                        Absences(record._id || "");
                       }}
                     >
                       <FaUserSlash />

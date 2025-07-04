@@ -19,6 +19,7 @@ const ListofDrugsPopup: React.FC<ListofDrugsPopupProps> = ({ isOpen, onClose, me
     const [form] = Form.useForm();
 
     useEffect(() => {
+        console.log(note,quantity)
         setNote(medication?.NhacNho || '');
         setQuantity(medication?.SoLuong || 0);
         form.setFieldsValue({

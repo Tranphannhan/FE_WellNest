@@ -1,15 +1,20 @@
 // import { Testtype } from "../types/hospitalTypes/hospitalType";
 import { ParaclinicalResponse } from "../types/hospitalTypes/hospitalType";
-import { paraclinicalType, prescriptionType } from "../types/patientTypes/patient";
+import { prescriptionType } from "../types/patientTypes/patient";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function getPrescriptionPendingPayment (): Promise<prescriptionType | null> {
+export async function getPrescriptionPendingPayment (Pagination:boolean = false , page:number = 1) {
   try {
-    const response = await fetch(`${API_BASE_URL}/Donthuoc/DonThuocThuNgan/Pagination?TrangThaiThanhToan=false&gidzl=kEmFJg2atsUrzmz1hBhQQR3r2Ksoi8nfh_u96hkttZAagLeKkEEBPgEcMqwyxDjgzg0AIZCiVU4HfwNVRG`);
+    const response = await fetch(`${API_BASE_URL}/Donthuoc/DonThuocThuNgan/Pagination?TrangThaiThanhToan=false&page=${page}`);
     if (!response.ok) return null;
     const data =await response.json();
-    return data.data
+    if(Pagination){
+      return data
+    }else{
+      return data.data
+    }
+    
   } catch (error) {
     console.error("Fetch lỗi:", error);
     return null;
@@ -18,12 +23,16 @@ export async function getPrescriptionPendingPayment (): Promise<prescriptionType
 
 
 // yêu cầu xét nghiệm 
-export async function getParaclinicalAwaitingPayment (): Promise<paraclinicalType | null> {
+export async function getParaclinicalAwaitingPayment (Pagination: boolean = false, page:number = 1) {
   try {
-    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Pagination?TrangThaiThanhToan=false&gidzl=ReQG2WGF9X5ZdP05214Z7s6PaGuH52yOVP3C0qOOSn8gbv89GKXs72gMm0yN6dDFBSJ3NJTUl8SZ0muc6m`);
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Pagination?TrangThaiThanhToan=false&page=${page}`);
     if (!response.ok) return null;
     const data =await response.json();
-    return data.data
+    if(Pagination){
+      return data
+    }else{
+      return data.data
+    }
   } catch (error) {
     console.error("Fetch lỗi:", error);
     return null;

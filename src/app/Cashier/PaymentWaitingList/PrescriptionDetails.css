@@ -19,6 +19,7 @@
     /* flex-direction: column;
     justify-content: space-between; */
     height: fit-content;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 
@@ -95,6 +96,8 @@
     padding: 20px;
     width: 72%;
     overflow-x: auto; 
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    height: fit-content;
 }
 
 

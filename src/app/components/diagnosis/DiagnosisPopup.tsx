@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
-import { Modal, Table } from "antd";
+import { Modal, Table, Input, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined, CheckOutlined } from "@ant-design/icons";
 import { diagnosisType } from "@/app/types/patientTypes/patient";
 
@@ -12,18 +12,19 @@ interface DataType {
 }
 
 export default function DiagnosisPopup({
-  id = '684926749c351fd5325793a4',
+  id,
   open,
   onClose,
+  readOnly = false, // Mặc định có thể edit
 }: {
   id: string;
   open: boolean;
   onClose: () => void;
+  readOnly?: boolean; // Tuỳ chọn
 }) {
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
 
-  // Fetch data when modal opens
   useEffect(() => {
     if (!open) return;
 
@@ -50,12 +51,11 @@ export default function DiagnosisPopup({
     fetchData();
   }, [id, open]);
 
-  // Start editing a row
   const handleEdit = (key: string) => {
+    if (readOnly) return; // Không cho edit khi readonly
     setEditingKey(key);
   };
 
-  // Save changes to a row
   const handleSave = async (key: string) => {
     const editedItem = dataSource.find((item) => item.key === key);
     if (!editedItem) return;
@@ -79,14 +79,15 @@ export default function DiagnosisPopup({
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      setEditingKey(null); // Exit editing mode
+      setEditingKey(null);
     } catch (error) {
       console.error("Lỗi khi cập nhật:", error);
     }
   };
 
-  // Delete a row
   const handleDelete = async (key: string) => {
+    if (readOnly) return; // Không cho xóa khi readonly
+
     try {
       const response = await fetch(
         `http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/Delete/${key}`,
@@ -111,6 +112,8 @@ export default function DiagnosisPopup({
     field: keyof DataType,
     value: string
   ) => {
+    if (readOnly) return; // Không cho chỉnh sửa khi readonly
+
     const newData = [...dataSource];
     const index = newData.findIndex((item) => item.key === key);
     if (index !== -1) {
@@ -125,26 +128,21 @@ export default function DiagnosisPopup({
     field: keyof DataType
   ) => {
     const isEditing = editingKey === record.key;
+
     return (
       <div style={{ textAlign: "center", minHeight: 40 }}>
-        {isEditing ? (
-          <input
+        {isEditing && !readOnly ? (
+          <Input
             value={text}
             onChange={(e) =>
               handleInputChange(record.key, field, e.target.value)
             }
             style={{
               width: "100%",
-              height: "36px",
-              border: "none",
-              outline: "none",
-              backgroundColor: "transparent",
+              height: 36,
               textAlign: "center",
-              fontSize: "14px",
-              padding: 0,
-              margin: 0,
-              boxSizing: "border-box",
-              overflow: "hidden",
+              fontSize: 14,
+              padding: "4px 8px",
             }}
           />
         ) : (
@@ -163,80 +161,93 @@ export default function DiagnosisPopup({
     );
   };
 
-  const columns = [
-    {
-      title: <div style={{ textAlign: "center" }}>Triệu chứng</div>,
-      dataIndex: "symptom",
-      key: "symptom",
-      render: (text: string, record: DataType) =>
-        renderCell(text, record, "symptom"),
-    },
-    {
-      title: <div style={{ textAlign: "center" }}>Chuẩn đoán sơ bộ</div>,
-      dataIndex: "diagnosis",
-      key: "diagnosis",
-      render: (text: string, record: DataType) =>
-        renderCell(text, record, "diagnosis"),
-    },
-    {
-      title: <div style={{ textAlign: "center" }}>Hành động</div>,
-      key: "action",
-      render: (_: string, record: DataType) => (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 16,
-          }}
-        >
-          <span
-            style={{
-              width: 28,
-              height: 28,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {editingKey === record.key ? (
-              <CheckOutlined
-                style={{
-                  fontSize: 20,
-                  color: "#1890ff",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleSave(record.key)}
-              />
-            ) : (
-              <EditOutlined
-                style={{
-                  fontSize: 20,
-                  color: "#1890ff",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleEdit(record.key)}
-              />
-            )}
-          </span>
+  const iconStyle = {
+    fontSize: 20,
+    width: 20,
+    height: 20,
+    display: "inline-flex",
+    justifyContent: "center",
+    alignItems: "center",
+    cursor: "pointer",
+  };
 
-          <span
+const baseColumns = [
+  {
+    title: <div style={{ textAlign: "center" }}>Triệu chứng</div>,
+    dataIndex: "symptom",
+    key: "symptom",
+    render: (text: string, record: DataType) =>
+      renderCell(text, record, "symptom"),
+  },
+  {
+    title: <div style={{ textAlign: "center" }}>Chuẩn đoán sơ bộ</div>,
+    dataIndex: "diagnosis",
+    key: "diagnosis",
+    render: (text: string, record: DataType) =>
+      renderCell(text, record, "diagnosis"),
+  },
+];
+
+const actionColumn = {
+  title: <div style={{ textAlign: "center" }}>Hành động</div>,
+  key: "action",
+  render: (_: string, record: DataType) => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 16,
+          backgroundColor: editingKey === record.key ? "#e6f7ff" : undefined,
+          borderRadius: 4,
+        }}
+      >
+        {editingKey === record.key ? (
+          <Tooltip title="Lưu" mouseEnterDelay={0.1} mouseLeaveDelay={0.1}>
+            <CheckOutlined
+              style={{
+                ...iconStyle,
+                color: "#1890ff",
+                width: 28,
+                height: 28,
+              }}
+              onClick={() => handleSave(record.key)}
+            />
+          </Tooltip>
+        ) : (
+          <Tooltip title="Sửa" mouseEnterDelay={0.1} mouseLeaveDelay={0.1}>
+            <EditOutlined
+              style={{
+                ...iconStyle,
+                color: "#1890ff",
+                width: 28,
+                height: 28,
+              }}
+              onClick={() => handleEdit(record.key)}
+            />
+          </Tooltip>
+        )}
+
+        <Tooltip title="Xóa" mouseEnterDelay={0.1} mouseLeaveDelay={0.1}>
+          <DeleteOutlined
             style={{
+              ...iconStyle,
+              color: "red",
               width: 28,
               height: 28,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
             }}
-          >
-            <DeleteOutlined
-              style={{ fontSize: 20, color: "red", cursor: "pointer" }}
-              onClick={() => handleDelete(record.key)}
-            />
-          </span>
-        </div>
-      ),
-    },
-  ];
+            onClick={() => handleDelete(record.key)}
+          />
+        </Tooltip>
+      </div>
+    );
+  },
+};
+
+const columns = readOnly
+  ? baseColumns
+  : [...baseColumns, actionColumn];
+
 
   return (
     <Modal open={open} onCancel={onClose} footer={null} width={800}>
@@ -248,6 +259,9 @@ export default function DiagnosisPopup({
         columns={columns}
         pagination={false}
         bordered
+        rowClassName={(record) =>
+          editingKey === record.key ? "editing-row" : ""
+        }
       />
     </Modal>
   );

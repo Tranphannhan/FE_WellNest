@@ -5,32 +5,68 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
 // lấy danh sách chờ xét nghiệm
-export async function getWaitingForTest (id : string , page : number, BoQua:boolean | null) {
-    try{
-        const respone = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/GetById_PhongTB_date/Pagination/?Id_PhongThietBi=${id}&TrangThai=false&page=${page}${BoQua?'&BoQua='+BoQua:""}`);
-        if(respone.ok){
-        return (await respone.json())
-        }else{
-        console.error("Không tìm thấy danh sách chờ xét nghiệm");
+// lấy danh sách chờ xét nghiệm
+export async function getWaitingForTest(
+  id: string,
+  page: number,
+  BoQua: boolean | null,
+  all: boolean | null = false
+) {
+  try {
+    const baseUrl = `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/GetById_PhongTB_date/Pagination/`;
+    const params = new URLSearchParams();
+
+    params.append("Id_PhongThietBi", id);
+
+    // Nếu all === true, chỉ lấy TrangThai=true, không phân trang, không BoQua
+    if (all) {
+      params.append("TrangThai", "true");
+    } else {
+      params.append("TrangThai", "false");
+      params.append("page", page.toString());
+      if (BoQua !== null) {
+        params.append("BoQua", BoQua.toString());
+      }
     }
-    }catch(error){
-        console.error("Lỗi khi lấy danh sách chờ xét nghiệm", error);
-        throw error; 
+
+    const url = `${baseUrl}?${params.toString()}`;
+    const response = await fetch(url);
+
+    if (response.ok) {
+      return await response.json();
+    } else {
+      console.error("Không tìm thấy danh sách chờ xét nghiệm");
+      return null;
     }
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách chờ xét nghiệm", error);
+    throw error;
+  }
 }
 
-
-
-// lấy chi tiết chờ xét nghiệm 
-export async function getWaitingForTestDetail(id: string, TrangThai: boolean | null) {
+// lấy yêu cầu xét nghiệm theo bệnh nhân
+export async function getWaitingForTestDetail(
+  id: string,
+  TrangThai: boolean | null,
+  Id_PhongThietBi: string | null = null
+) {
   try {
     // Tạo query base
     let query = `Id_PhieuKhamBenh=${id}`;
+
     if (TrangThai !== null && TrangThai !== undefined) {
       query += `&TrangThaiThanhToan=${TrangThai}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Detail?${query}&limit=1000`);
+    if (Id_PhongThietBi) {
+      query += `&Id_PhongThietBi=${Id_PhongThietBi}`;
+    }
+
+    query += `&limit=1000`;
+
+    const response = await fetch(
+      `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Detail?${query}`
+    );
 
     if (!response.ok) return null;
 
@@ -41,8 +77,6 @@ export async function getWaitingForTestDetail(id: string, TrangThai: boolean | n
     return null;
   }
 }
-
-
 
 
 // Tạo kết quả xét nghiệm

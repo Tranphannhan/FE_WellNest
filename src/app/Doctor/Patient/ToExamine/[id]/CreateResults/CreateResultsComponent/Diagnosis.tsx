@@ -149,7 +149,7 @@ export default function DiagnosisComponent({ reLoad }: { reLoad: () => void }) {
         <Button
           variant="outlined"
           startIcon={<FaEye />}
-          sx={{color:'#3497f9',border:'#3497f9 1px solid'}}
+          sx={{ color: "#3497f9", border: "#3497f9 1px solid" }}
           onClick={() => setIsModalOpen(true)}
         >
           Xem chẩn đoán
@@ -189,7 +189,7 @@ export default function DiagnosisComponent({ reLoad }: { reLoad: () => void }) {
       <Box display="flex" justifyContent="flex-end">
         <Button
           variant="contained"
-          sx={{backgroundColor:'#00d335'}}
+          sx={{ backgroundColor: "#00d335" }}
           color="success"
           startIcon={<FaSave />}
           disabled={!isSaveEnabled}

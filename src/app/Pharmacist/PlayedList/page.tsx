@@ -1,12 +1,12 @@
 "use client";
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
-import "./ListofDrugs.css";
+import "../ListofDrugs/ListofDrugs.css";
 import React, { useEffect, useState } from "react";
 import { prescriptionType } from "@/app/types/patientTypes/patient";
 import Link from "next/link";
-import { getPrescriptionList } from "@/app/services/Pharmacist";
+import { getThePrescriptionDispensed } from "@/app/services/Pharmacist";
 import NoData from "@/app/components/ui/Nodata/Nodata";
-import Pagination from "@/app/components/ui/Pagination/Pagination"; // ✅ Import phân trang
+import Pagination from "@/app/components/ui/Pagination/Pagination";
 
 export default function Prescription() {
   const [dataPrescription, setDataPrescription] = useState<prescriptionType[]>([]);
@@ -14,7 +14,7 @@ export default function Prescription() {
   const [totalPages, setTotalPages] = useState(1);
 
   const loadApi = async (page = 1) => {
-    const res = await getPrescriptionList(true, page);
+    const res = await getThePrescriptionDispensed(true, page);
     if (!res) return;
     setDataPrescription(res.data);
     setCurrentPage(res.currentPage);
@@ -92,7 +92,7 @@ export default function Prescription() {
                     <td>
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <Link href={`/Pharmacist/ListofDrugs/${record._id}`}>
-                          <button className="button--green" style={{ marginRight: "10px" }}>
+                          <button className="button--blue" style={{ marginRight: "10px" }}>
                             <i className="bi bi-eye-fill"></i>
                             Xem chi tiết
                           </button>
