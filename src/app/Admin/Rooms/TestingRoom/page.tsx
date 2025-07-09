@@ -17,6 +17,7 @@ import CustomTableRooms, {
   rowRenderType,
 } from "../../component/Table/CustomTableRoom";
 import { getTestingRoom } from "../../services/Room";
+import { useRouter } from "next/navigation";
 
 interface TestingRoom {
   _id: string;
@@ -62,6 +63,7 @@ export default function Page() {
   const [rows, setRows] = useState<rowRenderType[]>([]);
     const [currentPage, setCurrentPage] = useState <number> (0);
   const [totalItems , setTotalItems] = useState <number> (0)
+  const router = useRouter();
 
 
   // ✅ Load API
@@ -178,7 +180,7 @@ export default function Page() {
       <CustomTableRooms
         columns={columns}
         rows={filteredRows}
-        onEdit={() => {}}
+        onEdit={(id) => {router.push(`/Admin/Rooms/TestingRoom/Form/${id}`)}}
         onDelete={() => {}}
         onDisable={() => {}}
         showEdit={true}

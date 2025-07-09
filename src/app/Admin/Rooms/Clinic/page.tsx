@@ -1,4 +1,3 @@
-
 "use client";
 
 import SearchIcon from "@mui/icons-material/Search";
@@ -20,6 +19,7 @@ import CustomTableRooms, {
 } from "../../component/Table/CustomTableRoom";
 import { getRommm } from "../../services/Room";
 import { getkhoaOptions } from "../../services/DoctorSevices";
+import { useRouter } from "next/navigation";
 
 // Cấu hình cột của bảng
 const columns: Column[] = [
@@ -46,6 +46,7 @@ interface PhongKham {
   _id: string;
   Id_Khoa: Khoa;
   SoPhongKham: string;
+  TrangThaiHoatDong: boolean;
 }
 
 // Select chuyên khoa
@@ -62,6 +63,7 @@ export default function Page() {
   const [khoaOptions, setKhoaOptions] = useState<khoaOptionsType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalItems, setTotalItems] = useState<number>(0);
+  const router = useRouter();
 
   // Lấy chuyên khoa
   const loaddingAPISelect = async () => {
@@ -95,7 +97,7 @@ export default function Page() {
         _id: item._id,
         SoPhongKham: item.SoPhongKham,
         Khoa: item.Id_Khoa?.TenKhoa || "Không rõ",
-        TrangThaiHoatDong: item.Id_Khoa?.TrangThaiHoatDong ?? true,
+        TrangThaiHoatDong: item.TrangThaiHoatDong ?? true,
       }));
 
       setRows(mappedRows);
@@ -110,12 +112,10 @@ export default function Page() {
     loaddingAPI();
   }, [currentPage]);
 
-
   // Tải chuyên khoa 1 lần duy nhất
   useEffect(() => {
     loaddingAPISelect();
   }, []);
-
 
   // Lọc dữ liệu theo tìm kiếm + chuyên khoa
   const filteredRows = useMemo(() => {
@@ -213,7 +213,7 @@ export default function Page() {
       <CustomTableRooms
         columns={columns}
         rows={filteredRows}
-        onEdit={(row) => console.log("Edit", row)}
+        onEdit={(id) => {router.push(`/Admin/Rooms/Clinic/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
         onDisable={(row) => console.log("Disable", row)}
         showEdit={true}

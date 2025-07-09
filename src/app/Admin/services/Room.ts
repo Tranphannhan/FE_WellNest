@@ -37,3 +37,20 @@ export async function getTestingRoom (page : number) {
     throw error;
   }   
 } 
+
+// services/Room.ts
+export const getRommmDetail = async (id: string) => {
+  try {
+    const response = await fetch(`http://localhost:5000/Phong_Kham/Detail/${id}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Lỗi khi lấy chi tiết phòng khám:', error);
+    throw error;
+  }
+};

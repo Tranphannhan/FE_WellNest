@@ -18,6 +18,7 @@ import "./Staff.css";
 import { Staff } from "@/app/types/hospitalTypes/hospitalType";
 import CustomTableHumanResources, { Column } from "../../component/Table/CustomTableHumanResources";
 import { getOptionstaffAdmin, getstaffAdmin } from "../../services/staffSevices";
+import { useRouter } from "next/navigation";
 
 export interface rowRenderType {
   _id: string;
@@ -55,6 +56,7 @@ export default function Page() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [currentPage, setCurrentPage] = useState <number> (0);
   const [totalItems , setTotalItems] = useState <number> (0)
+  const router = useRouter();
 
   const loaddingAPI = async () => {
     const data = await getstaffAdmin(currentPage + 1);
@@ -213,7 +215,7 @@ export default function Page() {
         <CustomTableHumanResources
           columns={columns}
           rows={filteredRows}
-          onEdit={(id) => {console.log(id)}}
+          onEdit={(id) => {router.push(`/Admin/HumanResources/Staff/Form/${id}`)}}
           onDelete={() => {}}
           onDisable={(id) => {console.log(id)}}
           showEdit={true}

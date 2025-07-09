@@ -45,7 +45,7 @@ export interface Column {
 interface CustomTableProps {
   columns: Column[];
   rows: rowRenderType[];
-  onEdit?: (row: rowRenderType) => void;
+   onEdit?: (id: string) => void;
   onDelete?: (row: rowRenderType) => void;
   onDisable: (row: rowRenderType) => void;
   showEdit?: boolean;
@@ -276,7 +276,7 @@ export default function CustomTableRooms({
         {onEdit && showEdit && selectedRow && (
           <MenuItem
             onClick={() => {
-              onEdit();
+              onEdit && selectedRow && onEdit(selectedRow._id);
               handleCloseMenu();
             }}
             sx={{
