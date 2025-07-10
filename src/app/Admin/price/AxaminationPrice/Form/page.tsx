@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -16,49 +16,23 @@ import {
   SelectChangeEvent,
   Alert,
 } from '@mui/material';
-import { useRouter, useParams } from 'next/navigation';
-import './TestPriceForm.css';
+import { useRouter } from 'next/navigation';
+import './AddExaminationPriceForm.css';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 
-export default function TestPriceFormLayout() {
+export default function AddExaminationPriceForm() {
   const [price, setPrice] = useState<string>('');
-  const [priceType, setPriceType] = useState<string>('GiaXetNghiem');
-  const [status, setStatus] = useState<string>('An');
+  const [priceType, setPriceType] = useState<string>('GiaKham');
+  const [status, setStatus] = useState<string>('Hien');
   const [serviceName, setServiceName] = useState<string>('');
   const [errors, setErrors] = useState<{ serviceName?: string; price?: string }>({});
-  const [message, setMessage] = useState<string>(''); // Thêm state cho thông báo
+  const [message, setMessage] = useState<string>('');
   const router = useRouter();
-  const { id } = useParams();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
-
-  // Fetch dữ liệu chi tiết giá dịch vụ khi component mount
-  useEffect(() => {
-    const fetchServicePrice = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/Giadichvu/Detail/${id}`);
-        if (!response.ok) {
-          throw new Error('Không tìm thấy giá dịch vụ');
-        }
-        const data = await response.json();
-        setServiceName(data.Tendichvu || '');
-        setPrice(data.Giadichvu?.toString() || '');
-        setPriceType(data.Loaigia || 'GiaXetNghiem');
-        setStatus(data.TrangThaiHoatDong ? 'Hien' : 'An');
-      } catch (error: any) {
-        console.error('Lỗi khi lấy chi tiết giá dịch vụ:', error);
-        setMessage('Không thể tải dữ liệu giá dịch vụ');
-      }
-    };
-
-    if (id) {
-      fetchServicePrice();
-    }
-  }, [id, API_BASE_URL]);
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Allow only numeric input
     if (/^\d*$/.test(value)) {
       setPrice(value);
       setErrors((prev) => ({ ...prev, price: undefined }));
@@ -96,52 +70,40 @@ export default function TestPriceFormLayout() {
       return;
     }
 
-    // Dữ liệu cho endpoint Edit
-    const editData = {
+    const addData = {
       Tendichvu: serviceName.trim(),
       Giadichvu: parseInt(price) || 0,
       Loaigia: priceType,
+      TrangThaiHoatDong: status === 'Hien',
     };
 
     try {
-      const editResponse = await fetch(`${API_BASE_URL}/Giadichvu/Edit/${id}`, {
-        method: 'PUT',
+      const response = await fetch(`${API_BASE_URL}/Giadichvu/Add`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(editData),
+        body: JSON.stringify(addData),
       });
 
-      if (!editResponse.ok) {
-        const errorData = await editResponse.json();
-        throw new Error(errorData.message || 'Cập nhật giá dịch vụ thất bại');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Thêm giá dịch vụ thất bại');
       }
 
-      // Cập nhật trạng thái hoạt động
-      const statusResponse = await fetch(
-        `${API_BASE_URL}/Giadichvu/SuaTrangThai/${id}?TrangThaiHoatDong=${status === 'Hien'}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (!statusResponse.ok) {
-        const errorData = await statusResponse.json();
-        throw new Error(errorData.message || 'Cập nhật trạng thái thất bại');
-      }
-
-      setMessage('Cập nhật giá xét nghiệm thành công!');
+      setMessage('Thêm giá dịch vụ thành công!');
+      setServiceName('');
+      setPrice('');
+      setPriceType('GiaKham');
+      setStatus('Hien');
     } catch (error: any) {
-      console.error('Lỗi khi cập nhật:', error);
-      setMessage(`Cập nhật thất bại: ${error.message || 'Lỗi không xác định'}`);
+      console.error('Lỗi khi thêm giá dịch vụ:', error);
+      setMessage(`Thêm thất bại: ${error.message || 'Lỗi không xác định'}`);
     }
   };
 
   const handleCancel = () => {
-      router.push('/Admin/price/AxaminationPrice');
+    router.push('/Admin/price/AxaminationPrice');
   };
 
   return (
@@ -166,7 +128,7 @@ export default function TestPriceFormLayout() {
       >
         <Paper elevation={3} sx={{ width: '100%' }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}>
-            Chỉnh sửa Giá Xét Nghiệm
+            Thêm Giá Khám
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 10, mb: 4 }}>
@@ -207,7 +169,7 @@ export default function TestPriceFormLayout() {
                     required
                     disabled
                   >
-                    <MenuItem value="GiaXetNghiem">Giá Xét Nghiệm</MenuItem>
+                    <MenuItem value="GiaKham">Giá Khám</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl component="fieldset">
@@ -230,16 +192,15 @@ export default function TestPriceFormLayout() {
                 className="bigButton--gray"
                 onClick={handleCancel}
               >
-                <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
+                <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                 Hủy
               </button>
-            
               <button
                 type="submit"
                 className="bigButton--blue"
               >
-                <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
-                Cập nhật Giá Xét Nghiệm
+                <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Thêm Giá Khám
               </button>
             </Box>
           </form>

@@ -18,10 +18,9 @@ import {
   SelectChangeEvent,
   Alert,
 } from '@mui/material';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import './FormClinic.css';
 import { getkhoaOptions } from '@/app/Admin/services/DoctorSevices';
-import { getRommmDetail } from '@/app/Admin/services/Room';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 
@@ -63,75 +62,65 @@ const fetchKhoaOptions = async (callback: (data: khoaOptionsType[]) => void) => 
   }
 };
 
-const fetchPhongKhamDetail = async (id: string, callback: (data: PhongKham | null) => void) => {
+const checkRoomNumber = async (soPhongKham: string): Promise<boolean> => {
   try {
-    const response = await getRommmDetail(id);
-    if (response?.data) {
-      callback(response.data);
-    } else {
-      callback(null);
+    const response = await fetch('http://localhost:5000/Phong_Kham/CheckRoomNumber', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ SoPhongKham: soPhongKham }),
+    });
+    if (!response.ok) {
+      console.error(`Check room number API error: Status ${response.status}, ${response.statusText}`);
+      return false;
     }
+    const data = await response.json();
+    console.log('Check room number API response:', data);
+    return data.exists || false;
   } catch (error) {
-    console.error('Lỗi khi lấy chi tiết phòng khám:', error);
-    callback(null);
+    console.error('Check room number error:', error);
+    return false;
   }
 };
 
-const updatePhongKham = async (
-  id: string,
+const addPhongKham = async (
   data: { SoPhongKham: string; Id_Khoa: string; TrangThaiHoatDong: boolean },
   callback: (success: boolean, message: string) => void
 ) => {
   try {
-    const response = await fetch(`http://localhost:5000/Phong_Kham/${id}`, {
-      method: 'PUT',
+    const response = await fetch('http://localhost:5000/Phong_Kham/', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     const result = await response.json();
     if (response.ok) {
-      callback(true, result.message || 'Cập nhật phòng khám thành công!');
+      callback(true, result.message || 'Thêm phòng khám thành công!');
     } else {
-      callback(false, result.message || 'Có lỗi xảy ra khi cập nhật phòng khám.');
+      callback(false, result.message || 'Có lỗi xảy ra khi thêm phòng khám.');
     }
   } catch (error) {
-    console.error('Lỗi khi cập nhật phòng khám:', error);
-    callback(false, 'Có lỗi hệ thống khi cập nhật.');
+    console.error('Lỗi khi thêm phòng khám:', error);
+    callback(false, 'Có lỗi hệ thống khi thêm phòng khám.');
   }
 };
 
-export default function ClinicEditForm() {
+export default function AddClinicForm() {
   const router = useRouter();
-  const { id } = useParams<{ id: string }>();
   const [soPhongKham, setSoPhongKham] = useState<string>('');
   const [idKhoa, setIdKhoa] = useState<string>('');
   const [trangThaiHoatDong, setTrangThaiHoatDong] = useState<string>('Hien');
   const [khoaOptions, setKhoaOptions] = useState<khoaOptionsType[]>([]);
   const [errors, setErrors] = useState<{ soPhongKham?: string; idKhoa?: string }>({});
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
 
-  // Load dữ liệu phòng khám và danh sách khoa
+  // Load danh sách khoa
   useEffect(() => {
-    if (!id) return;
-
-    // Load danh sách khoa
     fetchKhoaOptions((data) => {
       setKhoaOptions(data);
-    });
-
-    // Load chi tiết phòng khám
-    fetchPhongKhamDetail(id, (data) => {
-      if (data) {
-        setSoPhongKham(data.SoPhongKham);
-        setIdKhoa(data.Id_Khoa._id);
-        setTrangThaiHoatDong(data.TrangThaiHoatDong ? 'Hien' : 'An');
-      } else {
-        setMessage('Không tìm thấy thông tin phòng khám.');
-      }
       setLoading(false);
     });
-  }, [id]);
+  }, []);
 
   // Tự động xóa thông báo sau 3 giây
   useEffect(() => {
@@ -144,10 +133,15 @@ export default function ClinicEditForm() {
   }, [message]);
 
   // Kiểm tra form
-  const validateForm = () => {
+  const validateForm = async () => {
     const newErrors: { soPhongKham?: string; idKhoa?: string } = {};
     if (!soPhongKham.trim()) {
       newErrors.soPhongKham = 'Vui lòng nhập số phòng';
+    } else {
+      const roomExists = await checkRoomNumber(soPhongKham.trim());
+      if (roomExists) {
+        newErrors.soPhongKham = 'Số phòng này đã được đăng ký rồi.';
+      }
     }
     if (!idKhoa) {
       newErrors.idKhoa = 'Vui lòng chọn khoa';
@@ -157,9 +151,12 @@ export default function ClinicEditForm() {
   };
 
   // Xử lý submit form
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) {
+    setMessage('');
+    setErrors({});
+
+    if (!(await validateForm())) {
       setMessage('Vui lòng kiểm tra các trường thông tin.');
       return;
     }
@@ -167,24 +164,25 @@ export default function ClinicEditForm() {
     const data = {
       SoPhongKham: soPhongKham.trim(),
       Id_Khoa: idKhoa,
-      TrangThaiHoatDong: trangThaiHoatDong === 'Hien',
+      TrangThaiHoatDong: true, // Hardcoded as per backend
     };
 
     setLoading(true);
-    updatePhongKham(id, data, (success, message) => {
+    addPhongKham(data, (success, message) => {
       setLoading(false);
       setMessage(message);
+      if (success) {
+        setSoPhongKham('');
+        setIdKhoa('');
+        setTrangThaiHoatDong('Hien');
+      }
     });
   };
 
   // Xử lý hủy form
   const handleCancel = () => {
-      router.push('/Admin/Rooms/Clinic');
+    router.push('/Admin/Rooms/Clinic');
   };
-
-  if (loading) {
-    return <Typography>Đang tải...</Typography>;
-  }
 
   return (
     <div className="AdminContent-Container">
@@ -197,7 +195,7 @@ export default function ClinicEditForm() {
       >
         <Paper elevation={3} sx={{ width: '100%' }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}>
-            Chỉnh sửa Phòng Khám
+            Thêm Phòng Khám
           </Typography>
           {message && (
             <Box sx={{ mb: 2 }}>
@@ -259,22 +257,31 @@ export default function ClinicEditForm() {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
-  <button
-    type="button"
-    className="bigButton--gray"
-    onClick={handleCancel}
-  >
-    <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
-    Hủy
-  </button>
-
-  <button
-    type="submit"
-    className="bigButton--blue"
-  >
-    <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
-    Cập nhật Phòng Khám
-  </button>
+              <button
+                type="button"
+                className="bigButton--gray"
+                onClick={handleCancel}
+              >
+                <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Hủy
+              </button>
+              <button
+                type="submit"
+                className="bigButton--blue"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
+                    Đang thêm...
+                  </>
+                ) : (
+                  <>
+                    <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                    Thêm Phòng Khám
+                  </>
+                )}
+              </button>
             </Box>
           </form>
         </Paper>

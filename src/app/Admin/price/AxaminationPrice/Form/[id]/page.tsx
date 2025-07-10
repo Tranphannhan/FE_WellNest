@@ -1,9 +1,8 @@
-'use client'
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
-  Button,
   Typography,
   Paper,
   Radio,
@@ -15,19 +14,54 @@ import {
   MenuItem,
   InputLabel,
   SelectChangeEvent,
+  Alert,
 } from '@mui/material';
-import './AxaminationPriceForm.css'
+import { useRouter, useParams } from 'next/navigation';
+import './AxaminationPriceForm.css';
+import { FaArrowLeft } from 'react-icons/fa6';
+import { FaSave } from 'react-icons/fa';
 
-function ExaminationPriceFormLayout() {
+export default function ExaminationPriceFormLayout() {
   const [price, setPrice] = useState<string>('');
   const [priceType, setPriceType] = useState<string>('GiaKham');
   const [status, setStatus] = useState<string>('An');
+  const [serviceName, setServiceName] = useState<string>('');
+  const [errors, setErrors] = useState<{ serviceName?: string; price?: string }>({});
+  const [message, setMessage] = useState<string>(''); // Thêm state cho thông báo
+  const router = useRouter();
+  const { id } = useParams();
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+
+  // Fetch dữ liệu chi tiết giá dịch vụ khi component mount
+  useEffect(() => {
+    const fetchServicePrice = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/Giadichvu/Detail/${id}`);
+        if (!response.ok) {
+          throw new Error('Không tìm thấy giá dịch vụ');
+        }
+        const data = await response.json();
+        setServiceName(data.Tendichvu || '');
+        setPrice(data.Giadichvu?.toString() || '');
+        setPriceType(data.Loaigia || 'GiaKham');
+        setStatus(data.TrangThaiHoatDong ? 'Hien' : 'An');
+      } catch (error: any) {
+        console.error('Lỗi khi lấy chi tiết giá dịch vụ:', error);
+        setMessage('Không thể tải dữ liệu giá dịch vụ');
+      }
+    };
+
+    if (id) {
+      fetchServicePrice();
+    }
+  }, [id, API_BASE_URL]);
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Allow only numeric input
     if (/^\d*$/.test(value)) {
       setPrice(value);
+      setErrors((prev) => ({ ...prev, price: undefined }));
     }
   };
 
@@ -39,17 +73,90 @@ function ExaminationPriceFormLayout() {
     setStatus(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleServiceNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setServiceName(e.target.value);
+    setErrors((prev) => ({ ...prev, serviceName: undefined }));
+  };
+
+  const validateForm = () => {
+    const newErrors: { serviceName?: string; price?: string } = {};
+    if (!serviceName.trim()) newErrors.serviceName = 'Vui lòng nhập tên dịch vụ';
+    if (!price || parseInt(price) <= 0) newErrors.price = 'Vui lòng nhập giá hợp lệ';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Tên dịch vụ:", document.forms[0].tenDichVu.value);
-    console.log("Giá dịch vụ:", price);
-    console.log("Loại giá:", priceType);
-    console.log("Trạng thái:", status);
-    alert("Form layout được submit (xem console)!");
+    setMessage('');
+    setErrors({});
+
+    if (!validateForm()) {
+      setMessage('Vui lòng kiểm tra các trường thông tin.');
+      return;
+    }
+
+    // Dữ liệu cho endpoint Edit
+    const editData = {
+      Tendichvu: serviceName.trim(),
+      Giadichvu: parseInt(price) || 0,
+      Loaigia: priceType,
+    };
+
+    try {
+      const editResponse = await fetch(`${API_BASE_URL}/Giadichvu/Edit/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editData),
+      });
+
+      if (!editResponse.ok) {
+        const errorData = await editResponse.json();
+        throw new Error(errorData.message || 'Cập nhật giá dịch vụ thất bại');
+      }
+
+      // Cập nhật trạng thái hoạt động
+      const statusResponse = await fetch(
+        `${API_BASE_URL}/Giadichvu/SuaTrangThai/${id}?TrangThaiHoatDong=${status === 'Hien'}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!statusResponse.ok) {
+        const errorData = await statusResponse.json();
+        throw new Error(errorData.message || 'Cập nhật trạng thái thất bại');
+      }
+
+      setMessage('Cập nhật giá dịch vụ thành công!');
+    } catch (error: any) {
+      console.error('Lỗi khi cập nhật:', error);
+      setMessage(`Cập nhật thất bại: ${error.message || 'Lỗi không xác định'}`);
+    }
+  };
+
+  const handleCancel = () => {
+      router.push('/Admin/price/AxaminationPrice');
   };
 
   return (
     <div className="AdminContent-Container">
+      {message && (
+        <div
+          className={
+            message.includes('thành công') ? 'message-success' : 'message-error'
+          }
+        >
+          <Alert severity={message.includes('thành công') ? 'success' : 'error'}>
+            {message}
+          </Alert>
+        </div>
+      )}
       <Box
         sx={{
           display: 'flex',
@@ -59,7 +166,7 @@ function ExaminationPriceFormLayout() {
       >
         <Paper elevation={3} sx={{ width: '100%' }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}>
-            Thông tin Giá Khám
+            Chỉnh sửa Giá Khám
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 10, mb: 4 }}>
@@ -71,6 +178,10 @@ function ExaminationPriceFormLayout() {
                     name="tenDichVu"
                     variant="outlined"
                     required
+                    value={serviceName}
+                    onChange={handleServiceNameChange}
+                    error={!!errors.serviceName}
+                    helperText={errors.serviceName}
                   />
                   <TextField
                     sx={{ width: { sm: '40%' } }}
@@ -81,6 +192,8 @@ function ExaminationPriceFormLayout() {
                     onChange={handlePriceChange}
                     required
                     inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                    error={!!errors.price}
+                    helperText={errors.price}
                   />
                 </Box>
                 <FormControl>
@@ -111,28 +224,27 @@ function ExaminationPriceFormLayout() {
                 </FormControl>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => {
-                  setPrice('');
-                  setPriceType('GiaKham');
-                  setStatus('An');
-                  console.log("Hủy form");
-                }}
-              >
-                Hủy
-              </Button>
-              <Button type="submit" variant="contained" color="primary">
-                Thêm Giá Khám
-              </Button>
-            </Box>
+<Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
+  <button
+    type="button"
+    className="bigButton--gray"
+    onClick={handleCancel}
+  >
+    <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
+    Hủy
+  </button>
+
+  <button
+    type="submit"
+    className="bigButton--blue"
+  >
+    <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
+    Cập nhật Giá Khám
+  </button>
+</Box>
           </form>
         </Paper>
       </Box>
     </div>
   );
 }
-
-export default ExaminationPriceFormLayout;
