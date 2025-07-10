@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
     TextField,
     FormControl,
@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { Upload, type UploadFile } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import "./EditStaff.css";
+import "./AddStaff.css";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
 
@@ -40,7 +40,7 @@ interface AccountType {
     TrangThaiHoatDong: boolean;
     Image: string;
     MatKhau: string;
-    Id_PhongThietBi: string; // Changed from ID_PhongXetNghiem to match schema
+    ID_PhongXetNghiem: string;
 }
 
 interface Errors {
@@ -48,36 +48,6 @@ interface Errors {
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
-export async function getAccountDetails(id: string): Promise<AccountType | null> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/Tai_Khoan/Detail/${id}`);
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`API error: Status ${response.status}, ${errorText}`);
-            return null;
-        }
-        const data = await response.json();
-        console.log("Account API response:", data);
-        const account = Array.isArray(data) && data.length > 0 ? data[0] : data.data || data;
-        return {
-            _id: account._id || "",
-            TenTaiKhoan: account.TenTaiKhoan || "",
-            SoDienThoai: account.SoDienThoai || "",
-            SoCCCD: account.SoCCCD || "",
-            GioiTinh: account.GioiTinh || "Nam",
-            VaiTro: account.Id_LoaiTaiKhoan?.VaiTro || "",
-            Id_LoaiTaiKhoan: account.Id_LoaiTaiKhoan || { _id: "", TenLoaiTaiKhoan: "", VaiTro: "" },
-            TrangThaiHoatDong: account.TrangThaiHoatDong ?? false,
-            Image: account.Image || "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar",
-            MatKhau: "",
-            Id_PhongThietBi: account.Id_PhongThietBi || "", // Updated field name
-        };
-    } catch (error) {
-        console.error("Fetch account details error:", error);
-        return null;
-    }
-}
 
 export async function getAccountTypes(): Promise<LoaiTaiKhoan[] | null> {
     try {
@@ -93,27 +63,6 @@ export async function getAccountTypes(): Promise<LoaiTaiKhoan[] | null> {
     } catch (error) {
         console.error("Exception khi lấy loại tài khoản nhân viên", error);
         return null;
-    }
-}
-
-export async function updateAccount(id: string, formData: FormData): Promise<boolean> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/Tai_Khoan/Edit/${id}`, {
-            method: "PUT",
-            body: formData,
-        });
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Update API error: Status ${response.status}, ${errorText}`);
-            return false;
-        }
-        return true;
-    } catch (error) {
-        console.error("Update account error:", error);
-        if (error instanceof TypeError && error.message === "Failed to fetch") {
-            console.error("Possible causes: Network issue, CORS, or server not running at", API_BASE_URL);
-        }
-        return false;
     }
 }
 
@@ -134,6 +83,27 @@ export async function getTestingRoom(page: number): Promise<{ data: any[] } | nu
     }
 }
 
+export async function addAccount(formData: FormData): Promise<{ success: boolean; message?: string }> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Tai_Khoan/Add`, {
+            method: "POST",
+            body: formData,
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error(`Add API error: Status ${response.status}, ${errorData.message}`);
+            return { success: false, message: errorData.message || "Có lỗi xảy ra khi thêm tài khoản." };
+        }
+        return { success: true };
+    } catch (error) {
+        console.error("Add account error:", error);
+        if (error instanceof TypeError && error.message === "Failed to fetch") {
+            console.error("Possible causes: Network issue, CORS, or server not running at", API_BASE_URL);
+        }
+        return { success: false, message: "Có lỗi xảy ra khi thêm tài khoản. Vui lòng thử lại." };
+    }
+}
+
 const App: React.FC = () => {
     const [account, setAccount] = useState<AccountType>({
         _id: "",
@@ -143,10 +113,10 @@ const App: React.FC = () => {
         GioiTinh: "Nam",
         VaiTro: "",
         Id_LoaiTaiKhoan: { _id: "", TenLoaiTaiKhoan: "", VaiTro: "" },
-        TrangThaiHoatDong: false,
-        Image: "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar",
+        TrangThaiHoatDong: true,
+        Image: "",
         MatKhau: "",
-        Id_PhongThietBi: "", // Updated field name
+        ID_PhongXetNghiem: "",
     });
 
     const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -157,37 +127,14 @@ const App: React.FC = () => {
     const [accountTypes, setAccountTypes] = useState<LoaiTaiKhoan[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [testLabs, setTestLabs] = useState<any[]>([]);
-
-    const params = useParams();
-    const accountId = params.id as string;
     const router = useRouter();
 
     useEffect(() => {
-        const fetchTestLabs = async () => {
-            try {
-                const data = await getTestingRoom(1);
-                if (data && Array.isArray(data.data)) {
-                    setTestLabs(data.data);
-                } else {
-                    setMessage("Không thể tải danh sách phòng xét nghiệm.");
-                }
-            } catch (error) {
-                console.error("Không thể tải danh sách phòng xét nghiệm", error);
-                setMessage("Có lỗi xảy ra khi tải danh sách phòng xét nghiệm.");
-            }
-        };
-
-        fetchTestLabs();
-    }, []);
-
-    useEffect(() => {
-        if (!accountId) return;
-
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const accountData = await getAccountDetails(accountId);
                 const accountTypeData = await getAccountTypes();
+                const testLabData = await getTestingRoom(1);
 
                 if (accountTypeData) {
                     setAccountTypes(accountTypeData);
@@ -195,10 +142,10 @@ const App: React.FC = () => {
                     setMessage("Không thể tải danh sách loại tài khoản.");
                 }
 
-                if (accountData) {
-                    setAccount(accountData);
+                if (testLabData && Array.isArray(testLabData.data)) {
+                    setTestLabs(testLabData.data);
                 } else {
-                    setMessage("Không tìm thấy thông tin tài khoản.");
+                    setMessage("Không thể tải danh sách phòng xét nghiệm.");
                 }
             } catch (error) {
                 console.error("Fetch data error:", error);
@@ -209,25 +156,7 @@ const App: React.FC = () => {
         };
 
         fetchData();
-    }, [accountId]);
-
-    useEffect(() => {
-        if (
-            account.Image &&
-            account.Image !== "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar"
-        ) {
-            setFileList([
-                {
-                    uid: "-1",
-                    name: "Ảnh tài khoản",
-                    status: "done",
-                    url: account.Image.startsWith("data:") ? account.Image : `${API_BASE_URL}/image/${account.Image}`,
-                },
-            ]);
-        } else {
-            setFileList([]);
-        }
-    }, [account.Image]);
+    }, []);
 
     const handleChange = (e: { target: { name?: string; value: string } }) => {
         const { name, value } = e.target;
@@ -240,7 +169,7 @@ const App: React.FC = () => {
                 ...prevAccount,
                 VaiTro: value,
                 Id_LoaiTaiKhoan: selectedType || { _id: "", TenLoaiTaiKhoan: "", VaiTro: "" },
-                Id_PhongThietBi: value !== "BacSiXetNghiem" ? "" : prevAccount.Id_PhongThietBi,
+                ID_PhongXetNghiem: value !== "BacSiXetNghiem" ? "" : prevAccount.ID_PhongXetNghiem,
             }));
         } else {
             setAccount((prevAccount) => ({
@@ -310,26 +239,24 @@ const App: React.FC = () => {
         if (!account.VaiTro) {
             newErrors.VaiTro = "Chọn vai trò là bắt buộc.";
         }
-        if (account.VaiTro === "BacSiXetNghiem" && !account.Id_PhongThietBi) {
-            newErrors.Id_PhongThietBi = "Chọn phòng xét nghiệm là bắt buộc.";
+        if (account.VaiTro === "BacSiXetNghiem" && !account.ID_PhongXetNghiem) {
+            newErrors.ID_PhongXetNghiem = "Chọn phòng xét nghiệm là bắt buộc.";
         }
-        if (account.MatKhau) {
-            if (account.MatKhau.length < 6) {
-                newErrors.MatKhau = "Mật khẩu phải có ít nhất 6 ký tự.";
-            }
-            if (account.MatKhau !== confirmPassword) {
-                newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
-            }
+        if (!account.MatKhau) {
+            newErrors.MatKhau = "Mật khẩu là bắt buộc.";
+        } else if (account.MatKhau.length < 6) {
+            newErrors.MatKhau = "Mật khẩu phải có ít nhất 6 ký tự.";
+        }
+        if (account.MatKhau !== confirmPassword) {
+            newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
+        }
+        if (!account.Image) {
+            newErrors.Image = "Ảnh tài khoản là bắt buộc.";
         }
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             setMessage("Vui lòng kiểm tra các trường thông tin.");
-            return;
-        }
-
-        if (!accountId) {
-            setMessage("Không tìm thấy ID tài khoản.");
             return;
         }
 
@@ -341,28 +268,48 @@ const App: React.FC = () => {
             formData.append("SoCCCD", account.SoCCCD);
             formData.append("GioiTinh", account.GioiTinh);
             formData.append("Id_LoaiTaiKhoan", account.Id_LoaiTaiKhoan._id);
+            formData.append("MatKhau", account.MatKhau);
             formData.append("TrangThaiHoatDong", String(account.TrangThaiHoatDong));
-            if (account.MatKhau) formData.append("MatKhau", account.MatKhau);
             if (selectedFile) {
                 formData.append("Image", selectedFile);
             }
-            if (account.Id_PhongThietBi) {
-                formData.append("Id_PhongThietBi", account.Id_PhongThietBi);
+            if (account.VaiTro === "BacSiXetNghiem" && account.ID_PhongXetNghiem) {
+                formData.append("ID_PhongXetNghiem", account.ID_PhongXetNghiem);
             }
 
-            const success = await updateAccount(accountId, formData);
-            if (success) {
-                setMessage("Cập nhật thông tin tài khoản thành công!");
-                const updatedAccount = await getAccountDetails(accountId);
-                if (updatedAccount) {
-                    setAccount(updatedAccount);
-                }
+            const result = await addAccount(formData);
+            if (result.success) {
+                setMessage("Thêm tài khoản thành công!");
+                setAccount({
+                    _id: "",
+                    TenTaiKhoan: "",
+                    SoDienThoai: "",
+                    SoCCCD: "",
+                    GioiTinh: "Nam",
+                    VaiTro: "",
+                    Id_LoaiTaiKhoan: { _id: "", TenLoaiTaiKhoan: "", VaiTro: "" },
+                    TrangThaiHoatDong: true,
+                    Image: "",
+                    MatKhau: "",
+                    ID_PhongXetNghiem: "",
+                });
+                setConfirmPassword("");
+                setFileList([]);
+                setSelectedFile(null);
             } else {
-                setMessage("Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.");
+                if (result.message === "Số điện thoại này đã được đăng ký rồi") {
+                    setErrors((prev) => ({
+                        ...prev,
+                        SoDienThoai: "Số điện thoại này đã được đăng ký rồi.",
+                    }));
+                    setMessage("Vui lòng kiểm tra số điện thoại.");
+                } else {
+                    setMessage(result.message || "Có lỗi xảy ra khi thêm tài khoản. Vui lòng thử lại.");
+                }
             }
         } catch (error) {
-            console.error("Lỗi khi cập nhật:", error);
-            setMessage("Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.");
+            console.error("Lỗi khi thêm tài khoản:", error);
+            setMessage("Có lỗi xảy ra khi thêm tài khoản. Vui lòng thử lại.");
         } finally {
             setIsLoading(false);
         }
@@ -381,7 +328,7 @@ const App: React.FC = () => {
 
     return (
         <div className="AdminContent-Container">
-            <h2 className="StaffEdit-Title">Thông tin tài khoản</h2>
+            <h2 className="StaffEdit-Title">Thêm tài khoản</h2>
 
             {isLoading && (
                 <div className="StaffEdit-Loading">
@@ -448,6 +395,8 @@ const App: React.FC = () => {
                                         placeholder="Nhập họ và tên"
                                         className={`StaffEdit-Input ${errors.TenTaiKhoan ? "StaffEdit-InputError" : ""}`}
                                         error={!!errors.TenTaiKhoan}
+                                        helperText={errors.TenTaiKhoan}
+                                        required
                                     />
                                 </div>
                             </div>
@@ -465,6 +414,8 @@ const App: React.FC = () => {
                                         placeholder="Nhập số CCCD"
                                         className={`StaffEdit-Input ${errors.SoCCCD ? "StaffEdit-InputError" : ""}`}
                                         error={!!errors.SoCCCD}
+                                        helperText={errors.SoCCCD}
+                                        required
                                     />
                                 </div>
                             </div>
@@ -484,7 +435,9 @@ const App: React.FC = () => {
                                         placeholder="Nhập số điện thoại"
                                         className={`StaffEdit-Input ${errors.SoDienThoai ? "StaffEdit-InputError" : ""}`}
                                         error={!!errors.SoDienThoai}
+                                        helperText={errors.SoDienThoai}
                                         type="tel"
+                                        required
                                     />
                                 </div>
                             </div>
@@ -515,7 +468,7 @@ const App: React.FC = () => {
                         <div className="StaffEdit-FormGrid">
                             <div className="StaffEdit-FormControl">
                                 <label htmlFor="MatKhau" className="StaffEdit-Label">
-                                    Mật khẩu:
+                                    Mật khẩu <span className="StaffEdit-RedStar">*</span>:
                                 </label>
                                 <div className="StaffEdit-InputContainer">
                                     <TextField
@@ -529,12 +482,13 @@ const App: React.FC = () => {
                                         error={!!errors.MatKhau}
                                         helperText={errors.MatKhau}
                                         type="password"
+                                        required
                                     />
                                 </div>
                             </div>
                             <div className="StaffEdit-FormControl">
                                 <label htmlFor="confirmPassword" className="StaffEdit-Label">
-                                    Xác nhận mật khẩu:
+                                    Xác nhận mật khẩu <span className="StaffEdit-RedStar">*</span>:
                                 </label>
                                 <div className="StaffEdit-InputContainer">
                                     <TextField
@@ -548,6 +502,7 @@ const App: React.FC = () => {
                                         error={!!errors.confirmPassword}
                                         helperText={errors.confirmPassword}
                                         type="password"
+                                        required
                                     />
                                 </div>
                             </div>
@@ -615,19 +570,17 @@ const App: React.FC = () => {
                             <FormControl
                                 fullWidth
                                 size="small"
-                                className={`StaffEdit-Select ${errors.Id_PhongThietBi ? "StaffEdit-SelectError" : ""}`}
+                                className={`StaffEdit-Select ${errors.ID_PhongXetNghiem ? "StaffEdit-SelectError" : ""}`}
                             >
-                                <InputLabel id="Id_PhongThietBi-label">
-                                    Chọn phòng xét nghiệm <span className="StaffEdit-RedStar">*</span>
-                                </InputLabel>
+                                <InputLabel id="ID_PhongXetNghiem-label">Chọn phòng xét nghiệm <span className="StaffEdit-RedStar">*</span></InputLabel>
                                 <Select
-                                    labelId="Id_PhongThietBi-label"
-                                    id="Id_PhongThietBi"
-                                    name="Id_PhongThietBi"
-                                    value={account.Id_PhongThietBi || ""}
+                                    labelId="ID_PhongXetNghiem-label"
+                                    id="ID_PhongXetNghiem"
+                                    name="ID_PhongXetNghiem"
+                                    value={account.ID_PhongXetNghiem || ""}
                                     onChange={handleChange}
                                     label="Chọn phòng xét nghiệm *"
-                                    error={!!errors.Id_PhongThietBi}
+                                    error={!!errors.ID_PhongXetNghiem}
                                 >
                                     <MenuItem value="">Chọn phòng xét nghiệm</MenuItem>
                                     {testLabs.map((lab) => (
@@ -636,8 +589,8 @@ const App: React.FC = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
-                                {errors.Id_PhongThietBi && (
-                                    <p className="StaffEdit-ErrorText">{errors.Id_PhongThietBi}</p>
+                                {errors.ID_PhongXetNghiem && (
+                                    <p className="StaffEdit-ErrorText">{errors.ID_PhongXetNghiem}</p>
                                 )}
                             </FormControl>
                         </div>
@@ -653,7 +606,6 @@ const App: React.FC = () => {
                         <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
                         Quay lại
                     </button>
-
                     <button
                         type="submit"
                         className="bigButton--blue"
@@ -662,12 +614,12 @@ const App: React.FC = () => {
                         {isLoading ? (
                             <>
                                 <FaSpinner style={{ marginRight: "6px", verticalAlign: "middle" }} className="spin" />
-                                Đang cập nhật...
+                                Đang thêm...
                             </>
                         ) : (
                             <>
                                 <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
-                                Cập nhật
+                                Thêm tài khoản
                             </>
                         )}
                     </button>

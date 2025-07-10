@@ -21,9 +21,9 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/system';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import './EditTestForm.css';
-import { FaArrowLeft } from 'react-icons/fa6';
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 
 // Custom styled component for the file input button
@@ -70,31 +70,34 @@ interface RoomOption {
   TenPhongThietBi: string;
 }
 
-function EditTestForm() {
+function AddTestForm() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [oldImage, setOldImage] = useState<string | null>(null); // Lưu tên file ảnh cũ
   const [testName, setTestName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [testCategory, setTestCategory] = useState<string>('');
   const [price, setPrice] = useState<string>('');
   const [status, setStatus] = useState<string>('Hien');
   const [errors, setErrors] = useState<{ imageFile?: string; testName?: string; price?: string }>({});
-  const [message, setMessage] = useState<string>(''); // Thêm state cho thông báo
+  const [message, setMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const [priceOptions, setPriceOptions] = useState<PriceOption[]>([]);
   const [roomOptions, setRoomOptions] = useState<RoomOption[]>([]);
   const router = useRouter();
-  const { id } = useParams();
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
   // Fetch price and room options
   useEffect(() => {
     const fetchOptions = async () => {
+      setLoading(true);
       try {
         const [priceResponse, roomResponse] = await Promise.all([
           fetch(`${API_BASE_URL}/Giadichvu/ServiceGroup/Pagination`),
           fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination`),
         ]);
+        if (!priceResponse.ok || !roomResponse.ok) {
+          throw new Error('Không thể tải danh sách giá hoặc phòng.');
+        }
         const priceData = await priceResponse.json();
         const roomData = await roomResponse.json();
         setPriceOptions(priceData.data || []);
@@ -102,44 +105,42 @@ function EditTestForm() {
       } catch (error) {
         console.error('Lỗi khi lấy danh sách giá và phòng:', error);
         setMessage('Đã có lỗi xảy ra khi tải danh sách giá và phòng.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchOptions();
   }, [API_BASE_URL]);
 
-  // Fetch test type data by ID
+  // Tự động xóa thông báo sau 3 giây
   useEffect(() => {
-    const fetchTestType = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/Loaixetnghiem/Detail/${id}`);
-        const data = await response.json();
-        if (data && data.data) {
-          setTestName(data.data.TenXetNghiem || '');
-          setDescription(data.data.MoTaXetNghiem || '');
-          if (data.data.Image) {
-            const imageUrl = data.data.Image.startsWith('http')
-              ? data.data.Image
-              : `${API_BASE_URL}/image/${data.data.Image}`;
-            setImagePreview(imageUrl);
-            setOldImage(data.data.Image); // Lưu tên file ảnh cũ
-          }
-          setTestCategory(data.data.Id_PhongThietBi?._id || '');
-          setPrice(data.data.Id_GiaDichVu?._id || '');
-          setStatus(data.data.TrangThaiHoatDong ? 'Hien' : 'An');
-        } else {
-          setMessage('Không tìm thấy thông tin xét nghiệm.');
-        }
-      } catch (error) {
-        console.error('Lỗi khi lấy thông tin xét nghiệm:', error);
-        setMessage('Đã có lỗi xảy ra khi tải thông tin xét nghiệm.');
-      }
-    };
-
-    if (id) {
-      fetchTestType();
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [id, API_BASE_URL]);
+  }, [message]);
+
+  const checkTestName = async (tenXetNghiem: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/Loaixetnghiem/CheckTestName`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ TenXetNghiem: tenXetNghiem.trim() }),
+      });
+      if (!response.ok) {
+        console.error(`Check test name API error: Status ${response.status}, ${response.statusText}`);
+        return false;
+      }
+      const data = await response.json();
+      return data.exists || false;
+    } catch (error) {
+      console.error('Check test name error:', error);
+      return false;
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -153,7 +154,7 @@ function EditTestForm() {
       setErrors((prevErrors) => ({ ...prevErrors, imageFile: undefined }));
     } else {
       setImageFile(null);
-      setImagePreview(oldImage ? `${API_BASE_URL}/image/${oldImage}` : null);
+      setImagePreview(null);
     }
   };
 
@@ -166,11 +167,18 @@ function EditTestForm() {
     setErrors((prevErrors) => ({ ...prevErrors, price: undefined }));
   };
 
-  const validateForm = () => {
+  const validateForm = async () => {
     const newErrors: { imageFile?: string; testName?: string; price?: string } = {};
-    if (!testName.trim()) newErrors.testName = 'Vui lòng nhập tên xét nghiệm.';
+    if (!testName.trim()) {
+      newErrors.testName = 'Vui lòng nhập tên xét nghiệm.';
+    } else {
+      const testExists = await checkTestName(testName);
+      if (testExists) {
+        newErrors.testName = 'Tên xét nghiệm đã tồn tại.';
+      }
+    }
     if (!price) newErrors.price = 'Vui lòng chọn giá dịch vụ.';
-    if (!imageFile && !oldImage) newErrors.imageFile = 'Vui lòng chọn ảnh xét nghiệm.';
+    if (!imageFile) newErrors.imageFile = 'Vui lòng chọn ảnh xét nghiệm.';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -180,47 +188,60 @@ function EditTestForm() {
     setMessage('');
     setErrors({});
 
-    if (!validateForm()) {
+    if (!(await validateForm())) {
       setMessage('Vui lòng kiểm tra các trường thông tin.');
       return;
     }
 
     try {
+      setLoading(true);
       const formData = new FormData();
-      formData.append('TenXetNghiem', testName);
-      formData.append('MoTaXetNghiem', description);
+      formData.append('TenXetNghiem', testName.trim());
+      formData.append('MoTaXetNghiem', description.trim());
       if (imageFile) {
         formData.append('Image', imageFile);
-      } else if (oldImage) {
-        formData.append('Image', oldImage); // Gửi tên file ảnh cũ nếu không có ảnh mới
       }
       formData.append('Id_PhongThietBi', testCategory || '');
       formData.append('Id_GiaDichVu', price);
-      formData.append('TrangThaiHoatDong', status === 'Hien' ? 'true' : 'false');
+      formData.append('TrangThaiHoatDong', 'true'); // Hardcoded as per backend
 
-      const response = await fetch(`${API_BASE_URL}/Loaixetnghiem/Edit/${id}`, {
-        method: 'PUT',
+      const response = await fetch(`${API_BASE_URL}/Loaixetnghiem/Add`, {
+        method: 'POST',
         body: formData,
       });
 
       if (response.ok) {
-        setMessage('Cập nhật xét nghiệm thành công!');
+        setMessage('Thêm loại xét nghiệm thành công!');
+        setTestName('');
+        setDescription('');
+        setTestCategory('');
+        setPrice('');
+        setStatus('Hien');
+        setImageFile(null);
+        setImagePreview(null);
       } else {
         const errorData = await response.json();
-        setMessage(`Cập nhật thất bại: ${errorData.message || 'Lỗi không xác định'}`);
+        setMessage(`Thêm thất bại: ${errorData.message || 'Lỗi không xác định'}`);
       }
     } catch (error) {
-      console.error('Lỗi khi cập nhật xét nghiệm:', error);
-      setMessage('Đã có lỗi xảy ra khi cập nhật xét nghiệm.');
+      console.error('Lỗi khi thêm xét nghiệm:', error);
+      setMessage('Đã có lỗi xảy ra khi thêm loại xét nghiệm.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCancel = () => {
-      router.push('/Admin/List/TestType');
+    router.push('/Admin/List/TestType');
   };
 
   return (
     <div className="AdminContent-Container">
+      {loading && (
+        <div className="message-loading">
+          <Alert severity="info">Đang tải dữ liệu...</Alert>
+        </div>
+      )}
       {message && (
         <div
           className={
@@ -241,7 +262,7 @@ function EditTestForm() {
       >
         <Paper elevation={3} sx={{ width: '100%' }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}>
-            Chỉnh Sửa Loại Xét Nghiệm
+            Thêm Loại Xét Nghiệm
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 10, mb: 4 }}>
@@ -306,7 +327,6 @@ function EditTestForm() {
                         e.stopPropagation();
                         setImageFile(null);
                         setImagePreview(null);
-                        setOldImage(null); // Xóa ảnh cũ khi xóa ảnh
                       }}
                     >
                       <DeleteIcon sx={{ color: 'gray', fontSize: 32 }} />
@@ -403,24 +423,33 @@ function EditTestForm() {
                 </FormControl>
               </Box>
             </Box>
-                          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
-                <button
-                  type="button"
-                  className="bigButton--gray"
-                  onClick={handleCancel}
-                >
-                  <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
-                  Hủy
-                </button>
-              
-                <button
-                  type="submit"
-                  className="bigButton--blue"
-                >
-                  <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
-                  Cập nhật Xét Nghiệm
-                </button>
-                          </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
+              <button
+                type="button"
+                className="bigButton--gray"
+                onClick={handleCancel}
+              >
+                <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Hủy
+              </button>
+              <button
+                type="submit"
+                className="bigButton--blue"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
+                    Đang thêm...
+                  </>
+                ) : (
+                  <>
+                    <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                    Thêm Loại Xét Nghiệm
+                  </>
+                )}
+              </button>
+            </Box>
           </form>
         </Paper>
       </Box>
@@ -428,4 +457,4 @@ function EditTestForm() {
   );
 }
 
-export default EditTestForm;
+export default AddTestForm;

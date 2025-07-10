@@ -5,7 +5,7 @@ import {
   Khoa,
   ClinicType,
 } from "@/app/types/doctorTypes/doctorTypes";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   TextField,
   FormControl,
@@ -22,7 +22,7 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import "./EditDoctor.css";
+import "./AddDoctor.css";
 import { Upload, type UploadFile } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
@@ -32,7 +32,7 @@ interface Errors {
   [key: string]: string;
 }
 
-interface DoctorUpdatePayload {
+interface DoctorPayload {
   TenBacSi?: string;
   SoDienThoai?: string;
   SoCCCD?: string;
@@ -48,29 +48,6 @@ interface DoctorUpdatePayload {
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
-export async function getDoctorDetails(id: string): Promise<DoctorType | null> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/Bacsi/detail/${id}`);
-    if (!response.ok) {
-      console.error(
-        `API error: Status ${response.status}, ${response.statusText}`
-      );
-      return null;
-    }
-    const data = await response.json();
-    console.log("Doctor API response:", data);
-
-    if (Array.isArray(data) && data.length > 0) {
-      return data[0];
-    }
-
-    return data.data || data;
-  } catch (error) {
-    console.error("Fetch doctor details error:", error);
-    return null;
-  }
-}
 
 export async function getSpecialties(): Promise<Khoa[] | null> {
   try {
@@ -112,42 +89,27 @@ export async function getClinicsBySpecialty(
   }
 }
 
-export async function updateDoctor(
-  id: string,
-  doctorData: DoctorUpdatePayload
-): Promise<boolean> {
+export async function addDoctor(doctorData: FormData): Promise<{ success: boolean, message?: string }> {
   try {
-    const payload: DoctorUpdatePayload = { ...doctorData };
-    if (typeof payload.TrangThaiHoatDong === "string") {
-      payload.TrangThaiHoatDong = payload.TrangThaiHoatDong === "true";
-    }
-    if (!payload.Matkhau) {
-      delete payload.Matkhau;
-    }
-
-    console.log("Sending payload:", payload);
-
-    const response = await fetch(`${API_BASE_URL}/Bacsi/Edit/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+    const response = await fetch(`${API_BASE_URL}/BacSi/Add`, {
+      method: "POST",
+      body: doctorData,
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(
-        `Update API error: Status ${response.status}, ${response.statusText}, Body:`,
-        errorText
-      );
-      return false;
+      console.error(`Add API error:`, data.message);
+      return { success: false, message: data.message || "Lỗi không xác định" };
     }
 
-    return true;
+    return { success: data.success, message: data.message };
   } catch (error) {
-    console.error("Update doctor error:", error);
-    return false;
+    console.error("Add doctor error:", error);
+    return { success: false, message: "Lỗi kết nối server" };
   }
 }
+
 
 const App: React.FC = () => {
   const [doctor, setDoctor] = useState<
@@ -157,14 +119,14 @@ const App: React.FC = () => {
     TenBacSi: "",
     SoDienThoai: "",
     SoCCCD: "",
-    NamSinh: "1",
+    NamSinh: "",
     GioiTinh: "Nam",
     HocVi: "",
     ID_Khoa: { _id: "", TenKhoa: "", TrangThaiHoatDong: true },
     Id_PhongKham: { _id: "", SoPhongKham: "" },
     address: "",
     TrangThaiHoatDong: true,
-    Image: "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar",
+    Image: "",
     Matkhau: "",
   });
 
@@ -174,55 +136,14 @@ const App: React.FC = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const router=useRouter();
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const params = useParams();
-  const doctorId = params.id as string;
-  const [fileList, setFileList] = useState<UploadFile[]>(
-    doctor.Image
-      ? [
-        {
-          uid: "-1",
-          name: "Ảnh bác sĩ",
-          status: "done",
-          url: doctor.Image.startsWith("data:")
-            ? doctor.Image
-            : `${API_BASE_URL}/image/${doctor.Image}`,
-        },
-      ]
-      : []
-  );
+  const router = useRouter();
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   useEffect(() => {
-    if (
-      doctor.Image &&
-      doctor.Image !== "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar"
-    ) {
-      setFileList([
-        {
-          uid: "-1",
-          name: "Ảnh bác sĩ",
-          status: "done",
-          url: doctor.Image.startsWith("data:")
-            ? doctor.Image
-            : `${API_BASE_URL}/image/${doctor.Image}`,
-        },
-      ]);
-    } else {
-      setFileList([]);
-    }
-  }, [doctor.Image]);
-
-  useEffect(() => {
-    if (!doctorId) {
-      return;
-    }
-
-    const fetchData = async () => {
+    const fetchSpecialties = async () => {
       setIsLoading(true);
       try {
-        const doctorData = await getDoctorDetails(doctorId);
         const specialtyData = await getSpecialties();
         if (specialtyData) {
           setSpecialties(specialtyData);
@@ -230,75 +151,16 @@ const App: React.FC = () => {
           console.log("No specialties data returned");
           setMessage("Không thể tải danh sách chuyên khoa.");
         }
-
-        if (doctorData) {
-          const mappedId_PhongKham =
-            typeof doctorData.Id_PhongKham === "string"
-              ? { _id: doctorData.Id_PhongKham, SoPhongKham: "" }
-              : doctorData.Id_PhongKham || { _id: "", SoPhongKham: "" };
-
-          const updatedDoctor = {
-            ...doctorData,
-            SoCCCD: doctorData.SoCCCD || "",
-            NamSinh: doctorData.NamSinh || "0",
-            Matkhau: "",
-            ID_Khoa: doctorData.ID_Khoa || {
-              _id: "",
-              TenKhoa: "",
-              TrangThaiHoatDong: true,
-            },
-            Id_PhongKham: mappedId_PhongKham,
-          };
-
-          setDoctor(updatedDoctor);
-          console.log("Updated doctor state:", updatedDoctor);
-
-          if (doctorData.ID_Khoa?._id) {
-            const clinicData = await getClinicsBySpecialty(
-              doctorData.ID_Khoa._id
-            );
-            if (clinicData) {
-              setClinics(clinicData);
-              if (typeof doctorData.Id_PhongKham === "string") {
-                const foundClinic = clinicData.find(
-                  (c) => c._id === doctorData.Id_PhongKham
-                );
-                if (foundClinic) {
-                  setDoctor((prev) => ({
-                    ...prev,
-                    Id_PhongKham: foundClinic,
-                  }));
-                  console.log("Updated Id_PhongKham with clinic:", foundClinic);
-                } else {
-                  console.log(
-                    "No matching clinic found for Id_PhongKham:",
-                    doctorData.Id_PhongKham
-                  );
-                  setMessage("Không tìm thấy phòng khám tương ứng.");
-                }
-              }
-            } else {
-              console.log("No clinic data returned");
-              setMessage("Không thể tải danh sách phòng khám.");
-            }
-          } else {
-            console.log("No doctor data returned");
-            setMessage("Không tìm thấy thông tin bác sĩ.");
-          }
-        } else {
-          console.log("No doctor data returned");
-          setMessage("Không tìm thấy thông tin bác sĩ.");
-        }
       } catch (error) {
-        console.error("Fetch data error:", error);
-        setMessage("Có lỗi xảy ra khi tải thông tin. Vui lòng thử lại.");
+        console.error("Fetch specialties error:", error);
+        setMessage("Có lỗi xảy ra khi tải danh sách chuyên khoa. Vui lòng thử lại.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchData();
-  }, [doctorId]);
+    fetchSpecialties();
+  }, []);
 
   useEffect(() => {
     if (doctor.ID_Khoa?._id) {
@@ -351,7 +213,6 @@ const App: React.FC = () => {
     console.log(`Field ${name} updated to:`, value);
   };
 
-
   const getBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -383,122 +244,102 @@ const App: React.FC = () => {
         ...prev,
         Image: base64,
       }));
-      setSelectedFile(latest.originFileObj); // nếu cần gửi lên server
-    }
-  };
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage("");
-    setErrors({});
-
-    // Initialize errors object
-    const newErrors: Errors = {};
-
-    // Validate required fields
-    if (!doctor.TenBacSi) {
-      newErrors.TenBacSi = "Họ và tên là bắt buộc.";
-    }
-    if (!doctor.SoCCCD) {
-      newErrors.SoCCCD = "Số CCCD là bắt buộc.";
-    } else if (!/^\d{12}$/.test(doctor.SoCCCD)) {
-      newErrors.SoCCCD = "Số CCCD phải có đúng 12 chữ số.";
-    }
-    if (!doctor.SoDienThoai) {
-      newErrors.SoDienThoai = "Số điện thoại là bắt buộc.";
-    } else if (!/^\d{10}$/.test(doctor.SoDienThoai)) {
-      newErrors.SoDienThoai = "Số điện thoại phải có đúng 10 chữ số.";
-    }
-    if (!doctor.NamSinh) {
-      newErrors.NamSinh = "Năm sinh là bắt buộc.";
-    } else {
-      const year = parseInt(doctor.NamSinh, 10);
-      const currentYear = new Date().getFullYear();
-      if (isNaN(year) || year < 1900 || year > currentYear) {
-        newErrors.NamSinh = `Năm sinh phải nằm trong khoảng 1900 đến ${currentYear}.`;
-      }
-    }
-    if (!doctor.ID_Khoa?._id) {
-      newErrors.ID_Khoa = "Chọn chuyên khoa là bắt buộc.";
-    }
-    if (!doctor.Id_PhongKham?._id) {
-      newErrors.Id_PhongKham = "Chọn phòng khám là bắt buộc.";
-    }
-    if (!doctor.HocVi) {
-      newErrors.HocVi = "Chọn học vị là bắt buộc.";
-    }
-    if (!doctor.Image || doctor.Image === "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar") {
-      newErrors.Image = "Ảnh bác sĩ là bắt buộc.";
-    }
-
-    // Validate password only if entered
-    if (doctor.Matkhau) {
-      if (doctor.Matkhau.length < 6) {
-        newErrors.Matkhau = "Mật khẩu phải có ít nhất 6 ký tự.";
-      }
-      if (doctor.Matkhau !== confirmPassword) {
-        newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
-      }
-    }
-
-    // If there are errors, set them and stop submission
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      setMessage("Vui lòng kiểm tra các trường thông tin.");
-      return;
-    }
-
-    if (!doctorId) {
-      setMessage("Không tìm thấy ID bác sĩ.");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("TenBacSi", doctor.TenBacSi || "");
-      formData.append("SoDienThoai", doctor.SoDienThoai || "");
-      formData.append("SoCCCD", doctor.SoCCCD || "");
-      formData.append("NamSinh", doctor.NamSinh || "");
-      formData.append("GioiTinh", doctor.GioiTinh || "");
-      formData.append("HocVi", doctor.HocVi || "");
-      formData.append("ID_Khoa", doctor.ID_Khoa?._id || "");
-      formData.append("Id_PhongKham", doctor.Id_PhongKham?._id || "");
-      formData.append("address", doctor.address || "");
-      formData.append("TrangThaiHoatDong", String(doctor.TrangThaiHoatDong));
-      if (doctor.Matkhau) formData.append("Matkhau", doctor.Matkhau);
-      if (selectedFile) formData.append("Image", selectedFile);
-
-      const response = await fetch(`${API_BASE_URL}/Bacsi/Edit/${doctorId}`, {
-        method: "PUT",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(
-          `Update API error: Status ${response.status}, ${response.statusText}, Body:`,
-          errorText
-        );
-        setMessage("Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.");
-        return;
-      }
-
-      setMessage("Cập nhật thông tin bác sĩ thành công!");
-    } catch (error) {
-      console.error("Lỗi khi cập nhật:", error);
-      setMessage("Có lỗi xảy ra khi cập nhật thông tin. Vui lòng thử lại.");
-    } finally {
-      setIsLoading(false);
+      setSelectedFile(latest.originFileObj);
     }
   };
 
-    const handleCancel = () => {
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setMessage("");
+  setErrors({});
+  
+  const newErrors: Errors = {};
+
+  // Validate các trường bắt buộc trước khi gọi API
+  if (!doctor.TenBacSi) newErrors.TenBacSi = "Họ và tên là bắt buộc.";
+  if (!doctor.SoCCCD) newErrors.SoCCCD = "Số CCCD là bắt buộc.";
+  if (!doctor.SoDienThoai) newErrors.SoDienThoai = "Số điện thoại là bắt buộc.";
+  if (!doctor.NamSinh) newErrors.NamSinh = "Năm sinh là bắt buộc.";
+  if (!doctor.ID_Khoa?._id) newErrors.ID_Khoa = "Chọn chuyên khoa là bắt buộc.";
+  if (!doctor.Id_PhongKham?._id) newErrors.Id_PhongKham = "Chọn phòng khám là bắt buộc.";
+  if (!doctor.HocVi) newErrors.HocVi = "Chọn học vị là bắt buộc.";
+  if (!doctor.Image) newErrors.Image = "Ảnh bác sĩ là bắt buộc.";
+  if (!doctor.Matkhau) newErrors.Matkhau = "Mật khẩu là bắt buộc.";
+  else if (doctor.Matkhau.length < 6) newErrors.Matkhau = "Mật khẩu ít nhất 6 ký tự.";
+  if (doctor.Matkhau !== confirmPassword) newErrors.confirmPassword = "Mật khẩu xác nhận không khớp.";
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    setMessage("Vui lòng kiểm tra các trường thông tin.");
+    return;
+  }
+
+  // Gửi form lên server
+  setIsLoading(true);
+  try {
+    const formData = new FormData();
+    formData.append("TenBacSi", doctor.TenBacSi || "");
+    formData.append("SoDienThoai", doctor.SoDienThoai || "");
+    formData.append("SoCCCD", doctor.SoCCCD || "");
+    formData.append("NamSinh", doctor.NamSinh || "");
+    formData.append("GioiTinh", doctor.GioiTinh || "");
+    formData.append("HocVi", doctor.HocVi || "");
+    formData.append("ID_Khoa", doctor.ID_Khoa?._id || "");
+    formData.append("Id_PhongKham", doctor.Id_PhongKham?._id || "");
+    formData.append("address", doctor.address || "");
+    formData.append("TrangThaiHoatDong", String(doctor.TrangThaiHoatDong));
+    formData.append("Matkhau", doctor.Matkhau || "");
+    if (selectedFile) formData.append("Image", selectedFile);
+
+    const result = await addDoctor(formData);
+
+    if (!result.success) {
+      // Check nếu BE trả về thông báo lỗi trùng
+      if (result.message?.includes("Số CCCD")) {
+        setErrors({ SoCCCD: result.message });
+      } else if (result.message?.includes("Số điện thoại")) {
+        setErrors({ SoDienThoai: result.message });
+      } else {
+        setMessage(result.message || "Có lỗi xảy ra khi thêm bác sĩ.");
+      }
+      return;
+    }
+
+    setMessage("Thêm bác sĩ thành công!");
+    setDoctor({
+      _id: "",
+      TenBacSi: "",
+      SoDienThoai: "",
+      SoCCCD: "",
+      NamSinh: "",
+      GioiTinh: "Nam",
+      HocVi: "",
+      ID_Khoa: { _id: "", TenKhoa: "", TrangThaiHoatDong: true },
+      Id_PhongKham: { _id: "", SoPhongKham: "" },
+      address: "",
+      TrangThaiHoatDong: true,
+      Image: "",
+      Matkhau: "",
+    });
+    setConfirmPassword("");
+    setFileList([]);
+    setSelectedFile(null);
+  } catch (err) {
+    console.error("Lỗi khi thêm bác sĩ:", err);
+    setMessage("Có lỗi xảy ra khi thêm bác sĩ. Vui lòng thử lại.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+  const handleCancel = () => {
     router.push('/Admin/HumanResources/Doctor');
   };
 
   return (
     <div className="AdminContent-Container">
-      <h2 className="title">Thông tin bác sĩ</h2>
+      <h2 className="title">Thêm bác sĩ</h2>
 
       {isLoading && (
         <div className="loading">
@@ -544,6 +385,7 @@ const App: React.FC = () => {
                 </div>
               )}
             </Upload>
+            {errors.Image && <p className="error-text">{errors.Image}</p>}
           </div>
 
           <div className="form-section">
@@ -568,7 +410,7 @@ const App: React.FC = () => {
                 </div>
               </div>
               <div className="form-control">
-                <label htmlFor="cccd" className="label">
+                <label htmlFor="SoCCCD" className="label">
                   Số CCCD <span className="red-star">*</span>:
                 </label>
                 <div className="input-container">
@@ -581,13 +423,14 @@ const App: React.FC = () => {
                     placeholder="Nhập số CCCD"
                     className={`input ${errors.SoCCCD ? "input-error" : ""}`}
                     error={!!errors.SoCCCD}
-                    helperText={errors.cccd}
+                    helperText={errors.SoCCCD}
+                    required
                   />
                 </div>
               </div>
             </div>
             <div className="form-grid-3">
-              <div className="form-grid-3-content1 form-control" >
+              <div className="form-grid-3-content1 form-control">
                 <label htmlFor="SoDienThoai" className="label">
                   Số điện thoại <span className="red-star">*</span>:
                 </label>
@@ -668,6 +511,7 @@ const App: React.FC = () => {
                     error={!!errors.Matkhau}
                     helperText={errors.Matkhau}
                     type="password"
+                    required
                   />
                 </div>
               </div>
@@ -687,6 +531,7 @@ const App: React.FC = () => {
                     error={!!errors.confirmPassword}
                     helperText={errors.confirmPassword}
                     type="password"
+                    required
                   />
                 </div>
               </div>
@@ -778,7 +623,7 @@ const App: React.FC = () => {
             <FormControl
               fullWidth
               size="small"
-              className={`select ${errors.Id_PhongKham ? "select-error" : ""}`}
+              className={`select ${errors.Id_PhongK}_{Kham ? "select-error" : ""}`}
             >
               <InputLabel id="Id_PhongKham-label">Chọn phòng khám</InputLabel>
               <Select
@@ -822,17 +667,16 @@ const App: React.FC = () => {
             {isLoading ? (
               <>
                 <FaSpinner style={{ marginRight: "6px", verticalAlign: "middle" }} className="spin" />
-                Đang cập nhật...
+                Đang thêm...
               </>
             ) : (
               <>
                 <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
-                Cập nhật
+                Thêm bác sĩ
               </>
             )}
           </button>
         </div>
-
       </form>
     </div>
   );

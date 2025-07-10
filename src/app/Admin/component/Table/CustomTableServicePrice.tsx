@@ -41,7 +41,7 @@ export interface ColumnCategory {
 interface CustomTableProps {
   columns: ColumnCategory[];
   rows: rowRenderType[];
-  onEdit?: (row: rowRenderType) => void;
+  onEdit?: (_id: string) => void;
   onDelete?: (row: rowRenderType) => void;
   onDisable: (row: rowRenderType) => void;
   showEdit?: boolean;
@@ -226,7 +226,7 @@ export default function CustomTableServicePrice({
       >
         {onEdit && showEdit && selectedRow && (
           <MenuItem
-            onClick={() => { onEdit(selectedRow); handleCloseMenu(); }}
+            onClick={() => { onEdit(selectedRow._id); handleCloseMenu(); }}
             sx={{ color: "#1976d2", fontSize: 15, fontWeight: 500, px: 2, py: 1, borderRadius: 1, "&:hover": { backgroundColor: "#e3f2fd" } }}
           >
             <FaEdit style={{ marginRight: 8 }} /> Sửa

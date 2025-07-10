@@ -17,9 +17,9 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/system';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import './FormTestingRoom.css';
-import { FaArrowLeft } from 'react-icons/fa6';
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 
 // Custom styled component for the file input button
@@ -63,47 +63,27 @@ interface TestingRoom {
   TrangThaiHoatDong?: boolean;
 }
 
-function TestingRoomFormLayout() {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+function AddTestingRoomForm() {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [oldImage, setOldImage] = useState<string | null>(null); // Lưu tên file ảnh cũ
   const [tenPhong, setTenPhong] = useState<string>('');
-  const [loaiXetNghiem, setLoaiXetNghiem] = useState<string>('');
+  const [tenXetNghiem, setTenXetNghiem] = useState<string>('');
   const [trangThai, setTrangThai] = useState<string>('Hien');
-  const [errors, setErrors] = useState<{ imageFile?: string; tenPhong?: string; loaiXetNghiem?: string }>({});
+  const [errors, setErrors] = useState<{ imageFile?: string; tenPhong?: string; tenXetNghiem?: string }>({});
   const [message, setMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const { id } = useParams();
 
-  // Fetch room details
+  // Tự động xóa thông báo sau 3 giây
   useEffect(() => {
-    const fetchRoomDetails = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Detail/${id}`);
-        const result = await response.json();
-        if (result.message === "Lấy chi tiết phòng thiết bị thành công") {
-          const room: TestingRoom = result.data;
-          setTenPhong(room.TenPhongThietBi);
-          setLoaiXetNghiem(room.TenXetNghiem);
-          setTrangThai(room.TrangThaiHoatDong ? 'Hien' : 'An');
-          if (room.Image) {
-            setImagePreview(`${API_BASE_URL}/image/${room.Image}`);
-            setOldImage(room.Image); // Lưu tên file ảnh cũ
-          }
-        } else {
-          setMessage('Không tìm thấy thông tin phòng xét nghiệm.');
-        }
-      } catch (error) {
-        console.error("Error fetching room details:", error);
-        setMessage('Đã có lỗi xảy ra khi tải thông tin phòng xét nghiệm.');
-      }
-    };
-    
-    if (id) {
-      fetchRoomDetails();
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [id, API_BASE_URL]);
+  }, [message]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -117,15 +97,15 @@ function TestingRoomFormLayout() {
       setErrors((prevErrors) => ({ ...prevErrors, imageFile: undefined }));
     } else {
       setImageFile(null);
-      setImagePreview(oldImage ? `${API_BASE_URL}/image/${oldImage}` : null);
+      setImagePreview(null);
     }
   };
 
   const validateForm = () => {
-    const newErrors: { imageFile?: string; tenPhong?: string; loaiXetNghiem?: string } = {};
-    if (!tenPhong) newErrors.tenPhong = 'Vui lòng nhập tên phòng';
-    if (!loaiXetNghiem) newErrors.loaiXetNghiem = 'Vui lòng nhập loại xét nghiệm';
-    if (!imageFile && !oldImage) newErrors.imageFile = 'Vui lòng chọn ảnh phòng xét nghiệm';
+    const newErrors: { imageFile?: string; tenPhong?: string; tenXetNghiem?: string } = {};
+    if (!tenPhong.trim()) newErrors.tenPhong = 'Vui lòng nhập tên phòng';
+    if (!tenXetNghiem.trim()) newErrors.tenXetNghiem = 'Vui lòng nhập tên xét nghiệm';
+    if (!imageFile) newErrors.imageFile = 'Vui lòng chọn ảnh phòng xét nghiệm';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -141,30 +121,36 @@ function TestingRoomFormLayout() {
     }
 
     const formData = new FormData();
-    formData.append('TenPhongThietBi', tenPhong);
-    formData.append('TenXetNghiem', loaiXetNghiem);
-    formData.append('TrangThaiHoatDong', trangThai === 'Hien' ? 'true' : 'false');
+    formData.append('TenPhongThietBi', tenPhong.trim());
+    formData.append('TenXetNghiem', tenXetNghiem.trim());
+    formData.append('TrangThaiHoatDong', 'true'); // Hardcoded as per backend
     if (imageFile) {
       formData.append('Image', imageFile);
-    } else if (oldImage) {
-      formData.append('Image', oldImage); // Gửi tên file ảnh cũ nếu không có ảnh mới
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/${id}`, {
-        method: 'PUT',
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/add`, {
+        method: 'POST',
         body: formData,
       });
 
       if (response.ok) {
-        setMessage('Cập nhật phòng xét nghiệm thành công!');
+        setMessage('Thêm phòng xét nghiệm thành công!');
+        setTenPhong('');
+        setTenXetNghiem('');
+        setTrangThai('Hien');
+        setImageFile(null);
+        setImagePreview(null);
       } else {
         const errorData = await response.json();
-        setMessage(`Cập nhật thất bại: ${errorData.message || 'Lỗi không xác định'}`);
+        setMessage(`Thêm thất bại: ${errorData.message || 'Lỗi không xác định'}`);
       }
     } catch (error) {
-      console.error('Error updating room:', error);
-      setMessage('Đã có lỗi xảy ra khi cập nhật phòng xét nghiệm.');
+      console.error('Error adding room:', error);
+      setMessage('Đã có lỗi xảy ra khi thêm phòng xét nghiệm.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -174,6 +160,11 @@ function TestingRoomFormLayout() {
 
   return (
     <div className="AdminContent-Container">
+      {loading && (
+        <div className="message-loading">
+          <Alert severity="info">Đang tải...</Alert>
+        </div>
+      )}
       {message && (
         <div
           className={
@@ -194,7 +185,7 @@ function TestingRoomFormLayout() {
       >
         <Paper elevation={3} sx={{ width: '100%' }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}>
-            Chỉnh sửa Phòng Xét Nghiệm
+            Thêm Phòng Xét Nghiệm
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 10, mb: 4 }}>
@@ -267,7 +258,6 @@ function TestingRoomFormLayout() {
                         e.stopPropagation();
                         setImageFile(null);
                         setImagePreview(null);
-                        setOldImage(null); // Xóa ảnh cũ khi xóa ảnh
                       }}
                     >
                       <DeleteIcon sx={{ color: 'gray', fontSize: 32 }} />
@@ -301,14 +291,14 @@ function TestingRoomFormLayout() {
                   />
                   <TextField
                     sx={{ width: { sm: '40%' } }}
-                    label="Loại Xét Nghiệm"
-                    name="loaiXetNghiem"
+                    label="Tên Xét Nghiệm"
+                    name="tenXetNghiem"
                     variant="outlined"
                     required
-                    value={loaiXetNghiem}
-                    onChange={(e) => setLoaiXetNghiem(e.target.value)}
-                    error={!!errors.loaiXetNghiem}
-                    helperText={errors.loaiXetNghiem}
+                    value={tenXetNghiem}
+                    onChange={(e) => setTenXetNghiem(e.target.value)}
+                    error={!!errors.tenXetNghiem}
+                    helperText={errors.tenXetNghiem}
                   />
                 </Box>
                 <FormControl component="fieldset">
@@ -326,22 +316,31 @@ function TestingRoomFormLayout() {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
-  <button
-    type="button"
-    className="bigButton--gray"
-    onClick={handleCancel}
-  >
-    <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
-    Hủy
-  </button>
-
-  <button
-    type="submit"
-    className="bigButton--blue"
-  >
-    <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
-    Cập nhật Phòng Xét Nghiệm
-  </button>
+              <button
+                type="button"
+                className="bigButton--gray"
+                onClick={handleCancel}
+              >
+                <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Hủy
+              </button>
+              <button
+                type="submit"
+                className="bigButton--blue"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
+                    Đang thêm...
+                  </>
+                ) : (
+                  <>
+                    <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                    Thêm Phòng Xét Nghiệm
+                  </>
+                )}
+              </button>
             </Box>
           </form>
         </Paper>
@@ -350,4 +349,4 @@ function TestingRoomFormLayout() {
   );
 }
 
-export default TestingRoomFormLayout;
+export default AddTestingRoomForm;

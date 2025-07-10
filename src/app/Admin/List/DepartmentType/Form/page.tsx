@@ -11,60 +11,41 @@ import {
   FormControlLabel,
   FormControl,
   FormLabel,
-  CircularProgress,
+  FormHelperText,
   Alert,
+  CircularProgress,
 } from '@mui/material';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import './DepartmentType.css';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
-import { FaArrowLeft } from 'react-icons/fa6';
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 
 interface DepartmentType {
-  _id: string;
   TenKhoa: string;
   TrangThaiHoatDong: boolean;
 }
 
-function DepartmentTypeEdit() {
+function AddDepartmentTypeForm() {
   const [formData, setFormData] = useState<DepartmentType>({
-    _id: '',
     TenKhoa: '',
-    TrangThaiHoatDong: false,
+    TrangThaiHoatDong: true,
   });
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState<string | null>(null); // Thay error bằng message
-  const [errors, setErrors] = useState<{ TenKhoa?: string }>({}); // Thêm state cho lỗi validate
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ TenKhoa?: string }>({});
   const router = useRouter();
-  const params = useParams();
-  const { id } = params;
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
-  // Fetch department type details
+  // Tự động xóa thông báo sau 3 giây
   useEffect(() => {
-    const fetchDepartmentType = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/Khoa/Detail/${id}`);
-        if (!response.ok) {
-          throw new Error('Không thể lấy thông tin loại khoa');
-        }
-        const { data } = await response.json();
-        setFormData({
-          _id: data._id,
-          TenKhoa: data.TenKhoa || '',
-          TrangThaiHoatDong: data.TrangThaiHoatDong || false,
-        });
-        setLoading(false);
-      } catch (err: any) {
-        setMessage(err.message);
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchDepartmentType();
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [id, API_BASE_URL]);
+  }, [message]);
 
   // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +54,7 @@ function DepartmentTypeEdit() {
       ...prev,
       [name]: value,
     }));
-    setErrors((prev) => ({ ...prev, [name]: undefined })); // Xóa lỗi khi người dùng nhập
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
   // Handle status change
@@ -84,11 +65,36 @@ function DepartmentTypeEdit() {
     }));
   };
 
+  // Check for duplicate department name
+  const checkDepartmentName = async (tenKhoa: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/Khoa/CheckDepartmentName`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ TenKhoa: tenKhoa.trim() }),
+      });
+      if (!response.ok) {
+        console.error(`Check department name API error: Status ${response.status}, ${response.statusText}`);
+        return false;
+      }
+      const data = await response.json();
+      return data.exists || false;
+    } catch (error) {
+      console.error('Check department name error:', error);
+      return false;
+    }
+  };
+
   // Validate form
-  const validateForm = () => {
+  const validateForm = async () => {
     const newErrors: { TenKhoa?: string } = {};
     if (!formData.TenKhoa.trim()) {
       newErrors.TenKhoa = 'Vui lòng nhập tên khoa';
+    } else {
+      const departmentExists = await checkDepartmentName(formData.TenKhoa);
+      if (departmentExists) {
+        newErrors.TenKhoa = 'Tên khoa đã tồn tại';
+      }
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -100,52 +106,52 @@ function DepartmentTypeEdit() {
     setMessage(null);
     setErrors({});
 
-    if (!validateForm()) {
+    if (!(await validateForm())) {
       setMessage('Vui lòng kiểm tra các trường thông tin.');
       return;
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/Khoa/${id}`, {
-        method: 'PUT',
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/Khoa/Add`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          TenKhoa: formData.TenKhoa,
-          TrangThaiHoatDong: formData.TrangThaiHoatDong,
+          TenKhoa: formData.TenKhoa.trim(),
+          TrangThaiHoatDong: true, // Hardcoded as per backend
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Không thể cập nhật loại khoa');
+        throw new Error(errorData.message || 'Không thể thêm khoa');
       }
 
-      setMessage('Cập nhật loại khoa thành công!');
+      setMessage('Thêm khoa thành công!');
+      setFormData({ TenKhoa: '', TrangThaiHoatDong: true });
     } catch (err: any) {
-      setMessage(err.message);
+      setMessage(err.message || 'Đã có lỗi xảy ra khi thêm khoa.');
+    } finally {
+      setLoading(false);
     }
   };
 
   // Handle cancel
   const handleCancel = () => {
-      router.push('/Admin/List/DepartmentType');
+    router.push('/Admin/List/DepartmentType');
   };
-
-  if (loading) {
-    return (
-      <div className="AdminContent-Container">
-        <div className="loading">
-          <CircularProgress size={20} className="spinner" />
-          Đang tải dữ liệu...
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="AdminContent-Container">
+      {loading && (
+        <div className="loading">
+          <Alert severity="info">
+            <CircularProgress size={20} className="spinner" /> Đang tải...
+          </Alert>
+        </div>
+      )}
       {message && (
         <div
           className={
@@ -162,7 +168,7 @@ function DepartmentTypeEdit() {
           { title: 'Trang chủ', href: '/Admin' },
           { title: 'Nhân sự', href: '/Admin/HumanResources/RoleType' },
           { title: 'Loại tài khoản', href: '/Admin/List/DepartmentType' },
-          { title: 'Chỉnh sửa Loại khoa' },
+          { title: 'Thêm Loại Khoa' },
         ]}
       />
       <Box
@@ -174,7 +180,7 @@ function DepartmentTypeEdit() {
       >
         <Paper elevation={3} sx={{ width: '100%' }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}>
-            Chỉnh sửa Loại Khoa
+            Thêm Loại Khoa
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 10, mb: 4 }}>
@@ -204,22 +210,31 @@ function DepartmentTypeEdit() {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
-  <button
-    type="button"
-    className="bigButton--gray"
-    onClick={handleCancel}
-  >
-    <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
-    Hủy
-  </button>
-
-  <button
-    type="submit"
-    className="bigButton--blue"
-  >
-    <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
-    Cập nhật Loại Khoa
-  </button>
+              <button
+                type="button"
+                className="bigButton--gray"
+                onClick={handleCancel}
+              >
+                <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Hủy
+              </button>
+              <button
+                type="submit"
+                className="bigButton--blue"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
+                    Đang thêm...
+                  </>
+                ) : (
+                  <>
+                    <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                    Thêm Loại Khoa
+                  </>
+                )}
+              </button>
             </Box>
           </form>
         </Paper>
@@ -228,4 +243,4 @@ function DepartmentTypeEdit() {
   );
 }
 
-export default DepartmentTypeEdit;
+export default AddDepartmentTypeForm;

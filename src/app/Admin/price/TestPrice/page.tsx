@@ -18,6 +18,7 @@ import CustomTableServicePrice, {
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import { getTestGroup } from "../../services/Category";
 import { ServicePriceType } from "@/app/types/hospitalTypes/hospitalType";
+import { useRouter } from "next/navigation";
 
 const columns: ColumnCategory[] = [
   { id: "Tendichvu", label: "Tên dịch vụ", sortable: true, Outstanding: true },
@@ -32,6 +33,7 @@ export default function Page() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const router = useRouter();
 
   const fetchData = async (currentPage = 1) => {
     try {
@@ -122,7 +124,7 @@ export default function Page() {
       <CustomTableServicePrice
         columns={columns}
         rows={filteredRows}
-        onEdit={(row) => console.log("Edit", row)}
+        onEdit={(id) => {router.push(`/Admin/price/TestPrice/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
         onDisable={(row) => console.log("Toggle status", row)}
         showEdit={true}
