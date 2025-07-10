@@ -117,3 +117,71 @@ export async function confirmTestRequestPayment(id: string){
     return null;
   }
 }
+
+
+// tìm kiếm
+export const SearchPrescriptionPendingPayment = async (
+  isWaiting: boolean,
+  page: number = 1,
+  fullName?: string | null,
+  phoneNumber?: string | null
+) => {
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.append("TrangThaiThanhToan", isWaiting ? "false" : "true");
+    queryParams.append("page", page.toString());
+    if (fullName) queryParams.append("HoVaTen", fullName);
+    if (phoneNumber) queryParams.append("SDT", phoneNumber);
+
+    const res = await fetch(`${API_BASE_URL}/Donthuoc/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?${queryParams.toString()}`);
+    if (!res.ok) return null;
+
+    return await res.json();
+  } catch (error) {
+    console.error("Lỗi khi fetch đơn thuốc:", error);
+    return null;
+  }
+};
+
+
+export const SearchParaclinicalAwaitingPayment = async (
+  isActive: boolean,
+  page: number = 1,
+  HoVaTen?: string,
+  SDT?: string
+) => {
+  try {
+    // Tạo query string chỉ chứa các tham số có giá trị
+    const params = new URLSearchParams({
+      TrangThaiHoatDong: String(isActive),
+      page: String(page),
+      limit: "5",
+    });
+
+    if (HoVaTen && HoVaTen.trim() !== "") {
+      params.append("HoVaTen", HoVaTen.trim());
+    }
+
+    if (SDT && SDT.trim() !== "") {
+      params.append("SDT", SDT.trim());
+    }
+
+    const response = await fetch(
+      `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Lỗi khi gọi API");
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Lỗi khi fetch getParaclinicalAwaitingPayment:", error);
+    return {
+      data: [],
+      totalPages: 1,
+      currentPage: 1,
+    };
+  }
+};

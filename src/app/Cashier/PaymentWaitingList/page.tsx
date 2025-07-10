@@ -8,8 +8,8 @@ import { formatCurrencyVND, formatTime } from "@/app/lib/Format";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { prescriptionType } from "@/app/types/patientTypes/patient";
 import {
-  getPrescriptionPendingPayment,
   confirmPrescriptionPayment,
+  SearchPrescriptionPendingPayment,
 } from "@/app/services/Cashier";
 import { showToast, ToastType } from "@/app/lib/Toast";
 import payment from "@/app/services/Pay";
@@ -31,9 +31,16 @@ export default function Prescription() {
     currentPage: 1,
     totalPages: 1,
   });
+  const [name, setName] = useState<string | null>(null);
+  const [phone, setPhone] = useState<string | null>(null);
 
   const loadApi = async (page: number = 1) => {
-    const getData = await getPrescriptionPendingPayment(true, page);
+    const getData = await SearchPrescriptionPendingPayment(
+      true,
+      page,
+      name,
+      phone
+    );
     if (!getData) return;
 
     setDataPrescription(getData.data || []);
@@ -129,8 +136,12 @@ export default function Prescription() {
                 type="text"
                 placeholder="Hãy nhập số điện thoại"
                 className="search-input"
+                value={phone ?? ""}
+                onChange={(e) =>
+                  setPhone(e.target.value ? e.target.value: null)
+                }
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={() => loadApi(1)}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
@@ -139,8 +150,10 @@ export default function Prescription() {
                 type="text"
                 placeholder="Hãy nhập tên"
                 className="search-input"
+                value={name ?? ""}
+                onChange={(e) => setName(e.target.value || null)}
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={() => loadApi(1)}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
@@ -221,7 +234,6 @@ export default function Prescription() {
               </tbody>
             </table>
 
-            {/* ✅ Thêm phân trang */}
             <Pagination
               totalPages={pagination.totalPages}
               currentPage={pagination.currentPage}

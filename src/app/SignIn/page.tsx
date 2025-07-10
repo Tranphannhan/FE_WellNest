@@ -46,9 +46,9 @@ const handleLogin = async () => {
     console.log('✅ Đăng nhập thành công:', result);
 
     // router.push('/dashboard'); // Hoặc chuyển hướng theo role
-  } catch (err: any) {
-    showToast(err.message || 'Đăng nhập thất bại', ToastType.error);
-    console.error('❌ Đăng nhập thất bại:', err.message);
+  } catch (err) {
+    showToast('Đăng nhập thất bại', ToastType.error);
+    console.error('❌ Đăng nhập thất bại:', err);
   }
 };
 

@@ -23,7 +23,6 @@ import { useRouter } from "next/navigation";
 
 // Cấu hình cột của bảng
 const columns: Column[] = [
-  { id: "_id", label: "ID Phòng", sortable: false, Outstanding: false },
   { id: "SoPhongKham", label: "Số phòng", sortable: true, Outstanding: true },
   { id: "Khoa", label: "Khoa", sortable: true, Outstanding: false },
   {

@@ -249,7 +249,7 @@ export default function CustomTableCatalog ({
           </MenuItem>
         )}
 
-        {onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
+        {showDisable && onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
           <MenuItem onClick={() => { onDisable(selectedRow); handleCloseMenu(); }} sx={{ color: "#388e3c", fontSize: 15, fontWeight: 500, px: 2, py: 1, borderRadius: 1, "&:hover": { backgroundColor: "#e8f5e9" } }}>
             <FaRegCheckCircle style={{ marginRight: 8 }} /> Kích hoạt
           </MenuItem>

@@ -83,9 +83,9 @@ export default function Page() {
         onDelete={(row) => console.log("Delete", row)}
         onDisable={(row) => console.log("Toggle status", row)}
         showEdit={true}
-        showDelete={true}
-        showDisable={true}
-        page={1}
+        showDelete={false}
+        showDisable={false}
+        page={0}
         totalItems={filteredRows.length}
         onPageChange={() => {}}
       />

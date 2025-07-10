@@ -116,7 +116,7 @@ export async function addDiagnosis (idMedicalExaminationCard : string , dataAdd 
 
 export async function getAllPagination(): Promise<laboratoryType[] | string> {
     try {
-        const result = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination`);
+        const result = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination?TrangThaiHoatDong=true`);
         if (result.ok) {
             const Data = await result.json();
             return Data.data;
@@ -133,7 +133,7 @@ export async function getAllPagination(): Promise<laboratoryType[] | string> {
 
 export async function getIdByTest(Id_PhongThietBi: string): Promise<clinicalType[] | string> {
     try {
-        const result = await fetch(`${API_BASE_URL}/Loaixetnghiem/LayTheoIdPhongThietBi/${Id_PhongThietBi}`);
+        const result = await fetch(`${API_BASE_URL}/Loaixetnghiem/LayTheoIdPhongThietBi/${Id_PhongThietBi}?TrangThaiHoatDong=true`);
 
         if (result.ok) {
             const Data = await result.json();

@@ -94,7 +94,7 @@ export default function Page() {
 
   const [khoaOptions, setKhoaOptions] = useState<khoaOptionsType[]>([]);
   const loaddingAPISelect = async () => {
-    const data = await getkhoaOptions();
+    const data = await getkhoaOptions(currentPage);
     if (data.data.length === 0 ? [] : data.data) setKhoaOptions(data.data);
   };
 

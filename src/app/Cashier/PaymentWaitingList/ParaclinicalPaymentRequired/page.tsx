@@ -8,13 +8,13 @@ import { formatCurrencyVND } from "@/app/lib/Format";
 import { FaMoneyCheckDollar } from "react-icons/fa6";
 import { paraclinicalType } from "@/app/types/patientTypes/patient";
 import {
-  getParaclinicalAwaitingPayment,
   confirmTestRequestPayment,
+  SearchParaclinicalAwaitingPayment,
 } from "@/app/services/Cashier";
 import { showToast, ToastType } from "@/app/lib/Toast";
 import payment from "@/app/services/Pay";
 import NoData from "@/app/components/ui/Nodata/Nodata";
-import Pagination from "@/app/components/ui/Pagination/Pagination"; // 👉 import Pagination
+import Pagination from "@/app/components/ui/Pagination/Pagination";
 
 export default function ParaclinicalPaymentRequired() {
   const router = useRouter();
@@ -33,8 +33,16 @@ export default function ParaclinicalPaymentRequired() {
     TongTien?: number;
   }>({});
 
+  const [searchName, setSearchName] = useState("");
+  const [searchPhone, setSearchPhone] = useState("");
+
   const loadApi = async (page: number = 1) => {
-    const res = await getParaclinicalAwaitingPayment(true, page);
+    const res = await SearchParaclinicalAwaitingPayment(
+      true,
+      page,
+      searchName.trim() || undefined,
+      searchPhone.trim() || undefined
+    );
     if (res?.data) {
       setDataPrescription(res.data);
       setCurrentPage(res.currentPage);
@@ -126,8 +134,10 @@ export default function ParaclinicalPaymentRequired() {
                 type="text"
                 placeholder="Hãy nhập số điện thoại"
                 className="search-input"
+                value={searchPhone}
+                onChange={(e) => setSearchPhone(e.target.value)}
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={() => loadApi(1)}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
@@ -137,8 +147,10 @@ export default function ParaclinicalPaymentRequired() {
                 type="text"
                 placeholder="Hãy nhập tên"
                 className="search-input"
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={() => loadApi(1)}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
@@ -221,7 +233,6 @@ export default function ParaclinicalPaymentRequired() {
               </tbody>
             </table>
 
-            {/* ✅ Component phân trang */}
             <Pagination
               totalPages={totalPages}
               currentPage={currentPage}
