@@ -24,7 +24,7 @@ export default function TestWaitingList() {
 
   const loadAPI = async () => {
     setIsLoading(true);
-    const getData = await getWaitingForTest('6803bf3070cd96d5cde6d824', currentPage, true);
+    const getData = await getWaitingForTest('684beac58f43c86c3e19cb95', currentPage, true);
     if (getData) {
       setData(getData.data);
       setTotalPages(getData.totalPages);
