@@ -10,7 +10,6 @@ import {
     RadioGroup,
     FormControlLabel,
     Radio,
-    Button,
     CircularProgress,
     Alert,
     Switch,
@@ -22,30 +21,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import "./EditStaff.css";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
-
-interface LoaiTaiKhoan {
-    _id: string;
-    TenLoaiTaiKhoan: string;
-    VaiTro: string;
-}
-
-interface AccountType {
-    _id: string;
-    TenTaiKhoan: string;
-    SoDienThoai: string;
-    SoCCCD: string;
-    GioiTinh: string;
-    VaiTro: string;
-    Id_LoaiTaiKhoan: LoaiTaiKhoan;
-    TrangThaiHoatDong: boolean;
-    Image: string;
-    MatKhau: string;
-    Id_PhongThietBi: string; // Changed from ID_PhongXetNghiem to match schema
-}
-
-interface Errors {
-    [key: string]: string;
-}
+import { AccountType, Errors, LoaiTaiKhoan, TestingRoom } from "../page";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
@@ -71,7 +47,7 @@ export async function getAccountDetails(id: string): Promise<AccountType | null>
             TrangThaiHoatDong: account.TrangThaiHoatDong ?? false,
             Image: account.Image || "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar",
             MatKhau: "",
-            Id_PhongThietBi: account.Id_PhongThietBi || "", // Updated field name
+            Id_PhongThietBi: account.Id_PhongThietBi || "",
         };
     } catch (error) {
         console.error("Fetch account details error:", error);
@@ -117,7 +93,7 @@ export async function updateAccount(id: string, formData: FormData): Promise<boo
     }
 }
 
-export async function getTestingRoom(page: number): Promise<{ data: any[] } | null> {
+export async function getTestingRoom(page: number): Promise<{ data: TestingRoom[] } | null> {
     try {
         const response = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination?page=${page}`);
         if (!response.ok) {
@@ -146,7 +122,7 @@ const App: React.FC = () => {
         TrangThaiHoatDong: false,
         Image: "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar",
         MatKhau: "",
-        Id_PhongThietBi: "", // Updated field name
+        Id_PhongThietBi: "",
     });
 
     const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -156,7 +132,7 @@ const App: React.FC = () => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [accountTypes, setAccountTypes] = useState<LoaiTaiKhoan[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [testLabs, setTestLabs] = useState<any[]>([]);
+    const [testLabs, setTestLabs] = useState<TestingRoom[]>([]);
 
     const params = useParams();
     const accountId = params.id as string;
@@ -169,11 +145,11 @@ const App: React.FC = () => {
                 if (data && Array.isArray(data.data)) {
                     setTestLabs(data.data);
                 } else {
-                    setMessage("Không thể tải danh sách phòng xét nghiệm.");
+                    setMessage("Không thể tải danh sách phòng thiết bị.");
                 }
             } catch (error) {
-                console.error("Không thể tải danh sách phòng xét nghiệm", error);
-                setMessage("Có lỗi xảy ra khi tải danh sách phòng xét nghiệm.");
+                console.error("Không thể tải danh sách phòng thiết bị", error);
+                setMessage("Có lỗi xảy ra khi tải danh sách phòng thiết bị.");
             }
         };
 
@@ -311,7 +287,7 @@ const App: React.FC = () => {
             newErrors.VaiTro = "Chọn vai trò là bắt buộc.";
         }
         if (account.VaiTro === "BacSiXetNghiem" && !account.Id_PhongThietBi) {
-            newErrors.Id_PhongThietBi = "Chọn phòng xét nghiệm là bắt buộc.";
+            newErrors.Id_PhongThietBi = "Chọn phòng thiết bị là bắt buộc.";
         }
         if (account.MatKhau) {
             if (account.MatKhau.length < 6) {
@@ -618,7 +594,7 @@ const App: React.FC = () => {
                                 className={`StaffEdit-Select ${errors.Id_PhongThietBi ? "StaffEdit-SelectError" : ""}`}
                             >
                                 <InputLabel id="Id_PhongThietBi-label">
-                                    Chọn phòng xét nghiệm <span className="StaffEdit-RedStar">*</span>
+                                    Chọn phòng thiết bị <span className="StaffEdit-RedStar">*</span>
                                 </InputLabel>
                                 <Select
                                     labelId="Id_PhongThietBi-label"
@@ -626,10 +602,10 @@ const App: React.FC = () => {
                                     name="Id_PhongThietBi"
                                     value={account.Id_PhongThietBi || ""}
                                     onChange={handleChange}
-                                    label="Chọn phòng xét nghiệm *"
+                                    label="Chọn phòng thiết bị *"
                                     error={!!errors.Id_PhongThietBi}
                                 >
-                                    <MenuItem value="">Chọn phòng xét nghiệm</MenuItem>
+                                    <MenuItem value="">Chọn phòng thiết bị</MenuItem>
                                     {testLabs.map((lab) => (
                                         <MenuItem key={lab._id} value={lab._id}>
                                             {lab.TenPhongThietBi}

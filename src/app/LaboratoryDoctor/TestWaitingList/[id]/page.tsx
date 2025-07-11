@@ -53,7 +53,7 @@ export default function PrescriptionDetails() {
       const getData = await getWaitingForTestDetail(
         String(id),
         null,
-        "684beac58f43c86c3e19cb95"
+        "6803bf3070cd96d5cde6d824"
       );
       if (!getData) return;
       setValue(getData.data);

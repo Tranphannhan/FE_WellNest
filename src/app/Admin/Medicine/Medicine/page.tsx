@@ -19,6 +19,7 @@ import CustomTableMedicine, {
 } from "../../component/Table/CustomTableMedicine";
 import { getListOfDrugs } from "../../services/Category";
 import { medicineType } from "@/app/types/hospitalTypes/hospitalType";
+import { useRouter } from "next/navigation";
 
 // Cấu hình cột
 const columns: ColumnMedicine[] = [
@@ -35,6 +36,7 @@ export default function Page() {
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const [page, setPage] = useState(0); // client page (0-based)
   const [totalItems, setTotalItems] = useState(0);
+  const router = useRouter();
 
   const fetchData = async (currentPage: number) => {
     try {
@@ -140,7 +142,7 @@ export default function Page() {
       <CustomTableMedicine
         columns={columns}
         rows={filteredRows}
-        onEdit={(row) => console.log("Sửa thuốc:", row)}
+        onEdit={(id) => {router.push(`/Admin/Medicine/Medicine/Form/${id}`)}}
         onDelete={(row) => console.log("Xoá thuốc:", row)}
         onDisable={(row) => console.log("Chuyển trạng thái:", row)}
         showEdit={true}

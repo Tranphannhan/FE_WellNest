@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
-  Button,
   Typography,
   Paper,
   Radio,
@@ -26,6 +25,14 @@ interface DepartmentType {
   TrangThaiHoatDong: boolean;
 }
 
+interface ApiError {
+  message?: string;
+}
+
+interface FormErrors {
+  TenKhoa?: string;
+}
+
 function DepartmentTypeEdit() {
   const [formData, setFormData] = useState<DepartmentType>({
     _id: '',
@@ -33,8 +40,8 @@ function DepartmentTypeEdit() {
     TrangThaiHoatDong: false,
   });
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState<string | null>(null); // Thay error bằng message
-  const [errors, setErrors] = useState<{ TenKhoa?: string }>({}); // Thêm state cho lỗi validate
+  const [message, setMessage] = useState<string | null>(null);
+  const [errors, setErrors] = useState<FormErrors>({});
   const router = useRouter();
   const params = useParams();
   const { id } = params;
@@ -55,8 +62,9 @@ function DepartmentTypeEdit() {
           TrangThaiHoatDong: data.TrangThaiHoatDong || false,
         });
         setLoading(false);
-      } catch (err: any) {
-        setMessage(err.message);
+      } catch (err: unknown) {
+        const error = err as ApiError | Error;
+        setMessage(error.message || 'Đã có lỗi xảy ra khi lấy thông tin loại khoa.');
         setLoading(false);
       }
     };
@@ -73,7 +81,7 @@ function DepartmentTypeEdit() {
       ...prev,
       [name]: value,
     }));
-    setErrors((prev) => ({ ...prev, [name]: undefined })); // Xóa lỗi khi người dùng nhập
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
   // Handle status change
@@ -86,7 +94,7 @@ function DepartmentTypeEdit() {
 
   // Validate form
   const validateForm = () => {
-    const newErrors: { TenKhoa?: string } = {};
+    const newErrors: FormErrors = {};
     if (!formData.TenKhoa.trim()) {
       newErrors.TenKhoa = 'Vui lòng nhập tên khoa';
     }
@@ -118,19 +126,20 @@ function DepartmentTypeEdit() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData: ApiError = await response.json();
         throw new Error(errorData.message || 'Không thể cập nhật loại khoa');
       }
 
       setMessage('Cập nhật loại khoa thành công!');
-    } catch (err: any) {
-      setMessage(err.message);
+    } catch (err: unknown) {
+      const error = err as ApiError | Error;
+      setMessage(error.message || 'Đã có lỗi xảy ra khi cập nhật loại khoa.');
     }
   };
 
   // Handle cancel
   const handleCancel = () => {
-      router.push('/Admin/List/DepartmentType');
+    router.push('/Admin/List/DepartmentType');
   };
 
   if (loading) {
@@ -204,22 +213,21 @@ function DepartmentTypeEdit() {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
-  <button
-    type="button"
-    className="bigButton--gray"
-    onClick={handleCancel}
-  >
-    <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
-    Hủy
-  </button>
-
-  <button
-    type="submit"
-    className="bigButton--blue"
-  >
-    <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
-    Cập nhật Loại Khoa
-  </button>
+              <button
+                type="button"
+                className="bigButton--gray"
+                onClick={handleCancel}
+              >
+                <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Hủy
+              </button>
+              <button
+                type="submit"
+                className="bigButton--blue"
+              >
+                <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Cập nhật Loại Khoa
+              </button>
             </Box>
           </form>
         </Paper>

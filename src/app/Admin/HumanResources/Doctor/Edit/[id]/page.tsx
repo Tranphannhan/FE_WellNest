@@ -48,6 +48,7 @@ interface DoctorUpdatePayload {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
+// Fetch doctor details
 export async function getDoctorDetails(id: string): Promise<DoctorType | null> {
   try {
     const response = await fetch(`${API_BASE_URL}/Bacsi/detail/${id}`);
@@ -59,21 +60,17 @@ export async function getDoctorDetails(id: string): Promise<DoctorType | null> {
     }
     const data = await response.json();
     console.log("Doctor API response:", data);
-
-    if (Array.isArray(data) && data.length > 0) {
-      return data[0];
-    }
-
-    return data.data || data;
+    return Array.isArray(data) && data.length > 0 ? data[0] : data.data || data;
   } catch (error) {
     console.error("Fetch doctor details error:", error);
     return null;
   }
 }
 
+// Fetch specialties
 export async function getSpecialties(): Promise<Khoa[] | null> {
   try {
-    const response = await fetch(`${API_BASE_URL}/Khoa/Pagination`);
+    const response = await fetch(`${API_BASE_URL}/Khoa/Pagination?TrangThaiHoatDong=true`);
     if (!response.ok) {
       console.error(
         `API error: Status ${response.status}, ${response.statusText}`
@@ -89,14 +86,19 @@ export async function getSpecialties(): Promise<Khoa[] | null> {
   }
 }
 
+// Fetch empty clinics by specialty
 export async function getClinicsBySpecialty(
   specialtyId: string
 ): Promise<ClinicType[] | null> {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/Phong_Kham/LayTheoKhoa/${specialtyId}`
+      `${API_BASE_URL}/Phong_Kham/LayPhongTrongTheoKhoa/${specialtyId}`
     );
     if (!response.ok) {
+      if (response.status === 404) {
+        console.warn("No empty clinics found for specialty:", specialtyId);
+        return [];
+      }
       console.error(
         `API error: Status ${response.status}, ${response.statusText}`
       );
@@ -111,6 +113,28 @@ export async function getClinicsBySpecialty(
   }
 }
 
+// Fetch single clinic details by ID
+export async function getClinicDetails(
+  clinicId: string
+): Promise<ClinicType | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Phong_Kham/detail/${clinicId}`);
+    if (!response.ok) {
+      console.error(
+        `API error: Status ${response.status}, ${response.statusText}`
+      );
+      return null;
+    }
+    const data = await response.json();
+    console.log("Clinic details API response:", data);
+    return data.data || data;
+  } catch (error) {
+    console.error("Fetch clinic details error:", error);
+    return null;
+  }
+}
+
+// Update doctor
 export async function updateDoctor(
   id: string,
   doctorData: DoctorUpdatePayload
@@ -123,7 +147,6 @@ export async function updateDoctor(
     if (!payload.Matkhau) {
       delete payload.Matkhau;
     }
-
     console.log("Sending payload:", payload);
 
     const response = await fetch(`${API_BASE_URL}/Bacsi/Edit/${id}`, {
@@ -140,7 +163,6 @@ export async function updateDoctor(
       );
       return false;
     }
-
     return true;
   } catch (error) {
     console.error("Update doctor error:", error);
@@ -156,7 +178,7 @@ const App: React.FC = () => {
     TenBacSi: "",
     SoDienThoai: "",
     SoCCCD: "",
-    NamSinh: "1",
+    NamSinh: "",
     GioiTinh: "Nam",
     HocVi: "",
     ID_Khoa: { _id: "", TenKhoa: "", TrangThaiHoatDong: true },
@@ -173,25 +195,11 @@ const App: React.FC = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const router=useRouter();
-
+  const router = useRouter();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const params = useParams();
   const doctorId = params.id as string;
-  const [fileList, setFileList] = useState<UploadFile[]>(
-    doctor.Image
-      ? [
-        {
-          uid: "-1",
-          name: "Ảnh bác sĩ",
-          status: "done",
-          url: doctor.Image.startsWith("data:")
-            ? doctor.Image
-            : `${API_BASE_URL}/image/${doctor.Image}`,
-        },
-      ]
-      : []
-  );
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   useEffect(() => {
     if (
@@ -215,6 +223,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (!doctorId) {
+      setMessage("Không tìm thấy ID bác sĩ.");
       return;
     }
 
@@ -223,23 +232,32 @@ const App: React.FC = () => {
       try {
         const doctorData = await getDoctorDetails(doctorId);
         const specialtyData = await getSpecialties();
+
         if (specialtyData) {
           setSpecialties(specialtyData);
         } else {
-          console.log("No specialties data returned");
           setMessage("Không thể tải danh sách chuyên khoa.");
         }
 
         if (doctorData) {
-          const mappedId_PhongKham =
-            typeof doctorData.Id_PhongKham === "string"
-              ? { _id: doctorData.Id_PhongKham, SoPhongKham: "" }
-              : doctorData.Id_PhongKham || { _id: "", SoPhongKham: "" };
+          let mappedId_PhongKham: ClinicType = { _id: "", SoPhongKham: "" };
+
+          if (doctorData.Id_PhongKham) {
+            if (typeof doctorData.Id_PhongKham === "string") {
+              const clinicDetails = await getClinicDetails(doctorData.Id_PhongKham);
+              mappedId_PhongKham = clinicDetails || {
+                _id: doctorData.Id_PhongKham,
+                SoPhongKham: "Phòng hiện tại",
+              };
+            } else {
+              mappedId_PhongKham = doctorData.Id_PhongKham;
+            }
+          }
 
           const updatedDoctor = {
             ...doctorData,
             SoCCCD: doctorData.SoCCCD || "",
-            NamSinh: doctorData.NamSinh || "0",
+            NamSinh: doctorData.NamSinh || "",
             Matkhau: "",
             ID_Khoa: doctorData.ID_Khoa || {
               _id: "",
@@ -253,39 +271,32 @@ const App: React.FC = () => {
           console.log("Updated doctor state:", updatedDoctor);
 
           if (doctorData.ID_Khoa?._id) {
-            const clinicData = await getClinicsBySpecialty(
-              doctorData.ID_Khoa._id
-            );
+            const clinicData = await getClinicsBySpecialty(doctorData.ID_Khoa._id);
             if (clinicData) {
-              setClinics(clinicData);
-              if (typeof doctorData.Id_PhongKham === "string") {
-                const foundClinic = clinicData.find(
-                  (c) => c._id === doctorData.Id_PhongKham
-                );
-                if (foundClinic) {
-                  setDoctor((prev) => ({
-                    ...prev,
-                    Id_PhongKham: foundClinic,
-                  }));
-                  console.log("Updated Id_PhongKham with clinic:", foundClinic);
-                } else {
-                  console.log(
-                    "No matching clinic found for Id_PhongKham:",
-                    doctorData.Id_PhongKham
-                  );
-                  setMessage("Không tìm thấy phòng khám tương ứng.");
-                }
+              // Include the current clinic if it’s not in the empty clinics list
+              let updatedClinics = [...clinicData];
+              if (
+                mappedId_PhongKham._id &&
+                !clinicData.some((c) => c._id === mappedId_PhongKham._id)
+              ) {
+                updatedClinics = [mappedId_PhongKham, ...clinicData];
               }
+              setClinics(updatedClinics);
+              console.log("Clinics loaded:", updatedClinics);
             } else {
-              console.log("No clinic data returned");
-              setMessage("Không thể tải danh sách phòng khám.");
+              // If no empty clinics, include only the current clinic if available
+              setClinics(
+                mappedId_PhongKham._id ? [mappedId_PhongKham] : []
+              );
+              setMessage("Không có phòng khám trống trong chuyên khoa này.");
             }
           } else {
-            console.log("No doctor data returned");
-            setMessage("Không tìm thấy thông tin bác sĩ.");
+            setClinics(
+              mappedId_PhongKham._id ? [mappedId_PhongKham] : []
+            );
+            setMessage("Không tìm thấy thông tin chuyên khoa của bác sĩ.");
           }
         } else {
-          console.log("No doctor data returned");
           setMessage("Không tìm thấy thông tin bác sĩ.");
         }
       } catch (error) {
@@ -304,20 +315,32 @@ const App: React.FC = () => {
       const fetchClinics = async () => {
         const clinicData = await getClinicsBySpecialty(doctor.ID_Khoa!._id);
         if (clinicData) {
-          setClinics(clinicData);
-          console.log("Clinics loaded:", clinicData);
+          // Include the current clinic if it’s not in the empty clinics list
+          let updatedClinics = [...clinicData];
+          if (
+            doctor.Id_PhongKham?._id &&
+            !clinicData.some((c) => c._id === doctor.Id_PhongKham?._id)
+          ) {
+            updatedClinics = [doctor.Id_PhongKham, ...clinicData];
+          }
+          setClinics(updatedClinics);
+          console.log("Clinics loaded:", updatedClinics);
         } else {
-          setClinics([]);
-          console.log("No clinics loaded");
-          setMessage("Không thể tải danh sách phòng khám.");
+          // If no empty clinics, include only the current clinic if available
+          setClinics(
+            doctor.Id_PhongKham?._id ? [doctor.Id_PhongKham] : []
+          );
+          setMessage("Không có phòng khám trống trong chuyên khoa này.");
         }
       };
       fetchClinics();
     } else {
-      setClinics([]);
-      console.log("No specialty ID, clearing clinics");
+      setClinics(
+        doctor.Id_PhongKham?._id ? [doctor.Id_PhongKham] : []
+      );
+      console.log("No specialty ID, keeping current clinic if available");
     }
-  }, [doctor.ID_Khoa?._id]);
+  }, [doctor.ID_Khoa?._id, doctor.Id_PhongKham?._id]);
 
   const handleChange = (e: { target: { name?: string; value: string } }) => {
     const { name, value } = e.target;
@@ -333,8 +356,9 @@ const App: React.FC = () => {
           TenKhoa: "",
           TrangThaiHoatDong: true,
         },
-        Id_PhongKham: { _id: "", SoPhongKham: "" },
+        Id_PhongKham: { _id: "", SoPhongKham: "" }, // Reset clinic when specialty changes
       }));
+      setClinics([]); // Clear clinics until new ones are fetched
     } else if (name === "Id_PhongKham") {
       const selectedClinic = clinics.find((c) => c._id === value);
       setDoctor((prevDoctor) => ({
@@ -349,7 +373,6 @@ const App: React.FC = () => {
     }
     console.log(`Field ${name} updated to:`, value);
   };
-
 
   const getBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -374,7 +397,7 @@ const App: React.FC = () => {
   }: {
     fileList: UploadFile[];
   }) => {
-    setFileList(newFileList.slice(-1)); // Chỉ giữ 1 ảnh
+    setFileList(newFileList.slice(-1)); // Keep only one image
     const latest = newFileList[0];
     if (latest?.originFileObj) {
       const base64 = await getBase64(latest.originFileObj);
@@ -382,18 +405,17 @@ const App: React.FC = () => {
         ...prev,
         Image: base64,
       }));
-      setSelectedFile(latest.originFileObj); // nếu cần gửi lên server
+      setSelectedFile(latest.originFileObj);
     }
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
     setErrors({});
 
-    // Initialize errors object
     const newErrors: Errors = {};
 
-    // Validate required fields
     if (!doctor.TenBacSi) {
       newErrors.TenBacSi = "Họ và tên là bắt buộc.";
     }
@@ -425,11 +447,12 @@ const App: React.FC = () => {
     if (!doctor.HocVi) {
       newErrors.HocVi = "Chọn học vị là bắt buộc.";
     }
-    if (!doctor.Image || doctor.Image === "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar") {
+    if (
+      !doctor.Image ||
+      doctor.Image === "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar"
+    ) {
       newErrors.Image = "Ảnh bác sĩ là bắt buộc.";
     }
-
-    // Validate password only if entered
     if (doctor.Matkhau) {
       if (doctor.Matkhau.length < 6) {
         newErrors.Matkhau = "Mật khẩu phải có ít nhất 6 ký tự.";
@@ -439,7 +462,6 @@ const App: React.FC = () => {
       }
     }
 
-    // If there are errors, set them and stop submission
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setMessage("Vui lòng kiểm tra các trường thông tin.");
@@ -491,8 +513,8 @@ const App: React.FC = () => {
     }
   };
 
-    const handleCancel = () => {
-    router.push('/Admin/HumanResources/Doctor');
+  const handleCancel = () => {
+    router.push("/Admin/HumanResources/Doctor");
   };
 
   return (
@@ -543,6 +565,7 @@ const App: React.FC = () => {
                 </div>
               )}
             </Upload>
+            {errors.Image && <p className="error-text">{errors.Image}</p>}
           </div>
 
           <div className="form-section">
@@ -567,7 +590,7 @@ const App: React.FC = () => {
                 </div>
               </div>
               <div className="form-control">
-                <label htmlFor="cccd" className="label">
+                <label htmlFor="SoCCCD" className="label">
                   Số CCCD <span className="red-star">*</span>:
                 </label>
                 <div className="input-container">
@@ -580,13 +603,14 @@ const App: React.FC = () => {
                     placeholder="Nhập số CCCD"
                     className={`input ${errors.SoCCCD ? "input-error" : ""}`}
                     error={!!errors.SoCCCD}
-                    helperText={errors.cccd}
+                    helperText={errors.SoCCCD}
+                    required
                   />
                 </div>
               </div>
             </div>
             <div className="form-grid-3">
-              <div className="form-grid-3-content1 form-control" >
+              <div className="form-grid-3-content1 form-control">
                 <label htmlFor="SoDienThoai" className="label">
                   Số điện thoại <span className="red-star">*</span>:
                 </label>
@@ -653,7 +677,7 @@ const App: React.FC = () => {
             <div className="form-grid">
               <div className="form-control">
                 <label htmlFor="Matkhau" className="label">
-                  Mật khẩu <span className="red-star">*</span>:
+                  Mật khẩu:
                 </label>
                 <div className="input-container">
                   <TextField
@@ -672,7 +696,7 @@ const App: React.FC = () => {
               </div>
               <div className="form-control">
                 <label htmlFor="confirmPassword" className="label">
-                  Xác nhận mật khẩu <span className="red-star">*</span>:
+                  Xác nhận mật khẩu:
                 </label>
                 <div className="input-container">
                   <TextField
@@ -788,11 +812,12 @@ const App: React.FC = () => {
                 onChange={handleChange}
                 label="Chọn phòng khám"
                 error={!!errors.Id_PhongKham}
+                disabled={!doctor.ID_Khoa?._id}
               >
                 <MenuItem value="">Chọn phòng khám</MenuItem>
                 {clinics.map((clinic) => (
                   <MenuItem key={clinic._id} value={clinic._id}>
-                    {clinic.SoPhongKham}
+                    {clinic.SoPhongKham || "Phòng hiện tại"}
                   </MenuItem>
                 ))}
               </Select>
@@ -820,7 +845,10 @@ const App: React.FC = () => {
           >
             {isLoading ? (
               <>
-                <FaSpinner style={{ marginRight: "6px", verticalAlign: "middle" }} className="spin" />
+                <FaSpinner
+                  style={{ marginRight: "6px", verticalAlign: "middle" }}
+                  className="spin"
+                />
                 Đang cập nhật...
               </>
             ) : (
@@ -831,7 +859,6 @@ const App: React.FC = () => {
             )}
           </button>
         </div>
-
       </form>
     </div>
   );

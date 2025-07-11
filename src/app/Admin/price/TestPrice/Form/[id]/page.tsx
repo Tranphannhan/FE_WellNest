@@ -15,11 +15,16 @@ import {
   InputLabel,
   SelectChangeEvent,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 import { useRouter, useParams } from 'next/navigation';
 import './TestPriceForm.css';
-import { FaArrowLeft } from 'react-icons/fa6';
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+
+interface ApiError {
+  message?: string;
+}
 
 export default function TestPriceFormLayout() {
   const [price, setPrice] = useState<string>('');
@@ -27,7 +32,9 @@ export default function TestPriceFormLayout() {
   const [status, setStatus] = useState<string>('An');
   const [serviceName, setServiceName] = useState<string>('');
   const [errors, setErrors] = useState<{ serviceName?: string; price?: string }>({});
-  const [message, setMessage] = useState<string>(''); // Thêm state cho thông báo
+  const [message, setMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [fetchLoading, setFetchLoading] = useState<boolean>(true);
   const router = useRouter();
   const { id } = useParams();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
@@ -36,6 +43,7 @@ export default function TestPriceFormLayout() {
   useEffect(() => {
     const fetchServicePrice = async () => {
       try {
+        setFetchLoading(true);
         const response = await fetch(`${API_BASE_URL}/Giadichvu/Detail/${id}`);
         if (!response.ok) {
           throw new Error('Không tìm thấy giá dịch vụ');
@@ -45,9 +53,12 @@ export default function TestPriceFormLayout() {
         setPrice(data.Giadichvu?.toString() || '');
         setPriceType(data.Loaigia || 'GiaXetNghiem');
         setStatus(data.TrangThaiHoatDong ? 'Hien' : 'An');
-      } catch (error: any) {
+      } catch (err: unknown) {
+        const error = err as ApiError | Error;
         console.error('Lỗi khi lấy chi tiết giá dịch vụ:', error);
-        setMessage('Không thể tải dữ liệu giá dịch vụ');
+        setMessage(error.message || 'Không thể tải dữ liệu giá dịch vụ');
+      } finally {
+        setFetchLoading(false);
       }
     };
 
@@ -90,9 +101,11 @@ export default function TestPriceFormLayout() {
     e.preventDefault();
     setMessage('');
     setErrors({});
+    setLoading(true);
 
     if (!validateForm()) {
       setMessage('Vui lòng kiểm tra các trường thông tin.');
+      setLoading(false);
       return;
     }
 
@@ -134,15 +147,29 @@ export default function TestPriceFormLayout() {
       }
 
       setMessage('Cập nhật giá xét nghiệm thành công!');
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ApiError | Error;
       console.error('Lỗi khi cập nhật:', error);
-      setMessage(`Cập nhật thất bại: ${error.message || 'Lỗi không xác định'}`);
+      setMessage(error.message || 'Cập nhật giá xét nghiệm thất bại');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCancel = () => {
-      router.push('/Admin/price/AxaminationPrice');
+    router.push('/Admin/price/ExaminationPrice');
   };
+
+  if (fetchLoading) {
+    return (
+      <div className="AdminContent-Container">
+        <div className="loading">
+          <CircularProgress size={20} className="spinner" />
+          Đang tải dữ liệu...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="AdminContent-Container">
@@ -230,16 +257,25 @@ export default function TestPriceFormLayout() {
                 className="bigButton--gray"
                 onClick={handleCancel}
               >
-                <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
+                <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                 Hủy
               </button>
-            
               <button
                 type="submit"
                 className="bigButton--blue"
+                disabled={loading}
               >
-                <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
-                Cập nhật Giá Xét Nghiệm
+                {loading ? (
+                  <>
+                    <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
+                    Đang cập nhật...
+                  </>
+                ) : (
+                  <>
+                    <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                    Cập nhật Giá Xét Nghiệm
+                  </>
+                )}
               </button>
             </Box>
           </form>

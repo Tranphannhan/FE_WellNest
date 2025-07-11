@@ -57,7 +57,7 @@ export async function getClinicsBySpecialty(
 ): Promise<ClinicType[] | null> {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/Phong_Kham/LayTheoKhoa/${specialtyId}`
+      `${API_BASE_URL}/Phong_Kham/LayPhongTrongTheoKhoa/${specialtyId}`
     );
     if (!response.ok) {
       console.error(

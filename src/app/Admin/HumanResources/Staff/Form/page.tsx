@@ -10,7 +10,6 @@ import {
     RadioGroup,
     FormControlLabel,
     Radio,
-    Button,
     CircularProgress,
     Alert,
     Switch,
@@ -23,13 +22,13 @@ import "./AddStaff.css";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
 
-interface LoaiTaiKhoan {
+export interface LoaiTaiKhoan {
     _id: string;
     TenLoaiTaiKhoan: string;
     VaiTro: string;
 }
 
-interface AccountType {
+export interface AccountType {
     _id: string;
     TenTaiKhoan: string;
     SoDienThoai: string;
@@ -40,14 +39,19 @@ interface AccountType {
     TrangThaiHoatDong: boolean;
     Image: string;
     MatKhau: string;
-    ID_PhongXetNghiem: string;
+    Id_PhongThietBi: string;
 }
 
-interface Errors {
+export interface TestingRoom {
+    _id: string;
+    TenPhongThietBi: string;
+}
+
+export interface Errors {
     [key: string]: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function getAccountTypes(): Promise<LoaiTaiKhoan[] | null> {
     try {
@@ -66,7 +70,7 @@ export async function getAccountTypes(): Promise<LoaiTaiKhoan[] | null> {
     }
 }
 
-export async function getTestingRoom(page: number): Promise<{ data: any[] } | null> {
+export async function getTestingRoom(page: number): Promise<{ data: TestingRoom[] } | null> {
     try {
         const response = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination?page=${page}`);
         if (!response.ok) {
@@ -116,7 +120,7 @@ const App: React.FC = () => {
         TrangThaiHoatDong: true,
         Image: "",
         MatKhau: "",
-        ID_PhongXetNghiem: "",
+        Id_PhongThietBi: "",
     });
 
     const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -126,7 +130,7 @@ const App: React.FC = () => {
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [accountTypes, setAccountTypes] = useState<LoaiTaiKhoan[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [testLabs, setTestLabs] = useState<any[]>([]);
+    const [testLabs, setTestLabs] = useState<TestingRoom[]>([]);
     const router = useRouter();
 
     useEffect(() => {
@@ -169,7 +173,7 @@ const App: React.FC = () => {
                 ...prevAccount,
                 VaiTro: value,
                 Id_LoaiTaiKhoan: selectedType || { _id: "", TenLoaiTaiKhoan: "", VaiTro: "" },
-                ID_PhongXetNghiem: value !== "BacSiXetNghiem" ? "" : prevAccount.ID_PhongXetNghiem,
+                Id_PhongThietBi: value !== "BacSiXetNghiem" ? "" : prevAccount.Id_PhongThietBi,
             }));
         } else {
             setAccount((prevAccount) => ({
@@ -239,8 +243,8 @@ const App: React.FC = () => {
         if (!account.VaiTro) {
             newErrors.VaiTro = "Chọn vai trò là bắt buộc.";
         }
-        if (account.VaiTro === "BacSiXetNghiem" && !account.ID_PhongXetNghiem) {
-            newErrors.ID_PhongXetNghiem = "Chọn phòng xét nghiệm là bắt buộc.";
+        if (account.VaiTro === "BacSiXetNghiem" && !account.Id_PhongThietBi) {
+            newErrors.Id_PhongThietBi = "Chọn phòng xét nghiệm là bắt buộc.";
         }
         if (!account.MatKhau) {
             newErrors.MatKhau = "Mật khẩu là bắt buộc.";
@@ -273,8 +277,8 @@ const App: React.FC = () => {
             if (selectedFile) {
                 formData.append("Image", selectedFile);
             }
-            if (account.VaiTro === "BacSiXetNghiem" && account.ID_PhongXetNghiem) {
-                formData.append("ID_PhongXetNghiem", account.ID_PhongXetNghiem);
+            if (account.VaiTro === "BacSiXetNghiem" && account.Id_PhongThietBi) {
+                formData.append("Id_PhongThietBi", account.Id_PhongThietBi);
             }
 
             const result = await addAccount(formData);
@@ -291,7 +295,7 @@ const App: React.FC = () => {
                     TrangThaiHoatDong: true,
                     Image: "",
                     MatKhau: "",
-                    ID_PhongXetNghiem: "",
+                    Id_PhongThietBi: "",
                 });
                 setConfirmPassword("");
                 setFileList([]);
@@ -562,25 +566,25 @@ const App: React.FC = () => {
                                 ))}
                             </Select>
                             {errors.VaiTro && <p className="StaffEdit-ErrorText">{errors.VaiTro}</p>}
-                        </FormControl>
-                    </div>
+                            </FormControl>
+                        </div>
 
                     {account.VaiTro === "BacSiXetNghiem" && (
                         <div className="StaffEdit-FormGridChild StaffEdit-SelectStatus">
                             <FormControl
                                 fullWidth
                                 size="small"
-                                className={`StaffEdit-Select ${errors.ID_PhongXetNghiem ? "StaffEdit-SelectError" : ""}`}
+                                className={`StaffEdit-Select ${errors.Id_PhongThietBi ? "StaffEdit-SelectError" : ""}`}
                             >
-                                <InputLabel id="ID_PhongXetNghiem-label">Chọn phòng xét nghiệm <span className="StaffEdit-RedStar">*</span></InputLabel>
+                                <InputLabel id="Id_PhongThietBi-label">Chọn phòng xét nghiệm <span className="StaffEdit-RedStar">*</span></InputLabel>
                                 <Select
-                                    labelId="ID_PhongXetNghiem-label"
-                                    id="ID_PhongXetNghiem"
-                                    name="ID_PhongXetNghiem"
-                                    value={account.ID_PhongXetNghiem || ""}
+                                    labelId="Id_PhongThietBi-label"
+                                    id="Id_PhongThietBi"
+                                    name="Id_PhongThietBi"
+                                    value={account.Id_PhongThietBi || ""}
                                     onChange={handleChange}
                                     label="Chọn phòng xét nghiệm *"
-                                    error={!!errors.ID_PhongXetNghiem}
+                                    error={!!errors.Id_PhongThietBi}
                                 >
                                     <MenuItem value="">Chọn phòng xét nghiệm</MenuItem>
                                     {testLabs.map((lab) => (
@@ -589,8 +593,8 @@ const App: React.FC = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
-                                {errors.ID_PhongXetNghiem && (
-                                    <p className="StaffEdit-ErrorText">{errors.ID_PhongXetNghiem}</p>
+                                {errors.Id_PhongThietBi && (
+                                    <p className="StaffEdit-ErrorText">{errors.Id_PhongThietBi}</p>
                                 )}
                             </FormControl>
                         </div>

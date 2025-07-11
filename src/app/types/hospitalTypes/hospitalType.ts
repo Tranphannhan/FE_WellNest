@@ -3,6 +3,7 @@ import { paraclinicalType } from "../patientTypes/patient";
 export interface medicineGroupType {
   _id?: string;
   TenNhomThuoc?: string;
+  TrangThaiHoatDong ? : boolean;
 }
 
 

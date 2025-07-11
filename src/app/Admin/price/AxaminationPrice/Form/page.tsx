@@ -18,8 +18,12 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import './AddExaminationPriceForm.css';
-import { FaArrowLeft } from 'react-icons/fa6';
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+
+interface ApiError {
+  message?: string;
+}
 
 export default function AddExaminationPriceForm() {
   const [price, setPrice] = useState<string>('');
@@ -28,6 +32,7 @@ export default function AddExaminationPriceForm() {
   const [serviceName, setServiceName] = useState<string>('');
   const [errors, setErrors] = useState<{ serviceName?: string; price?: string }>({});
   const [message, setMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
@@ -64,9 +69,11 @@ export default function AddExaminationPriceForm() {
     e.preventDefault();
     setMessage('');
     setErrors({});
+    setLoading(true);
 
     if (!validateForm()) {
       setMessage('Vui lòng kiểm tra các trường thông tin.');
+      setLoading(false);
       return;
     }
 
@@ -96,14 +103,17 @@ export default function AddExaminationPriceForm() {
       setPrice('');
       setPriceType('GiaKham');
       setStatus('Hien');
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ApiError | Error;
       console.error('Lỗi khi thêm giá dịch vụ:', error);
-      setMessage(`Thêm thất bại: ${error.message || 'Lỗi không xác định'}`);
+      setMessage(error.message || 'Thêm giá khám thất bại');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    router.push('/Admin/price/AxaminationPrice');
+    router.push('/Admin/price/ExaminationPrice');
   };
 
   return (
@@ -198,9 +208,19 @@ export default function AddExaminationPriceForm() {
               <button
                 type="submit"
                 className="bigButton--blue"
+                disabled={loading}
               >
-                <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                Thêm Giá Khám
+                {loading ? (
+                  <>
+                    <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
+                    Đang thêm...
+                  </>
+                ) : (
+                  <>
+                    <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                    Thêm Giá Khám
+                  </>
+                )}
               </button>
             </Box>
           </form>

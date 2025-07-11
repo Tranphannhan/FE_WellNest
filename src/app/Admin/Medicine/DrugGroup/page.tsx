@@ -18,6 +18,8 @@ import CustomTableMedicine, {
   rowRenderType,
 } from "../../component/Table/CustomTableMedicine";
 import { getDrugGroup } from "../../services/Category";
+import { medicineGroupType } from "@/app/types/hospitalTypes/hospitalType";
+import { useRouter } from "next/navigation";
 
 // Cấu hình cột hiển thị
 const columns: ColumnMedicine[] = [
@@ -31,12 +33,13 @@ export default function Page() {
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const [page, setPage] = useState(0); // page client (bắt đầu từ 0)
   const [totalItems, setTotalItems] = useState(0);
+  const router = useRouter();
 
   const fetchData = async (currentPage: number) => {
     try {
       const data = await getDrugGroup (currentPage);
       if (data?.data) {
-        const mappedRows = data.data.map((item: any) => ({
+        const mappedRows = data.data.map((item: medicineGroupType) => ({
           _id: item._id,
           TenNhomThuoc: item.TenNhomThuoc,
           TrangThaiHoatDong: item.TrangThaiHoatDong,
@@ -117,7 +120,7 @@ export default function Page() {
       <CustomTableMedicine
         columns={columns}
         rows={filteredRows}
-        onEdit={(row) => console.log("Sửa nhóm thuốc:", row)}
+        onEdit={(id) => {router.push(`/Admin/Medicine/DrugGroup/Form/${id}`)}}
         onDelete={(row) => console.log("Xoá nhóm thuốc:", row)}
         onDisable={(row) => console.log("Chuyển trạng thái nhóm thuốc:", row)}
         showEdit={true}

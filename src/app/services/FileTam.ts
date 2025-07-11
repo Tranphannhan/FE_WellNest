@@ -101,7 +101,7 @@ export async function fetchPrescriptionsByDateRange(
   all: boolean = false
 ): Promise<PrescriptionStatsPaginationResponse> {
   try {
-    let url = `${API_BASE_URL}/Donthuoc/filter-by-date`;
+    const url = `${API_BASE_URL}/Donthuoc/filter-by-date`;
     const params = new URLSearchParams();
 
     // Always append the 'all' parameter
@@ -141,7 +141,7 @@ export async function fetchTestRequestsByDateRange(
   all: boolean = false
 ): Promise<TestRequestPaginationResponse> {
   try {
-    let url = `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/filter-by-date`;
+    const url = `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/filter-by-date`;
     const params = new URLSearchParams();
 
     // Always append the 'all' parameter
@@ -179,7 +179,7 @@ export async function fetchMedicalRecordsByDateRange(
   all: boolean = false
 ): Promise<MedicalRecordPaginationResponse> {
   try {
-    let url = `${API_BASE_URL}/Phieu_Kham_Benh/filter-phieu-kham-benh`;
+    const url = `${API_BASE_URL}/Phieu_Kham_Benh/filter-phieu-kham-benh`;
     const params = new URLSearchParams();
 
     // Always append 'all'

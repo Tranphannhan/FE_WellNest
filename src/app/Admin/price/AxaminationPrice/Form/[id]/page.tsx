@@ -45,7 +45,7 @@ export default function ExaminationPriceFormLayout() {
         setPrice(data.Giadichvu?.toString() || '');
         setPriceType(data.Loaigia || 'GiaKham');
         setStatus(data.TrangThaiHoatDong ? 'Hien' : 'An');
-      } catch (error: any) {
+      } catch (error) {
         console.error('Lỗi khi lấy chi tiết giá dịch vụ:', error);
         setMessage('Không thể tải dữ liệu giá dịch vụ');
       }
@@ -134,9 +134,9 @@ export default function ExaminationPriceFormLayout() {
       }
 
       setMessage('Cập nhật giá dịch vụ thành công!');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Lỗi khi cập nhật:', error);
-      setMessage(`Cập nhật thất bại: ${error.message || 'Lỗi không xác định'}`);
+      setMessage(`Cập nhật thất bại: ${error|| 'Lỗi không xác định'}`);
     }
   };
 

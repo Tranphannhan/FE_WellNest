@@ -43,7 +43,7 @@ export interface ColumnMedicine {
 interface CustomTableProps {
   columns: ColumnMedicine[];
   rows: rowRenderType[];
-  onEdit?: (row: rowRenderType) => void;
+  onEdit?: (id: string) => void
   onDelete?: (row: rowRenderType) => void;
   onDisable: (row: rowRenderType) => void;
   showEdit?: boolean;
@@ -252,7 +252,7 @@ export default function CustomTableMedicine({
         {onEdit && showEdit && selectedRow && (
           <MenuItem
             onClick={() => {
-              onEdit(selectedRow);
+              onEdit(selectedRow._id);
               handleCloseMenu();
             }}
             sx={{
