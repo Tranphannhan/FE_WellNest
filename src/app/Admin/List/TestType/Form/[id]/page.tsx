@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
-  Button,
   Typography,
   Paper,
   Radio,
@@ -25,6 +24,7 @@ import { useRouter, useParams } from 'next/navigation';
 import './EditTestForm.css';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 
 // Custom styled component for the file input button
 const VisuallyHiddenInput = styled('input')({
@@ -221,6 +221,14 @@ function EditTestForm() {
 
   return (
     <div className="AdminContent-Container">
+       <BreadcrumbComponent
+                    items={[
+                      { title: "Trang chủ", href: "/Admin" },
+                      { title: "Danh mục", href: "/Admin/List/TestType" },
+                      { title: "Loại xét nghiệm", href: "/Admin/List/TestType" },
+                      { title: "Sửa loại xét nghiệm", href: "/Admin/List/TestType/Form" },
+                    ]}
+                  />
       {message && (
         <div
           className={

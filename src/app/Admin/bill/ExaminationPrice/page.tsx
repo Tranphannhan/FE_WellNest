@@ -20,6 +20,22 @@ const columns: ColumnCategory[] = [
   { id: "TenHoaDon", label: "Tên hóa đơn", sortable: true },
 ];
 
+export interface BillApiResponseItem {
+  _id: string;
+  LoaiHoaDon: "Kham" | "Thuoc" | "XetNghiem";
+  TenHoaDon: string;
+  Id_PhieuKhamBenh?: {
+    Ngay?: string;
+    Id_TheKhamBenh?: {
+      HoVaTen?: string;
+    };
+    Id_GiaDichVu?: {
+      Giadichvu?: number;
+    };
+  };
+}
+
+
 export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
@@ -34,7 +50,7 @@ export default function Page() {
       console.log("✅ Dữ liệu từ API:", data);
 
       if (data?.data) {
-        const mapped = data.data.map((item: any) => ({
+        const mapped = data.data.map((item: BillApiResponseItem) => ({
           _id: item._id,
           HoVaTen: item?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ?? "-",
           Ngay: item?.Id_PhieuKhamBenh?.Ngay ?? "-",

@@ -12,6 +12,7 @@ import CustomTableBill, {
 } from "../../component/Table/CustomTableBill";
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import { getBill } from "../../services/Category";
+import { BillApiResponseItem } from "../ExaminationPrice/page";
 
 const columns: ColumnCategory[] = [
   { id: "HoVaTen", label: "Họ và tên", sortable: true, Outstanding: true },
@@ -35,7 +36,7 @@ export default function Page() {
       console.log("✅ Dữ liệu từ API:", data);
 
       if (data?.data) {
-        const mapped = data.data.map((item: any) => ({
+        const mapped = data.data.map((item: BillApiResponseItem) => ({
           _id: item._id,
           HoVaTen: item?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ?? "-",
           Ngay: item?.Id_PhieuKhamBenh?.Ngay ?? "-",

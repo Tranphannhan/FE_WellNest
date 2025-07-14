@@ -20,6 +20,7 @@ import { useRouter, useParams } from 'next/navigation';
 import './AxaminationPriceForm.css';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 
 export default function ExaminationPriceFormLayout() {
   const [price, setPrice] = useState<string>('');
@@ -45,7 +46,7 @@ export default function ExaminationPriceFormLayout() {
         setPrice(data.Giadichvu?.toString() || '');
         setPriceType(data.Loaigia || 'GiaKham');
         setStatus(data.TrangThaiHoatDong ? 'Hien' : 'An');
-      } catch (error: any) {
+      } catch (error) {
         console.error('Lỗi khi lấy chi tiết giá dịch vụ:', error);
         setMessage('Không thể tải dữ liệu giá dịch vụ');
       }
@@ -134,9 +135,9 @@ export default function ExaminationPriceFormLayout() {
       }
 
       setMessage('Cập nhật giá dịch vụ thành công!');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Lỗi khi cập nhật:', error);
-      setMessage(`Cập nhật thất bại: ${error.message || 'Lỗi không xác định'}`);
+      setMessage(`Cập nhật thất bại: ${error|| 'Lỗi không xác định'}`);
     }
   };
 
@@ -146,6 +147,14 @@ export default function ExaminationPriceFormLayout() {
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+                    items={[
+                      { title: "Trang chủ", href: "/Admin" },
+                      { title: "Dịch vụ", href: "/Admin/price/AxaminationPrice" },
+                      { title: "Bảng giá dịch vụ", href: "/Admin/price/AxaminationPrice" },
+                      { title: "Sửa giá dịch vụ" },
+                    ]}
+                  />
       {message && (
         <div
           className={

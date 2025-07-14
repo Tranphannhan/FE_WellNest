@@ -19,6 +19,7 @@ import { Staff } from "@/app/types/hospitalTypes/hospitalType";
 import CustomTableHumanResources, { Column } from "../../component/Table/CustomTableHumanResources";
 import { getOptionstaffAdmin, getstaffAdmin } from "../../services/staffSevices";
 import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
 
 export interface rowRenderType {
   _id: string;
@@ -133,82 +134,89 @@ export default function Page() {
           { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
           { title: "Nhân viên" },
         ]}
-      />
+      />  
         {/* FORM TÌM KIẾM & FILTER */}
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 2,
-            mb: 2,
-            alignItems: "center",
-          }}
-        >
-          <TextField
-            sx={{
-              width: 250,
-              "& .MuiInputBase-root": {
-                paddingRight: "8px",
-                "& .MuiInputAdornment-root": {
-                  color: "#9e9e9e",
-                  transition: "color 0.3s",
-                },
-              },
-              "&:hover .MuiInputAdornment-root": {
-                color: "#424242",
-              },
-              "& .Mui-focused .MuiInputAdornment-root": {
-                color: "#1976d2",
-              },
-            }}
-            size="small"
-            placeholder="Tìm theo tên nhân viên..."
-            variant="outlined"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
-                </InputAdornment>
-              ),
-              endAdornment: searchText && (
-                <InputAdornment position="end">
-                  <CloseIcon
-                    sx={{ fontSize: "20px", cursor: "pointer" }}
-                    onClick={() => setSearchText("")}
-                  />
-                </InputAdornment>
-              ),
-            }}
-          />
+<Box
+  sx={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 2,
+    mb: 2,
+    alignItems: "center",
+    justifyContent: "space-between", // Pushes content to left and right
+    width: "100%", // Ensures the Box takes full width
+  }}
+>
+  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
+    <TextField
+      sx={{
+        width: 250,
+        "& .MuiInputBase-root": {
+          paddingRight: "8px",
+          "& .MuiInputAdornment-root": {
+            color: "#9e9e9e",
+            transition: "color 0.3s",
+          },
+        },
+        "&:hover .MuiInputAdornment-root": {
+          color: "#424242",
+        },
+        "& .Mui-focused .MuiInputAdornment-root": {
+          color: "#1976d2",
+        },
+      }}
+      size="small"
+      placeholder="Tìm theo tên nhân viên..."
+      variant="outlined"
+      value={searchText}
+      onChange={(e) => setSearchText(e.target.value)}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
+          </InputAdornment>
+        ),
+        endAdornment: searchText && (
+          <InputAdornment position="end">
+            <CloseIcon
+              sx={{ fontSize: "20px", cursor: "pointer" }}
+              onClick={() => setSearchText("")}
+            />
+          </InputAdornment>
+        ),
+      }}
+    />
 
-          <FormControl sx={{ minWidth: 250 }} size="small">
-            <InputLabel sx={{ fontSize: 14, top: 2 }}>
-              Loại tài khoản
-            </InputLabel>
-            <Select
-              label="Loại tài khoản"
-              value={selectedLoai}
-              onChange={(e) => setSelectedLoai(e.target.value)}
-              sx={{
-                fontSize: 14,
-                height: 40,
-                pl: 1,
-                "& .MuiSelect-icon": {
-                  right: 8,
-                },
-              }}
-            >
-              <MenuItem value="">Tất cả</MenuItem>
-              {TenLoaiOP.map((TenLoai) => (
-                <MenuItem key={TenLoai._id} value={TenLoai._id}>
-                  {TenLoai.TenLoaiTaiKhoan}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
+    <FormControl sx={{ minWidth: 250 }} size="small">
+      <InputLabel sx={{ fontSize: 14, top: 2 }}>Loại tài khoản</InputLabel>
+      <Select
+        label="Loại tài khoản"
+        value={selectedLoai}
+        onChange={(e) => setSelectedLoai(e.target.value)}
+        sx={{
+          fontSize: 14,
+          height: 40,
+          pl: 1,
+          "& .MuiSelect-icon": { right: 8 },
+        }}
+      >
+        <MenuItem value="">Tất cả</MenuItem>
+        {TenLoaiOP.map((TenLoai) => (
+          <MenuItem key={TenLoai._id} value={TenLoai._id}>
+            {TenLoai.TenLoaiTaiKhoan}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  </Box>
+
+  <div>
+        <ButtonAdd 
+          name="Thêm mới"
+          link="/Admin/HumanResources/Staff/Form"
+        />
+      </div>
+</Box>
 
 
         {/* BẢNG DỮ LIỆU */}

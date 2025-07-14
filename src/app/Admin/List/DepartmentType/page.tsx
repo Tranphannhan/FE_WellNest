@@ -19,6 +19,7 @@ import CustomTableCatalog, {
 } from "../../component/Table/CustomTableCatalog";
 import { getCategoryDepartments } from "../../services/Category";
 import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
 
 const columns: ColumnCategory[] = [
   { id: "TenKhoa", label: "Tên khoa", sortable: true, Outstanding: true },
@@ -82,6 +83,17 @@ export default function Page() {
         ]}
       />
 
+<Box
+  sx={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 2,
+    mb: 2,
+    alignItems: "center",
+    justifyContent: "space-between", // Pushes content to left and right
+    width: "100%", // Ensures the Box takes full width
+  }}
+>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
         <TextField
           sx={{ width: 250 }}
@@ -115,6 +127,13 @@ export default function Page() {
             <MenuItem value="Ngừng hoạt động">Ngừng hoạt động</MenuItem>
           </Select>
         </FormControl>
+      </Box>
+        <div>
+        <ButtonAdd 
+          name="Thêm mới"
+          link="/Admin/List/DepartmentType/Form"
+        />
+      </div>
       </Box>
 
       <CustomTableCatalog

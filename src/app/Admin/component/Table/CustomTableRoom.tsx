@@ -276,7 +276,7 @@ export default function CustomTableRooms({
         {onEdit && showEdit && selectedRow && (
           <MenuItem
             onClick={() => {
-              onEdit && selectedRow && onEdit(selectedRow._id);
+              onEdit(selectedRow._id);
               handleCloseMenu();
             }}
             sx={{

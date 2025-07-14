@@ -1,0 +1,89 @@
+.doctor-info-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  margin: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  font-family: Arial, sans-serif;
+  margin-top: 16px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.doctor-info-content {
+  display: flex;
+  gap: 20px;
+}
+
+/* Ảnh đại diện */
+.doctor-info-left {
+  width: 25%;
+  text-align: center;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+/* Form chính giữa */
+.doctor-info-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.doctor-info-right {
+  width: 22%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Các dòng form */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-row label {
+  width: 130px;
+  font-weight: 500;
+}
+
+.short-input {
+  width: 280px;
+}
+
+/* Label nằm trên */
+.form-row.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-row.vertical label {
+  width: auto;
+  margin-bottom: 4px;
+}
+
+.divider {
+  margin: 24px 0;
+  border: none;
+  height: 1px;
+  background-color: #eee;
+}
+
+.doctor-info-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

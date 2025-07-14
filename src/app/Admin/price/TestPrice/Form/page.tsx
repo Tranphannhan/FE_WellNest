@@ -18,8 +18,13 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import './TestPriceForm.css';
-import { FaArrowLeft } from 'react-icons/fa6';
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
+
+export interface ApiError {
+  message?: string;
+}
 
 export default function AddTestPriceForm() {
   const [price, setPrice] = useState<string>('');
@@ -28,6 +33,7 @@ export default function AddTestPriceForm() {
   const [serviceName, setServiceName] = useState<string>('');
   const [errors, setErrors] = useState<{ serviceName?: string; price?: string }>({});
   const [message, setMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
@@ -64,9 +70,11 @@ export default function AddTestPriceForm() {
     e.preventDefault();
     setMessage('');
     setErrors({});
+    setLoading(true);
 
     if (!validateForm()) {
       setMessage('Vui lòng kiểm tra các trường thông tin.');
+      setLoading(false);
       return;
     }
 
@@ -96,18 +104,29 @@ export default function AddTestPriceForm() {
       setPrice('');
       setPriceType('GiaXetNghiem');
       setStatus('Hien');
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as ApiError | Error;
       console.error('Lỗi khi thêm giá xét nghiệm:', error);
-      setMessage(`Thêm thất bại: ${error.message || 'Lỗi không xác định'}`);
+      setMessage(error.message || 'Thêm giá xét nghiệm thất bại');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    router.push('/Admin/price/AxaminationPrice');
+    router.push('/Admin/price/ExaminationPrice');
   };
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+              items={[
+                { title: "Trang chủ", href: "/Admin" },
+                { title: "Dịch vụ", href: "/Admin/price/AxaminationPrice" },
+                { title: "Bảng giá dịch vụ", href: "/Admin/price/AxaminationPrice" },
+                { title: "Thêm giá dịch vụ" },
+              ]}
+            />
       {message && (
         <div
           className={
@@ -198,9 +217,19 @@ export default function AddTestPriceForm() {
               <button
                 type="submit"
                 className="bigButton--blue"
+                disabled={loading}
               >
-                <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                Thêm Giá Xét Nghiệm
+                {loading ? (
+                  <>
+                    <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
+                    Đang thêm...
+                  </>
+                ) : (
+                  <>
+                    <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                    Thêm Giá Xét Nghiệm
+                  </>
+                )}
               </button>
             </Box>
           </form>

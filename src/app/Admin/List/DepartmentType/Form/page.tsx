@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
-  Button,
   Typography,
   Paper,
   Radio,
@@ -11,7 +10,6 @@ import {
   FormControlLabel,
   FormControl,
   FormLabel,
-  FormHelperText,
   Alert,
   CircularProgress,
 } from '@mui/material';
@@ -26,6 +24,15 @@ interface DepartmentType {
   TrangThaiHoatDong: boolean;
 }
 
+interface ApiError {
+  message?: string;
+}
+
+// Define errors for form validation
+interface FormErrors {
+  TenKhoa?: string;
+}
+
 function AddDepartmentTypeForm() {
   const [formData, setFormData] = useState<DepartmentType>({
     TenKhoa: '',
@@ -33,7 +40,7 @@ function AddDepartmentTypeForm() {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{ TenKhoa?: string }>({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const router = useRouter();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
@@ -87,7 +94,7 @@ function AddDepartmentTypeForm() {
 
   // Validate form
   const validateForm = async () => {
-    const newErrors: { TenKhoa?: string } = {};
+    const newErrors: FormErrors = {};
     if (!formData.TenKhoa.trim()) {
       newErrors.TenKhoa = 'Vui lòng nhập tên khoa';
     } else {
@@ -125,14 +132,15 @@ function AddDepartmentTypeForm() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData: ApiError = await response.json();
         throw new Error(errorData.message || 'Không thể thêm khoa');
       }
 
       setMessage('Thêm khoa thành công!');
       setFormData({ TenKhoa: '', TrangThaiHoatDong: true });
-    } catch (err: any) {
-      setMessage(err.message || 'Đã có lỗi xảy ra khi thêm khoa.');
+    } catch (err: unknown) {
+      const error = err as ApiError | Error;
+      setMessage(error.message || 'Đã có lỗi xảy ra khi thêm khoa.');
     } finally {
       setLoading(false);
     }
