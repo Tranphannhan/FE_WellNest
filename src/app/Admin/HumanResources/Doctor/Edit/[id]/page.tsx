@@ -171,7 +171,7 @@ export async function updateDoctor(
   }
 }
 
-const App: React.FC = () => {
+const Page: React.FC = () => {
   const [doctor, setDoctor] = useState<
     DoctorType & { SoCCCD?: string; address?: string; NamSinh?: string }
   >({
@@ -873,4 +873,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default Page;
