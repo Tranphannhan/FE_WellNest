@@ -1,0 +1,88 @@
+.doctor-wrapper {
+    padding: 24px;
+    background: #f0f6ff;
+    display: flex;
+    justify-content: center;
+}
+
+.doctor-container {
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: relative;
+    flex-wrap: wrap;
+}
+
+.doctor-title {
+    width: 100%;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.doctor-left {
+    flex: 0 0 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.doctor-avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
+
+.doctor-right {
+    flex: 1;
+}
+
+.doctor-row {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.doctor-row label {
+    font-weight: 500;
+    width: 180px;
+    color: #808080;
+    padding-left: 20px;
+}
+
+.doctor-row p {
+    flex: 1;
+    margin: 0;
+    color: #333;
+}
+
+/* Dòng chia đôi 2 cột */
+.doctor-row.double {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.doctor-row.double>div {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.doctor-footer {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
