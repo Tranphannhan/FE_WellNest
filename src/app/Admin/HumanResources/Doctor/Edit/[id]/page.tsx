@@ -27,151 +27,17 @@ import { PlusOutlined } from "@ant-design/icons";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
 import BreadcrumbComponent from "@/app/Admin/component/Breadcrumb";
+import { getClinicDetails, getClinicsBySpecialty, getDoctorDetails, getSpecialties } from "@/app/Admin/services/DoctorSevices";
 
 interface Errors {
   [key: string]: string;
 }
 
-interface DoctorUpdatePayload {
-  TenBacSi?: string;
-  SoDienThoai?: string;
-  SoCCCD?: string;
-  NamSinh?: string;
-  GioiTinh?: string;
-  HocVi?: string;
-  ID_Khoa?: string;
-  Id_PhongKham?: string;
-  TrangThaiHoatDong?: boolean;
-  Image?: string;
-  Matkhau?: string;
-}
-
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
-// Fetch doctor details
-export async function getDoctorDetails(id: string): Promise<DoctorType | null> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/Bacsi/detail/${id}`);
-    if (!response.ok) {
-      console.error(
-        `API error: Status ${response.status}, ${response.statusText}`
-      );
-      return null;
-    }
-    const data = await response.json();
-    console.log("Doctor API response:", data);
-    return Array.isArray(data) && data.length > 0 ? data[0] : data.data || data;
-  } catch (error) {
-    console.error("Fetch doctor details error:", error);
-    return null;
-  }
-}
 
-// Fetch specialties
-export async function getSpecialties(): Promise<Khoa[] | null> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/Khoa/Pagination?TrangThaiHoatDong=true`);
-    if (!response.ok) {
-      console.error(
-        `API error: Status ${response.status}, ${response.statusText}`
-      );
-      return null;
-    }
-    const data = await response.json();
-    console.log("Specialties API response:", data);
-    return data.data || data;
-  } catch (error) {
-    console.error("Fetch specialties error:", error);
-    return null;
-  }
-}
-
-// Fetch empty clinics by specialty
-export async function getClinicsBySpecialty(
-  specialtyId: string
-): Promise<ClinicType[] | null> {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/Phong_Kham/LayPhongTrongTheoKhoa/${specialtyId}`
-    );
-    if (!response.ok) {
-      if (response.status === 404) {
-        console.warn("No empty clinics found for specialty:", specialtyId);
-        return [];
-      }
-      console.error(
-        `API error: Status ${response.status}, ${response.statusText}`
-      );
-      return null;
-    }
-    const data = await response.json();
-    console.log("Clinics API response:", data);
-    return data.data || data;
-  } catch (error) {
-    console.error("Fetch clinics error:", error);
-    return null;
-  }
-}
-
-// Fetch single clinic details by ID
-export async function getClinicDetails(
-  clinicId: string
-): Promise<ClinicType | null> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/Phong_Kham/detail/${clinicId}`);
-    if (!response.ok) {
-      console.error(
-        `API error: Status ${response.status}, ${response.statusText}`
-      );
-      return null;
-    }
-    const data = await response.json();
-    console.log("Clinic details API response:", data);
-    return data.data || data;
-  } catch (error) {
-    console.error("Fetch clinic details error:", error);
-    return null;
-  }
-}
-
-// Update doctor
-export async function updateDoctor(
-  id: string,
-  doctorData: DoctorUpdatePayload
-): Promise<boolean> {
-  try {
-    const payload: DoctorUpdatePayload = { ...doctorData };
-    if (typeof payload.TrangThaiHoatDong === "string") {
-      payload.TrangThaiHoatDong = payload.TrangThaiHoatDong === "true";
-    }
-    if (!payload.Matkhau) {
-      delete payload.Matkhau;
-    }
-    console.log("Sending payload:", payload);
-
-    const response = await fetch(`${API_BASE_URL}/Bacsi/Edit/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(
-        `Update API error: Status ${response.status}, ${response.statusText}, Body:`,
-        errorText
-      );
-      return false;
-    }
-    return true;
-  } catch (error) {
-    console.error("Update doctor error:", error);
-    return false;
-  }
-}
-
-const Page: React.FC = () => {
+const App: React.FC = () => {
   const [doctor, setDoctor] = useState<
     DoctorType & { SoCCCD?: string; address?: string; NamSinh?: string }
   >({
@@ -873,4 +739,4 @@ const Page: React.FC = () => {
   );
 };
 
-export default Page;
+export default App;
