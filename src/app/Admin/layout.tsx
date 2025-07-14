@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { Suspense } from 'react'; // Thêm import Suspense
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { DemoProvider } from '@toolpad/core/internal';
@@ -29,7 +30,8 @@ const demoTheme = createTheme({
   },
 });
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+// Tạo component nội bộ để sử dụng các hook client-side
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const isClient = typeof window !== 'undefined';
   const router = useRouter();
   const pathname = usePathname();
@@ -78,10 +80,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <AccountMenu />
           </Box>
           <main className='Admin-containerLayout'>
-              {children}
-          </main> 
+            {children}
+          </main>
         </DashboardLayout>
       </AppProvider>
     </DemoProvider>
+  );
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </Suspense>
   );
 }

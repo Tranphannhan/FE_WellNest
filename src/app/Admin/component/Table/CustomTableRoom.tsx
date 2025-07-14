@@ -297,7 +297,7 @@ export default function CustomTableRooms({
         {onDelete && showDelete && selectedRow && (
           <MenuItem
             onClick={() => {
-              onDelete();
+              onDelete(selectedRow);
               handleCloseMenu();
             }}
             sx={{
@@ -318,7 +318,7 @@ export default function CustomTableRooms({
         {showDisable && selectedRow && selectedRow.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              onDisable();
+              onDisable(selectedRow);
               handleCloseMenu();
             }}
             sx={{
@@ -339,7 +339,7 @@ export default function CustomTableRooms({
         {onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              onDisable();
+              onDisable(selectedRow);
               handleCloseMenu();
             }}
             sx={{

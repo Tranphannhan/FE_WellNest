@@ -27,77 +27,13 @@ import { PlusOutlined } from "@ant-design/icons";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
 import BreadcrumbComponent from "@/app/Admin/component/Breadcrumb";
+import { addDoctor, getClinicsBySpecialty, getSpecialties } from "@/app/Admin/services/DoctorSevices";
 
 interface Errors {
   [key: string]: string;
 }
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
-
-export async function getSpecialties(): Promise<Khoa[] | null> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/Khoa/Pagination`);
-    if (!response.ok) {
-      console.error(
-        `API error: Status ${response.status}, ${response.statusText}`
-      );
-      return null;
-    }
-    const data = await response.json();
-    console.log("Specialties API response:", data);
-    return data.data || data;
-  } catch (error) {
-    console.error("Fetch specialties error:", error);
-    return null;
-  }
-}
-
-export async function getClinicsBySpecialty(
-  specialtyId: string
-): Promise<ClinicType[] | null> {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/Phong_Kham/LayPhongTrongTheoKhoa/${specialtyId}`
-    );
-    if (!response.ok) {
-      console.error(
-        `API error: Status ${response.status}, ${response.statusText}`
-      );
-      return null;
-    }
-    const data = await response.json();
-    console.log("Clinics API response:", data);
-    return data.data || data;
-  } catch (error) {
-    console.error("Fetch clinics error:", error);
-    return null;
-  }
-}
-
-export async function addDoctor(doctorData: FormData): Promise<{ success: boolean, message?: string }> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/BacSi/Add`, {
-      method: "POST",
-      body: doctorData,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error(`Add API error:`, data.message);
-      return { success: false, message: data.message || "Lỗi không xác định" };
-    }
-
-    return { success: data.success, message: data.message };
-  } catch (error) {
-    console.error("Add doctor error:", error);
-    return { success: false, message: "Lỗi kết nối server" };
-  }
-}
-
-
-const App: React.FC = () => {
+export default function DoctorEdit(){
   const [doctor, setDoctor] = useState<
     DoctorType & { SoCCCD?: string; address?: string; NamSinh?: string }
   >({
@@ -675,5 +611,3 @@ const handleSubmit = async (e: React.FormEvent) => {
     </div>
   );
 };
-
-export default App;

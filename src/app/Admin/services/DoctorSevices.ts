@@ -171,3 +171,28 @@ export async function updateDoctor(
     return false;
   }
 }
+
+//Edit doctor add
+
+export async function addDoctor(doctorData: FormData): Promise<{ success: boolean, message?: string }> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/BacSi/Add`, {
+      method: "POST",
+      body: doctorData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(`Add API error:`, data.message);
+      return { success: false, message: data.message || "Lỗi không xác định" };
+    }
+
+    return { success: data.success, message: data.message };
+  } catch (error) {
+    console.error("Add doctor error:", error);
+    return { success: false, message: "Lỗi kết nối server" };
+  }
+}
+
+

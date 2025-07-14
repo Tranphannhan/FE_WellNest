@@ -37,7 +37,7 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 
-const App: React.FC = () => {
+export default function Page(){
   const [doctor, setDoctor] = useState<
     DoctorType & { SoCCCD?: string; address?: string; NamSinh?: string }
   >({
@@ -738,5 +738,3 @@ const App: React.FC = () => {
     </div>
   );
 };
-
-export default App;

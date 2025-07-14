@@ -59,7 +59,7 @@ const formatCurrency = (amount: number) => {
     }).format(amount);
 };
 
-const TestRequestTransactions: React.FC = () => {
+export default function TestRequestTransactions() {
     const [testRequestTransactions, setTestRequestTransactions] = useState<Transaction[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [filterStartDate, setFilterStartDate] = useState("");
@@ -542,5 +542,3 @@ const TestRequestTransactions: React.FC = () => {
         </div>
     );
 };
-
-export default TestRequestTransactions;

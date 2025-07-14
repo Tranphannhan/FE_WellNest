@@ -23,95 +23,13 @@ import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
 import { AccountType, Errors, LoaiTaiKhoan, TestingRoom } from "../page";
 import BreadcrumbComponent from "@/app/Admin/component/Breadcrumb";
+import { getAccountDetails, getAccountTypes, getTestingRoom, updateAccount } from "@/app/Admin/services/staffSevices";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
-export async function getAccountDetails(id: string): Promise<AccountType | null> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/Tai_Khoan/Detail/${id}`);
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`API error: Status ${response.status}, ${errorText}`);
-            return null;
-        }
-        const data = await response.json();
-        console.log("Account API response:", data);
-        const account = Array.isArray(data) && data.length > 0 ? data[0] : data.data || data;
-        return {
-            _id: account._id || "",
-            TenTaiKhoan: account.TenTaiKhoan || "",
-            SoDienThoai: account.SoDienThoai || "",
-            SoCCCD: account.SoCCCD || "",
-            GioiTinh: account.GioiTinh || "Nam",
-            VaiTro: account.Id_LoaiTaiKhoan?.VaiTro || "",
-            Id_LoaiTaiKhoan: account.Id_LoaiTaiKhoan || { _id: "", TenLoaiTaiKhoan: "", VaiTro: "" },
-            TrangThaiHoatDong: account.TrangThaiHoatDong ?? false,
-            Image: account.Image || "https://placehold.co/150x150/aabbcc/ffffff?text=Avatar",
-            MatKhau: "",
-            Id_PhongThietBi: account.Id_PhongThietBi || "",
-        };
-    } catch (error) {
-        console.error("Fetch account details error:", error);
-        return null;
-    }
-}
 
-export async function getAccountTypes(): Promise<LoaiTaiKhoan[] | null> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/Loai_Tai_Khoan`);
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Lỗi fetch loại tài khoản nhân viên: ${response.status} - ${errorText}`);
-            return null;
-        }
-        const data = await response.json();
-        console.log("Account types API response:", data);
-        return data.data || data;
-    } catch (error) {
-        console.error("Exception khi lấy loại tài khoản nhân viên", error);
-        return null;
-    }
-}
 
-export async function updateAccount(id: string, formData: FormData): Promise<boolean> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/Tai_Khoan/Edit/${id}`, {
-            method: "PUT",
-            body: formData,
-        });
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Update API error: Status ${response.status}, ${errorText}`);
-            return false;
-        }
-        return true;
-    } catch (error) {
-        console.error("Update account error:", error);
-        if (error instanceof TypeError && error.message === "Failed to fetch") {
-            console.error("Possible causes: Network issue, CORS, or server not running at", API_BASE_URL);
-        }
-        return false;
-    }
-}
-
-export async function getTestingRoom(page: number): Promise<{ data: TestingRoom[] } | null> {
-    try {
-        const response = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination?page=${page}`);
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`API error: Status ${response.status}, ${errorText}`);
-            return null;
-        }
-        const data = await response.json();
-        console.log("Testing Room API response:", data);
-        return data;
-    } catch (error) {
-        console.error("Fetch testing rooms error:", error);
-        return null;
-    }
-}
-
-const App: React.FC = () => {
+ export default function StaffUpdate() {
     const [account, setAccount] = useState<AccountType>({
         _id: "",
         TenTaiKhoan: "",
@@ -661,5 +579,3 @@ const App: React.FC = () => {
         </div>
     );
 };
-
-export default App;
