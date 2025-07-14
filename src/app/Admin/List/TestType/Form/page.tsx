@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation';
 import './EditTestForm.css';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 
 // Custom styled component for the file input button
 const VisuallyHiddenInput = styled('input')({
@@ -236,6 +237,14 @@ function AddTestForm() {
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+              items={[
+                { title: "Trang chủ", href: "/Admin" },
+                { title: "Danh mục", href: "/Admin/List/TestType" },
+                { title: "Loại xét nghiệm", href: "/Admin/List/TestType" },
+                { title: "Thêm loại xét nghiệm", href: "/Admin/List/TestType/Form" },
+              ]}
+            />
       {loading && (
         <div className="message-loading">
           <Alert severity="info">Đang tải dữ liệu...</Alert>

@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import './TestPriceForm.css';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 
 export interface ApiError {
   message?: string;
@@ -118,6 +119,14 @@ export default function AddTestPriceForm() {
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+              items={[
+                { title: "Trang chủ", href: "/Admin" },
+                { title: "Dịch vụ", href: "/Admin/price/AxaminationPrice" },
+                { title: "Bảng giá dịch vụ", href: "/Admin/price/AxaminationPrice" },
+                { title: "Thêm giá dịch vụ" },
+              ]}
+            />
       {message && (
         <div
           className={

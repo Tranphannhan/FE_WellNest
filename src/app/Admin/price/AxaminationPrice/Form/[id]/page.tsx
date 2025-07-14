@@ -20,6 +20,7 @@ import { useRouter, useParams } from 'next/navigation';
 import './AxaminationPriceForm.css';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 
 export default function ExaminationPriceFormLayout() {
   const [price, setPrice] = useState<string>('');
@@ -146,6 +147,14 @@ export default function ExaminationPriceFormLayout() {
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+                    items={[
+                      { title: "Trang chủ", href: "/Admin" },
+                      { title: "Dịch vụ", href: "/Admin/price/AxaminationPrice" },
+                      { title: "Bảng giá dịch vụ", href: "/Admin/price/AxaminationPrice" },
+                      { title: "Sửa giá dịch vụ" },
+                    ]}
+                  />
       {message && (
         <div
           className={

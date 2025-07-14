@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import {
   Box,
   TextField,
-  Button,
   Typography,
   Paper,
   FormControl,
@@ -20,6 +19,9 @@ import {
   FormHelperText,
 } from '@mui/material';
 import './AddMedicineFormLayout.css';
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
+import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 
 interface GroupType {
   _id: string;
@@ -152,6 +154,14 @@ function AddMedicineFormLayout() {
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+        items={[
+          { title: "Trang chủ", href: "/Admin" },
+          { title: "Kho thuốc", href: "/Admin/Medicine" },
+          { title: "Danh sách thuốc" },
+          { title: "Thêm thuốc" },
+        ]}
+      />
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Paper elevation={3} sx={{ width: '100%'}}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}>
@@ -245,23 +255,32 @@ function AddMedicineFormLayout() {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleCancel}
-                className="cancel-button"
-              >
-                Hủy
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                className="submit-button"
-              >
-                Thêm Thuốc
-              </Button>
-            </Box>
+                          <button
+                            type="button"
+                            className="bigButton--gray"
+                            onClick={handleCancel}
+                          >
+                            <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                            Hủy
+                          </button>
+                          <button
+                            type="submit"
+                            className="bigButton--blue"
+                            disabled={loading}
+                          >
+                            {loading ? (
+                              <>
+                                <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
+                                Đang thêm...
+                              </>
+                            ) : (
+                              <>
+                                <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                Thêm Thuốc
+                              </>
+                            )}
+                          </button>
+                        </Box>
           </form>
         </Paper>
       </Box>

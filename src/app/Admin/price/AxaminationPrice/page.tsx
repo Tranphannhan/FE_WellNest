@@ -20,6 +20,7 @@ import BreadcrumbComponent from "../../component/Breadcrumb";
 import { getExaminationPrice } from "../../services/Category";
 import { ServicePriceType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
 
 const columns: ColumnCategory[] = [
   { id: "Tendichvu", label: "Tên dịch vụ", sortable: true, Outstanding: true },
@@ -82,6 +83,17 @@ export default function Page() {
           { title: "Bảng giá dịch vụ" },
         ]}
       />
+            <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 2,
+          alignItems: "center",
+          justifyContent: "space-between", // Pushes content to left and right
+          width: "100%", // Ensures the Box takes full width
+        }}
+      >
 
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
         <TextField
@@ -121,6 +133,13 @@ export default function Page() {
           </Select>
         </FormControl>
       </Box>
+      <div>
+                    <ButtonAdd 
+                      name="Thêm mới"
+                      link="/Admin/price/AxaminationPrice/Form"
+                    />
+                  </div>
+                  </Box>
 
       <CustomTableServicePrice
         columns={columns}

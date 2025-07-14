@@ -20,6 +20,7 @@ import CustomTableMedicine, {
 import { getDrugGroup } from "../../services/Category";
 import { medicineGroupType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
 
 // Cấu hình cột hiển thị
 const columns: ColumnMedicine[] = [
@@ -37,7 +38,7 @@ export default function Page() {
 
   const fetchData = async (currentPage: number) => {
     try {
-      const data = await getDrugGroup (currentPage);
+      const data = await getDrugGroup(currentPage);
       if (data?.data) {
         const mappedRows = data.data.map((item: medicineGroupType) => ({
           _id: item._id,
@@ -82,45 +83,65 @@ export default function Page() {
         ]}
       />
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
-        <TextField
-          sx={{ width: 250 }}
-          size="small"
-          placeholder="Tìm nhóm thuốc..."
-          variant="outlined"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
-              </InputAdornment>
-            ),
-            endAdornment: searchText && (
-              <InputAdornment position="end">
-                <CloseIcon
-                  sx={{ fontSize: "20px", cursor: "pointer" }}
-                  onClick={() => setSearchText("")}
-                />
-              </InputAdornment>
-            ),
-          }}
-        />
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 2,
+          alignItems: "center",
+          justifyContent: "space-between", // Pushes content to left and right
+          width: "100%", // Ensures the Box takes full width
+        }}
+      >
 
-        <FormControl size="small" sx={{ width: 200 }}>
-          <InputLabel>Trạng thái</InputLabel>
-          <Select value={statusFilter} label="Trạng thái" onChange={handleStatusChange}>
-            <MenuItem value="Tất cả">Tất cả</MenuItem>
-            <MenuItem value="Đang hoạt động">Đang hoạt động</MenuItem>
-            <MenuItem value="Ngừng hoạt động">Ngừng hoạt động</MenuItem>
-          </Select>
-        </FormControl>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
+          <TextField
+            sx={{ width: 250 }}
+            size="small"
+            placeholder="Tìm nhóm thuốc..."
+            variant="outlined"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
+                </InputAdornment>
+              ),
+              endAdornment: searchText && (
+                <InputAdornment position="end">
+                  <CloseIcon
+                    sx={{ fontSize: "20px", cursor: "pointer" }}
+                    onClick={() => setSearchText("")}
+                  />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          <FormControl size="small" sx={{ width: 200 }}>
+            <InputLabel>Trạng thái</InputLabel>
+            <Select value={statusFilter} label="Trạng thái" onChange={handleStatusChange}>
+              <MenuItem value="Tất cả">Tất cả</MenuItem>
+              <MenuItem value="Đang hoạt động">Đang hoạt động</MenuItem>
+              <MenuItem value="Ngừng hoạt động">Ngừng hoạt động</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
+        <div>
+          <ButtonAdd
+            name="Thêm mới"
+            link="/Admin/Medicine/DrugGroup/Form"
+          />
+        </div>
       </Box>
 
       <CustomTableMedicine
         columns={columns}
         rows={filteredRows}
-        onEdit={(id) => {router.push(`/Admin/Medicine/DrugGroup/Form/${id}`)}}
+        onEdit={(id) => { router.push(`/Admin/Medicine/DrugGroup/Form/${id}`) }}
         onDelete={(row) => console.log("Xoá nhóm thuốc:", row)}
         onDisable={(row) => console.log("Chuyển trạng thái nhóm thuốc:", row)}
         showEdit={true}

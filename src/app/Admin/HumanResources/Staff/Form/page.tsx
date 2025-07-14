@@ -21,6 +21,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import "./AddStaff.css";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
+import BreadcrumbComponent from "@/app/Admin/component/Breadcrumb";
 
 export interface LoaiTaiKhoan {
     _id: string;
@@ -332,6 +333,14 @@ const App: React.FC = () => {
 
     return (
         <div className="AdminContent-Container">
+            <BreadcrumbComponent
+                    items={[
+                      { title: "Trang chủ", href: "/Admin" },
+                      { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
+                      { title: "Nhân viên", href: "/Admin/HumanResources/Staff" },
+                      { title: "Thêm nhân viên" },
+                    ]}
+                  />
             <h2 className="StaffEdit-Title">Thêm tài khoản</h2>
 
             {isLoading && (

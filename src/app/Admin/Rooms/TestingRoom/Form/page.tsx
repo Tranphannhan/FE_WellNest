@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import './FormTestingRoom.css';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 
 // Custom styled component for the file input button
 const VisuallyHiddenInput = styled('input')({
@@ -152,6 +153,14 @@ function AddTestingRoomForm() {
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+        items={[
+          { title: "Trang chủ", href: "/Admin" },
+          { title: "Phòng", href: "/Admin/Rooms/TestingRoom" },
+          { title: "Phòng xét nghiệm", href: "/Admin/Rooms/TestingRoom" },
+          { title: "Thêm phòng xét nghiệm", href: "/Admin/Rooms/TestingRoom" },
+        ]}
+      />
       {loading && (
         <div className="message-loading">
           <Alert severity="info">Đang tải...</Alert>

@@ -26,6 +26,7 @@ import { Upload, type UploadFile } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
+import BreadcrumbComponent from "@/app/Admin/component/Breadcrumb";
 
 interface Errors {
   [key: string]: string;
@@ -324,6 +325,14 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+                items={[
+                  { title: "Trang chủ", href: "/Admin" },
+                  { title: "Nhân sự", href: "/Admin/HumanResources/Doctor" },
+                  { title: "Bác sĩ", href: "/Admin/HumanResources/Doctor" },
+                  { title: "Thêm bác sĩ" },
+                ]}
+              />
       <h2 className="title">Thêm bác sĩ</h2>
 
       {isLoading && (

@@ -18,6 +18,7 @@ import CustomTableRooms, {
 } from "../../component/Table/CustomTableRoom";
 import { getTestingRoom } from "../../services/Room";
 import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
 
 interface TestingRoom {
   _id: string;
@@ -123,6 +124,17 @@ export default function Page() {
       />
 
       {/* TÌM KIẾM & LỌC */}
+            <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 2,
+          alignItems: "center",
+          justifyContent: "space-between", // Pushes content to left and right
+          width: "100%", // Ensures the Box takes full width
+        }}
+      >
       <Box
         sx={{
           display: "flex",
@@ -175,6 +187,13 @@ export default function Page() {
           </Select>
         </FormControl>
       </Box>
+      <div>
+                    <ButtonAdd 
+                      name="Thêm mới"
+                      link="/Admin/Rooms/TestingRoom/Form"
+                    />
+                  </div>
+                  </Box>
 
       {/* BẢNG HIỂN THỊ */}
       <CustomTableRooms

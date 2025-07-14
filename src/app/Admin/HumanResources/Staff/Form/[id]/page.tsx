@@ -22,6 +22,7 @@ import "./EditStaff.css";
 import { FaArrowLeft, FaSpinner } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
 import { AccountType, Errors, LoaiTaiKhoan, TestingRoom } from "../page";
+import BreadcrumbComponent from "@/app/Admin/component/Breadcrumb";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
@@ -357,6 +358,14 @@ const App: React.FC = () => {
 
     return (
         <div className="AdminContent-Container">
+            <BreadcrumbComponent
+                                items={[
+                                  { title: "Trang chủ", href: "/Admin" },
+                                  { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
+                                  { title: "Nhân viên", href: "/Admin/HumanResources/Staff" },
+                                  { title: "Sửa nhân viên" },
+                                ]}
+                              />
             <h2 className="StaffEdit-Title">Thông tin tài khoản</h2>
 
             {isLoading && (

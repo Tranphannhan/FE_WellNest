@@ -20,6 +20,7 @@ import CustomTableRooms, {
 import { getRommm } from "../../services/Room";
 import { getkhoaOptions } from "../../services/DoctorSevices";
 import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
 
 // Cấu hình cột của bảng
 const columns: Column[] = [
@@ -139,6 +140,17 @@ export default function Page() {
 
       {/* Tìm kiếm & lọc */}
       <Box
+  sx={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 2,
+    mb: 2,
+    alignItems: "center",
+    justifyContent: "space-between", // Pushes content to left and right
+    width: "100%", // Ensures the Box takes full width
+  }}
+>
+      <Box
         sx={{
           display: "flex",
           flexWrap: "wrap",
@@ -207,6 +219,13 @@ export default function Page() {
           </Select>
         </FormControl>
       </Box>
+      <div>
+              <ButtonAdd 
+                name="Thêm mới"
+                link="/Admin/Rooms/Clinic/Form"
+              />
+            </div>
+            </Box>
 
       {/* Bảng hiển thị */}
       <CustomTableRooms

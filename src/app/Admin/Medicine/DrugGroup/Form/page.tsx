@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import {
   Box,
   TextField,
-  Button,
   Typography,
   Paper,
   FormControl,
@@ -15,6 +14,9 @@ import {
   Alert,
 } from '@mui/material';
 import './MedicineTypeFormLayout.css';
+import { FaArrowLeft } from 'react-icons/fa6';
+import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 
 function MedicineTypeFormLayout() {
   const router = useRouter();
@@ -26,7 +28,7 @@ function MedicineTypeFormLayout() {
   const [errors, setErrors] = useState<{
     TenNhomThuoc?: string;
   }>({});
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -81,11 +83,19 @@ function MedicineTypeFormLayout() {
   };
 
   const handleCancel = () => {
-      router.push('/Admin/MedicineType/DrugGroup');
+    router.push('/Admin/MedicineType/DrugGroup');
   };
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+        items={[
+          { title: "Trang chủ", href: "/Admin" },
+          { title: "Kho thuốc", href: "/Admin/Medicine/DrugGroup" },
+          { title: "Danh sách nhóm thuốc", href: "/Admin/Medicine/DrugGroup" },
+          { title: "Thêm nhóm thuốc" },
+        ]}
+      />
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Paper elevation={3} sx={{ width: '100%' }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}>
@@ -129,22 +139,21 @@ function MedicineTypeFormLayout() {
               </FormControl>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
-              <Button
-                variant="outlined"
-                color="secondary"
+              <button
+                type="button"
+                className="bigButton--gray"
                 onClick={handleCancel}
-                className="cancel-button"
               >
+                <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                 Hủy
-              </Button>
-              <Button
+              </button>
+              <button
                 type="submit"
-                variant="contained"
-                color="primary"
-                className="submit-button"
+                className="bigButton--blue"
               >
-                Thêm Loại Thuốc
-              </Button>
+                <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Thêm Nhóm Thuốc
+              </button>
             </Box>
           </form>
         </Paper>

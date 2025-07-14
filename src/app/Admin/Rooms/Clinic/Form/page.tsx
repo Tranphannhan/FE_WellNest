@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
-  Button,
   Typography,
   Paper,
   Radio,
@@ -23,21 +22,9 @@ import './FormClinic.css';
 import { getkhoaOptions } from '@/app/Admin/services/DoctorSevices';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 
-// Interface chuyên khoa
-interface Khoa {
-  _id: string;
-  TenKhoa: string;
-  TrangThaiHoatDong: boolean;
-}
 
-// Interface phòng
-interface PhongKham {
-  _id: string;
-  Id_Khoa: Khoa;
-  SoPhongKham: string;
-  TrangThaiHoatDong?: boolean;
-}
 
 // Select chuyên khoa
 interface khoaOptionsType {
@@ -186,6 +173,14 @@ export default function AddClinicForm() {
 
   return (
     <div className="AdminContent-Container">
+      <BreadcrumbComponent
+              items={[
+                { title: "Trang chủ", href: "/Admin" },
+                { title: "Phòng", href: "/Admin/Rooms/Clinic" },
+                { title: "Phòng khám", href: "/Admin/Rooms/Clinic" },
+                { title: "Thêm phòng khám"},
+              ]}
+            />
       <Box
         sx={{
           display: 'flex',
