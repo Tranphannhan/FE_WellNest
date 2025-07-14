@@ -114,6 +114,7 @@ export default function MedicineFees({ isOpen, onClose, data, detailedPrescripti
   }, [pdfPreviewImg, onClose, patientName]);
 
   useEffect(() => {
+    console.log(isDataReady,loadingPreview,patientAddress,diagnosis)
   if (isOpen && data && detailedPrescription) {
     setIsDataReady(true);
     setPdfPreviewImg('');
