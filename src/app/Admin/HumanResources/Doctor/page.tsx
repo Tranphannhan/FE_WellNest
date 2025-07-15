@@ -4,7 +4,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, MenuItem, FormControl, Select, InputLabel } from "@mui/material";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import "./Doctor.css";
 import BreadcrumbComponent from "../../component/Breadcrumb";
@@ -12,11 +12,14 @@ import { DoctorType } from "@/app/types/doctorTypes/doctorTypes";
 import CustomTableHumanResources, {
   Column,
 } from "../../component/Table/CustomTableHumanResources";
-import { getDoctorAdmin, getkhoaOptions } from "../../services/DoctorSevices";
+import {
+  getDoctorAdmin,
+  getkhoaOptions,
+  FindDoctor,
+} from "../../services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 
-// Cấu trúc sau khi chuẩn hoá dữ liệu
 export interface rowRenderType {
   _id: string;
   TenBacSi: string;
@@ -49,21 +52,14 @@ export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedKhoa, setSelectedKhoa] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
-  const [currentPage, setCurrentPage] = useState <number> (0);
-  const [totalItems , setTotalItems] = useState <number> (0)
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [totalItems, setTotalItems] = useState<number>(0);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
   const router = useRouter();
 
-  const getAPI = async () => {
-    const data = await getDoctorAdmin(currentPage + 1);
-    if (!data?.data || data.data.length === 0) {
-      setRows([]);
-      return;
-    }
-     setTotalItems (data.totalItems)
-
-    const mappedData = data.data.map((item: DoctorType) => ({
-      _id: item._id,
+  const mapData = (data: DoctorType[]) => {
+    return data.map((item) => ({
+      _id: item._id || "unknown", // đảm bảo string
       TenBacSi: item.TenBacSi || "Không rõ",
       GioiTinh: item.GioiTinh || "Không rõ",
       HocVi: item.HocVi || "Không rõ",
@@ -78,15 +74,56 @@ export default function Page() {
         ? item.Image
         : `${API_BASE_URL}/image/${item?.Image || "default.png"}`,
     }));
+  };
 
-    setRows(mappedData);
+  // Gọi API mặc định (phân trang)
+  const getAPI = async () => {
+    const data = await getDoctorAdmin(currentPage + 1);
+    if (!data?.data) {
+      setRows([]);
+      return;
+    }
+    setTotalItems(data.totalItems);
+    const mapped = mapData(data.data);
+    setRows(
+      selectedKhoa
+        ? mapped.filter((r) => r.Khoa === selectedKhoa)
+        : mapped
+    );
   };
 
   useEffect(() => {
-    getAPI();
+    if (searchText.trim() === "") {
+      getAPI();
+    }
   }, [currentPage]);
 
+  // Gọi API tìm kiếm
+  useEffect(() => {
+    const fetchSearch = async () => {
+      if (searchText.trim() === "") {
+        getAPI();
+        return;
+      }
 
+      const data = await FindDoctor(searchText);
+      if (!data?.data) {
+        setRows([]);
+        return;
+      }
+
+      const mapped = mapData(data.data);
+      setRows(
+        selectedKhoa
+          ? mapped.filter((r) => r.Khoa === selectedKhoa)
+          : mapped
+      );
+    };
+
+    fetchSearch();
+  }, [searchText, selectedKhoa]);
+
+  // --- Lấy danh sách chuyên khoa ---
   interface khoaOptionsType {
     _id: string;
     TenKhoa: string;
@@ -103,28 +140,18 @@ export default function Page() {
     loaddingAPISelect();
   }, []);
 
-  const filteredRows = useMemo(() => {
-    return rows.filter((row) => {
-      const matchSearch = row.TenBacSi.toLowerCase().includes(
-        searchText.toLowerCase()
-      );
-      const matchKhoa = selectedKhoa ? row.Khoa === selectedKhoa : true;
-      return matchSearch && matchKhoa;
-    });
-  }, [searchText, selectedKhoa, rows]);
-
   return (
-    <>
-      <div className="AdminContent-Container">
-        <BreadcrumbComponent
-          items={[
-            { title: "Trang chủ", href: "/Admin" },
-            { title: "Nhân sự", href: "/Admin/HumanResources/Doctor" },
-            { title: "Bác sĩ" },
-          ]}
-        />
-        {/* FORM TÌM KIẾM & FILTER */}
-        <Box
+    <div className="AdminContent-Container">
+      <BreadcrumbComponent
+        items={[
+          { title: "Trang chủ", href: "/Admin" },
+          { title: "Nhân sự", href: "/Admin/HumanResources/Doctor" },
+          { title: "Bác sĩ" },
+        ]}
+      />
+
+      {/* FORM TÌM KIẾM & FILTER */}
+      <Box
   sx={{
     display: "flex",
     flexWrap: "wrap",
@@ -135,69 +162,76 @@ export default function Page() {
     width: "100%",
   }}
 >
-  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
-    <TextField
-      sx={{
-        width: 250,
-        "& .MuiInputBase-root": {
-          paddingRight: "8px",
-          "& .MuiInputAdornment-root": {
-            color: "#9e9e9e",
-          },
-        },
-        "&:hover .MuiInputAdornment-root": {
-          color: "#424242",
-        },
-        "& .Mui-focused .MuiInputAdornment-root": {
-          color: "#1976d2",
-        },
-      }}
-      size="small"
-      placeholder="Tìm theo tên bác sĩ..."
-      variant="outlined"
-      value={searchText}
-      onChange={(e) => setSearchText(e.target.value)}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
-          </InputAdornment>
-        ),
-        endAdornment: searchText && (
-          <InputAdornment position="end">
-            <CloseIcon
-              sx={{ fontSize: "20px", cursor: "pointer" }}
-              onClick={() => setSearchText("")}
-            />
-          </InputAdornment>
-        ),
-      }}
-    />
-
-    <FormControl sx={{ minWidth: 250 }} size="small">
-      <InputLabel sx={{ fontSize: 14, top: 2 }}>Chuyên khoa</InputLabel>
-      <Select
-        label="Chuyên khoa"
-        value={selectedKhoa}
-        onChange={(e) => setSelectedKhoa(e.target.value)}
+      <Box
         sx={{
-          fontSize: 14,
-          height: 40,
-          pl: 1,
-          "& .MuiSelect-icon": { right: 8 },
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 2,
+          alignItems: "center",
         }}
       >
-        <MenuItem value="">Tất cả</MenuItem>
-        {khoaOptions.map((khoa) => (
-          <MenuItem key={khoa._id} value={khoa._id}>
-            {khoa.TenKhoa}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  </Box>
+        <TextField
+          sx={{
+            width: 250,
+            "& .MuiInputBase-root": {
+              paddingRight: "8px",
+              "& .MuiInputAdornment-root": {
+                color: "#9e9e9e",
+              },
+            },
+            "&:hover .MuiInputAdornment-root": {
+              color: "#424242",
+            },
+            "& .Mui-focused .MuiInputAdornment-root": {
+              color: "#1976d2",
+            },
+          }}
+          size="small"
+          placeholder="Tìm theo tên bác sĩ..."
+          variant="outlined"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
+              </InputAdornment>
+            ),
+            endAdornment: searchText && (
+              <InputAdornment position="end">
+                <CloseIcon
+                  sx={{ fontSize: "20px", cursor: "pointer" }}
+                  onClick={() => setSearchText("")}
+                />
+              </InputAdornment>
+            ),
+          }}
+        />
 
-   <div>
+        <FormControl sx={{ minWidth: 250 }} size="small">
+          <InputLabel sx={{ fontSize: 14, top: 2 }}>Chuyên khoa</InputLabel>
+          <Select
+            label="Chuyên khoa"
+            value={selectedKhoa}
+            onChange={(e) => setSelectedKhoa(e.target.value)}
+            sx={{
+              fontSize: 14,
+              height: 40,
+              pl: 1,
+              "& .MuiSelect-icon": { right: 8 },
+            }}
+          >
+            <MenuItem value="">Tất cả</MenuItem>
+            {khoaOptions.map((khoa) => (
+              <MenuItem key={khoa._id} value={khoa.TenKhoa}>
+                {khoa.TenKhoa}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+      <div>
       <ButtonAdd 
         name="Thêm mới"
         link="/Admin/HumanResources/Doctor/Edit"
@@ -205,22 +239,24 @@ export default function Page() {
     </div>
 </Box>
 
-        {/* BẢNG DỮ LIỆU */}
-        <CustomTableHumanResources
-          columns={columns}
-          rows={filteredRows}
-          onEdit={(id) => {router.push(`/Admin/HumanResources/Doctor/Edit/${id}`)}}
-          onDelete={() => {}}
-          onDisable={(id) => {console.log(id);
-          }}
-          showEdit={true}
-          showDelete={false}
-          showDisable={true}
-          page={currentPage}
-          totalItems={totalItems}
-          onPageChange={setCurrentPage}
-        />
-      </div>
-    </>
+      {/* BẢNG DỮ LIỆU */}
+      <CustomTableHumanResources
+        columns={columns}
+        rows={rows}
+        onEdit={(id) => {
+          router.push(`/Admin/HumanResources/Doctor/Edit/${id}`);
+        }}
+        onDelete={() => {}}
+        onDisable={(id) => {
+          console.log(id);
+        }}
+        showEdit={true}
+        showDelete={false}
+        showDisable={true}
+        page={currentPage}
+        totalItems={totalItems}
+        onPageChange={setCurrentPage}
+      />
+    </div>
   );
 }

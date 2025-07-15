@@ -16,7 +16,7 @@ import CustomTableRooms, {
   Column,
   rowRenderType,
 } from "../../component/Table/CustomTableRoom";
-import { getTestingRoom } from "../../services/Room";
+import { getTestingRoom, SearchRoomName } from "../../services/Room";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 
@@ -56,28 +56,27 @@ const columns: Column[] = [
   },
 ];
 
-
 export default function Page() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [searchText, setSearchText] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState(""); // Trạng thái hoạt động
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
     const [currentPage, setCurrentPage] = useState <number> (0);
   const [totalItems , setTotalItems] = useState <number> (0)
   const router = useRouter();
 
-
-  // ✅ Load API
+  // Gọi API load toàn bộ (phân trang)
   const LoaddingApi = async () => {
     try {
       const data = await getTestingRoom(currentPage + 1);
       if (!data?.data || data.data.length === 0) {
         setRows([]);
+        setTotalItems(0);
         return;
       }
 
-       setTotalItems (data.totalItems)
-      
+      setTotalItems(data.totalItems);
+
       const mappedData: rowRenderType[] = data.data.map((item: TestingRoom) => ({
         _id: item._id,
         TenPhongThietBi: item.TenPhongThietBi,
@@ -94,24 +93,59 @@ export default function Page() {
     }
   };
 
-  useEffect(() => {
-    LoaddingApi();
-  }, [currentPage]);
-  
+  // Gọi API tìm kiếm phòng theo tên
+  const handleSearchTextChange = async (key: string) => {
+    setSearchText(key);
+    setCurrentPage(0);
 
+    if (key.trim() === "") {
+      LoaddingApi();
+      return;
+    }
+
+    try {
+      const data = await SearchRoomName(key);
+      if (!data || data.length === 0) {
+        setRows([]);
+        setTotalItems(0);
+        return;
+      }
+
+      const mappedData: rowRenderType[] = data.map((item: TestingRoom) => ({
+        _id: item._id,
+        TenPhongThietBi: item.TenPhongThietBi,
+        TenXetNghiem: item.TenXetNghiem,
+        Image: item.Image?.startsWith("http")
+          ? item.Image
+          : `${API_BASE_URL}/image/${item.Image || "default.png"}`,
+        TrangThaiHoatDong: item.TrangThaiHoatDong ?? true,
+      }));
+
+      setRows(mappedData);
+      setTotalItems(mappedData.length);
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm phòng:", error);
+      setRows([]);
+      setTotalItems(0);
+    }
+  };
+
+  // Load lại dữ liệu khi đổi trang (chỉ khi không có searchText)
+  useEffect(() => {
+    if (searchText.trim() === "") {
+      LoaddingApi();
+    }
+  }, [currentPage]);
+
+  // Lọc trạng thái sau khi đã có danh sách từ API hoặc tìm kiếm
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
-      const matchSearch = row?.TenPhongThietBi?.toLowerCase().includes(
-        searchText.toLowerCase()
-      );
-
       const matchStatus = selectedStatus
         ? String(row.TrangThaiHoatDong) === selectedStatus
         : true;
-
-      return matchSearch && matchStatus;
+      return matchStatus;
     });
-  }, [searchText, selectedStatus, rows]);
+  }, [selectedStatus, rows]);
 
   return (
     <div className="AdminContent-Container">
@@ -150,7 +184,7 @@ export default function Page() {
           placeholder="Tìm theo tên phòng..."
           variant="outlined"
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => handleSearchTextChange(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -161,7 +195,7 @@ export default function Page() {
               <InputAdornment position="end">
                 <CloseIcon
                   sx={{ fontSize: "20px", cursor: "pointer" }}
-                  onClick={() => setSearchText("")}
+                  onClick={() => handleSearchTextChange("")}
                 />
               </InputAdornment>
             ),
@@ -181,7 +215,7 @@ export default function Page() {
               "& .MuiSelect-icon": { right: 8 },
             }}
           >
-            
+            <MenuItem value="">Tất cả</MenuItem>
             <MenuItem value="true">Đang hoạt động</MenuItem>
             <MenuItem value="false">Ngừng hoạt động</MenuItem>
           </Select>
@@ -205,9 +239,9 @@ export default function Page() {
         showEdit={true}
         showDelete={false}
         showDisable={true}
-         page={currentPage}
-          totalItems={totalItems}
-          onPageChange={setCurrentPage}
+        page={currentPage}
+        totalItems={totalItems}
+        onPageChange={setCurrentPage}
       />
     </div>
   );

@@ -1,6 +1,5 @@
-
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
@@ -11,7 +10,7 @@ import CustomTableBill, {
   rowRenderType,
 } from "../../component/Table/CustomTableBill";
 import BreadcrumbComponent from "../../component/Breadcrumb";
-import { getBill } from "../../services/Category";
+import { getBill, SearchBill } from "../../services/Category";
 import { BillApiResponseItem } from "../ExaminationPrice/page";
 
 const columns: ColumnCategory[] = [
@@ -29,11 +28,17 @@ export default function Page() {
   const [totalItems, setTotalItems] = useState(0);
   const rowsPerPage = 10;
 
-  
-  const fetchData = async (currentPage: number) => {
+  const fetchData = async (currentPage: number, search: string = "") => {
     try {
-      const data = await getBill(currentPage , 'XetNghiem');
-      console.log("✅ Dữ liệu từ API:", data);
+      let data;
+
+      if (search.trim()) {
+        // 🔍 Gọi API tìm kiếm
+        data = await SearchBill("XetNghiem", search.trim());
+      } else {
+        // 📄 Gọi API phân trang
+        data = await getBill(currentPage, "XetNghiem");
+      }
 
       if (data?.data) {
         const mapped = data.data.map((item: BillApiResponseItem) => ({
@@ -45,26 +50,25 @@ export default function Page() {
           TenHoaDon: item?.TenHoaDon ?? "-",
         }));
 
-        console.log("✅ Dữ liệu đã map:", mapped);
         setRows(mapped);
         setTotalItems(data.totalItems || mapped.length);
+      } else {
+        setRows([]);
+        setTotalItems(0);
       }
     } catch (error) {
-      console.error("Lỗi khi load hóa đơn:", error);
+      console.error("❌ Lỗi khi load dữ liệu:", error);
     }
   };
 
   useEffect(() => {
-    fetchData(page + 1); // Server dùng 1-based
-  }, [page]);
-
-  // ✅ Lọc theo họ tên an toàn
-  const filteredRows = useMemo(() => {
-    const keyword = searchText.toLowerCase().trim();
-    return rows.filter((row) =>
-      (row?.HoVaTen ?? "").toLowerCase().includes(keyword)
-    );
-  }, [rows, searchText]);
+    if (searchText.trim()) {
+      fetchData(1, searchText);
+      setPage(0); // Reset trang về 0 khi tìm kiếm
+    } else {
+      fetchData(page + 1);
+    }
+  }, [page, searchText]);
 
   return (
     <div className="AdminContent-Container">
@@ -106,7 +110,7 @@ export default function Page() {
       {/* 📋 Bảng hóa đơn */}
       <CustomTableBill
         columns={columns}
-        rows={filteredRows}
+        rows={rows}
         page={page}
         totalItems={totalItems}
         rowsPerPage={rowsPerPage}

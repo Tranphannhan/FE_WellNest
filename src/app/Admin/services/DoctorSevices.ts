@@ -50,6 +50,23 @@ export async function getkhoaOptions (page : number){
   }
 }
 
+// Tìm kiếm loại khoa
+export async function Searchfordepartmenttype (key : string){
+   try {
+    const result = await fetch(`http://localhost:5000/Khoa/Search?Key=${key}`);
+    if (result.ok) {
+      const Data = await result.json();
+      return Data;
+    } else {
+      const errorText = await result.text();
+      console.error(`Lỗi fetch Loại Khoa /Pagination: ${result.status} - ${errorText}`);
+      return 'Lỗi khi lấy loại khoa';
+    }
+  } catch (error) {
+    console.error("Exception khi lấy loại khoa", error);
+    throw error;
+  }
+}
 // Fetch doctor details
 export async function getDoctorDetails(id: string): Promise<DoctorType | null> {
   try {
@@ -196,3 +213,20 @@ export async function addDoctor(doctorData: FormData): Promise<{ success: boolea
 }
 
 
+// tìm kiếm bác sĩ
+export async function FindDoctor (key : string) {
+  try {
+    const result = await fetch(`http://localhost:5000/Bacsi/Search?Key=${key}`);
+    if (result.ok){
+      const Data = await result.json();
+      return Data;
+    } else {
+      const errorText = await result.text();
+      console.error(`Lỗi fetch Bacsi/Pagination: ${result.status} - ${errorText}`);
+      return 'Lỗi khi tìm kiếm bác sĩ';
+    }
+  } catch (error) {
+    console.error("Lỗi khi tìm kiếm bác sĩ", error);
+    throw error;
+  }   
+}

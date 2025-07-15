@@ -18,8 +18,10 @@ import CustomTableCatalog, {
   rowRenderType,
 } from "../../component/Table/CustomTableCatalog";
 import { getCategoryDepartments } from "../../services/Category";
+import { Searchfordepartmenttype } from "../../services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import changeDepartmentStatus from "../../services/TestType";
 
 const columns: ColumnCategory[] = [
   { id: "TenKhoa", label: "Tên khoa", sortable: true, Outstanding: true },
@@ -34,6 +36,7 @@ export default function Page() {
   const [totalItems, setTotalItems] = useState(0);
   const router = useRouter();
 
+  // Fetch phân trang mặc định
   const fetchData = async (currentPage = 1) => {
     try {
       const data = await getCategoryDepartments(currentPage);
@@ -42,7 +45,7 @@ export default function Page() {
           _id: item._id,
           TenKhoa: item.TenKhoa,
           TrangThaiHoatDong: item.TrangThaiHoatDong,
-          TenXetNghiem: "", // để tránh lỗi khi map sang bảng
+          TenXetNghiem: "",
         }));
         setRows(mapped);
         setTotalItems(data.totalItems);
@@ -52,22 +55,52 @@ export default function Page() {
     }
   };
 
+  // Gọi danh sách bình thường khi không search
   useEffect(() => {
-    fetchData(page + 1); // server bắt đầu từ 1
-  }, [page]);
+    if (searchText.trim() === "") {
+      fetchData(page + 1);
+    }
+  }, [page, searchText]);
 
+  // Gọi API tìm kiếm khi searchText có nội dung
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const handleSearch = async () => {
+        try {
+          if (searchText.trim() !== "") {
+            const result = await Searchfordepartmenttype (searchText);
+            if (Array.isArray(result)) {
+              const mapped = result.map((item: rowRenderType) => ({
+                _id: item._id,
+                TenKhoa: item.TenKhoa,
+                TrangThaiHoatDong: item.TrangThaiHoatDong,
+                TenXetNghiem: "",
+              }));
+              setRows(mapped);
+              setTotalItems(result.length);
+              setPage(0); // reset về page đầu
+            }
+          }
+        } catch (err) {
+          console.error("Lỗi khi tìm kiếm loại khoa:", err);
+        }
+      };
+      handleSearch();
+    }, 300); // debounce 300ms
+
+    return () => clearTimeout(timeout);
+  }, [searchText]);
+
+  // Lọc trạng thái tại client
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
-      const matchText = row.TenKhoa?.toLowerCase().includes(searchText.toLowerCase());
-
       const matchStatus =
         statusFilter === "Tất cả" ||
         (statusFilter === "Đang hoạt động" && row.TrangThaiHoatDong === true) ||
         (statusFilter === "Ngừng hoạt động" && row.TrangThaiHoatDong === false);
-
-      return matchText && matchStatus;
+      return matchStatus;
     });
-  }, [searchText, statusFilter, rows]);
+  }, [rows, statusFilter]);
 
   const handleStatusChange = (e: SelectChangeEvent) => {
     setStatusFilter(e.target.value);
@@ -141,7 +174,14 @@ export default function Page() {
         rows={filteredRows}
         onEdit={(id) => {router.push(`/Admin/List/DepartmentType/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
-        onDisable={(row) => console.log("Toggle status", row)}
+        onDisable={(id, status) => {
+        changeDepartmentStatus(id, status)
+        .then(() => {
+        alert("Cập nhật thành công");
+        fetchData(page + 1); // render lại
+      })
+      .catch(() => alert("Cập nhật thất bại"));
+      }}
         showEdit={true}
         showDelete={false}
         showDisable={true}

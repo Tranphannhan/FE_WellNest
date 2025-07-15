@@ -17,12 +17,11 @@ import CustomTableMedicine, {
   ColumnMedicine,
   rowRenderType,
 } from "../../component/Table/CustomTableMedicine";
-import { getListOfDrugs } from "../../services/Category";
+import { getListOfDrugs, SearchForMedicine } from "../../services/Category";
 import { medicineType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 
-// Cấu hình cột
 const columns: ColumnMedicine[] = [
   { id: "TenThuoc", label: "Tên thuốc", sortable: true, Outstanding: true },
   { id: "DonVi", label: "Đơn vị" },
@@ -35,13 +34,20 @@ export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [groupFilter, setGroupFilter] = useState("Tất cả");
   const [rows, setRows] = useState<rowRenderType[]>([]);
-  const [page, setPage] = useState(0); // client page (0-based)
+  const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const router = useRouter();
 
-  const fetchData = async (currentPage: number) => {
+  const fetchData = async (currentPage: number, search: string = "") => {
     try {
-      const data = await getListOfDrugs(currentPage); // gọi API
+      let data;
+
+      if (search.trim()) {
+        data = await SearchForMedicine(search.trim());
+      } else {
+        data = await getListOfDrugs(currentPage);
+      }
+
       if (data?.data) {
         const mapped = data.data.map((item: medicineType) => ({
           _id: item._id,
@@ -53,17 +59,26 @@ export default function Page() {
         }));
         setRows(mapped);
         setTotalItems(data.totalItems || mapped.length);
+      } else {
+        setRows([]);
+        setTotalItems(0);
       }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách thuốc:", error);
     }
   };
 
+  // 👇 Gọi fetch lại mỗi khi page hoặc searchText thay đổi
   useEffect(() => {
-    fetchData(page + 1); // API nhận page bắt đầu từ 1
-  }, [page]);
+    if (searchText.trim()) {
+      fetchData(1, searchText);
+      setPage(0);
+    } else {
+      fetchData(page + 1);
+    }
+  }, [page, searchText]);
 
-  // Danh sách nhóm thuốc duy nhất
+  // ✅ Lọc nhóm thuốc client-side
   const uniqueGroups = useMemo(() => {
     const groups = rows
       .map((r) => r.TenNhomThuoc)
@@ -71,15 +86,13 @@ export default function Page() {
     return ["Tất cả", ...groups];
   }, [rows]);
 
-  // Lọc dữ liệu
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
-      const matchText = row.TenThuoc?.toLowerCase().includes(searchText.toLowerCase());
       const matchGroup =
         groupFilter === "Tất cả" || row.TenNhomThuoc === groupFilter;
-      return matchText && matchGroup;
+      return matchGroup;
     });
-  }, [searchText, groupFilter, rows]);
+  }, [groupFilter, rows]);
 
   const handleGroupChange = (e: SelectChangeEvent) => {
     setGroupFilter(e.target.value);

@@ -11,13 +11,13 @@ import {
   Select,
   InputLabel,
 } from "@mui/material";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import "./Staff.css";
 import { Staff } from "@/app/types/hospitalTypes/hospitalType";
 import CustomTableHumanResources, { Column } from "../../component/Table/CustomTableHumanResources";
-import { getOptionstaffAdmin, getstaffAdmin } from "../../services/staffSevices";
+import { getOptionstaffAdmin, getstaffAdmin, searchAccount } from "../../services/staffSevices"; // thêm searchAccount
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 
@@ -31,24 +31,14 @@ export interface rowRenderType {
   TenLoai: string;
 }
 
-const columns:Column[]  = [
+const columns: Column[] = [
   { id: "Image", label: "Ảnh", sortable: false, Outstanding: false },
   { id: "TenTaiKhoan", label: "Họ tên", sortable: true, Outstanding: true },
   { id: "GioiTinh", label: "Giới tính", sortable: true, Outstanding: false },
   { id: "SoDienThoai", label: "SĐT", sortable: false, Outstanding: false },
-  {
-    id: "TenLoai",
-    label: "Loại tài khoản",
-    sortable: false,
-    Outstanding: true,
-  },
-  {
-    id: "TrangThaiHoatDong",
-    label: "Trạng thái",
-    sortable: true,
-    Outstanding: false,
-  },
-] as const;
+  { id: "TenLoai", label: "Loại tài khoản", sortable: false, Outstanding: true },
+  { id: "TrangThaiHoatDong", label: "Trạng thái", sortable: true, Outstanding: false },
+];
 
 export default function Page() {
   const [searchText, setSearchText] = useState("");
@@ -59,6 +49,7 @@ export default function Page() {
   const [totalItems , setTotalItems] = useState <number> (0)
   const router = useRouter();
 
+  // Load danh sách bình thường (khi không tìm kiếm)
   const loaddingAPI = async () => {
     const data = await getstaffAdmin(currentPage + 1);
     if (!data?.data || data.data.length === 0) {
@@ -66,17 +57,14 @@ export default function Page() {
       return;
     }
 
-    setTotalItems (data.totalItems)
+    setTotalItems(data.totalItems);
 
     const mappedRows: rowRenderType[] = data.data.map((item: Staff) => ({
       _id: item._id,
       TenTaiKhoan: item.TenTaiKhoan || "Không rõ",
       GioiTinh: item.GioiTinh || "Không rõ",
       SoDienThoai: item.SoDienThoai || "",
-      TrangThaiHoatDong:
-        typeof item.TrangThaiHoatDong === "boolean"
-          ? item.TrangThaiHoatDong
-          : true,
+      TrangThaiHoatDong: typeof item.TrangThaiHoatDong === "boolean" ? item.TrangThaiHoatDong : true,
       Image: `${API_BASE_URL}/image/${item?.Image || "default.png"}`,
       TenLoai: item?.Id_LoaiTaiKhoan?.TenLoaiTaiKhoan || "Không rõ",
     }));
@@ -85,58 +73,72 @@ export default function Page() {
   };
 
   useEffect(() => {
-    loaddingAPI();
-  }, [currentPage]);
-
-
-
-  // --- 
-  interface TenLoaiOPType {
-    _id: string,
-    TenLoaiTaiKhoan: string,
-    VaiTro : string
-  }
-
-  const [TenLoaiOP , setTenLoaiOP] = useState <TenLoaiOPType []> ([]);
-    const loaddingAPISelect  = async () => {
-      const data = await getOptionstaffAdmin ();
-      if (!data) return;
-      setTenLoaiOP (data)
+    if (!searchText.trim()) {
+      loaddingAPI();
     }
-  
+  }, [currentPage, searchText]);
 
-  useEffect (() => {
-    loaddingAPISelect ();
+  // Gọi searchAccount khi có từ khóa tìm kiếm
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (!searchText.trim()) return;
+
+      const data = await searchAccount(searchText); // nếu cần, truyền cả selectedLoai
+      if (data?.data) {
+        const mappedRows: rowRenderType[] = data.data.map((item: Staff) => ({
+          _id: item._id,
+          TenTaiKhoan: item.TenTaiKhoan || "Không rõ",
+          GioiTinh: item.GioiTinh || "Không rõ",
+          SoDienThoai: item.SoDienThoai || "",
+          TrangThaiHoatDong: typeof item.TrangThaiHoatDong === "boolean" ? item.TrangThaiHoatDong : true,
+          Image: `${API_BASE_URL}/image/${item?.Image || "default.png"}`,
+          TenLoai: item?.Id_LoaiTaiKhoan?.TenLoaiTaiKhoan || "Không rõ",
+        }));
+        setRows(mappedRows);
+        setTotalItems(data.totalItems || data.data.length);
+      } else {
+        setRows([]);
+      }
+    }, 500); // debounce 500ms
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchText]);
+
+  // --- Load option loại tài khoản
+  interface TenLoaiOPType {
+    _id: string;
+    TenLoaiTaiKhoan: string;
+    VaiTro: string;
+  }
+  const [TenLoaiOP, setTenLoaiOP] = useState<TenLoaiOPType[]>([]);
+  const loaddingAPISelect = async () => {
+    const data = await getOptionstaffAdmin();
+    if (!data) return;
+    setTenLoaiOP(data);
+  };
+
+  useEffect(() => {
+    loaddingAPISelect();
   }, []);
 
-
-
-  // ----
-
-  const filteredRows = useMemo(() => {
-    return rows.filter((row) => {
-      const matchSearch = row.TenTaiKhoan.toLowerCase().includes(
-        searchText.toLowerCase()
-      );
-      const matchLoai = selectedLoai ? row.TenLoai === selectedLoai : true;
-      return matchSearch && matchLoai;
-    });
-  }, [searchText, selectedLoai, rows]);
+  // --- Lọc theo loại tài khoản client-side
+  const displayedRows = rows.filter(row => {
+    return selectedLoai ? row.TenLoai === TenLoaiOP.find(t => t._id === selectedLoai)?.TenLoaiTaiKhoan : true;
+  });
 
   return (
     <>
-      
-
       <div className="AdminContent-Container">
         <BreadcrumbComponent
-        items={[
-          { title: "Trang chủ", href: "/Admin" },
-          { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
-          { title: "Nhân viên" },
-        ]}
-      />  
+          items={[
+            { title: "Trang chủ", href: "/Admin" },
+            { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
+            { title: "Nhân viên" },
+          ]}
+        />
+
         {/* FORM TÌM KIẾM & FILTER */}
-<Box
+        <Box
   sx={{
     display: "flex",
     flexWrap: "wrap",
@@ -147,45 +149,45 @@ export default function Page() {
     width: "100%", // Ensures the Box takes full width
   }}
 >
-  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
-    <TextField
-      sx={{
-        width: 250,
-        "& .MuiInputBase-root": {
-          paddingRight: "8px",
-          "& .MuiInputAdornment-root": {
-            color: "#9e9e9e",
-            transition: "color 0.3s",
-          },
-        },
-        "&:hover .MuiInputAdornment-root": {
-          color: "#424242",
-        },
-        "& .Mui-focused .MuiInputAdornment-root": {
-          color: "#1976d2",
-        },
-      }}
-      size="small"
-      placeholder="Tìm theo tên nhân viên..."
-      variant="outlined"
-      value={searchText}
-      onChange={(e) => setSearchText(e.target.value)}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
-          </InputAdornment>
-        ),
-        endAdornment: searchText && (
-          <InputAdornment position="end">
-            <CloseIcon
-              sx={{ fontSize: "20px", cursor: "pointer" }}
-              onClick={() => setSearchText("")}
-            />
-          </InputAdornment>
-        ),
-      }}
-    />
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
+          <TextField
+            sx={{
+              width: 250,
+              "& .MuiInputBase-root": {
+                paddingRight: "8px",
+                "& .MuiInputAdornment-root": {
+                  color: "#9e9e9e",
+                  transition: "color 0.3s",
+                },
+              },
+              "&:hover .MuiInputAdornment-root": {
+                color: "#424242",
+              },
+              "& .Mui-focused .MuiInputAdornment-root": {
+                color: "#1976d2",
+              },
+            }}
+            size="small"
+            placeholder="Tìm theo tên nhân viên..."
+            variant="outlined"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
+                </InputAdornment>
+              ),
+              endAdornment: searchText && (
+                <InputAdornment position="end">
+                  <CloseIcon
+                    sx={{ fontSize: "20px", cursor: "pointer" }}
+                    onClick={() => setSearchText("")}
+                  />
+                </InputAdornment>
+              ),
+            }}
+          />
 
     <FormControl sx={{ minWidth: 250 }} size="small">
       <InputLabel sx={{ fontSize: 14, top: 2 }}>Loại tài khoản</InputLabel>
@@ -218,18 +220,17 @@ export default function Page() {
       </div>
 </Box>
 
-
         {/* BẢNG DỮ LIỆU */}
         <CustomTableHumanResources
           columns={columns}
-          rows={filteredRows}
+          rows={displayedRows}
           onEdit={(id) => {router.push(`/Admin/HumanResources/Staff/Form/${id}`)}}
           onDelete={() => {}}
-          onDisable={(id) => {console.log(id)}}
+          onDisable={(id) => console.log(id)}
           showEdit={true}
           showDelete={false}
           showDisable={true}
-            page={currentPage} // ✅ Dùng biến state
+          page={currentPage}
           totalItems={totalItems}
           onPageChange={setCurrentPage}
         />

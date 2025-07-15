@@ -17,7 +17,7 @@ import CustomTableRooms, {
   Column,
   rowRenderType,
 } from "../../component/Table/CustomTableRoom";
-import { getRommm } from "../../services/Room";
+import { getRommm, SearchRoom } from "../../services/Room";
 import { getkhoaOptions } from "../../services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
@@ -107,7 +107,41 @@ export default function Page() {
     }
   };
 
-  // Tải dữ liệu phòng mỗi khi đổi trang
+  // Gọi khi người dùng tìm số phòng
+  const handleSearchTextChange = async (key: string) => {
+    setSearchText(key);
+    setCurrentPage(0);
+
+    if (key.trim() === "") {
+      loaddingAPI();
+      return;
+    }
+
+    try {
+      const data = await SearchRoom(key);
+      if (!data || data.length === 0) {
+        setRows([]);
+        setTotalItems(0);
+        return;
+      }
+
+      const mappedRows: rowRenderType[] = data.map((item: PhongKham) => ({
+        _id: item._id,
+        SoPhongKham: item.SoPhongKham,
+        Khoa: item.Id_Khoa?.TenKhoa || "Không rõ",
+        TrangThaiHoatDong: item.Id_Khoa?.TrangThaiHoatDong ?? true,
+      }));
+
+      setRows(mappedRows);
+      setTotalItems(mappedRows.length);
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm phòng:", error);
+      setRows([]);
+      setTotalItems(0);
+    }
+  };
+
+  // Khi đổi trang → load lại danh sách
   useEffect(() => {
     loaddingAPI();
   }, [currentPage]);
@@ -173,10 +207,7 @@ export default function Page() {
           placeholder="Tìm theo số phòng..."
           variant="outlined"
           value={searchText}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-            setCurrentPage(0); // reset về trang đầu
-          }}
+          onChange={(e) => handleSearchTextChange(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -187,7 +218,7 @@ export default function Page() {
               <InputAdornment position="end">
                 <CloseIcon
                   sx={{ fontSize: "20px", cursor: "pointer" }}
-                  onClick={() => setSearchText("")}
+                  onClick={() => handleSearchTextChange("")}
                 />
               </InputAdornment>
             ),
