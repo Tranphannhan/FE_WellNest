@@ -166,7 +166,7 @@ export const SearchParaclinicalAwaitingPayment = async (
     }
 
     const response = await fetch(
-      `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?${params.toString()}`
+      `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?${params.toString()}&TrangThaiThanhToan=false`
     );
 
     if (!response.ok) {
