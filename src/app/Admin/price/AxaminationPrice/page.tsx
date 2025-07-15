@@ -34,11 +34,8 @@ export default function Page() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-<<<<<<< HEAD
   const [Loaigia] = useState<string>("GiaKham"); // hoặc để người dùng chọn từ Select
-=======
   const router = useRouter();
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
   const fetchData = async (currentPage = 1) => {
     try {

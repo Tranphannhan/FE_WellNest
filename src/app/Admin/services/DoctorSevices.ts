@@ -50,8 +50,6 @@ export async function getkhoaOptions (page : number){
   }
 }
 
-<<<<<<< HEAD
-
 // Tìm kiếm loại khoa
 export async function Searchfordepartmenttype (key : string){
    try {
@@ -67,7 +65,8 @@ export async function Searchfordepartmenttype (key : string){
   } catch (error) {
     console.error("Exception khi lấy loại khoa", error);
     throw error;
-=======
+  }
+}
 // Fetch doctor details
 export async function getDoctorDetails(id: string): Promise<DoctorType | null> {
   try {
@@ -210,13 +209,8 @@ export async function addDoctor(doctorData: FormData): Promise<{ success: boolea
   } catch (error) {
     console.error("Add doctor error:", error);
     return { success: false, message: "Lỗi kết nối server" };
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
   }
 }
-
-
-<<<<<<< HEAD
-
 
 
 // tìm kiếm bác sĩ
@@ -236,5 +230,3 @@ export async function FindDoctor (key : string) {
     throw error;
   }   
 }
-=======
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566

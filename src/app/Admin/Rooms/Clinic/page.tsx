@@ -151,13 +151,6 @@ export default function Page() {
     loaddingAPISelect();
   }, []);
 
-<<<<<<< HEAD
-  // Lọc thêm theo chuyên khoa
-  const finalRows = useMemo(() => {
-    if (!selectedKhoa) return rows;
-    return rows.filter((row) => row.Khoa === selectedKhoa);
-  }, [rows, selectedKhoa]);
-=======
   // Lọc dữ liệu theo tìm kiếm + chuyên khoa
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -168,7 +161,6 @@ export default function Page() {
       return matchSearch && matchKhoa;
     });
   }, [searchText, selectedKhoa, rows]);
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
   return (
     <div className="AdminContent-Container">
@@ -269,13 +261,8 @@ export default function Page() {
       {/* Bảng hiển thị */}
       <CustomTableRooms
         columns={columns}
-<<<<<<< HEAD
-        rows={finalRows}
-        onEdit={(row) => console.log("Edit", row)}
-=======
         rows={filteredRows}
         onEdit={(id) => {router.push(`/Admin/Rooms/Clinic/Form/${id}`)}}
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
         onDelete={(row) => console.log("Delete", row)}
         onDisable={(row) => console.log("Disable", row)}
         showEdit={true}

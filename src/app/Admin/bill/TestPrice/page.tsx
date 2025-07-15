@@ -10,12 +10,8 @@ import CustomTableBill, {
   rowRenderType,
 } from "../../component/Table/CustomTableBill";
 import BreadcrumbComponent from "../../component/Breadcrumb";
-<<<<<<< HEAD
 import { getBill, SearchBill } from "../../services/Category";
-=======
-import { getBill } from "../../services/Category";
 import { BillApiResponseItem } from "../ExaminationPrice/page";
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
 const columns: ColumnCategory[] = [
   { id: "HoVaTen", label: "Họ và tên", sortable: true, Outstanding: true },

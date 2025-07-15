@@ -18,13 +18,10 @@ import CustomTableCatalog, {
   rowRenderType,
 } from "../../component/Table/CustomTableCatalog";
 import { getCategoryDepartments } from "../../services/Category";
-<<<<<<< HEAD
 import { Searchfordepartmenttype } from "../../services/DoctorSevices";
-=======
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 import changeDepartmentStatus from "../../services/TestType";
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
 const columns: ColumnCategory[] = [
   { id: "TenKhoa", label: "Tên khoa", sortable: true, Outstanding: true },

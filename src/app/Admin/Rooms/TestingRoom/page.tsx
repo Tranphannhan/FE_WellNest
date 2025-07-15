@@ -16,13 +16,9 @@ import CustomTableRooms, {
   Column,
   rowRenderType,
 } from "../../component/Table/CustomTableRoom";
-<<<<<<< HEAD
 import { getTestingRoom, SearchRoomName } from "../../services/Room";
-=======
-import { getTestingRoom } from "../../services/Room";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
 interface TestingRoom {
   _id: string;
@@ -65,14 +61,9 @@ export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
-<<<<<<< HEAD
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const [totalItems, setTotalItems] = useState<number>(0);
-=======
     const [currentPage, setCurrentPage] = useState <number> (0);
   const [totalItems , setTotalItems] = useState <number> (0)
   const router = useRouter();
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
   // Gọi API load toàn bộ (phân trang)
   const LoaddingApi = async () => {

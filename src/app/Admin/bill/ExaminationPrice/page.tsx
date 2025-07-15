@@ -76,9 +76,6 @@ export default function Page() {
     try {
       const data = await getBill(currentPage, "Kham");
       if (data?.data) {
-<<<<<<< HEAD
-        const mapped = mapData(data.data);
-=======
         const mapped = data.data.map((item: BillApiResponseItem) => ({
           _id: item._id,
           HoVaTen: item?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ?? "-",
@@ -89,7 +86,6 @@ export default function Page() {
         }));
 
         console.log("✅ Dữ liệu đã map:", mapped);
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
         setRows(mapped);
         setTotalItems(data.totalItems || mapped.length);
       }

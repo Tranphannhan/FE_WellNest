@@ -36,7 +36,6 @@ export async function getTestingRoom (page : number) {
     console.error("Exception khi lấy Phong_Thiet_Bi", error);
     throw error;
   }   
-<<<<<<< HEAD
 }
 
 
@@ -76,8 +75,6 @@ export async function SearchRoomName (key : string) {
     throw error;
   }   
 }   
-=======
-} 
 
 // services/Room.ts
 export const getRommmDetail = async (id: string) => {
@@ -95,4 +92,3 @@ export const getRommmDetail = async (id: string) => {
     throw error;
   }
 };
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
