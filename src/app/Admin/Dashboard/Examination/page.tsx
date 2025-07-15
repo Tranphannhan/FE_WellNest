@@ -67,7 +67,7 @@ const formatCurrency = (amount: number) => {
     }).format(amount);
 };
 
-const MedicalRecordTransactions: React.FC = () => {
+export default function MedicalRecordTransactions() {
     const [medicalRecordTransactions, setMedicalRecordTransactions] = useState<Transaction[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [filterStartDate, setFilterStartDate] = useState("");
@@ -542,5 +542,3 @@ const MedicalRecordTransactions: React.FC = () => {
         </div>
     );
 };
-
-export default MedicalRecordTransactions;

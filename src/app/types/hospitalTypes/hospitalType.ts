@@ -3,6 +3,7 @@ import { paraclinicalType } from "../patientTypes/patient";
 export interface medicineGroupType {
   _id?: string;
   TenNhomThuoc?: string;
+  TrangThaiHoatDong ? : boolean;
 }
 
 
@@ -200,4 +201,14 @@ export interface departmentType {
   _id : string,
   TenKhoa : string,
   TrangThaiHoatDong : boolean 
+}
+
+// Hóa đơn
+
+export interface billTypes{
+    Id_PhieuKhamBenh?: string;
+  Id_Dichvu: string | null;
+  Id_ThuNgan?: string;
+  LoaiHoaDon: 'Kham' | 'Thuoc' | 'XetNghiem';
+  TenHoaDon?: string;
 }

@@ -67,7 +67,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-const PrescriptionTransactions: React.FC = () => {
+export default function PrescriptionTransactions() {
   const [prescriptionTransactions, setPrescriptionTransactions] = useState<Transaction[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filterStartDate, setFilterStartDate] = useState("");
@@ -545,5 +545,3 @@ const PrescriptionTransactions: React.FC = () => {
     </div>
   );
 };
-
-export default PrescriptionTransactions;

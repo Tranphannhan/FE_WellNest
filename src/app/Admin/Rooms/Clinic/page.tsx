@@ -19,10 +19,11 @@ import CustomTableRooms, {
 } from "../../component/Table/CustomTableRoom";
 import { getRommm, SearchRoom } from "../../services/Room";
 import { getkhoaOptions } from "../../services/DoctorSevices";
+import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
 
 // Cấu hình cột của bảng
 const columns: Column[] = [
-  { id: "_id", label: "ID Phòng", sortable: false, Outstanding: false },
   { id: "SoPhongKham", label: "Số phòng", sortable: true, Outstanding: true },
   { id: "Khoa", label: "Khoa", sortable: true, Outstanding: false },
   {
@@ -45,6 +46,7 @@ interface PhongKham {
   _id: string;
   Id_Khoa: Khoa;
   SoPhongKham: string;
+  TrangThaiHoatDong: boolean;
 }
 
 // Select chuyên khoa
@@ -61,6 +63,7 @@ export default function Page() {
   const [khoaOptions, setKhoaOptions] = useState<khoaOptionsType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalItems, setTotalItems] = useState<number>(0);
+  const router = useRouter();
 
   // Lấy chuyên khoa
   const loaddingAPISelect = async () => {
@@ -94,7 +97,7 @@ export default function Page() {
         _id: item._id,
         SoPhongKham: item.SoPhongKham,
         Khoa: item.Id_Khoa?.TenKhoa || "Không rõ",
-        TrangThaiHoatDong: item.Id_Khoa?.TrangThaiHoatDong ?? true,
+        TrangThaiHoatDong: item.TrangThaiHoatDong ?? true,
       }));
 
       setRows(mappedRows);
@@ -148,11 +151,24 @@ export default function Page() {
     loaddingAPISelect();
   }, []);
 
+<<<<<<< HEAD
   // Lọc thêm theo chuyên khoa
   const finalRows = useMemo(() => {
     if (!selectedKhoa) return rows;
     return rows.filter((row) => row.Khoa === selectedKhoa);
   }, [rows, selectedKhoa]);
+=======
+  // Lọc dữ liệu theo tìm kiếm + chuyên khoa
+  const filteredRows = useMemo(() => {
+    return rows.filter((row) => {
+      const matchSearch = row?.SoPhongKham?.toLowerCase().includes(
+        searchText.toLowerCase()
+      );
+      const matchKhoa = selectedKhoa ? row.Khoa === selectedKhoa : true;
+      return matchSearch && matchKhoa;
+    });
+  }, [searchText, selectedKhoa, rows]);
+>>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
   return (
     <div className="AdminContent-Container">
@@ -165,6 +181,17 @@ export default function Page() {
       />
 
       {/* Tìm kiếm & lọc */}
+      <Box
+  sx={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 2,
+    mb: 2,
+    alignItems: "center",
+    justifyContent: "space-between", // Pushes content to left and right
+    width: "100%", // Ensures the Box takes full width
+  }}
+>
       <Box
         sx={{
           display: "flex",
@@ -231,12 +258,24 @@ export default function Page() {
           </Select>
         </FormControl>
       </Box>
+      <div>
+              <ButtonAdd 
+                name="Thêm mới"
+                link="/Admin/Rooms/Clinic/Form"
+              />
+            </div>
+            </Box>
 
       {/* Bảng hiển thị */}
       <CustomTableRooms
         columns={columns}
+<<<<<<< HEAD
         rows={finalRows}
         onEdit={(row) => console.log("Edit", row)}
+=======
+        rows={filteredRows}
+        onEdit={(id) => {router.push(`/Admin/Rooms/Clinic/Form/${id}`)}}
+>>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
         onDelete={(row) => console.log("Delete", row)}
         onDisable={(row) => console.log("Disable", row)}
         showEdit={true}

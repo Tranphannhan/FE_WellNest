@@ -1,15 +1,20 @@
 // import { Testtype } from "../types/hospitalTypes/hospitalType";
 import { ParaclinicalResponse } from "../types/hospitalTypes/hospitalType";
-import { paraclinicalType, prescriptionType } from "../types/patientTypes/patient";
+import { prescriptionType } from "../types/patientTypes/patient";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function getPrescriptionPendingPayment (): Promise<prescriptionType | null> {
+export async function getPrescriptionPendingPayment (Pagination:boolean = false , page:number = 1) {
   try {
-    const response = await fetch(`${API_BASE_URL}/Donthuoc/DonThuocThuNgan/Pagination?TrangThaiThanhToan=false&gidzl=kEmFJg2atsUrzmz1hBhQQR3r2Ksoi8nfh_u96hkttZAagLeKkEEBPgEcMqwyxDjgzg0AIZCiVU4HfwNVRG`);
+    const response = await fetch(`${API_BASE_URL}/Donthuoc/DonThuocThuNgan/Pagination?TrangThaiThanhToan=false&page=${page}`);
     if (!response.ok) return null;
     const data =await response.json();
-    return data.data
+    if(Pagination){
+      return data
+    }else{
+      return data.data
+    }
+    
   } catch (error) {
     console.error("Fetch lỗi:", error);
     return null;
@@ -18,12 +23,16 @@ export async function getPrescriptionPendingPayment (): Promise<prescriptionType
 
 
 // yêu cầu xét nghiệm 
-export async function getParaclinicalAwaitingPayment (): Promise<paraclinicalType | null> {
+export async function getParaclinicalAwaitingPayment (Pagination: boolean = false, page:number = 1) {
   try {
-    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Pagination?TrangThaiThanhToan=false&gidzl=ReQG2WGF9X5ZdP05214Z7s6PaGuH52yOVP3C0qOOSn8gbv89GKXs72gMm0yN6dDFBSJ3NJTUl8SZ0muc6m`);
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/YeuCauXetNghiemThuNgan/Pagination?TrangThaiThanhToan=false&page=${page}`);
     if (!response.ok) return null;
     const data =await response.json();
-    return data.data
+    if(Pagination){
+      return data
+    }else{
+      return data.data
+    }
   } catch (error) {
     console.error("Fetch lỗi:", error);
     return null;
@@ -107,3 +116,71 @@ export async function confirmTestRequestPayment(id: string){
     return null;
   }
 }
+
+
+// tìm kiếm
+export const SearchPrescriptionPendingPayment = async (
+  isWaiting: boolean,
+  page: number = 1,
+  fullName?: string | null,
+  phoneNumber?: string | null
+) => {
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.append("TrangThaiThanhToan", isWaiting ? "false" : "true");
+    queryParams.append("page", page.toString());
+    if (fullName) queryParams.append("HoVaTen", fullName);
+    if (phoneNumber) queryParams.append("SDT", phoneNumber);
+
+    const res = await fetch(`${API_BASE_URL}/Donthuoc/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?${queryParams.toString()}`);
+    if (!res.ok) return null;
+
+    return await res.json();
+  } catch (error) {
+    console.error("Lỗi khi fetch đơn thuốc:", error);
+    return null;
+  }
+};
+
+
+export const SearchParaclinicalAwaitingPayment = async (
+  isActive: boolean,
+  page: number = 1,
+  HoVaTen?: string,
+  SDT?: string
+) => {
+  try {
+    // Tạo query string chỉ chứa các tham số có giá trị
+    const params = new URLSearchParams({
+      TrangThaiHoatDong: String(isActive),
+      page: String(page),
+      limit: "5",
+    });
+
+    if (HoVaTen && HoVaTen.trim() !== "") {
+      params.append("HoVaTen", HoVaTen.trim());
+    }
+
+    if (SDT && SDT.trim() !== "") {
+      params.append("SDT", SDT.trim());
+    }
+
+    const response = await fetch(
+      `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Lỗi khi gọi API");
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Lỗi khi fetch getParaclinicalAwaitingPayment:", error);
+    return {
+      data: [],
+      totalPages: 1,
+      currentPage: 1,
+    };
+  }
+};

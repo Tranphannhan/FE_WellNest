@@ -12,6 +12,9 @@ import CustomTableCatalog, {
 } from "../../component/Table/CustomTableCatalog";
 import { getTypeOfTest } from "../../services/Category";
 import { ParaclinicalType } from "@/app/types/hospitalTypes/hospitalType";
+import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
+import { changeTestTypeStatus } from "../../services/TestType";
 
 // 👉 Thêm hàm tìm kiếm từ API
 export async function Searchfortesttype(key: string) {
@@ -47,6 +50,7 @@ export default function Page() {
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const router = useRouter();
 
   const fetchData = async (currentPage = 1) => {
     try {
@@ -131,55 +135,80 @@ export default function Page() {
         ]}
       />
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
-        <TextField
-          sx={{ width: 300 }}
-          size="small"
-          placeholder="Tìm theo tên xét nghiệm..."
-          variant="outlined"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
-              </InputAdornment>
-            ),
-            endAdornment: searchText && (
-              <InputAdornment position="end">
-                <CloseIcon
-                  sx={{ fontSize: "20px", cursor: "pointer" }}
-                  onClick={() => setSearchText("")}
-                />
-              </InputAdornment>
-            ),
-          }}
-        />
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 2,
+          alignItems: "center",
+          justifyContent: "space-between", // Pushes content to left and right
+          width: "100%", // Ensures the Box takes full width
+        }}
+      >
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
+          <TextField
+            sx={{ width: 300 }}
+            size="small"
+            placeholder="Tìm theo tên xét nghiệm..."
+            variant="outlined"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
+                </InputAdornment>
+              ),
+              endAdornment: searchText && (
+                <InputAdornment position="end">
+                  <CloseIcon
+                    sx={{ fontSize: "20px", cursor: "pointer" }}
+                    onClick={() => setSearchText("")}
+                  />
+                </InputAdornment>
+              ),
+            }}
+          />
 
-        <FormControl sx={{ minWidth: 250 }} size="small">
-          <InputLabel sx={{ fontSize: 14, top: 2 }}>Phòng thiết bị</InputLabel>
-          <Select
-            label="Phòng thiết bị"
-            value={selectedRoom}
-            onChange={(e) => setSelectedRoom(e.target.value)}
-            sx={{ fontSize: 14, height: 40, pl: 1, '& .MuiSelect-icon': { right: 8 } }}
-          >
-            <MenuItem value="">Tất cả</MenuItem>
-            {uniqueRooms.map((room) => (
-              <MenuItem key={room} value={room}>{room}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          <FormControl sx={{ minWidth: 250 }} size="small">
+            <InputLabel sx={{ fontSize: 14, top: 2 }}>Phòng thiết bị</InputLabel>
+            <Select
+              label="Phòng thiết bị"
+              value={selectedRoom}
+              onChange={(e) => setSelectedRoom(e.target.value)}
+              sx={{ fontSize: 14, height: 40, pl: 1, '& .MuiSelect-icon': { right: 8 } }}
+            >
+              <MenuItem value="">Tất cả</MenuItem>
+              {uniqueRooms.map((room) => (
+                <MenuItem key={room} value={room}>{room}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+        <div>
+          <ButtonAdd
+            name="Thêm mới"
+            link="/Admin/List/TestType/Form"
+          />
+        </div>
       </Box>
 
       <CustomTableCatalog
         columns={columns}
         rows={filteredRows}
-        onEdit={(row) => console.log("Edit", row)}
+        onEdit={(id) => { router.push(`/Admin/List/TestType/Form/${id}`) }}
         onDelete={(row) => console.log("Delete", row)}
-        onDisable={(row) => console.log("Toggle status", row)}
+        onDisable={(id, status) => {
+        changeTestTypeStatus(id, status)
+        .then(() => {
+          alert("Cập nhật thành công");
+          fetchData(page + 1);
+        })
+        .catch(() => alert("Cập nhật thất bại"));
+        }}
         showEdit={true}
-        showDelete={true}
+        showDelete={false}
         showDisable={true}
         page={page}
         totalItems={totalItems}

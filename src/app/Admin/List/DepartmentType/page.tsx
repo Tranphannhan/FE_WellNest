@@ -18,7 +18,13 @@ import CustomTableCatalog, {
   rowRenderType,
 } from "../../component/Table/CustomTableCatalog";
 import { getCategoryDepartments } from "../../services/Category";
+<<<<<<< HEAD
 import { Searchfordepartmenttype } from "../../services/DoctorSevices";
+=======
+import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
+import changeDepartmentStatus from "../../services/TestType";
+>>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
 const columns: ColumnCategory[] = [
   { id: "TenKhoa", label: "Tên khoa", sortable: true, Outstanding: true },
@@ -31,6 +37,7 @@ export default function Page() {
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const router = useRouter();
 
   // Fetch phân trang mặc định
   const fetchData = async (currentPage = 1) => {
@@ -112,6 +119,17 @@ export default function Page() {
         ]}
       />
 
+<Box
+  sx={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 2,
+    mb: 2,
+    alignItems: "center",
+    justifyContent: "space-between", // Pushes content to left and right
+    width: "100%", // Ensures the Box takes full width
+  }}
+>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
         <TextField
           sx={{ width: 250 }}
@@ -146,15 +164,29 @@ export default function Page() {
           </Select>
         </FormControl>
       </Box>
+        <div>
+        <ButtonAdd 
+          name="Thêm mới"
+          link="/Admin/List/DepartmentType/Form"
+        />
+      </div>
+      </Box>
 
       <CustomTableCatalog
         columns={columns}
         rows={filteredRows}
-        onEdit={(row) => console.log("Edit", row)}
+        onEdit={(id) => {router.push(`/Admin/List/DepartmentType/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
-        onDisable={(row) => console.log("Toggle status", row)}
+        onDisable={(id, status) => {
+        changeDepartmentStatus(id, status)
+        .then(() => {
+        alert("Cập nhật thành công");
+        fetchData(page + 1); // render lại
+      })
+      .catch(() => alert("Cập nhật thất bại"));
+      }}
         showEdit={true}
-        showDelete={true}
+        showDelete={false}
         showDisable={true}
         page={page}
         totalItems={totalItems}

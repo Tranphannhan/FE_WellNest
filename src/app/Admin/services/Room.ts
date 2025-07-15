@@ -36,6 +36,7 @@ export async function getTestingRoom (page : number) {
     console.error("Exception khi lấy Phong_Thiet_Bi", error);
     throw error;
   }   
+<<<<<<< HEAD
 }
 
 
@@ -75,3 +76,23 @@ export async function SearchRoomName (key : string) {
     throw error;
   }   
 }   
+=======
+} 
+
+// services/Room.ts
+export const getRommmDetail = async (id: string) => {
+  try {
+    const response = await fetch(`http://localhost:5000/Phong_Kham/Detail/${id}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Lỗi khi lấy chi tiết phòng khám:', error);
+    throw error;
+  }
+};
+>>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566

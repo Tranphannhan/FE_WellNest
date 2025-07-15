@@ -21,6 +21,22 @@ const columns: ColumnCategory[] = [
   { id: "TenHoaDon", label: "Tên hóa đơn", sortable: true },
 ];
 
+export interface BillApiResponseItem {
+  _id: string;
+  LoaiHoaDon: "Kham" | "Thuoc" | "XetNghiem";
+  TenHoaDon: string;
+  Id_PhieuKhamBenh?: {
+    Ngay?: string;
+    Id_TheKhamBenh?: {
+      HoVaTen?: string;
+    };
+    Id_GiaDichVu?: {
+      Giadichvu?: number;
+    };
+  };
+}
+
+
 export default function Page() {
   const [searchText, setSearchText] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
@@ -60,7 +76,20 @@ export default function Page() {
     try {
       const data = await getBill(currentPage, "Kham");
       if (data?.data) {
+<<<<<<< HEAD
         const mapped = mapData(data.data);
+=======
+        const mapped = data.data.map((item: BillApiResponseItem) => ({
+          _id: item._id,
+          HoVaTen: item?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ?? "-",
+          Ngay: item?.Id_PhieuKhamBenh?.Ngay ?? "-",
+          Giadichvu: item?.Id_PhieuKhamBenh?.Id_GiaDichVu?.Giadichvu ?? 0,
+          LoaiHoaDon: item?.LoaiHoaDon ?? "-",
+          TenHoaDon: item?.TenHoaDon ?? "-",
+        }));
+
+        console.log("✅ Dữ liệu đã map:", mapped);
+>>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
         setRows(mapped);
         setTotalItems(data.totalItems || mapped.length);
       }

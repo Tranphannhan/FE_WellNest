@@ -16,6 +16,7 @@
     background-color: white;
     padding: 20px;
     height: fit-content !important;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 
@@ -92,6 +93,8 @@
     padding: 20px;
     width: 72%;
     overflow-x: auto; 
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    height: fit-content;
 }
 
 
@@ -182,4 +185,7 @@
     background-color: #b02a37;
 }
 
+.p.MuiTypography-root.MuiTypography-body2.css-7ctihp-MuiTypography-root {
+    font-size: 16px;
+}
 

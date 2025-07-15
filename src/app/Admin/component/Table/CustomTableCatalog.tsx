@@ -47,9 +47,9 @@ export interface ColumnCategory {
 interface CustomTableProps {
   columns: ColumnCategory[];
   rows: rowRenderType[];
-  onEdit?: (row: rowRenderType) => void;
+  onEdit?: (id: string) => void;
   onDelete?: (row: rowRenderType) => void;
-  onDisable: (row: rowRenderType) => void;
+  onDisable?: (id: string, status: boolean) => void;
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;
@@ -215,9 +215,26 @@ export default function CustomTableCatalog ({
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu} PaperProps={{ elevation: 3, sx: { minWidth: 160, borderRadius: 2, mt: 1, boxShadow: "0 2px 12px rgba(0,0,0,0.1)", p: 0.5 } }} transformOrigin={{ horizontal: "right", vertical: "top" }} anchorOrigin={{ horizontal: "right", vertical: "bottom" }}>
         {onEdit && showEdit && selectedRow && (
-          <MenuItem onClick={() => { onEdit(selectedRow); handleCloseMenu(); }} sx={{ color: "#1976d2", fontSize: 15, fontWeight: 500, px: 2, py: 1, borderRadius: 1, "&:hover": { backgroundColor: "#e3f2fd" } }}>
-            <FaEdit style={{ marginRight: 8 }} /> Sửa
-          </MenuItem>
+          <MenuItem
+  onClick={() => {
+    if (onEdit && selectedRow?._id) {
+      onEdit(selectedRow._id); // chỉ truyền _id
+    }
+    handleCloseMenu();
+  }}
+  sx={{
+    color: "#1976d2",
+    fontSize: 15,
+    fontWeight: 500,
+    px: 2,
+    py: 1,
+    borderRadius: 1,
+    "&:hover": { backgroundColor: "#e3f2fd" },
+  }}
+>
+  <FaEdit style={{ marginRight: 8 }} /> Sửa
+</MenuItem>
+
         )}
 
         {onDelete && showDelete && selectedRow && (
@@ -226,14 +243,14 @@ export default function CustomTableCatalog ({
           </MenuItem>
         )}
 
-        {showDisable && selectedRow && selectedRow.TrangThaiHoatDong && (
-          <MenuItem onClick={() => { onDisable(selectedRow); handleCloseMenu(); }} sx={{ color: "#d32f2f", fontSize: 15, fontWeight: 500, px: 2, py: 1, borderRadius: 1, "&:hover": { backgroundColor: "#ffebee" } }}>
+        {showDisable && onDisable &&selectedRow && selectedRow.TrangThaiHoatDong && (
+          <MenuItem onClick={() => { onDisable(selectedRow._id, !selectedRow.TrangThaiHoatDong); handleCloseMenu(); }} sx={{ color: "#d32f2f", fontSize: 15, fontWeight: 500, px: 2, py: 1, borderRadius: 1, "&:hover": { backgroundColor: "#ffebee" } }}>
             <ImBlocked style={{ marginRight: 8 }} /> Vô hiệu
           </MenuItem>
         )}
 
-        {onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
-          <MenuItem onClick={() => { onDisable(selectedRow); handleCloseMenu(); }} sx={{ color: "#388e3c", fontSize: 15, fontWeight: 500, px: 2, py: 1, borderRadius: 1, "&:hover": { backgroundColor: "#e8f5e9" } }}>
+        {showDisable && onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
+          <MenuItem onClick={() => { onDisable(selectedRow._id, !selectedRow.TrangThaiHoatDong); handleCloseMenu(); }} sx={{ color: "#388e3c", fontSize: 15, fontWeight: 500, px: 2, py: 1, borderRadius: 1, "&:hover": { backgroundColor: "#e8f5e9" } }}>
             <FaRegCheckCircle style={{ marginRight: 8 }} /> Kích hoạt
           </MenuItem>
         )}

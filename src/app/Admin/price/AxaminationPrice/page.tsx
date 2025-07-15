@@ -18,6 +18,8 @@ import CustomTableServicePrice, {
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import { getExaminationPrice, searchserviceprice } from "../../services/Category";
 import { ServicePriceType } from "@/app/types/hospitalTypes/hospitalType";
+import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
 
 const columns: ColumnCategory[] = [
   { id: "Tendichvu", label: "Tên dịch vụ", sortable: true, Outstanding: true },
@@ -32,7 +34,11 @@ export default function Page() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+<<<<<<< HEAD
   const [Loaigia] = useState<string>("GiaKham"); // hoặc để người dùng chọn từ Select
+=======
+  const router = useRouter();
+>>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
   const fetchData = async (currentPage = 1) => {
     try {
@@ -85,6 +91,17 @@ export default function Page() {
           { title: "Bảng giá dịch vụ" },
         ]}
       />
+            <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 2,
+          alignItems: "center",
+          justifyContent: "space-between", // Pushes content to left and right
+          width: "100%", // Ensures the Box takes full width
+        }}
+      >
 
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
         <TextField
@@ -124,11 +141,18 @@ export default function Page() {
           </Select>
         </FormControl>
       </Box>
+      <div>
+                    <ButtonAdd 
+                      name="Thêm mới"
+                      link="/Admin/price/AxaminationPrice/Form"
+                    />
+                  </div>
+                  </Box>
 
       <CustomTableServicePrice
         columns={columns}
         rows={filteredRows}
-        onEdit={(row) => console.log("Edit", row)}
+        onEdit={(id) => {router.push(`/Admin/price/AxaminationPrice/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
         onDisable={(row) => console.log("Toggle status", row)}
         showEdit={true}

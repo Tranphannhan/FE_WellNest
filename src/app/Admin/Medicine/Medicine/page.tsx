@@ -19,6 +19,8 @@ import CustomTableMedicine, {
 } from "../../component/Table/CustomTableMedicine";
 import { getListOfDrugs, SearchForMedicine } from "../../services/Category";
 import { medicineType } from "@/app/types/hospitalTypes/hospitalType";
+import { useRouter } from "next/navigation";
+import ButtonAdd from "../../component/Button/ButtonAdd";
 
 const columns: ColumnMedicine[] = [
   { id: "TenThuoc", label: "Tên thuốc", sortable: true, Outstanding: true },
@@ -34,6 +36,7 @@ export default function Page() {
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const router = useRouter();
 
   const fetchData = async (currentPage: number, search: string = "") => {
     try {
@@ -105,6 +108,17 @@ export default function Page() {
         ]}
       />
 
+ <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 2,
+          alignItems: "center",
+          justifyContent: "space-between", // Pushes content to left and right
+          width: "100%", // Ensures the Box takes full width
+        }}
+      >
       <Box
         sx={{
           display: "flex",
@@ -149,11 +163,18 @@ export default function Page() {
           </Select>
         </FormControl>
       </Box>
+      <div>
+              <ButtonAdd 
+                name="Thêm mới"
+                link="/Admin/Medicine/Medicine/Form"
+              />
+            </div>
+            </Box>
 
       <CustomTableMedicine
         columns={columns}
         rows={filteredRows}
-        onEdit={(row) => console.log("Sửa thuốc:", row)}
+        onEdit={(id) => {router.push(`/Admin/Medicine/Medicine/Form/${id}`)}}
         onDelete={(row) => console.log("Xoá thuốc:", row)}
         onDisable={(row) => console.log("Chuyển trạng thái:", row)}
         showEdit={true}
