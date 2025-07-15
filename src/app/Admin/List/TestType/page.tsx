@@ -14,6 +14,7 @@ import { getTypeOfTest } from "../../services/Category";
 import { ParaclinicalType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import { changeTestTypeStatus } from "../../services/TestType";
 
 const columns: ColumnCategory[] = [
   { id: "TenXetNghiem", label: "Tên xét nghiệm", sortable: true, Outstanding: true },
@@ -147,7 +148,14 @@ export default function Page() {
         rows={filteredRows}
         onEdit={(id) => { router.push(`/Admin/List/TestType/Form/${id}`) }}
         onDelete={(row) => console.log("Delete", row)}
-        onDisable={(row) => console.log("Toggle status", row)}
+        onDisable={(id, status) => {
+        changeTestTypeStatus(id, status)
+        .then(() => {
+          alert("Cập nhật thành công");
+          fetchData(page + 1);
+        })
+        .catch(() => alert("Cập nhật thất bại"));
+        }}
         showEdit={true}
         showDelete={false}
         showDisable={true}

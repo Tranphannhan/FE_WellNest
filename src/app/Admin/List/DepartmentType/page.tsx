@@ -20,6 +20,7 @@ import CustomTableCatalog, {
 import { getCategoryDepartments } from "../../services/Category";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import changeDepartmentStatus from "../../services/TestType";
 
 const columns: ColumnCategory[] = [
   { id: "TenKhoa", label: "Tên khoa", sortable: true, Outstanding: true },
@@ -141,7 +142,14 @@ export default function Page() {
         rows={filteredRows}
         onEdit={(id) => {router.push(`/Admin/List/DepartmentType/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
-        onDisable={(row) => console.log("Toggle status", row)}
+        onDisable={(id, status) => {
+        changeDepartmentStatus(id, status)
+        .then(() => {
+        alert("Cập nhật thành công");
+        fetchData(page + 1); // render lại
+      })
+      .catch(() => alert("Cập nhật thất bại"));
+      }}
         showEdit={true}
         showDelete={false}
         showDisable={true}
