@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
@@ -10,7 +10,8 @@ import CustomTableBill, {
   rowRenderType,
 } from "../../component/Table/CustomTableBill";
 import BreadcrumbComponent from "../../component/Breadcrumb";
-import { getBill } from "../../services/Category";
+import { getBill, SearchBill } from "../../services/Category";
+
 
 const columns: ColumnCategory[] = [
   { id: "HoVaTen", label: "Họ và tên", sortable: true, Outstanding: true },
@@ -27,42 +28,67 @@ export default function Page() {
   const [totalItems, setTotalItems] = useState(0);
   const rowsPerPage = 10;
 
-  
+  interface HoaDonType {
+    _id: string;
+    Id_PhieuKhamBenh?: {
+      _id: string;
+      Ngay?: string;
+      Id_TheKhamBenh?: {
+        _id: string;
+        HoVaTen?: string;
+      };
+      Id_GiaDichVu?: {
+        _id: string;
+        Giadichvu?: number;
+      };
+    };
+    LoaiHoaDon?: string;
+    TenHoaDon?: string;
+  }
+
+  const mapData = (data: HoaDonType[]): rowRenderType[] =>
+    data.map((item) => ({
+      _id: item._id,
+      HoVaTen: item?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ?? "-",
+      Ngay: item?.Id_PhieuKhamBenh?.Ngay ?? "-",
+      Giadichvu: item?.Id_PhieuKhamBenh?.Id_GiaDichVu?.Giadichvu ?? 0,
+      LoaiHoaDon: item?.LoaiHoaDon ?? "-",
+      TenHoaDon: item?.TenHoaDon ?? "-",
+    }));
+
   const fetchData = async (currentPage: number) => {
     try {
-      const data = await getBill(currentPage , 'Kham');
-      console.log("✅ Dữ liệu từ API:", data);
-
+      const data = await getBill(currentPage, "Kham");
       if (data?.data) {
-        const mapped = data.data.map((item: any) => ({
-          _id: item._id,
-          HoVaTen: item?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ?? "-",
-          Ngay: item?.Id_PhieuKhamBenh?.Ngay ?? "-",
-          Giadichvu: item?.Id_PhieuKhamBenh?.Id_GiaDichVu?.Giadichvu ?? 0,
-          LoaiHoaDon: item?.LoaiHoaDon ?? "-",
-          TenHoaDon: item?.TenHoaDon ?? "-",
-        }));
-
-        console.log("✅ Dữ liệu đã map:", mapped);
+        const mapped = mapData(data.data);
         setRows(mapped);
         setTotalItems(data.totalItems || mapped.length);
       }
     } catch (error) {
-      console.error("Lỗi khi load hóa đơn:", error);
+      console.error("❌ Lỗi khi load danh sách hóa đơn:", error);
+    }
+  };
+
+  const fetchSearch = async (keyword: string) => {
+    try {
+      const data = await SearchBill("Kham", keyword); // Type = 1: Xét nghiệm
+      if (data?.data) {
+        const mapped = mapData(data.data);
+        setRows(mapped);
+        setTotalItems(mapped.length);
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi tìm kiếm hóa đơn:", error);
     }
   };
 
   useEffect(() => {
-    fetchData(page + 1); // Server dùng 1-based
-  }, [page]);
-
-  // ✅ Lọc theo họ tên an toàn
-  const filteredRows = useMemo(() => {
-    const keyword = searchText.toLowerCase().trim();
-    return rows.filter((row) =>
-      (row?.HoVaTen ?? "").toLowerCase().includes(keyword)
-    );
-  }, [rows, searchText]);
+    if (searchText.trim()) {
+      fetchSearch(searchText.trim());
+    } else {
+      fetchData(page + 1); // Server dùng 1-based
+    }
+  }, [page, searchText]);
 
   return (
     <div className="AdminContent-Container">
@@ -104,7 +130,7 @@ export default function Page() {
       {/* 📋 Bảng hóa đơn */}
       <CustomTableBill
         columns={columns}
-        rows={filteredRows}
+        rows={rows}
         page={page}
         totalItems={totalItems}
         rowsPerPage={rowsPerPage}

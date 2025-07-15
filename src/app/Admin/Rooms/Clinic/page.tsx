@@ -1,4 +1,3 @@
-
 "use client";
 
 import SearchIcon from "@mui/icons-material/Search";
@@ -18,7 +17,7 @@ import CustomTableRooms, {
   Column,
   rowRenderType,
 } from "../../component/Table/CustomTableRoom";
-import { getRommm } from "../../services/Room";
+import { getRommm, SearchRoom } from "../../services/Room";
 import { getkhoaOptions } from "../../services/DoctorSevices";
 
 // Cấu hình cột của bảng
@@ -105,28 +104,55 @@ export default function Page() {
     }
   };
 
-  // Tải dữ liệu phòng mỗi khi đổi trang
+  // Gọi khi người dùng tìm số phòng
+  const handleSearchTextChange = async (key: string) => {
+    setSearchText(key);
+    setCurrentPage(0);
+
+    if (key.trim() === "") {
+      loaddingAPI();
+      return;
+    }
+
+    try {
+      const data = await SearchRoom(key);
+      if (!data || data.length === 0) {
+        setRows([]);
+        setTotalItems(0);
+        return;
+      }
+
+      const mappedRows: rowRenderType[] = data.map((item: PhongKham) => ({
+        _id: item._id,
+        SoPhongKham: item.SoPhongKham,
+        Khoa: item.Id_Khoa?.TenKhoa || "Không rõ",
+        TrangThaiHoatDong: item.Id_Khoa?.TrangThaiHoatDong ?? true,
+      }));
+
+      setRows(mappedRows);
+      setTotalItems(mappedRows.length);
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm phòng:", error);
+      setRows([]);
+      setTotalItems(0);
+    }
+  };
+
+  // Khi đổi trang → load lại danh sách
   useEffect(() => {
     loaddingAPI();
   }, [currentPage]);
-
 
   // Tải chuyên khoa 1 lần duy nhất
   useEffect(() => {
     loaddingAPISelect();
   }, []);
 
-
-  // Lọc dữ liệu theo tìm kiếm + chuyên khoa
-  const filteredRows = useMemo(() => {
-    return rows.filter((row) => {
-      const matchSearch = row?.SoPhongKham?.toLowerCase().includes(
-        searchText.toLowerCase()
-      );
-      const matchKhoa = selectedKhoa ? row.Khoa === selectedKhoa : true;
-      return matchSearch && matchKhoa;
-    });
-  }, [searchText, selectedKhoa, rows]);
+  // Lọc thêm theo chuyên khoa
+  const finalRows = useMemo(() => {
+    if (!selectedKhoa) return rows;
+    return rows.filter((row) => row.Khoa === selectedKhoa);
+  }, [rows, selectedKhoa]);
 
   return (
     <div className="AdminContent-Container">
@@ -162,10 +188,7 @@ export default function Page() {
           placeholder="Tìm theo số phòng..."
           variant="outlined"
           value={searchText}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-            setCurrentPage(0); // reset về trang đầu
-          }}
+          onChange={(e) => handleSearchTextChange(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -176,7 +199,7 @@ export default function Page() {
               <InputAdornment position="end">
                 <CloseIcon
                   sx={{ fontSize: "20px", cursor: "pointer" }}
-                  onClick={() => setSearchText("")}
+                  onClick={() => handleSearchTextChange("")}
                 />
               </InputAdornment>
             ),
@@ -212,7 +235,7 @@ export default function Page() {
       {/* Bảng hiển thị */}
       <CustomTableRooms
         columns={columns}
-        rows={filteredRows}
+        rows={finalRows}
         onEdit={(row) => console.log("Edit", row)}
         onDelete={(row) => console.log("Delete", row)}
         onDisable={(row) => console.log("Disable", row)}

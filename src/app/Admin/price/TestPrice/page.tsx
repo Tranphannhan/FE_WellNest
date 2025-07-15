@@ -16,7 +16,7 @@ import CustomTableServicePrice, {
   rowRenderType,
 } from "../../component/Table/CustomTableServicePrice";
 import BreadcrumbComponent from "../../component/Breadcrumb";
-import { getTestGroup } from "../../services/Category";
+import { getTestGroup, searchserviceprice } from "../../services/Category"; // ✅ import thêm searchserviceprice
 import { ServicePriceType } from "@/app/types/hospitalTypes/hospitalType";
 
 const columns: ColumnCategory[] = [
@@ -32,10 +32,18 @@ export default function Page() {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const Loaigia = "GiaXetNghiem"; // Có thể đổi thành Select nếu muốn người dùng chọn loại giá
 
   const fetchData = async (currentPage = 1) => {
     try {
-      const data = await getTestGroup(currentPage);
+      let data;
+
+      if (searchText.trim()) {
+        data = await searchserviceprice(searchText, Loaigia);
+      } else {
+        data = await getTestGroup(currentPage);
+      }
+
       if (data?.data) {
         const mapped = data.data.map((item: ServicePriceType) => ({
           _id: item._id,
@@ -44,6 +52,7 @@ export default function Page() {
           Loaigia: item.Loaigia ?? "-",
           TrangThaiHoatDong: item.TrangThaiHoatDong ?? false,
         }));
+
         setRows(mapped);
         setTotalItems(data.totalItems || data.pagination?.total || mapped.length);
       }
@@ -54,11 +63,10 @@ export default function Page() {
 
   useEffect(() => {
     fetchData(page + 1);
-  }, [page]);
+  }, [page, searchText]);
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
-      const matchSearch = row.Tendichvu?.toLowerCase().includes(searchText.toLowerCase());
       const matchStatus =
         statusFilter === "all"
           ? true
@@ -66,9 +74,9 @@ export default function Page() {
           ? row.TrangThaiHoatDong === true
           : row.TrangThaiHoatDong === false;
 
-      return matchSearch && matchStatus;
+      return matchStatus;
     });
-  }, [searchText, rows, statusFilter]);
+  }, [rows, statusFilter]);
 
   return (
     <div className="AdminContent-Container">

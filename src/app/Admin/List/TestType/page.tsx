@@ -13,6 +13,24 @@ import CustomTableCatalog, {
 import { getTypeOfTest } from "../../services/Category";
 import { ParaclinicalType } from "@/app/types/hospitalTypes/hospitalType";
 
+// 👉 Thêm hàm tìm kiếm từ API
+export async function Searchfortesttype(key: string) {
+  try {
+    const result = await fetch(`http://localhost:5000/Loaixetnghiem/Search?Key=${key}`);
+    if (result.ok) {
+      const Data = await result.json();
+      return Data;
+    } else {
+      const errorText = await result.text();
+      console.error(`Lỗi fetch loại xét nghiệm : ${result.status} - ${errorText}`);
+      return 'Lỗi khi lấy loại xét nghiệm';
+    }
+  } catch (error) {
+    console.error("Exception khi lấy loại xét nghiệm", error);
+    throw error;
+  }
+}
+
 const columns: ColumnCategory[] = [
   { id: "TenXetNghiem", label: "Tên xét nghiệm", sortable: true, Outstanding: true },
   { id: "MoTaXetNghiem", label: "Mô tả", sortable: false },
@@ -53,9 +71,44 @@ export default function Page() {
     }
   };
 
+  // Fetch data khi đổi trang
   useEffect(() => {
-    fetchData(page + 1);
+    if (!searchText.trim()) {
+      fetchData(page + 1);
+    }
   }, [page]);
+
+  // Tìm kiếm loại xét nghiệm theo từ khóa
+  useEffect(() => {
+    const delayDebounce = setTimeout(async () => {
+      if (searchText.trim() !== "") {
+        try {
+          const result = await Searchfortesttype(searchText);
+          if (result?.data) {
+            const mapped = result.data.map((item: ParaclinicalType) => ({
+              _id: item._id,
+              TenXetNghiem: item.TenXetNghiem,
+              MoTaXetNghiem: item.MoTaXetNghiem,
+              Image: item.Image?.startsWith("http")
+                ? item.Image
+                : `${API_BASE_URL}/image/${item.Image || "default.png"}`,
+              TrangThaiHoatDong: item.TrangThaiHoatDong,
+              Giadichvu: item.Id_GiaDichVu?.Giadichvu ?? 0,
+              TenPhongThietBi: item.Id_PhongThietBi?.TenPhongThietBi ?? "Không rõ",
+            }));
+            setRows(mapped);
+            setTotalItems(result.totalItems || mapped.length);
+          }
+        } catch (error) {
+          console.error("Lỗi khi tìm kiếm loại xét nghiệm:", error);
+        }
+      } else {
+        fetchData(page + 1); // Reset lại dữ liệu nếu input rỗng
+      }
+    }, 400); // debounce 400ms
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchText]);
 
   const uniqueRooms = useMemo(() => {
     const roomSet = new Set(rows.map((row) => row.TenPhongThietBi));
@@ -63,12 +116,10 @@ export default function Page() {
   }, [rows]);
 
   const filteredRows = useMemo(() => {
-    return rows.filter((row) => {
-      const matchSearch = row.TenXetNghiem?.toLowerCase().includes(searchText.toLowerCase());
-      const matchRoom = selectedRoom ? row.TenPhongThietBi === selectedRoom : true;
-      return matchSearch && matchRoom;
-    });
-  }, [searchText, selectedRoom, rows]);
+    return selectedRoom
+      ? rows.filter((row) => row.TenPhongThietBi === selectedRoom)
+      : rows;
+  }, [selectedRoom, rows]);
 
   return (
     <div className="AdminContent-Container">

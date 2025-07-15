@@ -36,4 +36,42 @@ export async function getTestingRoom (page : number) {
     console.error("Exception khi lấy Phong_Thiet_Bi", error);
     throw error;
   }   
-} 
+}
+
+
+// tìm kiếm phòng
+export async function SearchRoom (key : string) {
+  try {
+    const result = await fetch(`http://localhost:5000/Phong_Kham/Search/${key}`);
+    if (result.ok){
+      const Data = await result.json();
+      return Data;
+    } else {
+      const errorText = await result.text();
+      console.error(`Lỗi fetch Bacsi/Pagination: ${result.status} - ${errorText}`);
+      return 'Lỗi khi tìm phòng khám';
+    }
+  } catch (error) {
+    console.error("Lỗi khi tìm kiếm phòng", error);
+    throw error;
+  }   
+}
+
+
+// Tìm kiếm phòng xét nghiệm
+export async function SearchRoomName (key : string) {
+  try {
+    const result = await fetch(`http://localhost:5000/Phong_Thiet_Bi/Search/${key}`);
+    if (result.ok){
+      const Data = await result.json();
+      return Data;
+    } else {
+      const errorText = await result.text();
+      console.error(`Lỗi fetch Bacsi/Pagination: ${result.status} - ${errorText}`);
+      return 'Lỗi khi tìm phòng khám';
+    }
+  } catch (error) {
+    console.error("Lỗi khi tìm kiếm phòng", error);
+    throw error;
+  }   
+}   

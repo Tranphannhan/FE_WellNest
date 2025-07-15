@@ -59,7 +59,6 @@ export async function getDetailPatientInformation (id : string): Promise<prescri
 }
 
 
-
 // Thông tin đơn thuóc
 export async function getDetailPrescription(id : string) {
   try {
