@@ -31,7 +31,7 @@ export default function ExaminationPriceFormLayout() {
   const [message, setMessage] = useState<string>(''); // Thêm state cho thông báo
   const router = useRouter();
   const { id } = useParams();
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Fetch dữ liệu chi tiết giá dịch vụ khi component mount
   useEffect(() => {

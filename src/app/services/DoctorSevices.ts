@@ -37,7 +37,7 @@ export async function getAllPatient (Id_Bacsi : string , TrangThai : boolean , T
 
 export async function getDetailMedicalExaminationCard(id: string): Promise<MedicalExaminationCard | null> {
   try {
-    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/Detail/${id}`);
+    const response = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/Detail/${id}`);
     if (!response.ok) return null;
     const data =await response.json();
     return data[0]
@@ -50,7 +50,7 @@ export async function getDetailMedicalExaminationCard(id: string): Promise<Medic
 // Lấy chỉ số sinh tồn theo Id_PhieuKhamBenh 
 export async function getVitalSignsByExaminationId(id: string): Promise<survivalIndexType | null> {
   try {
-    const response = await fetch(`http://localhost:5000/Chi_So_Sinh_Ton/LayTheoPhieuKhamBenh?Id_PhieuKhamBenh=${id}`);
+    const response = await fetch(`${API_BASE_URL}/Chi_So_Sinh_Ton/LayTheoPhieuKhamBenh?Id_PhieuKhamBenh=${id}`);
     if (!response.ok) return null;
     const data =await response.json();
     return data[0]
@@ -65,7 +65,7 @@ export async function getVitalSignsByExaminationId(id: string): Promise<survival
 // Cập nhât chỉ số sinh tồn
 export async function updateSurvivalIndex (id : string , data : survivalIndexType) {
   try {
-    const response = await fetch(`http://localhost:5000/Chi_So_Sinh_Ton/Update/${id}`,{
+    const response = await fetch(`${API_BASE_URL}/Chi_So_Sinh_Ton/Update/${id}`,{
       method : 'PATCH',
       headers: {
         'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ export async function updateSurvivalIndex (id : string , data : survivalIndexTyp
 
 export async function addDiagnosis (idMedicalExaminationCard : string , dataAdd : diagnosisType) {
   try {
-    const response = await fetch(`http://localhost:5000/Kham_Lam_Sang/Add`,{
+    const response = await fetch(`${API_BASE_URL}/Kham_Lam_Sang/Add`,{
       method : 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -97,7 +97,7 @@ export async function addDiagnosis (idMedicalExaminationCard : string , dataAdd 
     const data = await response.json()
     const id = data.data._id;
 
-     const response2 = await fetch(`http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/Add`,{
+     const response2 = await fetch(`${API_BASE_URL}/Chi_Tiet_Kham_Lam_Sang/Add`,{
       method : 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -153,7 +153,7 @@ export async function getIdByTest(Id_PhongThietBi: string): Promise<clinicalType
 
 export async function getDoctorTemporaryTypes (id: string): Promise<DoctorTemporaryTypes | null> {
   try {
-    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/LayTheoPhieuKhamBenh/${id}`);
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/LayTheoPhieuKhamBenh/${id}`);
     if (!response.ok) return null;
     const data = await response.json();
     return data
@@ -168,7 +168,7 @@ export async function getDoctorTemporaryTypes (id: string): Promise<DoctorTempor
 
 export async function deleteDoctorTemporaryTypes (id: string){
   try {
-    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/Delete/${id}`,{
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/Delete/${id}`,{
       method : 'DELETE',
     });
 
@@ -187,7 +187,7 @@ export async function deleteDoctorTemporaryTypes (id: string){
 
 export async function createTestRequest (Id_PhieuKhamBenh : string , Id_LoaiXetNghiem : string){
   try {
-    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/Add`,{
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/Add`,{
       method : 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -210,7 +210,7 @@ export async function createTestRequest (Id_PhieuKhamBenh : string , Id_LoaiXetN
 
 export async function deleteMedicine (id: string){
   try {
-    const response = await fetch(`http://localhost:5000/Donthuoc_Chitiet/Delete/${id}`,{
+    const response = await fetch(`${API_BASE_URL}/Donthuoc_Chitiet/Delete/${id}`,{
       method : 'DELETE',
     });
     
@@ -230,7 +230,7 @@ export async function createPrescription(
   TenDonThuoc: string
 ) {
   try {
-    const response = await fetch("http://localhost:5000/Donthuoc/Add", {
+    const response = await fetch(`${API_BASE_URL}/Donthuoc/Add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -267,7 +267,7 @@ export async function createPrescriptionDetail(
   NhacNho: string
 ) {
   try {
-    const response = await fetch('http://localhost:5000/Donthuoc_Chitiet/Add', {
+    const response = await fetch(`${API_BASE_URL}/Donthuoc_Chitiet/Add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -298,7 +298,7 @@ export async function createPrescriptionDetail(
 
 export async function fetchMedicalExaminationCardDetail(id: string){
   try {
-    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/Detail/${id}`);
+    const response = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/Detail/${id}`);
 
     if (!response.ok) {
       console.error("Không lấy được chi tiết phiếu khám bệnh");
@@ -315,7 +315,7 @@ export async function fetchMedicalExaminationCardDetail(id: string){
 
 export async function CheckPrescription(Id_PhieuKhamBenh: string) {
   try {
-    const response = await fetch(`http://localhost:5000/Donthuoc/KiemTraDonThuocDangTao?Id_PhieuKhamBenh=${Id_PhieuKhamBenh}`);
+    const response = await fetch(`${API_BASE_URL}/Donthuoc/KiemTraDonThuocDangTao?Id_PhieuKhamBenh=${Id_PhieuKhamBenh}`);
 
     if (!response.ok) {
       console.error("Lỗi khi kiểm tra đơn thuốc");
@@ -342,7 +342,7 @@ export async function CheckPrescription(Id_PhieuKhamBenh: string) {
 
 export async function createExaminationResults(dataAdd: generateTestResultsType) {
   try {
-    const response = await fetch('http://localhost:5000/Kham_Lam_Sang/Add', {
+    const response = await fetch(`${API_BASE_URL}/Kham_Lam_Sang/Add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -366,7 +366,7 @@ export async function createExaminationResults(dataAdd: generateTestResultsType)
     // Update 2
 
     if (data.Created) {
-      const updateResponse = await fetch(`http://localhost:5000/Kham_Lam_Sang/Edit/${data.data._id}`, {
+      const updateResponse = await fetch(`${API_BASE_URL}/Kham_Lam_Sang/Edit/${data.data._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -408,7 +408,7 @@ export async function createExaminationResults(dataAdd: generateTestResultsType)
 
 export async function getExaminationResults (id: string): Promise<generateTestResultsType | null> {
   try {
-    const response = await fetch(`http://localhost:5000/Kham_Lam_Sang/LayTheoPhieuKhamBenh/${id}`);
+    const response = await fetch(`${API_BASE_URL}/Kham_Lam_Sang/LayTheoPhieuKhamBenh/${id}`);
     if (!response.ok) return null;
     const data = await response.json();
     return data[0]
@@ -423,7 +423,7 @@ export async function getExaminationResults (id: string): Promise<generateTestRe
 // Xác nhận đã hoàn thành đơn thuốc
 export async function confirmPrescriptionCompletion (id: string){
   try {
-    const response = await fetch(`http://localhost:5000/Donthuoc/ThayDoiTrangThai/${id}?TrangThai=DaXacNhan`,{
+    const response = await fetch(`${API_BASE_URL}/Donthuoc/ThayDoiTrangThai/${id}?TrangThai=DaXacNhan`,{
       method:'PATCH',
     });
     if (!response.ok){
@@ -444,7 +444,7 @@ export async function confirmPrescriptionCompletion (id: string){
 //Lấy lịch sử khám bệnh 
 export async function medicalExamiNationHistory(id: string){
     try {
-        const result = await fetch(`http://localhost:5000/Kham_Lam_Sang/LayTheoTheKhamBenh/Pagination/${id}`);
+        const result = await fetch(`${API_BASE_URL}/Kham_Lam_Sang/LayTheoTheKhamBenh/Pagination/${id}`);
         if (result.ok) {
             const Data = await result.json();
             return Data.data;
@@ -463,7 +463,7 @@ export async function medicalExamiNationHistory(id: string){
 // Xác nhận đã hoàn thành đơn thuốc
 export async function testConfirmation (id: string){
   try {
-    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/ThayDoiTrangThaiHoatDong/${id}`,{
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/ThayDoiTrangThaiHoatDong/${id}`,{
       method:'PATCH',
     });
     if (!response.ok){
@@ -482,7 +482,7 @@ export async function testConfirmation (id: string){
 // Sử lí khi bệnh nhân vắng mặt
 export async function handlingAbsences (id: string){
   try {
-    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/KhongCoMat/${id}`,{
+    const response = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/KhongCoMat/${id}`,{
       method:'PATCH',
     });
     if (!response.ok){
@@ -502,7 +502,7 @@ export async function handlingAbsences (id: string){
 //Lấy lịch sử khám bệnh 
 export async function latestDiagnosis(id: string){
     try {
-        const result = await fetch(`http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/KiemTraCoChiTietKhamLamSang?Id_PhieuKhamBenh=${id}`);
+        const result = await fetch(`${API_BASE_URL}/Chi_Tiet_Kham_Lam_Sang/KiemTraCoChiTietKhamLamSang?Id_PhieuKhamBenh=${id}`);
         if (result.ok) {
             const Data = await result.json();
             return {continueRender:true,data:Data[0]};
@@ -518,7 +518,7 @@ export async function latestDiagnosis(id: string){
 //Xác nhận hoàn thành khám
 export async function confirmCompletion (id: string){
   try {
-    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/XacNhanTrangThai/${id}`,{
+    const response = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/XacNhanTrangThai/${id}`,{
       method:'PATCH',
     });
     if (!response.ok){
@@ -537,7 +537,7 @@ export async function confirmCompletion (id: string){
 // Chuyển phiếu khám bệnh sang trạng thái chớ xét nghiệm
 export async function waitingForTesting (id: string){
   try {
-    const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/ThayDoiTrangThaiHoatDong/${id}?TrangThaiHoatDong=XetNghiem`,{
+    const response = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/ThayDoiTrangThaiHoatDong/${id}?TrangThaiHoatDong=XetNghiem`,{
       method:'PATCH',
     });
     if (!response.ok){
@@ -556,7 +556,7 @@ export async function waitingForTesting (id: string){
 //Lấy kết quả xét nghiệm theo Id_PhieuKhamBenh
 export async function getResultsByMedicalExaminationFormId(id: string){
     try {
-        const result = await fetch(`http://localhost:5000/Ket_Qua_Xet_Nghiem/LayTheoIdPhieuKhamBenh/${id}`);
+        const result = await fetch(`${API_BASE_URL}/Ket_Qua_Xet_Nghiem/LayTheoIdPhieuKhamBenh/${id}`);
         if (result.ok) {
             const Data = await result.json();
             console.log('Lấy kq xét nghiệm theo Id_PhieuKhamBenh',Data)
@@ -574,7 +574,7 @@ export async function getResultsByMedicalExaminationFormId(id: string){
 //Lấy kết quả xét nghiệm theo Id_Yêu Cầu Xét Nghiệm
 export async function getResultsByRequestTesting(id: string){
     try {
-        const result = await fetch(`http://localhost:5000/Ket_Qua_Xet_Nghiem/LayTheoYeuCauXetNghiem/${id}`);
+        const result = await fetch(`${API_BASE_URL}/Ket_Qua_Xet_Nghiem/LayTheoYeuCauXetNghiem/${id}`);
         if (result.ok) {
             const Data = await result.json();
             console.log('Lấy kq xét nghiệm theo Id_YeuCauXetNghiem',Data)
@@ -611,7 +611,7 @@ export async function searchPatientsByDoctor({
       limit: String(limit)
     });
 
-    const url = `http://localhost:5000/Phieu_Kham_Benh/TimKiemBenhNhanBangTenHoacSDT/Pagination?${queryParams.toString()}`;
+    const url = `${API_BASE_URL}/Phieu_Kham_Benh/TimKiemBenhNhanBangTenHoacSDT/Pagination?${queryParams.toString()}`;
 
     const result = await fetch(url);
 

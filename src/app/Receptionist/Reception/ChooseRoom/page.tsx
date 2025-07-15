@@ -32,6 +32,7 @@ export default function ChooseRoom() {
     const [examinationCardInformation, setExaminationCardInformation] = useState <createExaminationCardInformationType>({})
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
     const router = useRouter();
     const [valueChooseRom , setValueChooseRom] = useState ({
         name : '',
@@ -46,7 +47,7 @@ async function HandleCreate() {
         
 
         // Gửi yêu cầu tạo phiếu khám bệnh
-        const response = await fetch('http://localhost:5000/Phieu_Kham_Benh/Add', {
+        const response = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/Add`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -104,7 +105,7 @@ async function HandleCreate() {
             showToast("Không có dữ liệu chỉ số sinh tồn để gửi!", ToastType.warn);
         } else {
             // Gửi chỉ số sinh tồn nếu có
-            const responseVitalSigns = await fetch('http://localhost:5000/Chi_So_Sinh_Ton/Add', {
+            const responseVitalSigns = await fetch(`${API_BASE_URL}/Chi_So_Sinh_Ton/Add`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

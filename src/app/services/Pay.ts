@@ -1,6 +1,7 @@
 // Trong React hoặc Next.js client
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const payment = async (amount:number, name:string, url:string, Id_DonThuoc:string) => {
-  const response = await fetch('http://localhost:5000/PaymentMoMo/create-payment', {
+  const response = await fetch(`${API_BASE_URL}/PaymentMoMo/create-payment`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

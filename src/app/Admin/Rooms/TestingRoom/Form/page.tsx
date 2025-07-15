@@ -57,7 +57,7 @@ const ImageUploadBox = styled(Box, {
 
 
 function AddTestingRoomForm() {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [tenPhong, setTenPhong] = useState<string>('');
