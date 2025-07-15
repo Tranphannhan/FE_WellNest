@@ -17,13 +17,9 @@ import BreadcrumbComponent from "../../component/Breadcrumb";
 import "./Staff.css";
 import { Staff } from "@/app/types/hospitalTypes/hospitalType";
 import CustomTableHumanResources, { Column } from "../../component/Table/CustomTableHumanResources";
-<<<<<<< HEAD
 import { getOptionstaffAdmin, getstaffAdmin, searchAccount } from "../../services/staffSevices"; // thêm searchAccount
-=======
-import { getOptionstaffAdmin, getstaffAdmin } from "../../services/staffSevices";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
 export interface rowRenderType {
   _id: string;
@@ -49,14 +45,9 @@ export default function Page() {
   const [selectedLoai, setSelectedLoai] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-<<<<<<< HEAD
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const [totalItems, setTotalItems] = useState<number>(0);
-=======
   const [currentPage, setCurrentPage] = useState <number> (0);
   const [totalItems , setTotalItems] = useState <number> (0)
   const router = useRouter();
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
   // Load danh sách bình thường (khi không tìm kiếm)
   const loaddingAPI = async () => {
@@ -139,7 +130,6 @@ export default function Page() {
     <>
       <div className="AdminContent-Container">
         <BreadcrumbComponent
-<<<<<<< HEAD
           items={[
             { title: "Trang chủ", href: "/Admin" },
             { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
@@ -148,6 +138,17 @@ export default function Page() {
         />
 
         {/* FORM TÌM KIẾM & FILTER */}
+        <Box
+  sx={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 2,
+    mb: 2,
+    alignItems: "center",
+    justifyContent: "space-between", // Pushes content to left and right
+    width: "100%", // Ensures the Box takes full width
+  }}
+>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2, alignItems: "center" }}>
           <TextField
             sx={{
@@ -187,65 +188,6 @@ export default function Page() {
               ),
             }}
           />
-=======
-        items={[
-          { title: "Trang chủ", href: "/Admin" },
-          { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
-          { title: "Nhân viên" },
-        ]}
-      />  
-        {/* FORM TÌM KIẾM & FILTER */}
-<Box
-  sx={{
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 2,
-    mb: 2,
-    alignItems: "center",
-    justifyContent: "space-between", // Pushes content to left and right
-    width: "100%", // Ensures the Box takes full width
-  }}
->
-  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
-    <TextField
-      sx={{
-        width: 250,
-        "& .MuiInputBase-root": {
-          paddingRight: "8px",
-          "& .MuiInputAdornment-root": {
-            color: "#9e9e9e",
-            transition: "color 0.3s",
-          },
-        },
-        "&:hover .MuiInputAdornment-root": {
-          color: "#424242",
-        },
-        "& .Mui-focused .MuiInputAdornment-root": {
-          color: "#1976d2",
-        },
-      }}
-      size="small"
-      placeholder="Tìm theo tên nhân viên..."
-      variant="outlined"
-      value={searchText}
-      onChange={(e) => setSearchText(e.target.value)}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon sx={{ fontSize: "20px", cursor: "pointer" }} />
-          </InputAdornment>
-        ),
-        endAdornment: searchText && (
-          <InputAdornment position="end">
-            <CloseIcon
-              sx={{ fontSize: "20px", cursor: "pointer" }}
-              onClick={() => setSearchText("")}
-            />
-          </InputAdornment>
-        ),
-      }}
-    />
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
 
     <FormControl sx={{ minWidth: 250 }} size="small">
       <InputLabel sx={{ fontSize: 14, top: 2 }}>Loại tài khoản</InputLabel>
@@ -281,13 +223,8 @@ export default function Page() {
         {/* BẢNG DỮ LIỆU */}
         <CustomTableHumanResources
           columns={columns}
-<<<<<<< HEAD
           rows={displayedRows}
-          onEdit={(id) => console.log(id)}
-=======
-          rows={filteredRows}
           onEdit={(id) => {router.push(`/Admin/HumanResources/Staff/Form/${id}`)}}
->>>>>>> 719c97165109777f9f4fd2e8da97d6aec25cc566
           onDelete={() => {}}
           onDisable={(id) => console.log(id)}
           showEdit={true}

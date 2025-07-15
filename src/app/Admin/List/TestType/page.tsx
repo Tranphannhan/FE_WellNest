@@ -14,25 +14,10 @@ import { getTypeOfTest } from "../../services/Category";
 import { ParaclinicalType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
-import { changeTestTypeStatus } from "../../services/TestType";
+import { changeTestTypeStatus, Searchfortesttype } from "../../services/TestType";
 
 // 👉 Thêm hàm tìm kiếm từ API
-export async function Searchfortesttype(key: string) {
-  try {
-    const result = await fetch(`http://localhost:5000/Loaixetnghiem/Search?Key=${key}`);
-    if (result.ok) {
-      const Data = await result.json();
-      return Data;
-    } else {
-      const errorText = await result.text();
-      console.error(`Lỗi fetch loại xét nghiệm : ${result.status} - ${errorText}`);
-      return 'Lỗi khi lấy loại xét nghiệm';
-    }
-  } catch (error) {
-    console.error("Exception khi lấy loại xét nghiệm", error);
-    throw error;
-  }
-}
+
 
 const columns: ColumnCategory[] = [
   { id: "TenXetNghiem", label: "Tên xét nghiệm", sortable: true, Outstanding: true },

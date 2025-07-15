@@ -59,3 +59,21 @@ export default async function changeDepartmentStatus(id: string, status: boolean
     throw error;
   }
 }
+
+//tìm kiếm phòng xét nghiệm
+export async function Searchfortesttype(key: string) {
+  try {
+    const result = await fetch(`http://localhost:5000/Loaixetnghiem/Search?Key=${key}`);
+    if (result.ok) {
+      const Data = await result.json();
+      return Data;
+    } else {
+      const errorText = await result.text();
+      console.error(`Lỗi fetch loại xét nghiệm : ${result.status} - ${errorText}`);
+      return 'Lỗi khi lấy loại xét nghiệm';
+    }
+  } catch (error) {
+    console.error("Exception khi lấy loại xét nghiệm", error);
+    throw error;
+  }
+}
