@@ -88,58 +88,65 @@ export default function ExaminationPriceFormLayout() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage('');
-    setErrors({});
+  e.preventDefault();
+  setMessage('');
+  setErrors({});
 
-    if (!validateForm()) {
-      setMessage('Vui lòng kiểm tra các trường thông tin.');
-      return;
+  if (!validateForm()) {
+    setMessage('Vui lòng kiểm tra các trường thông tin.');
+    return;
+  }
+
+  const editData = {
+    Tendichvu: serviceName.trim(),
+    Giadichvu: parseInt(price) || 0,
+    Loaigia: priceType,
+  };
+
+  try {
+    // 1. Cập nhật thông tin cơ bản
+    const editResponse = await fetch(`${API_BASE_URL}/Giadichvu/Edit/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editData),
+    });
+
+    if (!editResponse.ok) {
+      const errorData = await editResponse.json();
+      throw new Error(errorData.message || 'Cập nhật giá dịch vụ thất bại');
     }
 
-    // Dữ liệu cho endpoint Edit
-    const editData = {
-      Tendichvu: serviceName.trim(),
-      Giadichvu: parseInt(price) || 0,
-      Loaigia: priceType,
-    };
-
-    try {
-      const editResponse = await fetch(`${API_BASE_URL}/Giadichvu/Edit/${id}`, {
+    // 2. Xử lý trạng thái
+    if (priceType === 'GiaKham' && status === 'Hien') {
+      const activateRes = await fetch(`${API_BASE_URL}/Giadichvu/ActivateGiaKham/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editData),
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      if (!editResponse.ok) {
-        const errorData = await editResponse.json();
-        throw new Error(errorData.message || 'Cập nhật giá dịch vụ thất bại');
+      if (!activateRes.ok) {
+        throw new Error('Kích hoạt Giá Khám thất bại');
       }
-
-      // Cập nhật trạng thái hoạt động
+    } else {
       const statusResponse = await fetch(
         `${API_BASE_URL}/Giadichvu/SuaTrangThai/${id}?TrangThaiHoatDong=${status === 'Hien'}`,
         {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
         }
       );
 
       if (!statusResponse.ok) {
-        const errorData = await statusResponse.json();
-        throw new Error(errorData.message || 'Cập nhật trạng thái thất bại');
+        throw new Error('Cập nhật trạng thái thất bại');
       }
-
-      setMessage('Cập nhật giá dịch vụ thành công!');
-    } catch (error) {
-      console.error('Lỗi khi cập nhật:', error);
-      setMessage(`Cập nhật thất bại: ${error|| 'Lỗi không xác định'}`);
     }
-  };
+
+    setMessage('Cập nhật giá dịch vụ thành công!');
+  } catch (error) {
+    console.error('Lỗi khi cập nhật:', error);
+    setMessage(`Cập nhật thất bại: ${error || 'Lỗi không xác định'}`);
+  }
+};
+
 
   const handleCancel = () => {
       router.push('/Admin/price/AxaminationPrice');
@@ -183,8 +190,8 @@ export default function ExaminationPriceFormLayout() {
                 <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
                     sx={{ width: { sm: '60%' } }}
-                    label="Tên Dịch Vụ"
-                    name="tenDichVu"
+                    label="Tên Giá Khám"
+                    name="tenGiaKham"
                     variant="outlined"
                     required
                     value={serviceName}
@@ -194,8 +201,8 @@ export default function ExaminationPriceFormLayout() {
                   />
                   <TextField
                     sx={{ width: { sm: '40%' } }}
-                    label="Giá Dịch Vụ"
-                    name="giaDichVu"
+                    label="Giá Khám"
+                    name="giaGiaKham"
                     variant="outlined"
                     value={price}
                     onChange={handlePriceChange}
