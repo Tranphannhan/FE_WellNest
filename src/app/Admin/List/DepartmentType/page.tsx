@@ -22,6 +22,7 @@ import { Searchfordepartmenttype } from "../../services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 import changeDepartmentStatus from "../../services/TestType";
+import { showToast, ToastType } from "@/app/lib/Toast";
 
 const columns: ColumnCategory[] = [
   { id: "TenKhoa", label: "Tên khoa", sortable: true, Outstanding: true },
@@ -176,11 +177,11 @@ export default function Page() {
         onDelete={(row) => console.log("Delete", row)}
         onDisable={(id, status) => {
         changeDepartmentStatus(id, status)
-        .then(() => {
-        alert("Cập nhật thành công");
+          .then(() => {
+          showToast ("Cập nhật trạng thái thành công", ToastType.success);
         fetchData(page + 1); // render lại
       })
-      .catch(() => alert("Cập nhật thất bại"));
+      .catch(() =>  showToast ("Cập nhật trạng thái thất bại", ToastType.error));
       }}
         showEdit={true}
         showDelete={false}

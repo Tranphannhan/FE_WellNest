@@ -45,7 +45,7 @@ interface CustomTableProps {
   rows: rowRenderType[];
   onEdit?: (id: string) => void
   onDelete?: (row: rowRenderType) => void;
-  onDisable: (row: rowRenderType) => void;
+  onDisable: (id : string , status : boolean) => void;
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;
@@ -292,7 +292,7 @@ export default function CustomTableMedicine({
         {showDisable && selectedRow && selectedRow.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              onDisable(selectedRow);
+              onDisable(selectedRow._id , selectedRow.TrangThaiHoatDong as boolean);
               handleCloseMenu();
             }}
             sx={{
@@ -312,7 +312,7 @@ export default function CustomTableMedicine({
         {onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              onDisable(selectedRow);
+              onDisable(selectedRow._id , selectedRow.TrangThaiHoatDong as boolean);
               handleCloseMenu();
             }}
             sx={{

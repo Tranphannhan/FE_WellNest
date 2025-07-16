@@ -51,7 +51,7 @@ interface CustomTableProps {
   rows: rowRenderType[];
   onEdit?: (id: string) => void; // Updated to include row parameter
   onDelete?: () => void; // Updated to include row parameter
-  onDisable?: (id:string) => void; // Updated to include row parameter
+  onDisable?: (id:string , TrangThaiHoatDong : boolean) => void; // Updated to include row parameter
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;
@@ -376,7 +376,7 @@ export default function CustomTableHumanResources({
           <MenuItem
             onClick={() => {
               if (selectedRow && onDisable) {
-                onDisable(selectedRow._id);
+                onDisable(selectedRow._id , selectedRow.TrangThaiHoatDong);
                 handleCloseMenu();
               }
             }}
@@ -401,7 +401,7 @@ export default function CustomTableHumanResources({
           <MenuItem
             onClick={() => {
               if (selectedRow && onDisable) {
-                onDisable(selectedRow._id);
+                onDisable(selectedRow._id , selectedRow.TrangThaiHoatDong);
                 handleCloseMenu();
               }
             }}

@@ -43,7 +43,7 @@ interface CustomTableProps {
   rows: rowRenderType[];
   onEdit?: (_id: string) => void;
   onDelete?: (row: rowRenderType) => void;
-  onDisable: (row: rowRenderType) => void;
+  onDisable: (id : string , status : boolean) => void;
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;
@@ -244,7 +244,7 @@ export default function CustomTableServicePrice({
 
         {showDisable && selectedRow && selectedRow.TrangThaiHoatDong && (
           <MenuItem
-            onClick={() => { onDisable(selectedRow); handleCloseMenu(); }}
+            onClick={() => { onDisable(selectedRow._id , selectedRow.TrangThaiHoatDong); handleCloseMenu(); }}
             sx={{ color: "#d32f2f", fontSize: 15, fontWeight: 500, px: 2, py: 1, borderRadius: 1, "&:hover": { backgroundColor: "#ffebee" } }}
           >
             <ImBlocked style={{ marginRight: 8 }} /> Vô hiệu
@@ -253,7 +253,7 @@ export default function CustomTableServicePrice({
 
         {onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
           <MenuItem
-            onClick={() => { onDisable(selectedRow); handleCloseMenu(); }}
+            onClick={() => { onDisable(selectedRow._id , selectedRow.TrangThaiHoatDong); handleCloseMenu(); }}
             sx={{ color: "#388e3c", fontSize: 15, fontWeight: 500, px: 2, py: 1, borderRadius: 1, "&:hover": { backgroundColor: "#e8f5e9" } }}
           >
             <FaRegCheckCircle style={{ marginRight: 8 }} /> Kích hoạt

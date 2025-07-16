@@ -17,10 +17,11 @@ import CustomTableMedicine, {
   ColumnMedicine,
   rowRenderType,
 } from "../../component/Table/CustomTableMedicine";
-import { getListOfDrugs, SearchForMedicine } from "../../services/Category";
+import { getListOfDrugs, SearchForMedicine, TestConversiondrugStateChangeStatusEvaluation } from "../../services/Category";
 import { medicineType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import { showToast, ToastType } from "@/app/lib/Toast";
 
 const columns: ColumnMedicine[] = [
   { id: "TenThuoc", label: "Tên thuốc", sortable: true, Outstanding: true },
@@ -78,6 +79,7 @@ export default function Page() {
     }
   }, [page, searchText]);
 
+
   // ✅ Lọc nhóm thuốc client-side
   const uniqueGroups = useMemo(() => {
     const groups = rows
@@ -96,6 +98,25 @@ export default function Page() {
 
   const handleGroupChange = (e: SelectChangeEvent) => {
     setGroupFilter(e.target.value);
+  };
+
+
+  // Chuyển đổi trạng thái
+  const stateChange = async (id: string, TrangThaiHoatDong: boolean) => {
+    try {
+      const Result = await TestConversiondrugStateChangeStatusEvaluation (id, !TrangThaiHoatDong);
+      console.log(Result);
+      
+      if (Result?.status){
+        showToast ("Cập nhật trạng thái thành công", ToastType.success);
+        await fetchData(page + 1);
+      } else {
+        showToast("Cập nhật thất bại", ToastType.error);
+      }
+    } catch (error) {
+      showToast("Lỗi khi cập nhật trạng thái", ToastType.error);
+      console.error(error);
+    }
   };
 
   return (
@@ -164,19 +185,19 @@ export default function Page() {
         </FormControl>
       </Box>
       <div>
-              <ButtonAdd 
-                name="Thêm mới"
-                link="/Admin/Medicine/Medicine/Form"
-              />
-            </div>
-            </Box>
+        <ButtonAdd 
+          name="Thêm mới"
+          link="/Admin/Medicine/Medicine/Form"
+        />
+      </div>
+      </Box>
 
       <CustomTableMedicine
         columns={columns}
         rows={filteredRows}
         onEdit={(id) => {router.push(`/Admin/Medicine/Medicine/Form/${id}`)}}
         onDelete={(row) => console.log("Xoá thuốc:", row)}
-        onDisable={(row) => console.log("Chuyển trạng thái:", row)}
+        onDisable={stateChange}
         showEdit={true}
         showDelete={true}
         showDisable={true}
