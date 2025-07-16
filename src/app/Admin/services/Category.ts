@@ -120,6 +120,22 @@ export async function getDrugGroup (page : number) {
   }
 } 
 
+// Chuyển đổi trạng thái nhóm thuốc
+export async function DrugStatusChange   (id: string, currentStatus: boolean) {
+  const res = await fetch(
+    `${API_BASE_URL}/Nhomthuoc/StateChange/${id}?TrangThaiHoatDong=${currentStatus}`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await res.json();
+  return data; 
+}
+ 
+
+
+
 
 // lấy danh sách thuốc
 export async function getListOfDrugs (page : number) {
@@ -139,6 +155,21 @@ export async function getListOfDrugs (page : number) {
     throw error;
   }
 } 
+
+
+// Chuyển đổi trạng thái thuốc
+export async function TestConversiondrugStateChangeStatusEvaluation (id: string, currentStatus: boolean) {
+  const res = await fetch(
+    `${API_BASE_URL}/Thuoc/StateChange/${id}?TrangThaiHoatDong=${currentStatus}`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await res.json();
+  return data; 
+}
+
 
 
 // tìm kiếm thuốc
@@ -220,6 +251,21 @@ export async function searchserviceprice (key : string , Loaigia : string) {
     throw error;
   }
 } 
+
+
+//cập nhật trang thái giá dịch vụ
+export async function ServicePriceStatusUpdate (id: string, currentStatus: boolean) {
+  const res = await fetch(
+    `${API_BASE_URL}/Giadichvu/SuaTrangThai/${id}?TrangThaiHoatDong=${currentStatus}`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await res.json();
+  return data; 
+}
+ 
 
 
 

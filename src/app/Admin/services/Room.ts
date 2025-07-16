@@ -20,7 +20,7 @@ export async function getRommm (page : number) {
   }   
 }   
 
- 
+// lấy danh sách phòng xét nghiệm
 export async function getTestingRoom (page : number) {
   try {
     const result = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Pagination?page=${page}`);
@@ -37,6 +37,23 @@ export async function getTestingRoom (page : number) {
     throw error;
   }   
 }
+ 
+
+// Chuyển đổi trạng thái phòng xét nghiệm
+export async function TestConversionStatusEvaluation (id: string, currentStatus: boolean) {
+  const res = await fetch(
+    `${API_BASE_URL}/Phong_Thiet_Bi/StateChange/${id}?TrangThaiHoatDong=${currentStatus}`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await res.json();
+  return data; 
+}
+ 
+  
+ 
 
 
 // tìm kiếm phòng

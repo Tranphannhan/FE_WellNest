@@ -16,10 +16,11 @@ import CustomTableServicePrice, {
   rowRenderType,
 } from "../../component/Table/CustomTableServicePrice";
 import BreadcrumbComponent from "../../component/Breadcrumb";
-import { getTestGroup, searchserviceprice } from "../../services/Category"; // ✅ import thêm searchserviceprice
+import { getTestGroup, searchserviceprice, ServicePriceStatusUpdate } from "../../services/Category"; // ✅ import thêm searchserviceprice
 import { ServicePriceType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import { showToast, ToastType } from "@/app/lib/Toast";
 
 const columns: ColumnCategory[] = [
   { id: "Tendichvu", label: "Tên dịch vụ", sortable: true, Outstanding: true },
@@ -81,6 +82,26 @@ export default function Page() {
     });
   }, [rows, statusFilter]);
 
+
+    // Chuyển đổi trạng thái
+    const stateChange = async (id: string, TrangThaiHoatDong: boolean) => {
+      try {
+        const Result = await ServicePriceStatusUpdate (id, !TrangThaiHoatDong);
+        console.log(Result);
+        
+        if (Result?.status){
+          showToast ("Cập nhật trạng thái thành công", ToastType.success);
+          await fetchData ();
+  
+        } else {
+          showToast("Cập nhật thất bại", ToastType.error);
+        }
+      } catch (error) {
+        showToast ("Lỗi khi cập nhật trạng thái", ToastType.error);
+        console.error(error);
+      }
+    };
+
   return (
     <div className="AdminContent-Container">
       <BreadcrumbComponent
@@ -141,19 +162,19 @@ export default function Page() {
         </FormControl>
       </Box>
       <div>
-              <ButtonAdd 
-                name="Thêm mới"
-                link="/Admin/price/TestPrice/Form"
-              />
-            </div>
-            </Box>
+        <ButtonAdd 
+          name="Thêm mới"
+          link="/Admin/price/TestPrice/Form"
+        />
+      </div>
+      </Box>
 
       <CustomTableServicePrice
         columns={columns}
         rows={filteredRows}
         onEdit={(id) => {router.push(`/Admin/price/TestPrice/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
-        onDisable={(row) => console.log("Toggle status", row)}
+        onDisable={stateChange}
         showEdit={true}
         showDelete={true}
         showDisable={true}

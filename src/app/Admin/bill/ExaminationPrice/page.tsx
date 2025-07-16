@@ -11,6 +11,7 @@ import CustomTableBill, {
 } from "../../component/Table/CustomTableBill";
 import BreadcrumbComponent from "../../component/Breadcrumb";
 import { getBill, SearchBill } from "../../services/Category";
+import { showToast, ToastType } from "@/app/lib/Toast";
 
 
 const columns: ColumnCategory[] = [
@@ -85,7 +86,6 @@ export default function Page() {
           TenHoaDon: item?.TenHoaDon ?? "-",
         }));
 
-        console.log("✅ Dữ liệu đã map:", mapped);
         setRows(mapped);
         setTotalItems(data.totalItems || mapped.length);
       }
@@ -103,7 +103,8 @@ export default function Page() {
         setTotalItems(mapped.length);
       }
     } catch (error) {
-      console.error("❌ Lỗi khi tìm kiếm hóa đơn:", error);
+      console.error("", error);
+      showToast("❌ Lỗi khi tìm kiếm hóa đơn:", ToastType.error);
     }
   };
 

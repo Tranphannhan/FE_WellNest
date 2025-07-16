@@ -17,10 +17,11 @@ import CustomTableMedicine, {
   ColumnMedicine,
   rowRenderType,
 } from "../../component/Table/CustomTableMedicine";
-import { getDrugGroup } from "../../services/Category";
+import { DrugStatusChange, getDrugGroup } from "../../services/Category";
 import { medicineGroupType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import { showToast, ToastType } from "@/app/lib/Toast";
 
 // Cấu hình cột hiển thị
 const columns: ColumnMedicine[] = [
@@ -72,6 +73,26 @@ export default function Page() {
   const handleStatusChange = (e: SelectChangeEvent) => {
     setStatusFilter(e.target.value);
   };
+
+
+  // Chuyển đổi trạng thái
+  const stateChange = async (id: string, TrangThaiHoatDong: boolean) => {
+    try {
+      const Result = await DrugStatusChange (id, !TrangThaiHoatDong);
+      console.log(Result);
+      
+      if (Result?.status){
+        showToast ("Cập nhật trạng thái thành công", ToastType.success);
+        await  fetchData(page + 1);
+      } else {
+        showToast("Cập nhật thất bại", ToastType.error);
+      }
+    } catch (error) {
+      showToast("Lỗi khi cập nhật trạng thái", ToastType.error);
+      console.error(error);
+    }
+  };
+  
 
   return (
     <div className="AdminContent-Container">
@@ -143,7 +164,7 @@ export default function Page() {
         rows={filteredRows}
         onEdit={(id) => { router.push(`/Admin/Medicine/DrugGroup/Form/${id}`) }}
         onDelete={(row) => console.log("Xoá nhóm thuốc:", row)}
-        onDisable={(row) => console.log("Chuyển trạng thái nhóm thuốc:", row)}
+        onDisable={stateChange}
         showEdit={true}
         showDelete={true}
         showDisable={true}

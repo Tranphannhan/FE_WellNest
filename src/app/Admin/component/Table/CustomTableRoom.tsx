@@ -41,13 +41,13 @@ export interface Column {
   sortable?: boolean;
   Outstanding?: boolean;
 }
-
+  
 interface CustomTableProps {
   columns: Column[];
   rows: rowRenderType[];
-   onEdit?: (id: string) => void;
+  onEdit?: (id: string) => void;
   onDelete?: (row: rowRenderType) => void;
-  onDisable: (row: rowRenderType) => void;
+  onDisable: (id: string , TrangThaiHoatDong : boolean) => void;
   showEdit?: boolean;
   showDelete?: boolean;
   showDisable?: boolean;
@@ -241,7 +241,7 @@ export default function CustomTableRooms({
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table> 
 
       {typeof page === "number" &&
         typeof totalItems === "number" &&
@@ -318,7 +318,7 @@ export default function CustomTableRooms({
         {showDisable && selectedRow && selectedRow.TrangThaiHoatDong && (
           <MenuItem
             onClick={() => {
-              onDisable(selectedRow);
+              onDisable(selectedRow._id , selectedRow.TrangThaiHoatDong);
               handleCloseMenu();
             }}
             sx={{
@@ -329,7 +329,7 @@ export default function CustomTableRooms({
               py: 1,
               borderRadius: 1,
               "&:hover": { backgroundColor: "#ffebee" },
-            }}
+            }} 
           >
             <ImBlocked style={{ marginRight: 8 }} />
             Vô hiệu
@@ -338,8 +338,8 @@ export default function CustomTableRooms({
 
         {onDisable && selectedRow && !selectedRow.TrangThaiHoatDong && (
           <MenuItem
-            onClick={() => {
-              onDisable(selectedRow);
+            onClick={() => {  
+              onDisable(selectedRow._id , selectedRow.TrangThaiHoatDong);
               handleCloseMenu();
             }}
             sx={{

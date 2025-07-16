@@ -15,7 +15,7 @@ import { ParaclinicalType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 import { changeTestTypeStatus, Searchfortesttype } from "../../services/TestType";
-
+import { showToast, ToastType } from "@/app/lib/Toast";
 // 👉 Thêm hàm tìm kiếm từ API
 
 
@@ -187,10 +187,10 @@ export default function Page() {
         onDisable={(id, status) => {
         changeTestTypeStatus(id, status)
         .then(() => {
-          alert("Cập nhật thành công");
+          showToast ("Cập nhật trạng thái thành công", ToastType.success);
           fetchData(page + 1);
         })
-        .catch(() => alert("Cập nhật thất bại"));
+        .catch(() =>  showToast ("Cập nhật trạng thái thất bại", ToastType.error));
         }}
         showEdit={true}
         showDelete={false}

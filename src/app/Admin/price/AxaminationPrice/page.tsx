@@ -16,10 +16,12 @@ import CustomTableServicePrice, {
   rowRenderType,
 } from "../../component/Table/CustomTableServicePrice";
 import BreadcrumbComponent from "../../component/Breadcrumb";
-import { activateExaminationPrice, getExaminationPrice, searchserviceprice } from "../../services/Category";
+// import { activateExaminationPrice, getExaminationPrice, searchserviceprice } from "../../services/Category";
+import { getExaminationPrice, searchserviceprice, ServicePriceStatusUpdate } from "../../services/Category";
 import { ServicePriceType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import { showToast, ToastType } from "@/app/lib/Toast";
 
 const columns: ColumnCategory[] = [
   { id: "Tendichvu", label: "Tên dịch vụ", sortable: true, Outstanding: true },
@@ -36,6 +38,7 @@ export default function Page() {
   const [totalItems, setTotalItems] = useState(0);
   const [Loaigia] = useState<string>("GiaKham"); // hoặc để người dùng chọn từ Select
   const router = useRouter();
+
 
   const fetchData = async (currentPage = 1) => {
     try {
@@ -78,6 +81,27 @@ export default function Page() {
       return matchStatus;
     });
   }, [rows, statusFilter]);
+
+
+
+  // Chuyển đổi trạng thái
+  const stateChange = async (id: string, TrangThaiHoatDong: boolean) => {
+    try {
+      const Result = await ServicePriceStatusUpdate (id, !TrangThaiHoatDong);
+      console.log(Result);
+      
+      if (Result?.status){
+        showToast ("Cập nhật trạng thái thành công", ToastType.success);
+        await fetchData ();
+
+      } else {
+        showToast("Cập nhật thất bại", ToastType.error);
+      }
+    } catch (error) {
+      showToast("Lỗi khi cập nhật trạng thái", ToastType.error);
+      console.error(error);
+    }
+  };
 
   return (
     <div className="AdminContent-Container">
@@ -139,27 +163,28 @@ export default function Page() {
         </FormControl>
       </Box>
       <div>
-                    <ButtonAdd 
-                      name="Thêm mới"
-                      link="/Admin/price/AxaminationPrice/Form"
-                    />
-                  </div>
-                  </Box>
+        <ButtonAdd 
+          name="Thêm mới"
+          link="/Admin/price/AxaminationPrice/Form"
+        />
+      </div>
+      </Box>
 
       <CustomTableServicePrice
         columns={columns}
         rows={filteredRows}
         onEdit={(id) => {router.push(`/Admin/price/AxaminationPrice/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
-        onDisable={async (row) => {
-    try {
-      const res = await activateExaminationPrice(row._id);
-      console.log("Kích hoạt giá GiaKham:", res);
-      fetchData(page + 1); // reload lại dữ liệu
-    } catch (e) {
-      console.error("Kích hoạt thất bại", e);
-    }
-  }}
+        // onDisable={async (row) => {
+        //   try {
+        //     const res = await activateExaminationPrice(row._id);
+        //     console.log("Kích hoạt giá GiaKham:", res);
+        //     fetchData(page + 1); // reload lại dữ liệu
+        //   } catch (e) {
+        //     console.error("Kích hoạt thất bại", e);
+        //   }
+        // }}
+        onDisable={stateChange}
         showEdit={true}
         showDelete={true}
         showDisable={true}
