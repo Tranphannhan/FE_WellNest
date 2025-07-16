@@ -104,7 +104,7 @@ export default function ChooseRoom() {
 
       if (!payload.CanNang && !payload.ChieuCao) {
         showToast("Không có dữ liệu chỉ số sinh tồn để gửi!", ToastType.warn);
-      } else {
+      }
         // Gửi chỉ số sinh tồn nếu có
         const responseVitalSigns = await fetch(
           `${API_BASE_URL}/Chi_So_Sinh_Ton/Add`,
@@ -124,7 +124,7 @@ export default function ChooseRoom() {
 
         const resultVitalSigns = await responseVitalSigns.json();
         console.log("Thêm chỉ số sinh tồn thành công:", resultVitalSigns);
-      }
+    
 
       // Thành công toàn bộ
       showToast("Tạo phiếu khám bệnh thành công!", ToastType.success);
