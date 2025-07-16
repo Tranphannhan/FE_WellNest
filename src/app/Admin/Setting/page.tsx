@@ -21,15 +21,8 @@ import {
 } from "@mui/material";
 import BreadcrumbComponent from "../component/Breadcrumb";
 import { SettingsIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-
-// Dữ liệu mẫu
-const khoaData = [
-  { id: 1, name: "Khoa Nội tổng quát", enabled: true },
-  { id: 2, name: "Khoa Ngoại chấn thương", enabled: true },
-  { id: 3, name: "Khoa Nhi", enabled: true },
-  { id: 4, name: "Khoa Da liễu", enabled: false },
-];
+import { useEffect, useState, useCallback } from "react";
+import { BackendChonPhong, fetchKhoaList, fetchSettings, FrontendChonPhong, KhoaData, updateKhoaCanLamSang, updateSettings } from "../services/Setting";
 
 // Hook lấy chế độ dark/light từ data-toolpad-color-scheme
 function useToolpadColorScheme() {
@@ -103,20 +96,110 @@ const SectionWrapper = ({
 };
 
 export default function Page() {
-  const isDarkMode = useToolpadColorScheme(); // ✅ dùng được ở mọi nơi
-  const [khoaList, setKhoaList] = useState(khoaData);
+  const isDarkMode = useToolpadColorScheme();
+  const [khoaList, setKhoaList] = useState<KhoaData[]>([]);
   const [middayDuration, setMiddayDuration] = useState(15);
   const [applyToAllDoctors, setApplyToAllDoctors] = useState(false);
   const [globalLimit, setGlobalLimit] = useState(50);
   const [limitError, setLimitError] = useState("");
+  const [chonPhong, setChonPhong] = useState<FrontendChonPhong>("thuCong");
+  const [documentId, setDocumentId] = useState<string | null>(null);
 
-  const handleToggle = (id: number) => {
-    setKhoaList((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, enabled: !item.enabled } : item
-      )
-    );
+  // Map frontend radio values to backend enum values
+  const mapChonPhongToBackend = (value: FrontendChonPhong): BackendChonPhong => {
+    const mapping: Record<FrontendChonPhong, BackendChonPhong> = {
+      thuCong: "ThuCong",
+      itNguoiNhat: "ItNguoi",
+      phongGan: "PhongGan",
+      ganDay: "GanDay",
+      phongXa: "PhongXa",
+    };
+    return mapping[value];
   };
+
+  // Map backend enum values to frontend radio values
+  const mapChonPhongToFrontend = (value: BackendChonPhong): FrontendChonPhong => {
+    const mapping: Record<BackendChonPhong, FrontendChonPhong> = {
+      ThuCong: "thuCong",
+      ItNguoi: "itNguoiNhat",
+      PhongGan: "phongGan",
+      GanDay: "ganDay",
+      PhongXa: "phongXa",
+    };
+    return mapping[value] || "thuCong";
+  };
+
+  // Fetch settings and khoa list
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Load settings
+        const settingsData = await fetchSettings();
+        if (settingsData) {
+          setChonPhong(mapChonPhongToFrontend(settingsData.ChonPhong));
+          setMiddayDuration(settingsData.ThoiGianKham);
+          setApplyToAllDoctors(settingsData.ApDungThoiGianKham);
+          setGlobalLimit(settingsData.GioiHanBenhNhan);
+          setDocumentId(settingsData._id);
+        }
+
+        // Load khoa list
+        const khoaData = await fetchKhoaList();
+        setKhoaList(khoaData);
+      } catch (err) {
+        console.error(err instanceof Error ? err.message : "Lỗi khi tải dữ liệu");
+      }
+    };
+    loadData();
+  }, []);
+
+  // Save settings changes with debouncing
+  const saveChanges = useCallback(
+    async () => {
+      if (limitError || !documentId) {
+        return;
+      }
+
+      const dataToUpdate = {
+        ChonPhong: mapChonPhongToBackend(chonPhong),
+        ThoiGianKham: middayDuration,
+        ApDungThoiGianKham: applyToAllDoctors,
+        GioiHanBenhNhan: globalLimit,
+      };
+
+      try {
+        await updateSettings(documentId, dataToUpdate);
+      } catch {
+        console.error("Lỗi khi cập nhật dữ liệu");
+      }
+    },
+    [chonPhong, middayDuration, applyToAllDoctors, globalLimit, limitError, documentId]
+  );
+
+  // Debounced save effect for settings
+  useEffect(() => {
+      saveChanges();
+  }, [saveChanges]);
+
+  // Handle CanLamSang toggle
+  const handleToggle = useCallback(
+    async (id: string, currentStatus: boolean) => {
+      try {
+        const newStatus = !currentStatus;
+        const status = await updateKhoaCanLamSang(id, newStatus);
+        if (status === "Cập nhật CanLamSang thành công") {
+          setKhoaList((prev) =>
+            prev.map((item) =>
+              item._id === id ? { ...item, CanLamSang: newStatus } : item
+            )
+          );
+        }
+      } catch {
+        console.error("Lỗi khi cập nhật CanLamSang");
+      }
+    },
+    []
+  );
 
   return (
     <div className="AdminContent-Container">
@@ -138,13 +221,17 @@ export default function Page() {
             bệnh nhân.
           </Typography>
           <FormControl>
-            <RadioGroup defaultValue="thuCong" name="chonPhong">
+            <RadioGroup
+              name="chonPhong"
+              value={chonPhong}
+              onChange={(e) => setChonPhong(e.target.value as FrontendChonPhong)}
+            >
               {[
-                ["ThuCong", "Thủ công – người dùng chọn"],
-                ["ItNguoi", "Tự động – ít người chờ nhất"],
-                ["PhongGan", "Tự động – ưu tiên phòng gần nhất"],
-                ["PhongXa", "Tự động – ưu tiên phòng xa nhất"],
-                ["GanDay", "Tự động – ưu tiên phòng gần đầy"],
+                ["thuCong", "Thủ công – người dùng chọn"],
+                ["itNguoiNhat", "Tự động – ít người chờ nhất"],
+                ["phongGan", "Tự động – ưu tiên phòng gần nhất"],
+                ["phongXa", "Tự động – ưu tiên phòng xa nhất"],
+                ["ganDay", "Tự động – ưu tiên phòng gần đầy"],
               ].map(([value, label]) => (
                 <FormControlLabel
                   key={value}
@@ -167,8 +254,7 @@ export default function Page() {
             marginTop: "10px",
             marginBottom: "15px",
           }}
-        />{" "}
-        {/* Gạch ngang */}
+        />
         {/* THỜI GIAN KHÁM TRUNG BÌNH */}
         <SectionWrapper
           title={`Thời gian khám trung bình: [ ${middayDuration} phút ]`}
@@ -203,8 +289,7 @@ export default function Page() {
             marginTop: "10px",
             marginBottom: "15px",
           }}
-        />{" "}
-        {/* Gạch ngang */}
+        />
         {/* GIỚI HẠN TỐI ĐA */}
         <SectionWrapper
           title="Giới hạn số lượng tiếp nhận bệnh nhân"
@@ -239,8 +324,7 @@ export default function Page() {
             marginTop: "10px",
             marginBottom: "15px",
           }}
-        />{" "}
-        {/* Gạch ngang */}
+        />
         {/* BẬT TẮT YÊU CẦU CLS */}
         <SectionWrapper
           title="Khoa được phép yêu cầu cận lâm sàng (CLS)"
@@ -257,11 +341,11 @@ export default function Page() {
               <TableBody>
                 {khoaList.map((row) => (
                   <TableRow
-                    key={row.id}
+                    key={row._id}
                     hover
                     sx={{ transition: "background 0.2s ease" }}
                   >
-                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.TenKhoa}</TableCell>
                     <TableCell>
                       <Box
                         sx={{ display: "flex", alignItems: "center", gap: 1 }}
@@ -270,14 +354,14 @@ export default function Page() {
                           fontSize={13}
                           fontWeight={500}
                           color={
-                            row.enabled ? "success.main" : "text.secondary"
+                            row.CanLamSang ? "success.main" : "text.secondary"
                           }
                         >
-                          {row.enabled ? "Bật" : "Tắt"}
+                          {row.CanLamSang ? "Bật" : "Tắt"}
                         </Typography>
                         <Switch
-                          checked={row.enabled}
-                          onChange={() => handleToggle(row.id)}
+                          checked={row.CanLamSang}
+                          onChange={() => handleToggle(row._id, row.CanLamSang)}
                           color="success"
                           size="small"
                         />

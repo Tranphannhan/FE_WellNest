@@ -266,3 +266,26 @@ export async function SearchBill (Type: string , key  : string) {
     return { data: [], totalItems: 0 };
   }
 }
+
+export async function activateExaminationPrice(id: string) {
+  try {
+    const result = await fetch(`${API_BASE_URL}/Giadichvu/ActivateGiaKham/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (result.ok) {
+      const data = await result.json();
+      return data;
+    } else {
+      const errorText = await result.text();
+      console.error(`Lỗi kích hoạt giá GiaKham: ${result.status} - ${errorText}`);
+      return 'Lỗi khi kích hoạt giá GiaKham';
+    }
+  } catch (error) {
+    console.error("Exception khi kích hoạt giá GiaKham", error);
+    throw error;
+  }
+}

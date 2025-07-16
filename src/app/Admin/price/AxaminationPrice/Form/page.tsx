@@ -67,51 +67,80 @@ export default function AddExaminationPriceForm() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage('');
-    setErrors({});
-    setLoading(true);
+  e.preventDefault();
+  setMessage('');
+  setErrors({});
+  setLoading(true);
 
-    if (!validateForm()) {
-      setMessage('Vui lòng kiểm tra các trường thông tin.');
-      setLoading(false);
-      return;
-    }
+  if (!validateForm()) {
+    setMessage('Vui lòng kiểm tra các trường thông tin.');
+    setLoading(false);
+    return;
+  }
 
-    const addData = {
-      Tendichvu: serviceName.trim(),
-      Giadichvu: parseInt(price) || 0,
-      Loaigia: priceType,
-      TrangThaiHoatDong: status === 'Hien',
-    };
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/Giadichvu/Add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(addData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Thêm giá dịch vụ thất bại');
-      }
-
-      setMessage('Thêm giá dịch vụ thành công!');
-      setServiceName('');
-      setPrice('');
-      setPriceType('GiaKham');
-      setStatus('Hien');
-    } catch (err: unknown) {
-      const error = err as ApiError | Error;
-      console.error('Lỗi khi thêm giá dịch vụ:', error);
-      setMessage(error.message || 'Thêm giá khám thất bại');
-    } finally {
-      setLoading(false);
-    }
+  const addData = {
+    Tendichvu: serviceName.trim(),
+    Giadichvu: parseInt(price) || 0,
+    Loaigia: priceType,
+    TrangThaiHoatDong: status === 'Hien',
   };
+
+  try {
+    // Thêm mới
+    const response = await fetch(`${API_BASE_URL}/Giadichvu/Add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(addData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Thêm giá dịch vụ thất bại');
+    }
+
+    const result = await response.json();
+    const newId = result.data?._id;
+    setMessage('Thêm giá dịch vụ thành công!');
+
+    // Kích hoạt
+    if (addData.Loaigia === 'GiaKham' && addData.TrangThaiHoatDong) {
+      if (!newId) {
+        console.error('Không lấy được ID sau khi thêm, không thể activate');
+        setMessage(prev => prev + ' Tuy nhiên không lấy được ID để kích hoạt.');
+      } else {
+        try {
+          const activateRes = await fetch(`${API_BASE_URL}/Giadichvu/ActivateGiaKham/${newId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+          });
+
+          if (!activateRes.ok) {
+            const activateErr = await activateRes.text();
+            console.error(`Lỗi kích hoạt: ${activateRes.status} - ${activateErr}`);
+            setMessage(prev => prev + ' Tuy nhiên, kích hoạt trạng thái hoạt động thất bại.');
+          } else {
+            setMessage(prev => prev + ' Và đã tự động chuyển sang trạng thái hoạt động.');
+          }
+        } catch (err) {
+          console.error('Exception khi kích hoạt:', err);
+          setMessage(prev => prev + ' Tuy nhiên, xảy ra lỗi khi kích hoạt.');
+        }
+      }
+    }
+
+    setServiceName('');
+    setPrice('');
+    setPriceType('GiaKham');
+    setStatus('Hien');
+  } catch (err: unknown) {
+    const error = err as ApiError | Error;
+    console.error('Lỗi khi thêm giá dịch vụ:', error);
+    setMessage(error.message || 'Thêm giá khám thất bại');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleCancel = () => {
     router.push('/Admin/price/ExaminationPrice');
@@ -155,8 +184,8 @@ export default function AddExaminationPriceForm() {
                 <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
                     sx={{ width: { sm: '60%' } }}
-                    label="Tên Dịch Vụ"
-                    name="tenDichVu"
+                    label="Tên Giá Khám"
+                    name="tenGiaKham"
                     variant="outlined"
                     required
                     value={serviceName}
@@ -166,8 +195,8 @@ export default function AddExaminationPriceForm() {
                   />
                   <TextField
                     sx={{ width: { sm: '40%' } }}
-                    label="Giá Dịch Vụ"
-                    name="giaDichVu"
+                    label="Giá Khám"
+                    name="giaKham"
                     variant="outlined"
                     value={price}
                     onChange={handlePriceChange}

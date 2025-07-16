@@ -16,7 +16,7 @@ import CustomTableServicePrice, {
   rowRenderType,
 } from "../../component/Table/CustomTableServicePrice";
 import BreadcrumbComponent from "../../component/Breadcrumb";
-import { getExaminationPrice, searchserviceprice } from "../../services/Category";
+import { activateExaminationPrice, getExaminationPrice, searchserviceprice } from "../../services/Category";
 import { ServicePriceType } from "@/app/types/hospitalTypes/hospitalType";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
@@ -151,7 +151,15 @@ export default function Page() {
         rows={filteredRows}
         onEdit={(id) => {router.push(`/Admin/price/AxaminationPrice/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
-        onDisable={(row) => console.log("Toggle status", row)}
+        onDisable={async (row) => {
+    try {
+      const res = await activateExaminationPrice(row._id);
+      console.log("Kích hoạt giá GiaKham:", res);
+      fetchData(page + 1); // reload lại dữ liệu
+    } catch (e) {
+      console.error("Kích hoạt thất bại", e);
+    }
+  }}
         showEdit={true}
         showDelete={true}
         showDisable={true}
