@@ -63,7 +63,7 @@ export default async function changeDepartmentStatus(id: string, status: boolean
 //tìm kiếm phòng xét nghiệm
 export async function Searchfortesttype(key: string) {
   try {
-    const result = await fetch(`http://localhost:5000/Loaixetnghiem/Search?Key=${key}`);
+    const result = await fetch(`${API_BASE_URL}/Loaixetnghiem/Search?Key=${key}`);
     if (result.ok) {
       const Data = await result.json();
       return Data;

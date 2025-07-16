@@ -11,6 +11,9 @@ import NoData from '@/app/components/ui/Nodata/Nodata';
 import { showToast, ToastType } from '@/app/lib/Toast';
 import ModalComponent from '@/app/components/shared/Modal/Modal';
 import Spinner from 'react-bootstrap/Spinner';
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+
 
 export default function TestWaitingList() {
   const router = useRouter();
@@ -22,16 +25,32 @@ export default function TestWaitingList() {
   const [showModal, setShowModal] = useState(false);
   const [selectedSkipId, setSelectedSkipId] = useState<string | null>(null);
 
-  const loadAPI = async () => {
-    setIsLoading(true);
-    const getData = await getWaitingForTest('6803bf3070cd96d5cde6d824', currentPage, true);
-    if (getData) {
-      setData(getData.data);
-      setTotalPages(getData.totalPages);
-      setCurrentPage(getData.currentPage);
-    }
+const loadAPI = async () => {
+  setIsLoading(true);
+
+  const token = Cookies.get("token");
+  if (!token) {
     setIsLoading(false);
-  };
+    return;
+  }
+
+  const decoded = jwtDecode<{ _id: string }>(token);
+  const idBacSi = decoded?._id;
+  if (!idBacSi) {
+    setIsLoading(false);
+    return;
+  }
+
+  const getData = await getWaitingForTest(idBacSi, currentPage, true);
+  if (getData) {
+    setData(getData.data);
+    setTotalPages(getData.totalPages);
+    setCurrentPage(getData.currentPage);
+  }
+
+  setIsLoading(false);
+};
+
 
   const openSkipModal = (id: string) => {
     setSelectedSkipId(id);

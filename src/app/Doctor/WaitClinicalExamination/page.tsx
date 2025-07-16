@@ -9,6 +9,9 @@ import moment from "moment";
 import { FaNotesMedical } from "react-icons/fa";
 import NoData from "@/app/components/ui/Nodata/Nodata";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+
 
 export default function WaitClinicalExamination() {
   const [dataRender, setDataRender] = useState<MedicalExaminationCard[]>([]);
@@ -22,9 +25,16 @@ export default function WaitClinicalExamination() {
     router.push(`/Doctor/Patient/ToExamine/${id}?WaitClinicalExamination=true`);
   };
 
-  const loadPatients = async () => {
+const loadPatients = async () => {
+  const token = Cookies.get("token");
+  if (!token) return;
+
+  try {
+    const decoded = jwtDecode<{_id:string}>(token);
+    const idBacSi = decoded?._id;
+ 
     const res = await searchPatientsByDoctor({
-      idBacSi: "6807397b4a1e320062ce2b20",
+      idBacSi,
       trangThai: false,
       trangThaiHoatDong: "XetNghiem",
       soDienThoai: phone,
@@ -32,9 +42,14 @@ export default function WaitClinicalExamination() {
       page: currentPage,
       limit: 7,
     });
+
     setDataRender(res?.data || []);
     setTotalPages(res?.totalPages || 1);
-  };
+  } catch (err) {
+    console.error("Lỗi giải mã token:", err);
+  }
+};
+
 
   useEffect(() => {
     loadPatients();

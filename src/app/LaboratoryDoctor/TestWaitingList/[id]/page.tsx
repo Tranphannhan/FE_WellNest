@@ -30,13 +30,29 @@ import StatusBadge from "@/app/components/ui/StatusBadge/StatusBadge";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import DiagnosisPopup from "@/app/components/diagnosis/DiagnosisPopup";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 type Order = "asc" | "desc";
 
 export default function PrescriptionDetails() {
   const router = useRouter();
   const params = useParams();
+  const [idNguoiXetNghiem, setIdNguoiXetNghiem] = useState<string>("");
+
   const { id } = params;
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode<{ _id: string }>(token);
+        setIdNguoiXetNghiem(decoded._id);
+      } catch (err) {
+        console.error("Lỗi khi decode token:", err);
+      }
+    }
+  }, []);
 
   const [showResultsPopup, SetShowResultsPopup] = useState(false);
   const [dataResule, setDataResule] = useState<NormalTestResult[]>([]);
@@ -130,7 +146,10 @@ export default function PrescriptionDetails() {
 
       <div className="PrescriptionDetails-container">
         {/* Thông tin bệnh nhân */}
-        <div className="PrescriptionDetails-container__Box1" style={{ flex: 1 }}>
+        <div
+          className="PrescriptionDetails-container__Box1"
+          style={{ flex: 1 }}
+        >
           <h3 style={{ marginBottom: 16 }}>Thông tin bệnh nhân</h3>
 
           <Box
@@ -148,33 +167,41 @@ export default function PrescriptionDetails() {
             <Typography variant="body2" sx={{ fontSize: 16 }}>
               <span style={{ fontWeight: 500, color: "#000" }}>Bệnh nhân:</span>{" "}
               <span style={{ color: "#555" }}>
-                {value[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen || "Chưa rõ"}
+                {value[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ||
+                  "Chưa rõ"}
               </span>
             </Typography>
 
             <Typography variant="body2" sx={{ fontSize: 16 }}>
               <span style={{ fontWeight: 500, color: "#000" }}>Ngày sinh:</span>{" "}
               <span style={{ color: "#555" }}>
-                {value[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh || "Chưa rõ"}
+                {value[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh ||
+                  "Chưa rõ"}
               </span>
             </Typography>
 
             <Typography variant="body2" sx={{ fontSize: 16 }}>
               <span style={{ fontWeight: 500, color: "#000" }}>Giới tính:</span>{" "}
               <span style={{ color: "#555" }}>
-                {value[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh || "Chưa rõ"}
+                {value[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh ||
+                  "Chưa rõ"}
               </span>
             </Typography>
 
             <Typography variant="body2" sx={{ fontSize: 16 }}>
               <span style={{ fontWeight: 500, color: "#000" }}>Ngày khám:</span>{" "}
-              <span style={{ color: "#555" }}>{value[0]?.Id_PhieuKhamBenh?.Ngay || "-"}</span>
+              <span style={{ color: "#555" }}>
+                {value[0]?.Id_PhieuKhamBenh?.Ngay || "-"}
+              </span>
             </Typography>
 
             <Typography variant="body2" sx={{ fontSize: 16 }}>
-              <span style={{ fontWeight: 500, color: "#000" }}>Số điện thoại:</span>{" "}
+              <span style={{ fontWeight: 500, color: "#000" }}>
+                Số điện thoại:
+              </span>{" "}
               <span style={{ color: "#555" }}>
-                {value[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai || "Chưa rõ"}
+                {value[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai ||
+                  "Chưa rõ"}
               </span>
             </Typography>
 
@@ -182,7 +209,9 @@ export default function PrescriptionDetails() {
               variant="body2"
               sx={{ fontSize: 16, maxWidth: "100%", whiteSpace: "pre-wrap" }}
             >
-              <span style={{ fontWeight: 500, color: "#000" }}>Lý do đến khám:</span>{" "}
+              <span style={{ fontWeight: 500, color: "#000" }}>
+                Lý do đến khám:
+              </span>{" "}
               <span
                 style={{
                   color: "#555",
@@ -227,7 +256,9 @@ export default function PrescriptionDetails() {
 
         {/* Bảng chi tiết đơn thuốc */}
         <div className="PrescriptionDetails-container__Box2">
-          <div className="PrescriptionDetails-container__Box2__title">Yêu cầu xét nghiệm</div>
+          <div className="PrescriptionDetails-container__Box2__title">
+            Yêu cầu xét nghiệm
+          </div>
 
           <Table sx={{ mt: 2, borderRadius: 2, overflow: "hidden" }}>
             <TableHead>
@@ -262,14 +293,20 @@ export default function PrescriptionDetails() {
                         <ArrowDropUpIcon
                           fontSize="small"
                           style={{
-                            color: orderBy === "Gio" && order === "asc" ? "#1976d2" : "#ccc",
+                            color:
+                              orderBy === "Gio" && order === "asc"
+                                ? "#1976d2"
+                                : "#ccc",
                             marginBottom: -6,
                           }}
                         />
                         <ArrowDropDownIcon
                           fontSize="small"
                           style={{
-                            color: orderBy === "Gio" && order === "desc" ? "#1976d2" : "#ccc",
+                            color:
+                              orderBy === "Gio" && order === "desc"
+                                ? "#1976d2"
+                                : "#ccc",
                             marginTop: -6,
                           }}
                         />
@@ -308,14 +345,20 @@ export default function PrescriptionDetails() {
                         <ArrowDropUpIcon
                           fontSize="small"
                           style={{
-                            color: orderBy === "TrangThai" && order === "asc" ? "#1976d2" : "#ccc",
+                            color:
+                              orderBy === "TrangThai" && order === "asc"
+                                ? "#1976d2"
+                                : "#ccc",
                             marginBottom: -6,
                           }}
                         />
                         <ArrowDropDownIcon
                           fontSize="small"
                           style={{
-                            color: orderBy === "TrangThai" && order === "desc" ? "#1976d2" : "#ccc",
+                            color:
+                              orderBy === "TrangThai" && order === "desc"
+                                ? "#1976d2"
+                                : "#ccc",
                             marginTop: -6,
                           }}
                         />
@@ -342,12 +385,16 @@ export default function PrescriptionDetails() {
                 >
                   <TableCell>{item.Id_LoaiXetNghiem.TenXetNghiem}</TableCell>
                   <TableCell>{item.Gio}</TableCell>
-                  <TableCell>{item.Id_PhieuKhamBenh.Id_Bacsi?.TenBacSi}</TableCell>
+                  <TableCell>
+                    {item.Id_PhieuKhamBenh.Id_Bacsi?.TenBacSi}
+                  </TableCell>
                   <TableCell>
                     <StatusBadge
                       color={item.TrangThai ? "#388e3c" : "#d84315"}
                       backgroundColor={item.TrangThai ? "#e8f5e9" : "#fbe9e7"}
-                      label={item.TrangThai ? "Đã xét nghiệm" : "Chưa xét nghiệm"}
+                      label={
+                        item.TrangThai ? "Đã xét nghiệm" : "Chưa xét nghiệm"
+                      }
                     />
                   </TableCell>
                   <TableCell align="right">
@@ -358,7 +405,9 @@ export default function PrescriptionDetails() {
                         color: "white",
                         backgroundColor: item.TrangThai ? "#00d335" : "#3497f9",
                         "&:hover": {
-                          backgroundColor: item.TrangThai ? "#00b42a" : "#1c78e2",
+                          backgroundColor: item.TrangThai
+                            ? "#00b42a"
+                            : "#1c78e2",
                         },
                       }}
                       startIcon={item.TrangThai ? <FaEye /> : <FaPlus />}
@@ -367,7 +416,7 @@ export default function PrescriptionDetails() {
                           ? update(
                               item._id,
                               item.Id_PhieuKhamBenh._id,
-                              "68272ec1b4cfad70da81002f",
+                              idNguoiXetNghiem,
                               item.Id_LoaiXetNghiem.TenXetNghiem
                             )
                           : handleView(item._id)

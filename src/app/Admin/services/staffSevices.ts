@@ -24,7 +24,7 @@ export async function getstaffAdmin(page : number) {
 // Tìm kiếm tài khoản - 
 export async function  searchAccount(key : string) {
   try {
-    const result = await fetch(`http://localhost:5000/Tai_Khoan/Search?Key=${key}`);
+    const result = await fetch(`${API_BASE_URL}/Tai_Khoan/Search?Key=${key}`);
     if (result.ok) {
       const Data = await result.json();
       return Data;

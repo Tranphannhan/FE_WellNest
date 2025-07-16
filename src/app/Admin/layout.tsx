@@ -72,8 +72,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           <Box
             sx={{
               position: 'absolute',
-              top: 12,
-              right: 24,
+              top: 8,
+              right: 30,
               zIndex: 1300,
             }}
           >

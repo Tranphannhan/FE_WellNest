@@ -140,11 +140,11 @@ export default function Page() {
           <FormControl>
             <RadioGroup defaultValue="thuCong" name="chonPhong">
               {[
-                ["thuCong", "Thủ công – người dùng chọn"],
-                ["itNguoiNhat", "Tự động – ít người chờ nhất"],
-                ["uuTienBacSi", "Tự động – ưu tiên phòng có bác sĩ"],
-                ["ganDay", "Tự động – ưu tiên phòng gần nhất"],
-                ["ngaunhien", "Tự động – ngẫu nhiên"],
+                ["ThuCong", "Thủ công – người dùng chọn"],
+                ["ItNguoi", "Tự động – ít người chờ nhất"],
+                ["PhongGan", "Tự động – ưu tiên phòng gần nhất"],
+                ["PhongXa", "Tự động – ưu tiên phòng xa nhất"],
+                ["GanDay", "Tự động – ưu tiên phòng gần đầy"],
               ].map(([value, label]) => (
                 <FormControlLabel
                   key={value}

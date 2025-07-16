@@ -25,7 +25,7 @@ export async function getCategoryAdmin () {
 // tìm kiếm danh sách loại tài khoản
 export async function SearchCategoryAdmin (key : string) {
   try {
-    const result = await fetch(`http://localhost:5000/Loai_Tai_Khoan/Search?Key=${key}`); 
+    const result = await fetch(`${API_BASE_URL}/Loai_Tai_Khoan/Search?Key=${key}`); 
     if (result.ok) {
       const Data = await result.json();
       return Data;
@@ -44,7 +44,7 @@ export async function SearchCategoryAdmin (key : string) {
 // tìm kiếm loại xét nghiệm
 export async function Searchfortesttype (key : string) {
   try {
-    const result = await fetch(`http://localhost:5000/Loaixetnghiem/Search?Key=${key}`); 
+    const result = await fetch(`${API_BASE_URL}/Loaixetnghiem/Search?Key=${key}`); 
     if (result.ok) {
       const Data = await result.json();
       return Data;
@@ -205,7 +205,7 @@ export async function getExaminationPrice (page : number) {
 // tìm kiếm giá dịch vụ
 export async function searchserviceprice (key : string , Loaigia : string) {
   try {
-    const result = await fetch(`http://localhost:5000/Giadichvu/Search?Key=${key}&Loaigia=${Loaigia}`); 
+    const result = await fetch(`${API_BASE_URL}/Giadichvu/Search?Key=${key}&Loaigia=${Loaigia}`); 
     if (result.ok) {
       const Data = await result.json();
       return Data;

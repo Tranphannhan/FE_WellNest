@@ -269,32 +269,48 @@ export default function TestRequestTransactions() {
 
     const totalTestRequestRevenue = sortedAndFilteredTransactions.reduce((sum, t) => sum + t.amount, 0);
 
-    const calculateTotalByDateRange = () => {
-        if (filterStartDate && filterEndDate) {
-            return sortedAndFilteredTransactions
-                .filter((t) => {
-                    const transactionDate = new Date(t.date);
-                    const start = new Date(filterStartDate);
-                    const end = new Date(filterEndDate);
-                    return transactionDate >= start && transactionDate <= end;
-                })
-                .reduce((sum, t) => sum + t.amount, 0);
-        }
-        return 0;
-    };
+      const calculateTotalByDateRange = () => {
+  if (filterStartDate && filterEndDate) {
+    return sortedAndFilteredTransactions
+      .filter((t) => {
+        const transactionDate = new Date(t.date);
+        const start = new Date(filterStartDate);
+        const end = new Date(filterEndDate);
+        return transactionDate >= start && transactionDate <= end;
+      })
+      .reduce((sum, t) => sum + t.amount, 0);
+  } else {
+    // Nếu không filter, lấy theo ngày hôm nay
+    const today = new Date().toISOString().split("T")[0];
+    return sortedAndFilteredTransactions
+      .filter((t) => t.date === today)
+      .reduce((sum, t) => sum + t.amount, 0);
+  }
+};
 
-    const calculateTotalByMonth = () => {
-        if (filterMonth) {
-            const [year, month] = filterMonth.split("-").map(Number);
-            return sortedAndFilteredTransactions
-                .filter((t) => {
-                    const transactionDate = new Date(t.date);
-                    return transactionDate.getFullYear() === year && transactionDate.getMonth() + 1 === month;
-                })
-                .reduce((sum, t) => sum + t.amount, 0);
-        }
-        return 0;
-    };
+
+  const calculateTotalByMonth = () => {
+  if (filterMonth) {
+    const [year, month] = filterMonth.split("-").map(Number);
+    return sortedAndFilteredTransactions
+      .filter((t) => {
+        const transactionDate = new Date(t.date);
+        return transactionDate.getFullYear() === year && (transactionDate.getMonth() + 1) === month;
+      })
+      .reduce((sum, t) => sum + t.amount, 0);
+  } else {
+    // Nếu không filter, lấy theo tháng hiện tại
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    return sortedAndFilteredTransactions
+      .filter((t) => {
+        const transactionDate = new Date(t.date);
+        return transactionDate.getFullYear() === currentYear && (transactionDate.getMonth() + 1) === currentMonth;
+      })
+      .reduce((sum, t) => sum + t.amount, 0);
+  }
+};
 
     const calculateTotalByYear = () => {
         if (filterYear) {

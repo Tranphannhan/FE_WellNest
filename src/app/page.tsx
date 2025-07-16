@@ -100,7 +100,7 @@ const App = () => {
       } else if (role === "cashier") {
         router.push("/Cashier/Dashboard");
       } else if (role === "testing") {
-        router.push("/LaboratoryDoctor/TestWaitingLis");
+        router.push("/LaboratoryDoctor/TestWaitingList");
       } else if (role === "pharmacist") {
         router.push("/Pharmacist/ListofDrugs");
       } else if (role === "admin") {

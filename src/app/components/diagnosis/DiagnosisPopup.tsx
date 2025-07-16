@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Table, Input, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined, CheckOutlined } from "@ant-design/icons";
 import { diagnosisType } from "@/app/types/patientTypes/patient";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface DataType {
   key: string;
@@ -31,7 +32,7 @@ export default function DiagnosisPopup({
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/LayTheoPhieuKhamBenh?Id_PhieuKhamBenh=${id}`
+          `${API_BASE_URL}/Chi_Tiet_Kham_Lam_Sang/LayTheoPhieuKhamBenh?Id_PhieuKhamBenh=${id}`
         );
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
@@ -62,7 +63,7 @@ export default function DiagnosisPopup({
 
     try {
       const response = await fetch(
-        `http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/Update/${key}`,
+        `${API_BASE_URL}/Chi_Tiet_Kham_Lam_Sang/Update/${key}`,
         {
           method: "PATCH",
           headers: {
@@ -90,7 +91,7 @@ export default function DiagnosisPopup({
 
     try {
       const response = await fetch(
-        `http://localhost:5000/Chi_Tiet_Kham_Lam_Sang/Delete/${key}`,
+        `${API_BASE_URL}/Chi_Tiet_Kham_Lam_Sang/Delete/${key}`,
         {
           method: "DELETE",
         }

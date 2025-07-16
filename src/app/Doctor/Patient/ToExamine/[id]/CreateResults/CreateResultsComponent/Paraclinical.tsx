@@ -57,6 +57,7 @@ export default function ParaclinicalComponent({hiddenButton,shouldContinue,callB
   const [departmentName, setDepartmentName] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const router = useRouter();
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const allConfirmed =
   data.length > 0 &&
@@ -304,7 +305,7 @@ const print =
                         <td>
                           <img
                             style={{ width: "67px", height: "40px" }}
-                            src={`http://localhost:5000/image/${item.Id_LoaiXetNghiem.Image}`}
+                            src={`${API_BASE_URL}/image/${item.Id_LoaiXetNghiem.Image}`}
                             alt="Hình ảnh xét nghiệm"
                           />
                         </td>

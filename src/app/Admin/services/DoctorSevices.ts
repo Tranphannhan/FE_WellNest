@@ -53,7 +53,7 @@ export async function getkhoaOptions (page : number){
 // Tìm kiếm loại khoa
 export async function Searchfordepartmenttype (key : string){
    try {
-    const result = await fetch(`http://localhost:5000/Khoa/Search?Key=${key}`);
+    const result = await fetch(`${API_BASE_URL}/Khoa/Search?Key=${key}`);
     if (result.ok) {
       const Data = await result.json();
       return Data;
@@ -216,7 +216,7 @@ export async function addDoctor(doctorData: FormData): Promise<{ success: boolea
 // tìm kiếm bác sĩ
 export async function FindDoctor (key : string) {
   try {
-    const result = await fetch(`http://localhost:5000/Bacsi/Search?Key=${key}`);
+    const result = await fetch(`${API_BASE_URL}/Bacsi/Search?Key=${key}`);
     if (result.ok){
       const Data = await result.json();
       return Data;

@@ -8,7 +8,7 @@ const roleRouteMap: Record<string, string> = {
   "/Receptionist": "TiepNhan",
   "/Cashier": "ThuNgan",
   "/Pharmacist": "DuocSi",
-  "/LaboratoryDoctor": "XetNghiem",
+  "/LaboratoryDoctor": "BacSiXetNghiem",
   "/Admin": "Admin",
 };
 

@@ -25,7 +25,7 @@ import { AccountType, Errors, LoaiTaiKhoan, TestingRoom } from "../page";
 import BreadcrumbComponent from "@/app/Admin/component/Breadcrumb";
 import { getAccountDetails, getAccountTypes, getTestingRoom, updateAccount } from "@/app/Admin/services/staffSevices";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
 

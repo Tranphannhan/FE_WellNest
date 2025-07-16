@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import {
   MdLocalHospital,
@@ -11,59 +12,135 @@ import {
   MdOutlineVaccines,
   MdOutlineAssignment
 } from "react-icons/md";
-import BreadcrumbComponent from "../component/Breadcrumb";
 import { FaHouseMedical } from "react-icons/fa6";
-
-const monitorData = [
+import BreadcrumbComponent from "../component/Breadcrumb";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const initialMonitorData = [
   {
     label: "Khoa hoạt động",
     icon: <MdLocalHospital size={28} color="#e91e63" />,
-    value: 7,
+    value: 0,
+    api: `${API_BASE_URL}/Khoa/Pagination?TrangThaiHoatDong=true`,
+    field: "TenKhoa",
   },
   {
     label: "Phòng khám hoạt động",
-    icon: <FaHouseMedical  size={28} color="#4caf50" />,
-    value: 5,
+    icon: <FaHouseMedical size={28} color="#4caf50" />,
+    value: 0,
+    api: `${API_BASE_URL}/Phong_Kham/Pagination?TrangThaiHoatDong=true`,
+    field: "SoPhongKham",
   },
   {
     label: "Phòng thiết bị hoạt động",
     icon: <MdOutlineVaccines size={28} color="#388e3c" />,
-    value: 4,
+    value: 0,
+    api: `${API_BASE_URL}/Phong_Thiet_Bi/Pagination?TrangThaiHoatDong=true`,
+    field: "TenPhongThietBi",
   },
   {
     label: "Đang khám",
     icon: <MdOutlineMonitorHeart size={28} color="#1976d2" />,
-    value: 12,
+    value: 0,
+    api: `${API_BASE_URL}/Phieu_Kham_Benh?TrangThaiHoatDong=Kham&TrangThai=false&NgayHienTai=true`,
+    field: "SoNguoiDangKham",
   },
   {
-    label: "Chờ khám",
+    label: "Vắng mặt",
     icon: <MdPendingActions size={28} color="#ffa000" />,
-    value: 20,
+    value: 0,
+    api: `${API_BASE_URL}/Phieu_Kham_Benh?TrangThaiHoatDong=BoQua&TrangThai=false&NgayHienTai=true`,
+    field: "SoNguoiVangMat",
   },
-
   {
-    label: "Yêu cầu chờ thanh toán",
+    label: "Xét nghiệm chờ thanh toán",
     icon: <MdOutlinePayments size={28} color="#f57c00" />,
-    value: 6,
+    value: 0,
+    api: `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination&TrangThaiThanhToan=true`,
+    field: "SoNguoiChoThanhToan",
   },
   {
-    label: "Yêu cầu chờ xét nghiệm",
+    label: "Chờ xét nghiệm",
     icon: <MdOutlineAssignment size={28} color="#0097a7" />,
-    value: 4,
+    value: 0,
+    api: `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem?TrangThaiThanhToan=true&TrangThai=false&TrangThaiHoatDong=true&NgayHienTai=true`,
+    field: "SoNguoiVangMat",
   },
   {
     label: "Đơn thuốc chờ thanh toán",
     icon: <MdOutlineReceiptLong size={28} color="#7b1fa2" />,
-    value: 3,
+    value: 0,
+    api: `${API_BASE_URL}/Donthuoc/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?TrangThaiThanhToan=false`,
+    field: "DonThuocChoThanhToan",
   },
   {
     label: "Đơn thuốc chờ phát thuốc",
     icon: <MdOutlineMedication size={28} color="#c2185b" />,
-    value: 2,
+    value: 0,
+    api: `${API_BASE_URL}/Donthuoc/DanhSachPhatThuoc/Pagination`,
+    field: "DonThuocChoThanhToan",
   },
 ];
 
 export default function MonitorPage() {
+  const [monitorData, setMonitorData] = useState(initialMonitorData);
+
+useEffect(() => {
+  const fetchData = async () => {
+    const newData = await Promise.all(
+      initialMonitorData.map(async (item) => {
+        if (!item.api) return item;
+
+        try {
+          const res = await fetch(item.api);
+          const json = await res.json();
+
+          if (json.totalItems !== undefined) {
+            return { ...item, value: json.totalItems };
+          }
+
+          if (json.total !== undefined) {
+            return { ...item, value: json.total };
+          }
+
+          if (Array.isArray(json)) {
+            return { ...item, value: json.length };
+          }
+
+          if (Array.isArray(json.data)) {
+            return { ...item, value: json.data.length };
+          }
+
+          if (
+            typeof json.data === "object" &&
+            json.data !== null
+          ) {
+            if (json.data.totalItems !== undefined) {
+              return { ...item, value: json.data.totalItems };
+            }
+            if (json.data.total !== undefined) {
+              return { ...item, value: json.data.total };
+            }
+            if (Array.isArray(json.data.data)) {
+              return { ...item, value: json.data.data.length };
+            }
+          }
+
+          console.warn(`Không tìm thấy tổng phù hợp cho API: ${item.api}`, json);
+          return item;
+        } catch (err) {
+          console.error("Error fetching:", item.label, err);
+          return item;
+        }
+      })
+    );
+
+    setMonitorData(newData);
+  };
+
+  fetchData();
+}, []);
+
+
   const getUnit = (label: string): string => {
     if (label.includes("Khoa")) return "khoa";
     if (label.includes("Phòng thiết bị")) return "phòng";
@@ -71,7 +148,9 @@ export default function MonitorPage() {
     if (label.includes("xét nghiệm")) return "yêu cầu";
     if (label.includes("Đơn thuốc")) return "đơn";
     if (label.includes("Yêu cầu")) return "yêu cầu";
+    if (label.includes("Xét nghiệm chờ thanh toán")) return "yêu cầu";
     if (label.includes("khám")) return "người";
+    if (label.includes("Vắng mặt")) return "người";
     return "";
   };
 
@@ -118,7 +197,6 @@ export default function MonitorPage() {
                 display: "flex",
                 boxShadow:
                   " rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;",
-
                 alignItems: "center",
                 gap: 2,
                 bgcolor: "#f3fcff",
@@ -143,7 +221,7 @@ export default function MonitorPage() {
                   variant="body2"
                   color="#646464"
                   sx={{
-                    fontSize: '16px',
+                    fontSize: "16px",
                     fontWeight: 500,
                     mb: 0.5,
                   }}

@@ -8,6 +8,8 @@ import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 import moment from "moment";
 import { FaNotesMedical, FaUserSlash } from "react-icons/fa";
 import NoData from "@/app/components/ui/Nodata/Nodata";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 export default function Patient() {
   const [dataRender, setDataRender] = useState<MedicalExaminationCard[]>([]);
@@ -24,8 +26,12 @@ export default function Patient() {
   }
 
   const LoaddingPatient = async () => {
+    const token = Cookies.get("token");
+    if (!token) return;
+    const decoded = jwtDecode<{ _id: string }>(token);
+    const idBacSi = decoded?._id;
     const Data = await getAllPatient(
-      "6807397b4a1e320062ce2b20",
+      idBacSi,
       false,
       "Kham",
       1
@@ -57,30 +63,6 @@ export default function Patient() {
       />
 
       <div className="Patient-container">
-        {/* <div className="search-reception-container">
-          <div className="search-box-wrapper">
-            <div className="search-box">
-              <input
-                type="text"
-                placeholder="Hãy nhập số điện thoại"
-                className="search-input"
-              />
-              <button className="search-btn">
-                <i className="bi bi-search"></i>
-              </button>
-            </div>
-            <div className="search-box">
-              <input
-                type="text"
-                placeholder="Hãy nhập tên"
-                className="search-input"
-              />
-              <button className="search-btn">
-                <i className="bi bi-search"></i>
-              </button>
-            </div>
-          </div>
-        </div> */}
         {dataRender.length > 0 ? (
           <table className="Patient-container_table">
             <thead>
