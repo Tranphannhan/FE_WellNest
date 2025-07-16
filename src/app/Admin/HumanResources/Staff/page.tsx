@@ -20,6 +20,8 @@ import CustomTableHumanResources, { Column } from "../../component/Table/CustomT
 import { getOptionstaffAdmin, getstaffAdmin, searchAccount } from "../../services/staffSevices"; // thêm searchAccount
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import { showToast, ToastType } from "@/app/lib/Toast";
+import { ChangeEmployeeStatus } from "../../services/DoctorSevices";
 
 export interface rowRenderType {
   _id: string;
@@ -55,7 +57,7 @@ export default function Page() {
     if (!data?.data || data.data.length === 0) {
       setRows([]);
       return;
-    }
+    }  
 
     setTotalItems(data.totalItems);
 
@@ -125,6 +127,30 @@ export default function Page() {
   const displayedRows = rows.filter(row => {
     return selectedLoai ? row.TenLoai === TenLoaiOP.find(t => t._id === selectedLoai)?.TenLoaiTaiKhoan : true;
   });
+
+
+   
+    // cập nhật trang thái
+    const stateChange = async (id: string, TrangThaiHoatDong: boolean) => {
+      try {
+        const Result = await ChangeEmployeeStatus (id, !TrangThaiHoatDong);
+        console.log(Result);
+        
+        if (Result?.status){
+          showToast("Cập nhật trạng thái thành công", ToastType.success);
+          console.log('Thành công');
+  
+          await loaddingAPI ();
+        } else {
+          showToast("Cập nhật thất bại", ToastType.error);
+        }
+      } catch (error) {
+        showToast("Lỗi khi cập nhật trạng thái", ToastType.error);
+        console.error(error);
+      }
+    };
+
+
 
   return (
     <>
@@ -226,7 +252,7 @@ export default function Page() {
           rows={displayedRows}
           onEdit={(id) => {router.push(`/Admin/HumanResources/Staff/Form/${id}`)}}
           onDelete={() => {}}
-          onDisable={(id) => console.log(id)}
+          onDisable={stateChange}
           showEdit={true}
           showDelete={false}
           showDisable={true}

@@ -50,6 +50,52 @@ export async function getkhoaOptions (page : number){
   }
 }
 
+//  Chuyển đổi trang thái phòng khám
+export async function ChangeClinicStatus(id: string, currentStatus: boolean) {
+  const res = await fetch(
+    `${API_BASE_URL}/Phong_Kham/StateChange/${id}?TrangThaiHoatDong=${currentStatus}`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await res.json();
+  return data; 
+}
+
+
+
+// cập nhât trạng thái bác sĩ
+export async function ChangeDoctorStatus(id: string, currentStatus: boolean) {
+  const res = await fetch(
+    `${API_BASE_URL}/Bacsi/StateChange/${id}?TrangThaiHoatDong=${currentStatus}`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await res.json();
+  return data; 
+}
+
+
+
+// cập nhật trạng thái nhân viên
+export async function ChangeEmployeeStatus(id: string, currentStatus: boolean) {
+  const res = await fetch(
+    `${API_BASE_URL}/Tai_Khoan/StateChange/${id}?TrangThaiHoatDong=${currentStatus}`,
+    {
+      method: "PATCH",
+    }
+  );
+
+  const data = await res.json();
+  return data; 
+}
+
+
+
+
 // Tìm kiếm loại khoa
 export async function Searchfordepartmenttype (key : string){
    try {

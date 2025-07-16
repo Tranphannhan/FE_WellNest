@@ -16,9 +16,11 @@ import {
   getDoctorAdmin,
   getkhoaOptions,
   FindDoctor,
+  ChangeDoctorStatus,
 } from "../../services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import { showToast, ToastType } from "@/app/lib/Toast";
 
 export interface rowRenderType {
   _id: string;
@@ -140,6 +142,29 @@ export default function Page() {
     loaddingAPISelect();
   }, []);
 
+
+
+  // cập nhật trang thái
+  const stateChange = async (id: string, TrangThaiHoatDong: boolean) => {
+    try {
+      const Result = await ChangeDoctorStatus(id, !TrangThaiHoatDong);
+      console.log(Result);
+      
+      if (Result?.status){
+        showToast("Cập nhật trạng thái thành công", ToastType.success);
+        console.log('Thành công');
+
+        await getAPI();
+      } else {
+        showToast("Cập nhật thất bại", ToastType.error);
+      }
+    } catch (error) {
+      showToast("Lỗi khi cập nhật trạng thái", ToastType.error);
+      console.error(error);
+    }
+  };
+
+
   return (
     <div className="AdminContent-Container">
       <BreadcrumbComponent
@@ -152,16 +177,17 @@ export default function Page() {
 
       {/* FORM TÌM KIẾM & FILTER */}
       <Box
-  sx={{
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 2,
-    mb: 2,
-    alignItems: "center",
-    justifyContent: "space-between", // Pushes inputs to left and button to right
-    width: "100%",
-  }}
->
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 2,
+          alignItems: "center",
+          justifyContent: "space-between", // Pushes inputs to left and button to right
+          width: "100%",
+        }}
+      >
+
       <Box
         sx={{
           display: "flex",
@@ -232,7 +258,7 @@ export default function Page() {
         </FormControl>
       </Box>
       <div>
-      <ButtonAdd 
+      <ButtonAdd  
         name="Thêm mới"
         link="/Admin/HumanResources/Doctor/Edit"
       />
@@ -247,9 +273,7 @@ export default function Page() {
           router.push(`/Admin/HumanResources/Doctor/Edit/${id}`);
         }}
         onDelete={() => {}}
-        onDisable={(id) => {
-          console.log(id);
-        }}
+        onDisable = {stateChange}
         showEdit={true}
         showDelete={false}
         showDisable={true}

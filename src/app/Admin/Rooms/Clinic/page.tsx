@@ -18,9 +18,10 @@ import CustomTableRooms, {
   rowRenderType,
 } from "../../component/Table/CustomTableRoom";
 import { getRommm, SearchRoom } from "../../services/Room";
-import { getkhoaOptions } from "../../services/DoctorSevices";
+import { ChangeClinicStatus, getkhoaOptions } from "../../services/DoctorSevices";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import { showToast, ToastType } from "@/app/lib/Toast";
 
 // Cấu hình cột của bảng
 const columns: Column[] = [
@@ -47,7 +48,7 @@ interface PhongKham {
   Id_Khoa: Khoa;
   SoPhongKham: string;
   TrangThaiHoatDong: boolean;
-}
+} 
 
 // Select chuyên khoa
 interface khoaOptionsType {
@@ -162,6 +163,32 @@ export default function Page() {
     });
   }, [searchText, selectedKhoa, rows]);
 
+
+   
+  // Chuyển đổi trạng thái
+  const stateChange = async (id: string, TrangThaiHoatDong: boolean) => {
+    try {
+      const Result = await ChangeClinicStatus (id, !TrangThaiHoatDong);
+      console.log(Result);
+      
+      if (Result?.status){
+        showToast ("Cập nhật trạng thái thành công", ToastType.success);
+        console.log('Thành công');
+
+        await loaddingAPISelect();
+        await loaddingAPI ();
+
+
+      } else {
+        showToast("Cập nhật thất bại", ToastType.error);
+      }
+    } catch (error) {
+      showToast("Lỗi khi cập nhật trạng thái", ToastType.error);
+      console.error(error);
+    }
+  };
+
+
   return (
     <div className="AdminContent-Container">
       <BreadcrumbComponent
@@ -264,7 +291,7 @@ export default function Page() {
         rows={filteredRows}
         onEdit={(id) => {router.push(`/Admin/Rooms/Clinic/Form/${id}`)}}
         onDelete={(row) => console.log("Delete", row)}
-        onDisable={(row) => console.log("Disable", row)}
+        onDisable={stateChange}
         showEdit={true}
         showDelete={false}
         showDisable={true}
@@ -273,5 +300,5 @@ export default function Page() {
         onPageChange={setCurrentPage}
       />
     </div>
-  );
+  ); 
 }

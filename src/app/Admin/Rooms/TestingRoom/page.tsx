@@ -16,9 +16,10 @@ import CustomTableRooms, {
   Column,
   rowRenderType,
 } from "../../component/Table/CustomTableRoom";
-import { getTestingRoom, SearchRoomName } from "../../services/Room";
+import { getTestingRoom, SearchRoomName, TestConversionStatusEvaluation } from "../../services/Room";
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
+import { showToast, ToastType } from "@/app/lib/Toast";
 
 interface TestingRoom {
   _id: string;
@@ -130,6 +131,7 @@ export default function Page() {
     }
   };
 
+
   // Load lại dữ liệu khi đổi trang (chỉ khi không có searchText)
   useEffect(() => {
     if (searchText.trim() === "") {
@@ -146,6 +148,29 @@ export default function Page() {
       return matchStatus;
     });
   }, [selectedStatus, rows]);
+
+
+
+  // Chuyển đổi trạng thái
+  const stateChange = async (id: string, TrangThaiHoatDong: boolean) => {
+    try {
+      const Result = await TestConversionStatusEvaluation (id, !TrangThaiHoatDong);
+      console.log(Result);
+      
+      if (Result?.status){
+        showToast ("Cập nhật trạng thái thành công", ToastType.success);
+        await LoaddingApi ();
+
+      } else {
+        showToast("Cập nhật thất bại", ToastType.error);
+      }
+    } catch (error) {
+      showToast("Lỗi khi cập nhật trạng thái", ToastType.error);
+      console.error(error);
+    }
+  };
+
+
 
   return (
     <div className="AdminContent-Container">
@@ -235,7 +260,7 @@ export default function Page() {
         rows={filteredRows}
         onEdit={(id) => {router.push(`/Admin/Rooms/TestingRoom/Form/${id}`)}}
         onDelete={() => {}}
-        onDisable={() => {}}
+        onDisable={stateChange}
         showEdit={true}
         showDelete={false}
         showDisable={true}

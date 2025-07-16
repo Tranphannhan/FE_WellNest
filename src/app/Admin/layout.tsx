@@ -13,6 +13,7 @@ import Box from '@mui/material/Box';
 import AccountMenu from './component/AccountMenu';
 import NAVIGATION from './component/NavAdmin/NavAdmin';
 import './component/NavAdmin/NavAdmin.css';
+import { ToastContainer } from 'react-toastify';
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -51,6 +52,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <DemoProvider window={isClient ? window : undefined}>
+      <ToastContainer />
       <AppProvider
         navigation={NAVIGATION}
         router={customRouter}
@@ -66,7 +68,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             />
           ),
           title: '',
-        }}
+        }} 
       >
         <DashboardLayout>
           <Box
