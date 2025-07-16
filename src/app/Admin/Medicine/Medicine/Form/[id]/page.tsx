@@ -47,7 +47,7 @@ function UpdateMedicineFormLayout() {
     TenThuoc?: string;
     Gia?: string;
   }>({});
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Lấy danh sách nhóm thuốc
   const fetchGroups = async () => {

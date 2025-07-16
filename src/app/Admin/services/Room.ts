@@ -59,7 +59,7 @@ export async function TestConversionStatusEvaluation (id: string, currentStatus:
 // tìm kiếm phòng
 export async function SearchRoom (key : string) {
   try {
-    const result = await fetch(`http://localhost:5000/Phong_Kham/Search/${key}`);
+    const result = await fetch(`${API_BASE_URL}/Phong_Kham/Search/${key}`);
     if (result.ok){
       const Data = await result.json();
       return Data;
@@ -78,7 +78,7 @@ export async function SearchRoom (key : string) {
 // Tìm kiếm phòng xét nghiệm
 export async function SearchRoomName (key : string) {
   try {
-    const result = await fetch(`http://localhost:5000/Phong_Thiet_Bi/Search/${key}`);
+    const result = await fetch(`${API_BASE_URL}/Phong_Thiet_Bi/Search/${key}`);
     if (result.ok){
       const Data = await result.json();
       return Data;
@@ -96,7 +96,7 @@ export async function SearchRoomName (key : string) {
 // services/Room.ts
 export const getRommmDetail = async (id: string) => {
   try {
-    const response = await fetch(`http://localhost:5000/Phong_Kham/Detail/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/Phong_Kham/Detail/${id}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });

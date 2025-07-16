@@ -54,7 +54,7 @@
 }
 
 button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.toolpad-demo-app-1sv69n2-MuiButtonBase-root-MuiIconButton-root {
-    right: 60px;
+    right: 70px;
 }
 
 .MuiBox-root.toolpad-demo-app-0 {
@@ -76,13 +76,6 @@ html[data-toolpad-color-scheme="dark"] .toolpad-demo-app-23htwk {
   min-height: 100%;
   height: fit-content;
 }
-
-
-
-/* .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorLeft.MuiDrawer-paperAnchorDockedLeft.toolpad-demo-app-oc2eyy-MuiPaper-root-MuiDrawer-paper {
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-} */
-
 
 
 nav{
@@ -133,4 +126,8 @@ html[data-toolpad-color-scheme="dark"] .Admin-containerLayout {
   color: white;
   box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 6px,
               rgba(255, 255, 255, 0.1) 0px 1px 2px inset;
+}
+
+html[data-toolpad-color-scheme="dark"] .toolpad-demo-app-23htwk {
+    background-color: #000000 !important;
 }

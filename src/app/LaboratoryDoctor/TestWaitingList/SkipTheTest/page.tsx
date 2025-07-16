@@ -8,6 +8,9 @@ import Pagination from '@/app/components/ui/Pagination/Pagination';
 import { paraclinicalType } from '@/app/types/patientTypes/patient';
 import { getWaitingForTest } from '@/app/services/LaboratoryDoctor';
 import NoData from '@/app/components/ui/Nodata/Nodata';
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
+
 
 export default function Prescription() {
   const router = useRouter();
@@ -15,13 +18,22 @@ export default function Prescription() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [data, setData] = useState<paraclinicalType[]>([]);
 
-  const loaddingAPI = async () => {
-    const getData = await getWaitingForTest('6803bf3070cd96d5cde6d824', currentPage, false);
-    if (!getData) return;
-    setData(getData.data);
-    setTotalPages(getData.totalPages);
-    setCurrentPage(getData.currentPage);
-  };
+const loaddingAPI = async () => {
+  const token = Cookies.get("token");
+  if (!token) return;
+
+  const decoded = jwtDecode<{ _id: string }>(token);
+  const idBacSi = decoded?._id;
+  if (!idBacSi) return;
+
+  const getData = await getWaitingForTest(idBacSi, currentPage, false);
+  if (!getData) return;
+
+  setData(getData.data);
+  setTotalPages(getData.totalPages);
+  setCurrentPage(getData.currentPage);
+};
+
 
   useEffect(() => {
     loaddingAPI();

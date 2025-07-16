@@ -53,7 +53,7 @@ export async function getAllChooseRooms (_id : string,currentPage:number) {
 export async function handlePay(id:string){
 
     try {
-        const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/Xacnhanthanhtoan/${id}`,
+        const response = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/Xacnhanthanhtoan/${id}`,
             {method:'PATCH'}
         )
         if(response.ok){
@@ -84,7 +84,7 @@ export async function handlePay(id:string){
   export async function checkPay(id:string){
 
     try {
-        const response = await fetch(`http://localhost:5000/Phieu_Kham_Benh/Detail/${id}`
+        const response = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/Detail/${id}`
         )
         if(response.ok){
             const data =await response.json();
@@ -108,7 +108,7 @@ export async function handlePay(id:string){
 
   export async function searchMedicalExaminationBook(phone:string,name:string,page:number = 1) {
         try{
-            const respone = await fetch(`http://localhost:5000/The_Kham_Benh/TimKiemSoKhamBenh/Pagination?sdt=${phone}&ten=${name}&page=${page}`);
+            const respone = await fetch(`${API_BASE_URL}/The_Kham_Benh/TimKiemSoKhamBenh/Pagination?sdt=${phone}&ten=${name}&page=${page}`);
             if(respone.ok){
             return (await respone.json())
             }else{

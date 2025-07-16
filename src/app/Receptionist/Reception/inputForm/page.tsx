@@ -15,6 +15,7 @@ export default function InputForm() {
   const [idUpdateBook, setIdUpdateBook] = useState<string>('');
   const [valueUpdate, setValueUpdate] = useState<medicalExaminationBook>({});
   const router = useRouter();
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -176,7 +177,7 @@ export default function InputForm() {
       )
     );
 
-    const response = await fetch(`http://localhost:5000/The_Kham_Benh/Edit/${idUpdateBook}`, {
+    const response = await fetch(`${API_BASE_URL}/The_Kham_Benh/Edit/${idUpdateBook}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

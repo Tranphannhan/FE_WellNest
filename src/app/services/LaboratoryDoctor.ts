@@ -88,7 +88,7 @@ export async function generateTestResults (fullForm:valueForm){
             if (value) formData.append(key, value);
         }
 
-        const response = await fetch(`http://localhost:5000/Ket_Qua_Xet_Nghiem/Add`, {
+        const response = await fetch(`${API_BASE_URL}/Ket_Qua_Xet_Nghiem/Add`, {
             method: 'POST',
             body: formData,
         });
@@ -114,7 +114,7 @@ export async function generateTestResults (fullForm:valueForm){
 // xác nhận trạng thái xét nghiệm
 export async function handleCompleteTheTests (id: string) {
   try {
-    const response = await fetch(`http://localhost:5000/Yeu_Cau_Xet_Nghiem/XacNhanTrangThai/${id}`,
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/XacNhanTrangThai/${id}`,
       {
         method: 'PATCH',
         headers: {

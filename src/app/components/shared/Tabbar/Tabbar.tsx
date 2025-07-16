@@ -17,7 +17,7 @@ export default function Tabbar({ tabbarItems }: { tabbarItems: tabbarContentType
   return (
     <Box
       sx={{
-        pt: '20px',
+        pt: '11px',
         pb: 0,
         position: 'relative',
         '&::before': {

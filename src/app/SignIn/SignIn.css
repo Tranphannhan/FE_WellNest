@@ -180,9 +180,8 @@
 .input-label {
     display: block; /* block */
     font-size: 16px; /* text-sm */
-    font-weight: 500; /* font-medium */
     color: #4b5563; /* text-gray-700 */
-    margin-bottom: 0.5rem; /* mb-2 */
+    margin-bottom: 5px; /* mb-2 */
 }
 
 .input-field {

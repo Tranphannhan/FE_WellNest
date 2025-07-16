@@ -4,7 +4,7 @@ import Link from 'next/link';
 import './Navbar.css'
 import { usePathname } from 'next/navigation';
 import { MdLogout } from "react-icons/md";
-import { conTentNavigationType } from '@/app/types/componentTypes/navTypes';
+import { conTentNavigationType } from '@/app/types/componentTypes/NavTypes';
 
 
 export default function Navbar ({conTentNavigation}:{conTentNavigation:conTentNavigationType}){

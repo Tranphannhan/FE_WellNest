@@ -30,6 +30,12 @@ import { prescriptionType } from "@/app/types/patientTypes/patient";
 import ModalComponent from "@/app/components/shared/Modal/Modal";
 import "./ListofDrugsDetail.css";
 import StatusBadge from "@/app/components/ui/StatusBadge/StatusBadge";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+
+interface TokenPayload {
+  _id: string;
+}
 
 export default function PrescriptionDetails() {
   const router = useRouter();
@@ -66,10 +72,20 @@ export default function PrescriptionDetails() {
 
   const handleConfirmationDispensing = async (idDonthuoc: string) => {
     try {
+      const token = Cookies.get("token");
+      if (!token) {
+        console.error("Không tìm thấy token!");
+        return;
+      }
+
+      const decoded = jwtDecode<TokenPayload>(token);
+      const idNguoiPhatThuoc = decoded._id;
+
       const result = await ConfirmationOfDispensing(
         idDonthuoc,
-        "68272d28b4cfad70da810025"
+        idNguoiPhatThuoc
       );
+
       if (result) {
         await loadAPI();
         setShowModal(false);

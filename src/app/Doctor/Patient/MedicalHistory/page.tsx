@@ -9,6 +9,9 @@ import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
 import { FaEye } from "react-icons/fa";
 import NoData from "@/app/components/ui/Nodata/Nodata";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
+
 
 export default function Patient() {
   const [dataRender, setDataRender] = useState<MedicalExaminationCard[]>([]);
@@ -22,19 +25,26 @@ export default function Patient() {
     router.push(`/Doctor/Patient/ToExamine/${id}`);
   }
 
-  const loadPatients = async () => {
-    const res = await searchPatientsByDoctor({
-      idBacSi: "6807397b4a1e320062ce2b20",
-      trangThai: true,
-      trangThaiThanhToan: true,
-      soDienThoai: phone,
-      hoVaTen: name,
-      page: currentPage,
-      limit: 7,
-    });
-    setDataRender(res?.data || []);
-    setTotalPages(res?.totalPages || 1);
-  };
+const loadPatients = async () => {
+  const token = Cookies.get("token");
+  if (!token) return;
+  const decoded = jwtDecode<{ _id: string }>(token);
+  const idBacSi = decoded?._id;
+
+  const res = await searchPatientsByDoctor({
+    idBacSi,
+    trangThai: true,
+    trangThaiThanhToan: true,
+    soDienThoai: phone,
+    hoVaTen: name,
+    page: currentPage,
+    limit: 7,
+  });
+
+  setDataRender(res?.data || []);
+  setTotalPages(res?.totalPages || 1);
+};
+
 
   useEffect(() => {
     loadPatients();

@@ -12,6 +12,8 @@ import moment from "moment";
 import { FaNotesMedical } from "react-icons/fa";
 import NoData from "@/app/components/ui/Nodata/Nodata";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 export default function ListPatientsMissed() {
   const [dataRender, setDataRender] = useState<MedicalExaminationCard[]>([]);
@@ -24,33 +26,39 @@ export default function ListPatientsMissed() {
     router.push(`/Doctor/Patient/ToExamine/${id}`);
   }
 
-  async function handleSearch() {
-    const data = await searchPatientsByDoctor({
-      idBacSi: "6807397b4a1e320062ce2b20",
-      soDienThoai: phone,
-      trangThaiHoatDong:'BoQua',
-      hoVaTen: name,
-      page:currentPage,
-    });
-    if (data) {
-      setDataRender(data.data);
-      setTotalPages(totalPages);
-      setCurrentPage(data.currentPage);
-    }
-  }
+ async function handleSearch() {
+  const token = Cookies.get("token");
+  if (!token) return;
+  const decoded = jwtDecode<{ _id: string }>(token);
+  const idBacSi = decoded?._id;
 
-  const LoaddingPatient = async () => {
-    const Data = await getAllPatient(
-      "6807397b4a1e320062ce2b20",
-      false,
-      "BoQua",
-      currentPage
-    );
-    console.log(Data);
-    setDataRender(Data.data);
-    setTotalPages(Data.totalPages)
-    setCurrentPage(1)
-  };
+  const data = await searchPatientsByDoctor({
+    idBacSi,
+    soDienThoai: phone,
+    trangThaiHoatDong: "BoQua",
+    hoVaTen: name,
+    page: currentPage,
+  });
+  if (data) {
+    setDataRender(data.data);
+    setTotalPages(data.totalPages);
+    setCurrentPage(data.currentPage);
+  }
+}
+
+const LoaddingPatient = async () => {
+  const token = Cookies.get("token");
+  if (!token) return;
+  const decoded = jwtDecode<{ _id: string }>(token);
+  const idBacSi = decoded?._id;
+
+  const Data = await getAllPatient(idBacSi, false, "BoQua", currentPage);
+  console.log(Data);
+  setDataRender(Data.data);
+  setTotalPages(Data.totalPages);
+  setCurrentPage(1);
+};
+
 
     useEffect(() => {
     if (phone || name) {

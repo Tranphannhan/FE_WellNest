@@ -32,7 +32,7 @@ interface khoaOptionsType {
   TenKhoa: string;
   TrangThaiHoatDong: boolean;
 }
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 // API fetch functions
 const fetchKhoaOptions = async (callback: (data: khoaOptionsType[]) => void) => {
   try {
@@ -51,7 +51,7 @@ const fetchKhoaOptions = async (callback: (data: khoaOptionsType[]) => void) => 
 
 const checkRoomNumber = async (soPhongKham: string): Promise<boolean> => {
   try {
-    const response = await fetch('http://localhost:5000/Phong_Kham/CheckRoomNumber', {
+    const response = await fetch(`${API_BASE_URL}/Phong_Kham/CheckRoomNumber`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ SoPhongKham: soPhongKham }),
@@ -74,7 +74,7 @@ const addPhongKham = async (
   callback: (success: boolean, message: string) => void
 ) => {
   try {
-    const response = await fetch('http://localhost:5000/Phong_Kham/', {
+    const response = await fetch(`${API_BASE_URL}/Phong_Kham/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
