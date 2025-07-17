@@ -10,7 +10,7 @@ import {
   MdOutlinePayments,
   MdOutlineMedication,
   MdOutlineVaccines,
-  MdOutlineAssignment
+  MdOutlineAssignment,
 } from "react-icons/md";
 import { FaHouseMedical } from "react-icons/fa6";
 import BreadcrumbComponent from "../component/Breadcrumb";
@@ -55,7 +55,7 @@ const initialMonitorData = [
     label: "Xét nghiệm chờ thanh toán",
     icon: <MdOutlinePayments size={28} color="#f57c00" />,
     value: 0,
-    api: `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination&TrangThaiThanhToan=true`,
+    api: `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?TrangThaiThanhToan=false`,
     field: "SoNguoiChoThanhToan",
   },
   {
@@ -84,62 +84,65 @@ const initialMonitorData = [
 export default function MonitorPage() {
   const [monitorData, setMonitorData] = useState(initialMonitorData);
 
-useEffect(() => {
-  const fetchData = async () => {
-    const newData = await Promise.all(
-      initialMonitorData.map(async (item) => {
-        if (!item.api) return item;
+  useEffect(() => {
+    const fetchData = async () => {
+      const newData = await Promise.all(
+        initialMonitorData.map(async (item) => {
+          if (!item.api) return item;
 
-        try {
-          const res = await fetch(item.api);
-          const json = await res.json();
+          try {
+            const res = await fetch(item.api);
+            const json = await res.json();
 
-          if (json.totalItems !== undefined) {
-            return { ...item, value: json.totalItems };
-          }
-
-          if (json.total !== undefined) {
-            return { ...item, value: json.total };
-          }
-
-          if (Array.isArray(json)) {
-            return { ...item, value: json.length };
-          }
-
-          if (Array.isArray(json.data)) {
-            return { ...item, value: json.data.length };
-          }
-
-          if (
-            typeof json.data === "object" &&
-            json.data !== null
-          ) {
-            if (json.data.totalItems !== undefined) {
-              return { ...item, value: json.data.totalItems };
+            if (json.totalItems !== undefined) {
+              return { ...item, value: json.totalItems };
             }
-            if (json.data.total !== undefined) {
-              return { ...item, value: json.data.total };
+
+            if (json.total !== undefined) {
+              return { ...item, value: json.total };
             }
-            if (Array.isArray(json.data.data)) {
-              return { ...item, value: json.data.data.length };
+
+            if (Array.isArray(json)) {
+              return { ...item, value: json.length };
             }
+
+            if (Array.isArray(json.data)) {
+              return { ...item, value: json.data.length };
+            }
+
+            if (typeof json.data === "object" && json.data !== null) {
+              if (json.data.totalItems !== undefined) {
+                return { ...item, value: json.data.totalItems };
+              }
+              if (json.data.total !== undefined) {
+                return { ...item, value: json.data.total };
+              }
+              if (Array.isArray(json.data.data)) {
+                return { ...item, value: json.data.data.length };
+              }
+            }
+
+            console.warn(
+              `Không tìm thấy tổng phù hợp cho API: ${item.api}`,
+              json
+            );
+            return item;
+          } catch (err) {
+            console.error("Error fetching:", item.label, err);
+            return item;
           }
+        })
+      );
 
-          console.warn(`Không tìm thấy tổng phù hợp cho API: ${item.api}`, json);
-          return item;
-        } catch (err) {
-          console.error("Error fetching:", item.label, err);
-          return item;
-        }
-      })
-    );
+      setMonitorData(newData);
+    };
 
-    setMonitorData(newData);
-  };
+    fetchData();
 
-  fetchData();
-}, []);
+    const intervalId = setInterval(fetchData, 10000);
 
+    return () => clearInterval(intervalId);
+  }, []);
 
   const getUnit = (label: string): string => {
     if (label.includes("Khoa")) return "khoa";
