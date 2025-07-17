@@ -22,8 +22,8 @@ const loaddingAPI = async () => {
   const token = Cookies.get("token");
   if (!token) return;
 
-  const decoded = jwtDecode<{ _id: string }>(token);
-  const idBacSi = decoded?._id;
+  const decoded = jwtDecode<{ _Id_PhongThietBi: string }>(token);
+  const idBacSi = decoded?._Id_PhongThietBi;
   if (!idBacSi) return;
 
   const getData = await getWaitingForTest(idBacSi, currentPage, false);
