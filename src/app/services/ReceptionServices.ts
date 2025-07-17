@@ -121,3 +121,24 @@ export async function handlePay(id:string){
   }
 
   
+
+export async function GetPriceDiscovery(){
+  try {
+    const response = await fetch(`${API_BASE_URL}/Giadichvu/ActiveGiaKham`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Lỗi khi gọi API: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Lỗi khi lấy giá khám:", error);
+    return null;
+  }
+}

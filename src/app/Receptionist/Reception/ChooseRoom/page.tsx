@@ -4,7 +4,7 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import "./ChooseRoom.css";
 import Link from "next/link";
 import Example from "./notificationChooseRoom";
-import { getAllChooseRooms } from "@/app/services/ReceptionServices";
+import { getAllChooseRooms, GetPriceDiscovery } from "@/app/services/ReceptionServices";
 import { showToast, ToastType } from "@/app/lib/Toast";
 import { receptionTemporaryDoctorTypes } from "@/app/types/receptionTypes/receptionTemporaryTypes";
 import { useRouter } from "next/navigation";
@@ -68,7 +68,7 @@ export default function ChooseRoom() {
       const idPhieuKhamBenh = result._id;
 
       if (!idPhieuKhamBenh) {
-        showToast("Không nhận được ID phiếu khám bệnh!", ToastType.error);
+        showToast("Không nhận được phiếu khám bệnh!", ToastType.error);
         return;
       }
 
@@ -155,63 +155,68 @@ export default function ChooseRoom() {
     receptionTemporaryDoctorTypes[]
   >([]);
   useEffect(() => {
-    const initData = async () => {
-      try {
-        // Lấy token từ cookie
-        const token = Cookies.get("token");
-        if (!token) {
-          showToast("Không tìm thấy token", ToastType.error);
-          return;
-        }
+const initData = async () => {
+  try {
+    const token = Cookies.get("token");
+    if (!token) {
+      showToast("Không tìm thấy token", ToastType.error);
+      return;
+    }
 
-        const decoded = jwtDecode<{ _id: string }>(token);
-        const idNguoiTiepNhan = decoded._id;
+    const decoded = jwtDecode<{ _id: string }>(token);
+    const idNguoiTiepNhan = decoded._id;
 
-        // Tiếp tục xử lý dữ liệu localStorage như cũ
-        const thongTinTiepNhanRaw = sessionStorage.getItem("thongTinTiepNhan");
-        const soKhamBenhRaw = sessionStorage.getItem("soKhamBenh");
+    const thongTinTiepNhanRaw = sessionStorage.getItem("thongTinTiepNhan");
+    const soKhamBenhRaw = sessionStorage.getItem("soKhamBenh");
 
-        if (!thongTinTiepNhanRaw || !soKhamBenhRaw) {
-          showToast("Thiếu dữ liệu tiếp nhận hoặc bệnh nhân", ToastType.error);
-          return;
-        }
+    if (!thongTinTiepNhanRaw || !soKhamBenhRaw) {
+      showToast("Thiếu dữ liệu tiếp nhận hoặc bệnh nhân", ToastType.error);
+      return;
+    }
 
-        const thongTinTiepNhan = JSON.parse(thongTinTiepNhanRaw);
-        const soKhamBenh = JSON.parse(soKhamBenhRaw);
+    const thongTinTiepNhan = JSON.parse(thongTinTiepNhanRaw);
+    const soKhamBenh = JSON.parse(soKhamBenhRaw);
 
-        if (!soKhamBenh._id) {
-          showToast("Chưa có mã sổ khám bệnh", ToastType.error);
-          return;
-        }
+    if (!soKhamBenh._id) {
+      showToast("Chưa có mã sổ khám bệnh", ToastType.error);
+      return;
+    }
 
-        setExaminationCardInformation((prev) => ({
-          ...prev,
-          Id_TheKhamBenh: soKhamBenh._id,
-          Id_GiaDichVu: "683420eb8b7660453369dce1",
-          Id_NguoiTiepNhan: idNguoiTiepNhan, // ✅ sử dụng từ token
-          LyDoDenKham: thongTinTiepNhan.Reason,
-        }));
+    // ✅ Lấy giá khám từ API
+    const giaKhamData = await GetPriceDiscovery();
+    if (!giaKhamData || !giaKhamData._id) {
+      showToast("Không lấy được giá khám", ToastType.error);
+      return;
+    }
 
-        setVitalSigns({
-          height: String(thongTinTiepNhan.height || ""),
-          weight: String(thongTinTiepNhan.Weight || ""),
-        });
+    setExaminationCardInformation((prev) => ({
+      ...prev,
+      Id_TheKhamBenh: soKhamBenh._id,
+      Id_GiaDichVu: giaKhamData._id,
+      Id_NguoiTiepNhan: idNguoiTiepNhan,
+      LyDoDenKham: thongTinTiepNhan.Reason,
+    }));
 
-        setNameDepartment(thongTinTiepNhan.Department.name);
+    setVitalSigns({
+      height: String(thongTinTiepNhan.height || ""),
+      weight: String(thongTinTiepNhan.Weight || ""),
+    });
 
-        const response = await getAllChooseRooms(
-          thongTinTiepNhan.Department._id,
-          currentPage
-        );
-        if (response) {
-          setDataChooseRoom(response.data);
-          setTotalPagas(response.totalPages);
-        }
-      } catch (error) {
-        showToast("Đã có lỗi xảy ra khi tải dữ liệu", ToastType.error);
-        console.error(error);
-      }
-    };
+    setNameDepartment(thongTinTiepNhan.Department.name);
+
+    const response = await getAllChooseRooms(
+      thongTinTiepNhan.Department._id,
+      currentPage
+    );
+    if (response) {
+      setDataChooseRoom(response.data);
+      setTotalPagas(response.totalPages);
+    }
+  } catch (error) {
+    showToast("Đã có lỗi xảy ra khi tải dữ liệu", ToastType.error);
+    console.error(error);
+  }
+};
 
     initData();
   }, [currentPage]);
