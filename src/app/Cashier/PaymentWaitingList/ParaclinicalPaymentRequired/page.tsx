@@ -15,6 +15,8 @@ import { showToast, ToastType } from "@/app/lib/Toast";
 import payment from "@/app/services/Pay";
 import NoData from "@/app/components/ui/Nodata/Nodata";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 export default function ParaclinicalPaymentRequired() {
   const router = useRouter();
@@ -35,6 +37,19 @@ export default function ParaclinicalPaymentRequired() {
 
   const [searchName, setSearchName] = useState("");
   const [searchPhone, setSearchPhone] = useState("");
+
+  const getThuNganIdFromToken = (): string | null => {
+    const token = Cookies.get("token");
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode<{ _id: string }>(token);
+      return decoded._id;
+    } catch (error) {
+      console.error("Lỗi giải mã token:", error);
+      return null;
+    }
+  };
 
   const loadApi = async (page: number = 1) => {
     const res = await SearchParaclinicalAwaitingPayment(
@@ -78,7 +93,12 @@ export default function ParaclinicalPaymentRequired() {
 
   const paymentConfirmation = async () => {
     try {
-      const result = await confirmTestRequestPayment(idPhieuKhamBenh);
+      const Id_ThuNgan = getThuNganIdFromToken();
+      if(!Id_ThuNgan){
+          showToast("Không tìm thấy ID thu ngân", ToastType.error);
+          return;
+      }
+      const result = await confirmTestRequestPayment(idPhieuKhamBenh, Id_ThuNgan);
       if (result) {
         showToast("Xác nhận thanh toán thành công", ToastType.success);
         setShowModal(false);

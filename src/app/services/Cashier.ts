@@ -100,15 +100,17 @@ export async function confirmPrescriptionPayment(id: string): Promise<prescripti
 }
 
 //Xác nhận thanh toán cận lâm sàng
-export async function confirmTestRequestPayment(id: string){
+export async function confirmTestRequestPayment(id: string, Id_ThuNgan: string) {
+  console.log("Id_ThuNgan:", Id_ThuNgan); // 👈 kiểm tra giá trị truyền vào
+
   try {
-    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/Xacnhanthanhtoan?Id_PhieuKhamBenh=${id}`, {
+    const response = await fetch(`${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/Xacnhanthanhtoan?Id_PhieuKhamBenh=${id}&Id_ThuNgan=${Id_ThuNgan}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    
+
     const data = await response.json();
     return data;
   } catch (error) {
@@ -116,6 +118,7 @@ export async function confirmTestRequestPayment(id: string){
     return null;
   }
 }
+
 
 
 // tìm kiếm

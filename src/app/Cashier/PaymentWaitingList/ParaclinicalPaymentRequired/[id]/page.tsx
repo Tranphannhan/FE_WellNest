@@ -30,6 +30,8 @@ import StatusBadge from "@/app/components/ui/StatusBadge/StatusBadge";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PrintIcon from "@mui/icons-material/Print";
 import PaymentIcon from "@mui/icons-material/Payment";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 export default function ParaclinicalDetails() {
   const router = useRouter();
@@ -108,9 +110,27 @@ export default function ParaclinicalDetails() {
     handleShow();
   };
 
+    const getThuNganIdFromToken = (): string | null => {
+    const token = Cookies.get("token");
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode<{ _id: string }>(token);
+      return decoded._id;
+    } catch (error) {
+      console.error("Lỗi giải mã token:", error);
+      return null;
+    }
+  };
+
   const paymentConfirmation = async () => {
     try {
-      const result = await confirmTestRequestPayment(idPhieuKhamBenh);
+      const Id_ThuNgan = getThuNganIdFromToken();
+        if(!Id_ThuNgan){
+                showToast("Không tìm thấy ID thu ngân", ToastType.error);
+                return;
+            }
+      const result = await confirmTestRequestPayment(idPhieuKhamBenh, Id_ThuNgan);
       const message = result?.message || "Xác nhận không rõ";
       if (
         message.includes("đã được thanh toán trước đó") ||

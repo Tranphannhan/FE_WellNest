@@ -138,7 +138,7 @@ const paymentConfirmation = async () => {
           Id_Dichvu: data?._id.toString(),
           Id_ThuNgan: idThuNgan,
           LoaiHoaDon: "Thuoc",
-          TenHoaDon: data?.TenDonThuoc,
+          TenHoaDon:`Hóa đơn: ${data?.TenDonThuoc}`,
           TongTien: dataPendingPayment.TongTien
         }),
       });
