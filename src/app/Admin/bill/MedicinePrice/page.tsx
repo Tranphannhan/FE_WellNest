@@ -44,7 +44,7 @@ export default function Page() {
           _id: item._id,
           HoVaTen: item?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ?? "-",
           Ngay: item?.Id_PhieuKhamBenh?.Ngay ?? "-",
-          Giadichvu: item?.Id_PhieuKhamBenh?.Id_GiaDichVu?.Giadichvu ?? 0,
+          TongTien: item?.TongTien ?? 0,
           LoaiHoaDon: item?.LoaiHoaDon ?? "-",
           TenHoaDon: item?.TenHoaDon ?? "-",
         }));
