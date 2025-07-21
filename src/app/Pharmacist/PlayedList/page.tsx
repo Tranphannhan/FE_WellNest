@@ -4,17 +4,19 @@ import "../ListofDrugs/ListofDrugs.css";
 import React, { useEffect, useState } from "react";
 import { prescriptionType } from "@/app/types/patientTypes/patient";
 import Link from "next/link";
-import { getThePrescriptionDispensed } from "@/app/services/Pharmacist";
 import NoData from "@/app/components/ui/Nodata/Nodata";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
+import { SearchPrescriptionByDoctor } from "@/app/services/Cashier";
 
 export default function Prescription() {
   const [dataPrescription, setDataPrescription] = useState<prescriptionType[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [fullName, setFullName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const loadApi = async (page = 1) => {
-    const res = await getThePrescriptionDispensed(true, page);
+    const res = await SearchPrescriptionByDoctor('DaPhatThuoc', false, page, fullName, phoneNumber); // ✅ TrangThai: false, ThanhToan: true
     if (!res) return;
     setDataPrescription(res.data);
     setCurrentPage(res.currentPage);
@@ -24,6 +26,10 @@ export default function Prescription() {
   useEffect(() => {
     loadApi();
   }, []);
+
+  const handleSearch = () => {
+    loadApi(1); // reset về trang đầu khi tìm kiếm
+  };
 
   return (
     <>
@@ -44,8 +50,10 @@ export default function Prescription() {
                 type="text"
                 placeholder="Hãy nhập số điện thoại"
                 className="search-input"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={handleSearch}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
@@ -55,8 +63,10 @@ export default function Prescription() {
                 type="text"
                 placeholder="Hãy nhập tên"
                 className="search-input"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={handleSearch}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
@@ -92,7 +102,7 @@ export default function Prescription() {
                     <td>
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <Link href={`/Pharmacist/ListofDrugs/${record._id}`}>
-                          <button className="button--blue" style={{ marginRight: "10px" }}>
+                          <button className="button--green" style={{ marginRight: "10px" }}>
                             <i className="bi bi-eye-fill"></i>
                             Xem chi tiết
                           </button>
@@ -104,7 +114,6 @@ export default function Prescription() {
               </tbody>
             </table>
 
-            {/* ✅ Thêm Pagination */}
             <Pagination
               totalPages={totalPages}
               currentPage={currentPage}

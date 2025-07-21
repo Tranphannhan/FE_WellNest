@@ -1,24 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
-import "../TestWaitingList.css";
-import Pagination from "@/app/components/ui/Pagination/Pagination";
-import { paraclinicalType } from "@/app/types/patientTypes/patient";
-import { getWaitingForTest } from "@/app/services/LaboratoryDoctor";
-import NoData from "@/app/components/ui/Nodata/Nodata";
-import { FaEye } from "react-icons/fa6";
-import Cookies from "js-cookie";
+import '../TestWaitingList.css'
+import Pagination from '@/app/components/ui/Pagination/Pagination';
+import { paraclinicalType } from '@/app/types/patientTypes/patient';
+import NoData from '@/app/components/ui/Nodata/Nodata';
 import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
+import { SearchParaclinicalWithStatus } from '@/app/services/Cashier';
+import { FaEye } from 'react-icons/fa6';
 
 export default function Prescription() {
   const router = useRouter();
   const [totalPages, setTotalPages] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [data, setData] = useState<paraclinicalType[]>([]);
+  const [fullName, setFullName] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
 
-  const loaddingAPI = async () => {
+  const loaddingAPI = async (page: number = 1) => {
     const token = Cookies.get("token");
     if (!token) return;
 
@@ -26,7 +28,17 @@ export default function Prescription() {
     const idBacSi = decoded?._Id_PhongThietBi;
     if (!idBacSi) return;
 
-    const getData = await getWaitingForTest(idBacSi, currentPage, false, true);
+    const getData = await SearchParaclinicalWithStatus(
+      true, // TrangThaiHoatDong
+      page, // page
+      true, // TrangThai
+      fullName,
+      phoneNumber,
+      true, // TrangThaiThanhToan
+      false,
+      idBacSi
+    );
+
     if (!getData) return;
 
     setData(getData.data);
@@ -35,26 +47,21 @@ export default function Prescription() {
   };
 
   useEffect(() => {
-    loaddingAPI();
+    loaddingAPI(currentPage);
   }, [currentPage]);
+
+  const handleSearch = () => {
+    loaddingAPI(1); // Reset về trang đầu khi tìm kiếm
+  };
 
   return (
     <>
       <Tabbar
         tabbarItems={{
           tabbarItems: [
-            {
-              text: "Chờ xét nghiệm",
-              link: "/LaboratoryDoctor/TestWaitingList",
-            },
-            {
-              text: "Bỏ qua xét nghiệm",
-              link: "/LaboratoryDoctor/TestWaitingList/SkipTheTest",
-            },
-            {
-              text: "Đã xét nghiệm",
-              link: "/LaboratoryDoctor/TestWaitingList/TestHistory",
-            },
+            { text: 'Chờ xét nghiệm', link: '/LaboratoryDoctor/TestWaitingList' },
+            { text: 'Bỏ qua xét nghiệm', link: '/LaboratoryDoctor/TestWaitingList/SkipTheTest' },
+            { text: 'Đã xét nghiệm', link: '/LaboratoryDoctor/TestWaitingList/TestHistory' },
           ],
         }}
       />
@@ -67,8 +74,10 @@ export default function Prescription() {
                 type="text"
                 placeholder="Hãy nhập số điện thoại"
                 className="search-input"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={handleSearch}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
@@ -77,8 +86,10 @@ export default function Prescription() {
                 type="text"
                 placeholder="Hãy nhập tên"
                 className="search-input"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
               />
-              <button className="search-btn">
+              <button className="search-btn" onClick={handleSearch}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
@@ -105,29 +116,15 @@ export default function Prescription() {
                 {data.map((record, index) => (
                   <tr key={record._id}>
                     <td>{(currentPage - 1) * 10 + index + 1}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>
-                      {record.Id_PhieuKhamBenh.Id_TheKhamBenh.HoVaTen}
-                    </td>
+                    <td style={{ whiteSpace: 'nowrap' }}>{record.Id_PhieuKhamBenh.Id_TheKhamBenh.HoVaTen}</td>
+                    <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh || ''}</td>
+                    <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh || ''}</td>
+                    <td>{record?.Id_PhieuKhamBenh?.LyDoDenKham || ''}</td>
+                    <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai || ''}</td>
+                    <td>{record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SDT_NguoiThan || ''}</td>
+                    <td style={{ whiteSpace: 'nowrap' }}>{record?.Ngay || ''}</td>
                     <td>
-                      {record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.GioiTinh || ""}
-                    </td>
-                    <td>
-                      {record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.NgaySinh || ""}
-                    </td>
-                    <td>{record?.Id_PhieuKhamBenh?.LyDoDenKham || ""}</td>
-                    <td>
-                      {record?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.SoDienThoai ||
-                        ""}
-                    </td>
-                    <td>
-                      {record?.Id_PhieuKhamBenh?.Id_TheKhamBenh
-                        ?.SDT_NguoiThan || ""}
-                    </td>
-                    <td style={{ whiteSpace: "nowrap" }}>
-                      {record?.Ngay || ""}
-                    </td>
-                    <td>
-                      <button
+ <button
                         className="button--blue"
                         onClick={() =>
                           router.push(

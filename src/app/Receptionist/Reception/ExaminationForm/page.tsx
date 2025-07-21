@@ -151,8 +151,8 @@ export default function ExaminationForm() {
 
       <ConfirmationNotice
         Data_information={{
-          name: "Nhân",
-          totalPrice: String(price), // format: "85.000"
+          name: valueRender?.fullName,
+          totalPrice: String(price),
           paymentMethod: "",
           handleClose: handlePayClose,
           handleShow: handlePayShow,
