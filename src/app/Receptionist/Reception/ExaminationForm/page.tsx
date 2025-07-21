@@ -15,6 +15,14 @@ import { useRouter } from "next/navigation";
 import ModalComponent from "@/app/components/shared/Modal/Modal";
 import ConfirmationNotice from "@/app/Cashier/ComponentCashier/ConfirmationNotice";
 import payment from "@/app/services/Pay";
+//import token
+import Cookies from "js-cookie";
+import {jwtDecode} from "jwt-decode";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+interface MyTokenType {
+  _id: string;
+  // có thể thêm các field khác nếu cần
+}
 
 export default function ExaminationForm() {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -38,6 +46,50 @@ export default function ExaminationForm() {
   const handlePayClose = () => setModalPay(false);
   const handlePayShow = () => setModalPay(true);
 
+  //Lay token
+
+  const getTiepNhanIdFromToken = (): string | null => {
+  const token = Cookies.get("token"); 
+
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode<MyTokenType>(token);
+    return decoded._id;
+  } catch (error) {
+    console.error("Lỗi giải mã token:", error);
+    return null;
+  }
+};
+
+  const addHoaDonKham = async (Id_PhieuKhamBenh: string) => {
+  const idThuNgan = getTiepNhanIdFromToken();
+  if (!idThuNgan || !Id_PhieuKhamBenh) return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/Hoadon/Add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Id_PhieuKhamBenh,
+        Id_Dichvu: null,
+        Id_ThuNgan: idThuNgan,
+        LoaiHoaDon: "Kham",
+        TenHoaDon: "Hóa đơn phí khám",
+      }),
+    });
+
+    const data = await response.json();
+    console.log("✅ Tạo hóa đơn khám thành công:", data);
+  } catch (error) {
+    console.error("❌ Lỗi tạo hóa đơn khám:", error);
+  }
+};
+
+//code cu ko sua
+
   async function Pay() {
     if (!valueRender?.Id_PhieuKhamBenh) {
       return showToast("Chưa có mã phiếu khám bệnh", ToastType.error);
@@ -57,6 +109,8 @@ export default function ExaminationForm() {
       sessionStorage.setItem("ThongTinPhieuKham", JSON.stringify(newValue));
       setStatusPay(true);
       setShowModal(false);
+      //Add hoa don
+      await addHoaDonKham(valueRender.Id_PhieuKhamBenh);
     } else if (result) {
       showToast(result.message, ToastType.error);
     }
