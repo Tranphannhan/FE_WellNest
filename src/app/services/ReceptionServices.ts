@@ -142,3 +142,32 @@ export async function GetPriceDiscovery(){
     return null;
   }
 }
+
+// services/suggestKhoa.ts
+
+// services/suggestKhoa.ts
+
+export async function fetchSuggestedKhoa(symptoms: string[]) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Khoa/Suggest`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ symptoms }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Lỗi không xác định");
+    }
+
+    return data.data; // { symptoms, khoaUuTien, khoaLienQuan }
+  } catch (error) {
+    console.error("Lỗi khi gợi ý khoa:", error);
+    return null;
+  }
+}
+
+
