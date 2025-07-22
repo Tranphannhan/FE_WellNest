@@ -32,6 +32,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import PaymentIcon from "@mui/icons-material/Payment";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
+import payment from "@/app/services/Pay";
 
 export default function ParaclinicalDetails() {
   const router = useRouter();
@@ -55,6 +56,47 @@ export default function ParaclinicalDetails() {
     "Gio" | "TrangThaiThanhToan" | "Gia" | ""
   >("");
 
+  const paymentConfirmation = async (id: string | null = null) => {
+    try {
+      const Id_ThuNgan = getThuNganIdFromToken();
+      if (!Id_ThuNgan) {
+        showToast("Không tìm thấy ID thu ngân", ToastType.error);
+        return;
+      }
+
+      const finalId = id ?? (idPhieuKhamBenh || String(params.id)); // fallback 3 bước
+      const result = await confirmTestRequestPayment(finalId, Id_ThuNgan);
+      const message = result?.message || "Xác nhận không rõ";
+
+      if (
+        message.includes("đã được thanh toán trước đó") ||
+        message.includes("thành công")
+      ) {
+        showToast(message, ToastType.success);
+        handleClose();
+        setIsPaid(true);
+        await loaddingApi();
+        return;
+      }
+
+      showToast("Không rõ trạng thái thanh toán", ToastType.error);
+    } catch {
+      showToast("Đã có lỗi xảy ra khi xác nhận thanh toán", ToastType.error);
+    } finally {
+      handleClose();
+    }
+  };
+
+  const PayMoMo = async () => {
+    await payment(
+      totalPrice,
+      "Xét nghiệm",
+      `http://localhost:3000/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${idPhieuKhamBenh}`,
+      idPhieuKhamBenh,
+      "XetNghiem"
+    );
+  };
+
   const loaddingApi = async () => {
     const response = await getDetailParaclinicalAwaitingPayment(String(id));
     if (!response) return;
@@ -70,6 +112,28 @@ export default function ParaclinicalDetails() {
   useEffect(() => {
     loaddingApi();
   }, [id]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const extraData = searchParams.get("extraData");
+    const resultCode = searchParams.get("resultCode");
+
+    if (extraData && resultCode === "0" && !isPaid) {
+      try {
+        const parsedExtraData = JSON.parse(decodeURIComponent(extraData));
+        const idFromMoMo = parsedExtraData.Id;
+
+        // fallback nếu idPhieuKhamBenh chưa có
+        const compareId = idPhieuKhamBenh || String(id);
+
+        if (idFromMoMo === compareId) {
+          paymentConfirmation(idFromMoMo);
+        }
+      } catch (error) {
+        console.error("Lỗi phân tích extraData:", error);
+      }
+    }
+  }, []);
 
   const handleSort = (columnId: "Gio" | "TrangThaiThanhToan" | "Gia") => {
     const isAsc = orderBy === columnId && order === "asc";
@@ -110,7 +174,7 @@ export default function ParaclinicalDetails() {
     handleShow();
   };
 
-    const getThuNganIdFromToken = (): string | null => {
+  const getThuNganIdFromToken = (): string | null => {
     const token = Cookies.get("token");
     if (!token) return null;
 
@@ -120,33 +184,6 @@ export default function ParaclinicalDetails() {
     } catch (error) {
       console.error("Lỗi giải mã token:", error);
       return null;
-    }
-  };
-
-  const paymentConfirmation = async () => {
-    try {
-      const Id_ThuNgan = getThuNganIdFromToken();
-        if(!Id_ThuNgan){
-                showToast("Không tìm thấy ID thu ngân", ToastType.error);
-                return;
-            }
-      const result = await confirmTestRequestPayment(idPhieuKhamBenh, Id_ThuNgan);
-      const message = result?.message || "Xác nhận không rõ";
-      if (
-        message.includes("đã được thanh toán trước đó") ||
-        message.includes("thành công")
-      ) {
-        showToast(message, ToastType.success);
-        handleClose();
-        setIsPaid(true);
-        await loaddingApi();
-        return;
-      }
-      showToast("Không rõ trạng thái thanh toán", ToastType.error);
-    } catch {
-      showToast("Đã có lỗi xảy ra khi xác nhận thanh toán", ToastType.error);
-    } finally {
-      handleClose();
     }
   };
 
@@ -172,7 +209,7 @@ export default function ParaclinicalDetails() {
           handleShow,
           show: showModal,
           callBack: paymentConfirmation,
-          paymentConfirmation: () => {},
+          paymentConfirmation: PayMoMo,
         }}
       />
 

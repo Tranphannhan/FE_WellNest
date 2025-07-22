@@ -57,9 +57,8 @@ export default function PrescriptionDetails() {
     TongTien?: number;
   }>({});
   const [isMedicineFeesOpen, setIsMedicineFeesOpen] = useState(false);
-const [order, setOrder] = useState<"asc" | "desc">("asc");
-const [orderBy, setOrderBy] = useState<"SoLuong" | "Gia" | "">( "");
-
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
+  const [orderBy, setOrderBy] = useState<"SoLuong" | "Gia" | "">("");
 
   const loadAPI = async () => {
     try {
@@ -80,16 +79,85 @@ const [orderBy, setOrderBy] = useState<"SoLuong" | "Gia" | "">( "");
       Number(dataPendingPayment.TongTien),
       "Đơn thuốc",
       `http://localhost:3000/Cashier/PaymentWaitingList/${id}`,
-      id as string
+      id as string,
+      "DonThuoc"
     );
   };
 
+  const paymentConfirmation = async (id: string | null = null) => {
+    try {
+      const realId = id ?? data?._id?.toString(); // dùng id truyền vào, nếu không có thì dùng data._id
+
+      if (!realId) {
+        showToast("Không xác định được ID đơn thuốc", ToastType.error);
+        return;
+      }
+
+      const result = await confirmPrescriptionPayment(realId);
+
+      if (result) {
+        const idThuNgan = getThuNganIdFromToken();
+
+        if (!idThuNgan) {
+          showToast("Không tìm thấy ID thu ngân", ToastType.error);
+          return;
+        }
+
+        // Gửi request tạo hóa đơn
+        await fetch(`${API_BASE_URL}/Hoadon/Add`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            Id_PhieuKhamBenh: data?.Id_PhieuKhamBenh?._id,
+            Id_Dichvu: realId,
+            Id_ThuNgan: idThuNgan,
+            LoaiHoaDon: "Thuoc",
+            TenHoaDon: `Hóa đơn: ${data?.TenDonThuoc}`,
+            TongTien: dataPendingPayment.TongTien,
+          }),
+        });
+
+        showToast("Xác nhận thanh toán thành công", ToastType.success);
+        setShowModal(false);
+        await loadAPI();
+      } else {
+        showToast("Xác nhận thanh toán thất bại", ToastType.error);
+      }
+    } catch (error) {
+      showToast("Đã có lỗi xảy ra khi xác nhận thanh toán", ToastType.error);
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const resultCode = searchParams.get("resultCode");
-    if (resultCode === "0")
-      showToast("Thanh toán thành công", ToastType.success);
     loadAPI();
   }, []);
+
+  useEffect(() => {
+    const resultCode = searchParams.get("resultCode");
+    const extraDataRaw = searchParams.get("extraData");
+
+    if (resultCode === "0" && extraDataRaw && data) {
+      try {
+        const extraData = JSON.parse(decodeURIComponent(extraDataRaw));
+        const idFromMoMo = extraData.Id;
+        const type = extraData.Type;
+
+        if (
+          idFromMoMo === id &&
+          type === "DonThuoc" &&
+          data.TrangThaiThanhToan === false
+        ) {
+          console.log("✅ Thanh toán MoMo hợp lệ, tiến hành xác nhận...");
+          paymentConfirmation(idFromMoMo);
+        }
+      } catch (error) {
+        console.error("❌ Lỗi khi xử lý extraData từ MoMo:", error);
+      }
+    }
+  }, [data]); // Theo dõi sự thay đổi của `data`
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
@@ -102,59 +170,17 @@ const [orderBy, setOrderBy] = useState<"SoLuong" | "Gia" | "">( "");
   //lay token ThuNgan
 
   const getThuNganIdFromToken = (): string | null => {
-  const token = Cookies.get("token");
-  if (!token) return null;
+    const token = Cookies.get("token");
+    if (!token) return null;
 
-  try {
-    const decoded = jwtDecode<MyTokenType>(token);
-    return decoded._id;
-  } catch (error) {
-    console.error("Lỗi giải mã token:", error);
-    return null;
-  }
-};
-
-const paymentConfirmation = async () => {
-  try {
-    const result = await confirmPrescriptionPayment(String(id));
-
-    if (result) {
-      //Sua o day
-      const idThuNgan = getThuNganIdFromToken();
-
-      if (!idThuNgan) {
-        showToast("Không tìm thấy ID thu ngân", ToastType.error);
-        return;
-      }
-
-      // Gửi request tạo hóa đơn
-      await fetch(`${API_BASE_URL}/Hoadon/Add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Id_PhieuKhamBenh: data?.Id_PhieuKhamBenh?._id,
-          Id_Dichvu: data?._id.toString(),
-          Id_ThuNgan: idThuNgan,
-          LoaiHoaDon: "Thuoc",
-          TenHoaDon:`Hóa đơn: ${data?.TenDonThuoc}`,
-          TongTien: dataPendingPayment.TongTien
-        }),
-      });
-
-      showToast("Xác nhận thanh toán thành công", ToastType.success);
-      setShowModal(false);
-      await loadAPI();
-    } else {
-      showToast("Xác nhận thanh toán thất bại", ToastType.error);
+    try {
+      const decoded = jwtDecode<MyTokenType>(token);
+      return decoded._id;
+    } catch (error) {
+      console.error("Lỗi giải mã token:", error);
+      return null;
     }
-  } catch (error) {
-    showToast("Đã có lỗi xảy ra khi xác nhận thanh toán", ToastType.error);
-    console.error(error);
-  }
-};
-
+  };
 
   const handlePrint = () => {
     if (!data || detailedPrescription.length === 0) {
@@ -164,24 +190,22 @@ const paymentConfirmation = async () => {
     setIsMedicineFeesOpen(true);
   };
 
-const handleSort = (property: "SoLuong" | "Gia") => {
-  const isAsc = orderBy === property && order === "asc";
-  setOrder(isAsc ? "desc" : "asc");
-  setOrderBy(property);
-};
+  const handleSort = (property: "SoLuong" | "Gia") => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
 
-
-const sortedPrescription = React.useMemo(() => {
-  if (!orderBy) return detailedPrescription;
-  return [...detailedPrescription].sort((a, b) => {
-    const aValue = orderBy === "SoLuong" ? a.SoLuong : a.Id_Thuoc.Gia || 0;
-    const bValue = orderBy === "SoLuong" ? b.SoLuong : b.Id_Thuoc.Gia || 0;
-    if (aValue < bValue) return order === "asc" ? -1 : 1;
-    if (aValue > bValue) return order === "asc" ? 1 : -1;
-    return 0;
-  });
-}, [detailedPrescription, order, orderBy]);
-
+  const sortedPrescription = React.useMemo(() => {
+    if (!orderBy) return detailedPrescription;
+    return [...detailedPrescription].sort((a, b) => {
+      const aValue = orderBy === "SoLuong" ? a.SoLuong : a.Id_Thuoc.Gia || 0;
+      const bValue = orderBy === "SoLuong" ? b.SoLuong : b.Id_Thuoc.Gia || 0;
+      if (aValue < bValue) return order === "asc" ? -1 : 1;
+      if (aValue > bValue) return order === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [detailedPrescription, order, orderBy]);
 
   return (
     <>
@@ -307,7 +331,7 @@ const sortedPrescription = React.useMemo(() => {
               <Button
                 variant="contained"
                 color="primary"
-                sx={{whiteSpace:"nowrap"}}
+                sx={{ whiteSpace: "nowrap" }}
                 startIcon={<PrintIcon />}
                 onClick={handlePrint}
               >

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import "bootstrap-icons/font/bootstrap-icons.css";
 import Navbar from "@/app/components/shared/Navbar/Navbar";
-import '../globals.css'
+import "../globals.css";
 import Header from "@/app/components/shared/Header/Header";
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 import ChatSuggestKhoa from "../components/shared/ChatSuggestKhoa/ChatSuggestKhoa";
 
 const geistSans = Geist({
@@ -34,42 +34,36 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="containerClient">
-           <ToastContainer />
-            <Navbar
-              conTentNavigation = {
+          <ToastContainer />
+          <Navbar
+            conTentNavigation={{
+              logo: "/images/logoWebsite.png",
+              navItems: [
                 {
-                  logo:'/images/logoWebsite.png',
-                  navItems:[
-                    {icon:`bi bi-file-earmark-text-fill`,text:"Tiếp nhận", link:'/Receptionist/Reception'},
-                    {icon:`bi bi-search`,text:"Tra cứu thẻ khám", link:'/Receptionist/SearchReception'}
-                  ]
-                }
-              }
-            >
-          </Navbar>
+                  icon: `bi bi-file-earmark-text-fill`,
+                  text: "Tiếp nhận",
+                  link: "/Receptionist/Reception",
+                },
+                {
+                  icon: `bi bi-search`,
+                  text: "Tra cứu thẻ khám",
+                  link: "/Receptionist/SearchReception",
+                },
+              ],
+            }}
+          ></Navbar>
 
-              <div className="containerClient__content">
+          <div className="containerClient__content">
+            <Header
+              conTentHeader={{
+                title: "Tiếp nhận ",
+              }}
+            ></Header>
+            <div className="containerClient__item">{children}</div>
 
-                 <Header
-                    conTentHeader = {
-                      {
-                        title : 'Tiếp nhận ',
-                      }
-                    }
-                >
-                      
-                </Header>
-              <div className="containerClient__item">
-                    {children}
-              </div>
-      
-
- <ChatSuggestKhoa />
-               
-              </div>
-
+            <ChatSuggestKhoa />
+          </div>
         </div>
-
       </body>
     </html>
   );

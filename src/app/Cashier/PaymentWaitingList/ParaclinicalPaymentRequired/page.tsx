@@ -1,7 +1,7 @@
 "use client";
 import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import "../Prescription.css";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import ConfirmationNotice from "../../ComponentCashier/ConfirmationNotice";
 import React, { useEffect, useState } from "react";
 import { formatCurrencyVND } from "@/app/lib/Format";
@@ -20,7 +20,6 @@ import Cookies from "js-cookie";
 
 export default function ParaclinicalPaymentRequired() {
   const router = useRouter();
-  const { id } = useParams();
 
   const [dataPrescription, setDataPrescription] = useState<paraclinicalType[]>(
     []
@@ -66,11 +65,13 @@ export default function ParaclinicalPaymentRequired() {
   };
 
   const PayMoMo = async () => {
+    if(!dataPendingPayment.TongTien) return showToast("Không lấy được tổng tiền", ToastType.error);
     await payment(
-      100000,
-      "Đơn thuốc",
+      dataPendingPayment?.TongTien | 0,
+      "Xét nghiệm",
       `http://localhost:3000/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${idPhieuKhamBenh}`,
-      id as string
+      idPhieuKhamBenh,
+      "XetNghiem"
     );
   };
 

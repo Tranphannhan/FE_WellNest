@@ -191,3 +191,22 @@ export const getSystemFunctions = async () => {
     throw error;
   }
 };
+
+export const getSTTKham = async (id: string)=> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Phieu_Kham_Benh/Detail/${id}`);
+    if (!response.ok) throw new Error("Lỗi khi gọi API");
+
+    const data = await response.json();
+
+    if (data) {
+      return data[0].STTKham;
+    }
+
+    console.warn("Không tìm thấy trường STTKham trong kết quả");
+    return null;
+  } catch (error) {
+    console.error("Lỗi khi lấy STTKham:", error);
+    return null;
+  }
+};

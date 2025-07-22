@@ -8,6 +8,7 @@ import type { ExaminationForm } from "@/app/types/receptionTypes/receptionTypes"
 import {
   checkPay,
   GetPriceDiscovery,
+  getSTTKham,
   handlePay,
 } from "@/app/services/ReceptionServices";
 import { showToast, ToastType } from "@/app/lib/Toast";
@@ -17,7 +18,7 @@ import ConfirmationNotice from "@/app/Cashier/ComponentCashier/ConfirmationNotic
 import payment from "@/app/services/Pay";
 //import token
 import Cookies from "js-cookie";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 interface MyTokenType {
   _id: string;
@@ -49,68 +50,68 @@ export default function ExaminationForm() {
   //Lay token
 
   const getTiepNhanIdFromToken = (): string | null => {
-  const token = Cookies.get("token"); 
+    const token = Cookies.get("token");
 
-  if (!token) return null;
+    if (!token) return null;
 
-  try {
-    const decoded = jwtDecode<MyTokenType>(token);
-    return decoded._id;
-  } catch (error) {
-    console.error("Lỗi giải mã token:", error);
-    return null;
-  }
-};
+    try {
+      const decoded = jwtDecode<MyTokenType>(token);
+      return decoded._id;
+    } catch (error) {
+      console.error("Lỗi giải mã token:", error);
+      return null;
+    }
+  };
 
   const addHoaDonKham = async (Id_PhieuKhamBenh: string) => {
-  const idThuNgan = getTiepNhanIdFromToken();
-  if (!idThuNgan || !Id_PhieuKhamBenh) return;
+    const idThuNgan = getTiepNhanIdFromToken();
+    if (!idThuNgan || !Id_PhieuKhamBenh) return;
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/Hoadon/Add`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        Id_PhieuKhamBenh,
-        Id_Dichvu: null,
-        Id_ThuNgan: idThuNgan,
-        LoaiHoaDon: "Kham",
-        TenHoaDon: "Hóa đơn phí khám",
-      }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/Hoadon/Add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Id_PhieuKhamBenh,
+          Id_Dichvu: null,
+          Id_ThuNgan: idThuNgan,
+          LoaiHoaDon: "Kham",
+          TenHoaDon: "Hóa đơn phí khám",
+        }),
+      });
 
-    const data = await response.json();
-    console.log("✅ Tạo hóa đơn khám thành công:", data);
-  } catch (error) {
-    console.error("❌ Lỗi tạo hóa đơn khám:", error);
-  }
-};
+      const data = await response.json();
+      console.log("✅ Tạo hóa đơn khám thành công:", data);
+    } catch (error) {
+      console.error("❌ Lỗi tạo hóa đơn khám:", error);
+    }
+  };
 
-//code cu ko sua
+  //code cu ko sua
 
-  async function Pay() {
-    if (!valueRender?.Id_PhieuKhamBenh) {
+  async function Pay(id: string | null = null) {
+    const Id_PhieuKhamBenh = id ?? valueRender?.Id_PhieuKhamBenh;
+
+    if (!Id_PhieuKhamBenh) {
       return showToast("Chưa có mã phiếu khám bệnh", ToastType.error);
     }
 
-    const result = await handlePay(valueRender.Id_PhieuKhamBenh);
+    const result = await handlePay(Id_PhieuKhamBenh);
 
     if (result?.status === true && result?.QueueNumber) {
       showToast(result.message, ToastType.success);
 
       const newValue = {
-        ...valueRender,
+        ...(valueRender as ExaminationForm),
         QueueNumber: result.QueueNumber,
       };
-
       setValueRender(newValue);
-      sessionStorage.setItem("ThongTinPhieuKham", JSON.stringify(newValue));
       setStatusPay(true);
       setShowModal(false);
-      //Add hoa don
-      await addHoaDonKham(valueRender.Id_PhieuKhamBenh);
+
+      await addHoaDonKham(Id_PhieuKhamBenh);
     } else if (result) {
       showToast(result.message, ToastType.error);
     }
@@ -131,7 +132,7 @@ export default function ExaminationForm() {
     if (stutus) setStatusPay(stutus?.status);
   }
 
-    const PayMoMo = async () => {
+  const PayMoMo = async () => {
     await payment(
       price,
       "Phí Khám",
@@ -140,43 +141,76 @@ export default function ExaminationForm() {
       "PhiKham"
     );
   };
-
-
-  useEffect(() => {
-    const fetchPrice = async () => {
-      try {
-        const result = await GetPriceDiscovery();
-        if (result?.Giadichvu) {
-          setPrice(result.Giadichvu);
-        } else {
-          console.warn("Không lấy được giá khám bệnh.");
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy giá khám:", error);
+useEffect(() => {
+  const fetchPrice = async () => {
+    try {
+      const result = await GetPriceDiscovery();
+      if (result?.Giadichvu) {
+        setPrice(result.Giadichvu);
+      } else {
+        console.warn("Không lấy được giá khám bệnh.");
       }
-    };
+    } catch (error) {
+      console.error("Lỗi khi lấy giá khám:", error);
+    }
+  };
 
-    const loadSessionData = () => {
-      try {
-        const dataLocal = sessionStorage.getItem("ThongTinPhieuKham");
-        if (dataLocal) {
-          const dataOb = JSON.parse(dataLocal);
-          checkRender(dataOb.Id_PhieuKhamBenh); // gọi check trạng thái thanh toán
-          setValueRender(dataOb);
-        } else {
-          setValueRender(null);
-        }
-      } catch (error) {
-        console.error("Lỗi khi đọc dữ liệu từ sessionStorage:", error);
+  const loadSessionData = async () => {
+    try {
+      const dataLocal = sessionStorage.getItem("ThongTinPhieuKham");
+      if (dataLocal) {
+        const dataOb:ExaminationForm  = JSON.parse(dataLocal);
+        const queueNumberRes = await getSTTKham(dataOb.Id_PhieuKhamBenh)
+        checkRender(dataOb.Id_PhieuKhamBenh);
+
+        setValueRender({...dataOb,QueueNumber:queueNumberRes});
+      } else {
         setValueRender(null);
       }
-    };
+    } catch (error) {
+      console.error("Lỗi khi đọc dữ liệu từ sessionStorage:", error);
+      setValueRender(null);
+    }
+  };
 
-    fetchPrice(); // Gọi API lấy giá khám
-    loadSessionData(); // Lấy thông tin phiếu khám từ sessionStorage
-  }, []);
+  fetchPrice();
+  loadSessionData();
 
-  const currentCollectorName = "Trần Phan Nhân";
+  // Kiểm tra thanh toán MoMo
+  const urlParams = new URLSearchParams(window.location.search);
+  const resultCode = urlParams.get("resultCode");
+  const extraDataRaw = urlParams.get("extraData");
+
+  if (resultCode === "0" && extraDataRaw) {
+    try {
+      const extraData = JSON.parse(decodeURIComponent(extraDataRaw));
+      const idFromMoMo = extraData.Id;
+      const type = extraData.Type;
+
+      const dataLocal = sessionStorage.getItem("ThongTinPhieuKham");
+      if (dataLocal) {
+        const dataOb = JSON.parse(dataLocal);
+        if (idFromMoMo === dataOb.Id_PhieuKhamBenh && type === "PhiKham") {
+          console.log("🎉 MoMo thành công, gọi Pay...");
+
+          // Gọi Pay và sau đó reload trang mà không có query params
+          Pay(dataOb.Id_PhieuKhamBenh).then(() => {
+            loadSessionData()
+            router.push('/Receptionist/Reception/ExaminationForm')
+          });
+        }
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi parse extraData từ URL:", error);
+    }
+  }
+}, []);
+
+
+  const token = Cookies.get("token");
+  if (!token) return showToast("Chưa có tên người Tiếp Nhân", ToastType.error);
+  const decoded = jwtDecode<{ _TenTaiKhoan: string }>(token);
+  const currentCollectorName = decoded._TenTaiKhoan;
 
   const handleOpenPreview = () => setShowPreviewModal(true);
   const handleClosePreview = () => setShowPreviewModal(false);

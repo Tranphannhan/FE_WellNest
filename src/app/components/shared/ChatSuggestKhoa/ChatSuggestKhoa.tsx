@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Fab,
   Drawer,
   IconButton,
   TextField,
@@ -13,17 +12,14 @@ import {
   Avatar,
   Paper,
 } from "@mui/material";
-import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import { fetchSuggestedKhoa } from "@/app/services/ReceptionServices";
 import { SiRobotframework } from "react-icons/si";
-<<<<<<< HEAD
-import {IoMdSend } from "react-icons/io";
-=======
+import { IoMdSend } from "react-icons/io";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
->>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
+import AIChatButton from "./AvataAI";
 
 // Kiểu khoa
 type Khoa = {
@@ -56,20 +52,14 @@ export default function ChatSuggestKhoa() {
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: "bot",
-<<<<<<< HEAD
-      text: "Xin chào, tôi là AI của hệ thống WELLNEST.\nVui lòng nhập các triệu chứng để tôi có thể giúp bạn tìm ra khoa phù hợp nhất.",
-=======
       text:
         "Xin chào, tôi là AI của hệ thống WELLNEST.\n" +
         "Vui lòng nhập các triệu chứng để tôi có thể giúp bạn tìm ra khoa phù hợp nhất.",
->>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-<<<<<<< HEAD
-=======
   const [user, setUser] = useState<UserToken | null>(null);
 
   // Lấy user từ token
@@ -88,7 +78,6 @@ export default function ChatSuggestKhoa() {
   const avatarUrl = user?._Image
     ? `${API_BASE_URL}/image/${user._Image}`
     : "/default-avatar.png";
->>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -123,12 +112,7 @@ export default function ChatSuggestKhoa() {
         ...prev,
         {
           sender: "bot",
-<<<<<<< HEAD
           text: "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này.",
-=======
-          text:
-            "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này.",
->>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
         },
       ]);
     } finally {
@@ -139,14 +123,8 @@ export default function ChatSuggestKhoa() {
   return (
     <>
       {/* Floating Chat Icon */}
-      <Fab
-        color="primary"
-        aria-label="chat"
-        sx={{ position: "fixed", bottom: 24, right: 24, zIndex: 1000 }}
-        onClick={() => setOpen(true)}
-      >
-        <ChatIcon />
-      </Fab>
+<AIChatButton callBack={()=>setOpen(true)}></AIChatButton>
+
 
       {/* Chat Drawer */}
       <Drawer
@@ -177,10 +155,7 @@ export default function ChatSuggestKhoa() {
               width={150}
               height={150}
             />
-<<<<<<< HEAD
             <Typography variant="subtitle1" fontWeight="bold"></Typography>
-=======
->>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
           </Box>
           <IconButton onClick={() => setOpen(false)}>
             <CloseIcon />
@@ -200,11 +175,7 @@ export default function ChatSuggestKhoa() {
                 alignItems="flex-end"
               >
                 {msg.sender === "bot" && (
-<<<<<<< HEAD
                   <Avatar sx={{ bgcolor: "#3497f9", mr: 1 }}>
-=======
-                  <Avatar sx={{ bgcolor: "primary.main", mr: 1 }}>
->>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
                     <SiRobotframework fontSize="20px" />
                   </Avatar>
                 )}
@@ -228,16 +199,10 @@ export default function ChatSuggestKhoa() {
                 </Paper>
 
                 {msg.sender === "user" && (
-<<<<<<< HEAD
-                  <Avatar sx={{ bgcolor: "#aaaaaaff", ml: 1 }}>
-                    <PersonIcon fontSize="small" />
-                  </Avatar>
-=======
                   <Avatar
                     src={avatarUrl}
                     sx={{ width: 32, height: 32, ml: 1 }}
                   />
->>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
                 )}
               </Box>
             ))}
@@ -266,10 +231,12 @@ export default function ChatSuggestKhoa() {
               <CircularProgress size={20} color="inherit" />
             ) : (
               <>
-                <IoMdSend style={{
-                  fontSize:26,
-                  marginLeft:4
-                }}/>
+                <IoMdSend
+                  style={{
+                    fontSize: 26,
+                    marginLeft: 4,
+                  }}
+                />
               </>
             )}
           </Button>
