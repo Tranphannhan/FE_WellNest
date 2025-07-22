@@ -122,9 +122,9 @@ const loadAPI = async () => {
                 </tr>
               </thead>
               <tbody>
-                {data.map((record, index) => (
+                {data.map((record) => (
                   <tr key={record._id}>
-                    <td>{(currentPage - 1) * 10 + index + 1}</td>
+                    <td>{record.STT}</td>
                     <td>{record.Id_PhieuKhamBenh.Id_TheKhamBenh.HoVaTen}</td>
                     <td>{record.Id_PhieuKhamBenh.Id_TheKhamBenh.GioiTinh || ''}</td>
                     <td>{record.Id_PhieuKhamBenh.Id_TheKhamBenh.NgaySinh || ''}</td>
