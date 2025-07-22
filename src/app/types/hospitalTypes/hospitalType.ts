@@ -212,3 +212,11 @@ export interface billTypes{
   LoaiHoaDon: 'Kham' | 'Thuoc' | 'XetNghiem';
   TenHoaDon?: string;
 }
+
+export interface SystemFunctionType {
+  _id: string;
+  ApDungThoiGianKham: boolean;
+  ChonPhong: string;
+  GioiHanBenhNhan: number;
+  ThoiGianKham: number;
+}

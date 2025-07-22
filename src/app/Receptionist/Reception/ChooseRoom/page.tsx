@@ -4,7 +4,11 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import "./ChooseRoom.css";
 import Link from "next/link";
 import Example from "./notificationChooseRoom";
-import { getAllChooseRooms, GetPriceDiscovery } from "@/app/services/ReceptionServices";
+import {
+  getAllChooseRooms,
+  GetPriceDiscovery,
+  getSystemFunctions,
+} from "@/app/services/ReceptionServices";
 import { showToast, ToastType } from "@/app/lib/Toast";
 import { receptionTemporaryDoctorTypes } from "@/app/types/receptionTypes/receptionTemporaryTypes";
 import { useRouter } from "next/navigation";
@@ -14,6 +18,7 @@ import { Badge } from "antd";
 import { GiClick } from "react-icons/gi";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import { SystemFunctionType } from "@/app/types/hospitalTypes/hospitalType";
 
 interface createExaminationCardInformationType {
   Id_TheKhamBenh?: string;
@@ -42,6 +47,15 @@ export default function ChooseRoom() {
     name: "",
     roomNumber: 0,
   });
+  const [systemSettings, setSystemSettings] =
+    useState<SystemFunctionType | null>(null);
+
+  async function GetSystemSettings() {
+    const res = await getSystemFunctions();
+    if (!res)
+      return showToast("Lấy cài đặt hệ thống thất bại!", ToastType.error);
+    setSystemSettings(res);
+  }
 
   async function HandleCreate() {
     try {
@@ -78,7 +92,7 @@ export default function ChooseRoom() {
         cccd: result.Id_TheKhamBenh?.SoCCCD || "Không có",
         dob: result.Id_TheKhamBenh?.NgaySinh || "Không có",
         phone: result.Id_TheKhamBenh?.SoDienThoai || "Không có",
-        gender: result.Id_TheKhamBenh?.GioiTinh || "Không có",
+        gender: result.Id_TheKhamBenh?.GioiTinh || "不知道",
         height: vitalSigns.height || "Không có",
         weight: vitalSigns.weight || "Không có",
         clinic: result.Id_Bacsi?.Id_PhongKham?.SoPhongKham || "Không có",
@@ -102,29 +116,24 @@ export default function ChooseRoom() {
         payload.ChieuCao = vitalSigns.height.trim();
       }
 
-      if (!payload.CanNang && !payload.ChieuCao) {
-        showToast("Không có dữ liệu chỉ số sinh tồn để gửi!", ToastType.warn);
-      }
-        // Gửi chỉ số sinh tồn nếu có
-        const responseVitalSigns = await fetch(
-          `${API_BASE_URL}/Chi_So_Sinh_Ton/Add`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          }
-        );
-
-        if (!responseVitalSigns.ok) {
-          showToast("Thêm chỉ số sinh tồn thất bại!", ToastType.error);
-          return;
+      const responseVitalSigns = await fetch(
+        `${API_BASE_URL}/Chi_So_Sinh_Ton/Add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         }
+      );
 
-        const resultVitalSigns = await responseVitalSigns.json();
-        console.log("Thêm chỉ số sinh tồn thành công:", resultVitalSigns);
-    
+      if (!responseVitalSigns.ok) {
+        showToast("Thêm chỉ số sinh tồn thất bại!", ToastType.error);
+        return;
+      }
+
+      const resultVitalSigns = await responseVitalSigns.json();
+      console.log("Thêm chỉ số sinh tồn thành công:", resultVitalSigns);
 
       // Thành công toàn bộ
       showToast("Tạo phiếu khám bệnh thành công!", ToastType.success);
@@ -155,71 +164,120 @@ export default function ChooseRoom() {
     receptionTemporaryDoctorTypes[]
   >([]);
   useEffect(() => {
-const initData = async () => {
-  try {
-    const token = Cookies.get("token");
-    if (!token) {
-      showToast("Không tìm thấy token", ToastType.error);
-      return;
-    }
+    const initData = async () => {
+      try {
+        const token = Cookies.get("token");
+        if (!token) {
+          showToast("Không tìm thấy token", ToastType.error);
+          return;
+        }
 
-    const decoded = jwtDecode<{ _id: string }>(token);
-    const idNguoiTiepNhan = decoded._id;
+        const decoded = jwtDecode<{ _id: string }>(token);
+        const idNguoiTiepNhan = decoded._id;
 
-    const thongTinTiepNhanRaw = sessionStorage.getItem("thongTinTiepNhan");
-    const soKhamBenhRaw = sessionStorage.getItem("soKhamBenh");
+        const thongTinTiepNhanRaw = sessionStorage.getItem("thongTinTiepNhan");
+        const soKhamBenhRaw = sessionStorage.getItem("soKhamBenh");
 
-    if (!thongTinTiepNhanRaw || !soKhamBenhRaw) {
-      showToast("Thiếu dữ liệu tiếp nhận hoặc bệnh nhân", ToastType.error);
-      return;
-    }
+        if (!thongTinTiepNhanRaw || !soKhamBenhRaw) {
+          showToast("Thiếu dữ liệu tiếp nhận hoặc bệnh nhân", ToastType.error);
+          return;
+        }
 
-    const thongTinTiepNhan = JSON.parse(thongTinTiepNhanRaw);
-    const soKhamBenh = JSON.parse(soKhamBenhRaw);
+        const thongTinTiepNhan = JSON.parse(thongTinTiepNhanRaw);
+        const soKhamBenh = JSON.parse(soKhamBenhRaw);
 
-    if (!soKhamBenh._id) {
-      showToast("Chưa có mã sổ khám bệnh", ToastType.error);
-      return;
-    }
+        if (!soKhamBenh._id) {
+          showToast("Chưa có mã sổ khám bệnh", ToastType.error);
+          return;
+        }
 
-    // ✅ Lấy giá khám từ API
-    const giaKhamData = await GetPriceDiscovery();
-    if (!giaKhamData || !giaKhamData._id) {
-      showToast("Không lấy được giá khám", ToastType.error);
-      return;
-    }
+        // ✅ Lấy giá khám từ API
+        const giaKhamData = await GetPriceDiscovery();
+        if (!giaKhamData || !giaKhamData._id) {
+          showToast("Không lấy được giá khám", ToastType.error);
+          return;
+        }
 
-    setExaminationCardInformation((prev) => ({
-      ...prev,
-      Id_TheKhamBenh: soKhamBenh._id,
-      Id_GiaDichVu: giaKhamData._id,
-      Id_NguoiTiepNhan: idNguoiTiepNhan,
-      LyDoDenKham: thongTinTiepNhan.Reason,
-    }));
+        setExaminationCardInformation((prev) => ({
+          ...prev,
+          Id_TheKhamBenh: soKhamBenh._id,
+          Id_GiaDichVu: giaKhamData._id,
+          Id_NguoiTiepNhan: idNguoiTiepNhan,
+          LyDoDenKham: thongTinTiepNhan.Reason,
+        }));
 
-    setVitalSigns({
-      height: String(thongTinTiepNhan.height || ""),
-      weight: String(thongTinTiepNhan.Weight || ""),
-    });
+        setVitalSigns({
+          height: String(thongTinTiepNhan.height || ""),
+          weight: String(thongTinTiepNhan.Weight || ""),
+        });
 
-    setNameDepartment(thongTinTiepNhan.Department.name);
+        setNameDepartment(thongTinTiepNhan.Department.name);
 
-    const response = await getAllChooseRooms(
-      thongTinTiepNhan.Department._id,
-      currentPage
-    );
-    if (response) {
-      setDataChooseRoom(response.data);
-      setTotalPagas(response.totalPages);
-    }
-  } catch (error) {
-    showToast("Đã có lỗi xảy ra khi tải dữ liệu", ToastType.error);
-    console.error(error);
-  }
-};
+        const response = await getAllChooseRooms(
+          thongTinTiepNhan.Department._id,
+          currentPage
+        );
+        if (response) {
+          setDataChooseRoom(response.data);
+          setTotalPagas(response.totalPages);
+        }
+      } catch (error) {
+        showToast("Đã có lỗi xảy ra khi tải dữ liệu", ToastType.error);
+        console.error(error);
+      }
+    };
 
     initData();
+    GetSystemSettings();
   }, [currentPage]);
+
+  // Function to determine if a room is prioritized based on systemSettings.ChonPhong
+  const isPrioritizedRoom = (doctor: receptionTemporaryDoctorTypes) => {
+    if (
+      !systemSettings ||
+      !systemSettings.ChonPhong ||
+      systemSettings.ChonPhong === "ThuCong"
+    ) {
+      return true; // In ThuCong mode, all rooms are selectable
+    }
+
+    // Sort rooms based on the criteria
+    const sortedRooms = [...dataChooseRoom].sort((a, b) => {
+      if (systemSettings.ChonPhong === "ItNguoi") {
+        return a.SoNguoiDangKham - b.SoNguoiDangKham; // Ascending for least patients
+      } else if (systemSettings.ChonPhong === "PhongGan") {
+        return (
+          (Number(a.Id_PhongKham?.SoPhongKham) || 0) -
+          (Number(b.Id_PhongKham?.SoPhongKham) || 0)
+        ); // Ascending for lowest room number
+      } else if (systemSettings.ChonPhong === "PhongXa") {
+        return (
+          (Number(b.Id_PhongKham?.SoPhongKham) || 0) -
+          (Number(a.Id_PhongKham?.SoPhongKham) || 0)
+        ); // Descending for highest room number
+      } else if (systemSettings.ChonPhong === "GanDay") {
+        return b.SoNguoiDangKham - a.SoNguoiDangKham; // Descending for most patients
+      }
+      return 0;
+    });
+
+    // Get the top half of the sorted rooms
+    const halfLength = Math.ceil(sortedRooms.length / 2);
+    const prioritizedRooms = sortedRooms.slice(0, halfLength);
+
+    // Check if the current doctor is in the prioritized list
+    return prioritizedRooms.some((room) => room._id === doctor._id);
+  };
+
+  const sortedRooms = [...dataChooseRoom].sort((a, b) => {
+    const aIsPrioritized = isPrioritizedRoom(a);
+    const bIsPrioritized = isPrioritizedRoom(b);
+
+    if (aIsPrioritized && !bIsPrioritized) return -1;
+    if (!aIsPrioritized && bIsPrioritized) return 1;
+
+    return 0; // Giữ nguyên thứ tự nếu cả hai giống nhau
+  });
 
   return (
     <>
@@ -278,9 +336,11 @@ const initData = async () => {
                     </td>
                   </tr>
                 ) : (
-                  dataChooseRoom.map(
+                  sortedRooms.map(
                     (doctor: receptionTemporaryDoctorTypes, index: number) => {
-                      const totalMinutes = doctor.SoNguoiDangKham * 15;
+                      const totalMinutes =
+                        doctor.SoNguoiDangKham *
+                        (systemSettings ? systemSettings.ThoiGianKham : 15);
 
                       const formatTime = (minutes: number) => {
                         if (minutes < 60) return `${minutes} phút`;
@@ -290,7 +350,10 @@ const initData = async () => {
                           ? `${hours} tiếng`
                           : `${hours} tiếng ${mins} phút`;
                       };
-                      const isFull = doctor.SoNguoiDangKham === 10;
+                      const isFull =
+                        doctor.SoNguoiDangKham ===
+                        (systemSettings ? systemSettings.GioiHanBenhNhan : 10);
+                      const isPrioritized = isPrioritizedRoom(doctor);
 
                       return (
                         <tr key={index}>
@@ -309,7 +372,9 @@ const initData = async () => {
                                     : "red",
                             }}
                           >
-                            {doctor.SoNguoiDangKham + "/10"} bệnh nhân
+                            {doctor.SoNguoiDangKham +
+                              `/${systemSettings?.GioiHanBenhNhan}`}{" "}
+                            bệnh nhân
                           </td>
                           <td>{formatTime(totalMinutes)}</td>
                           <td>
@@ -361,12 +426,20 @@ const initData = async () => {
                                 }}
                                 className="button--blue"
                                 style={{
-                                  background: isFull ? "#313131" : "",
+                                  background: isFull
+                                    ? "#636363ff"
+                                    : isPrioritized
+                                      ? "#13ad32ff"
+                                      : "#3497f9",
                                   cursor: isFull ? "not-allowed" : "pointer",
                                 }}
                               >
                                 <GiClick />
-                                {isFull ? "Đã đầy" : "Chọn phòng"}
+                                {isFull
+                                  ? "Đã đầy"
+                                  : isPrioritized
+                                    ? "Ưu tiên"
+                                    : "Chọn Phòng"}
                               </button>
                             }
                           </td>

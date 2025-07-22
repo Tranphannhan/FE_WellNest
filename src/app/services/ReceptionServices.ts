@@ -142,3 +142,52 @@ export async function GetPriceDiscovery(){
     return null;
   }
 }
+
+// services/suggestKhoa.ts
+
+// services/suggestKhoa.ts
+
+export async function fetchSuggestedKhoa(symptoms: string[]) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Khoa/Suggest`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ symptoms }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Lỗi không xác định");
+    }
+
+    return data.data; // { symptoms, khoaUuTien, khoaLienQuan }
+  } catch (error) {
+    console.error("Lỗi khi gợi ý khoa:", error);
+    return null;
+  }
+}
+
+
+export const getSystemFunctions = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/Chuc_Nang_He_Thong`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Lỗi HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data[0];
+  } catch (error) {
+    console.error("Lỗi khi lấy chức năng hệ thống:", error);
+    throw error;
+  }
+};

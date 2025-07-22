@@ -629,3 +629,27 @@ export async function searchPatientsByDoctor({
     throw error;
   }
 }
+
+
+export const checkCanLamSangByDepartmentId = async (id: string)=> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/Khoa/Detail/${id}`);
+    if (!res.ok) {
+      console.error("Lỗi khi gọi API:", res.statusText);
+      return false;
+    }
+
+    const json = await res.json();
+    const canLamSang = json?.data?.CanLamSang;
+
+    if (typeof canLamSang === "boolean") {
+      return canLamSang;
+    }
+
+    console.warn("Trường CanLamSang không hợp lệ:", canLamSang);
+    return false;
+  } catch (error) {
+    console.error("Lỗi kết nối hoặc xử lý dữ liệu:", error);
+    return false;
+  }
+};
