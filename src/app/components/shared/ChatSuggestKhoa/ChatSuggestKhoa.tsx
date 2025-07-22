@@ -15,10 +15,11 @@ import {
 } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
-import PersonIcon from "@mui/icons-material/Person";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { fetchSuggestedKhoa } from "@/app/services/ReceptionServices";
 import { SiRobotframework } from "react-icons/si";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 // Kiểu khoa
 type Khoa = {
@@ -38,17 +39,45 @@ type Message = {
   text: string;
 };
 
+// Token
+type UserToken = {
+  _Image?: string;
+  _TenTaiKhoan?: string;
+  _TenBacSi?: string;
+};
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export default function ChatSuggestKhoa() {
   const [messages, setMessages] = useState<Message[]>([
-  {
-    sender: "bot",
-    text: "Xin chào, tôi là AI của hệ thống WELLNEST.\nVui lòng nhập các triệu chứng để tôi có thể giúp bạn tìm ra khoa phù hợp nhất.",
-  },
-]);
+    {
+      sender: "bot",
+      text:
+        "Xin chào, tôi là AI của hệ thống WELLNEST.\n" +
+        "Vui lòng nhập các triệu chứng để tôi có thể giúp bạn tìm ra khoa phù hợp nhất.",
+    },
+  ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  
+  const [user, setUser] = useState<UserToken | null>(null);
+
+  // Lấy user từ token
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode<UserToken>(token);
+        setUser(decoded);
+      } catch (err) {
+        console.error("Token không hợp lệ:", err);
+      }
+    }
+  }, []);
+
+  const avatarUrl = user?._Image
+    ? `${API_BASE_URL}/image/${user._Image}`
+    : "/default-avatar.png";
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -66,7 +95,9 @@ export default function ChatSuggestKhoa() {
       const symptoms = input.split(",").map((s) => s.trim());
       const res: SuggestedKhoaResponse = await fetchSuggestedKhoa(symptoms);
 
-      const botText = `Dựa trên các triệu chứng bạn cung cấp, chúng tôi đề xuất:\n\n - Khoa ưu tiên: ${res.khoaUuTien?.TenKhoa || "Không xác định"}\n - Khoa liên quan: ${
+      const botText = `Dựa trên các triệu chứng bạn cung cấp, chúng tôi đề xuất:\n\n - Khoa ưu tiên: ${
+        res.khoaUuTien?.TenKhoa || "Không xác định"
+      }\n - Khoa liên quan: ${
         res.khoaLienQuan?.map((k) => k.TenKhoa).join(", ") || "Không có"
       }`;
 
@@ -79,7 +110,11 @@ export default function ChatSuggestKhoa() {
     } catch {
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này." },
+        {
+          sender: "bot",
+          text:
+            "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này.",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -116,9 +151,12 @@ export default function ChatSuggestKhoa() {
           borderBottom={1}
         >
           <Box display="flex" alignItems="center" gap={1}>
-            <img src="/images/logoWebsite.png" alt="WELLNEST AI" width={150} height={150} />
-            <Typography variant="subtitle1" fontWeight="bold">
-            </Typography>
+            <img
+              src="/images/logoWebsite.png"
+              alt="WELLNEST AI"
+              width={150}
+              height={150}
+            />
           </Box>
           <IconButton onClick={() => setOpen(false)}>
             <CloseIcon />
@@ -137,7 +175,7 @@ export default function ChatSuggestKhoa() {
               >
                 {msg.sender === "bot" && (
                   <Avatar sx={{ bgcolor: "primary.main", mr: 1 }}>
-                    <SiRobotframework  fontSize="20px" />
+                    <SiRobotframework fontSize="20px" />
                   </Avatar>
                 )}
 
@@ -157,9 +195,10 @@ export default function ChatSuggestKhoa() {
                 </Paper>
 
                 {msg.sender === "user" && (
-                  <Avatar sx={{ bgcolor: "#b1e2faff", ml: 1 }}>
-                    <PersonIcon fontSize="small" />
-                  </Avatar>
+                  <Avatar
+                    src={avatarUrl}
+                    sx={{ width: 32, height: 32, ml: 1 }}
+                  />
                 )}
               </Box>
             ))}
