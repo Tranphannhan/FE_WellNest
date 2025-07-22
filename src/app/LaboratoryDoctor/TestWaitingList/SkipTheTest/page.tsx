@@ -6,38 +6,52 @@ import Tabbar from "@/app/components/shared/Tabbar/Tabbar";
 import '../TestWaitingList.css'
 import Pagination from '@/app/components/ui/Pagination/Pagination';
 import { paraclinicalType } from '@/app/types/patientTypes/patient';
-import { getWaitingForTest } from '@/app/services/LaboratoryDoctor';
 import NoData from '@/app/components/ui/Nodata/Nodata';
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
-
+import { SearchParaclinicalWithStatus } from '@/app/services/Cashier';
 
 export default function Prescription() {
   const router = useRouter();
   const [totalPages, setTotalPages] = useState<number>(1);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [data, setData] = useState<paraclinicalType[]>([]);
+  const [fullName, setFullName] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
 
-const loaddingAPI = async () => {
-  const token = Cookies.get("token");
-  if (!token) return;
+  const loaddingAPI = async (page: number = 1) => {
+    const token = Cookies.get("token");
+    if (!token) return;
 
-  const decoded = jwtDecode<{ _id: string }>(token);
-  const idBacSi = decoded?._id;
-  if (!idBacSi) return;
+    const decoded = jwtDecode<{ _Id_PhongThietBi: string }>(token);
+    const idBacSi = decoded?._Id_PhongThietBi;
+    if (!idBacSi) return;
 
-  const getData = await getWaitingForTest(idBacSi, currentPage, false);
-  if (!getData) return;
+    const getData = await SearchParaclinicalWithStatus(
+      true, // TrangThaiHoatDong
+      page, // page
+      false, // TrangThai
+      fullName,
+      phoneNumber,
+      true, // TrangThaiThanhToan
+      false,
+      idBacSi
+    );
 
-  setData(getData.data);
-  setTotalPages(getData.totalPages);
-  setCurrentPage(getData.currentPage);
-};
+    if (!getData) return;
 
+    setData(getData.data);
+    setTotalPages(getData.totalPages);
+    setCurrentPage(getData.currentPage);
+  };
 
   useEffect(() => {
-    loaddingAPI();
+    loaddingAPI(currentPage);
   }, [currentPage]);
+
+  const handleSearch = () => {
+    loaddingAPI(1); // Reset về trang đầu khi tìm kiếm
+  };
 
   return (
     <>
@@ -55,14 +69,26 @@ const loaddingAPI = async () => {
         <div className="Prescription-searchReceptionContainer">
           <div className="Prescription_searchBoxWrapper">
             <div className="Prescription_searchBox">
-              <input type="text" placeholder="Hãy nhập số điện thoại" className="search-input" />
-              <button className="search-btn">
+              <input
+                type="text"
+                placeholder="Hãy nhập số điện thoại"
+                className="search-input"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+              <button className="search-btn" onClick={handleSearch}>
                 <i className="bi bi-search"></i>
               </button>
             </div>
             <div className="Prescription_searchBox">
-              <input type="text" placeholder="Hãy nhập tên" className="search-input" />
-              <button className="search-btn">
+              <input
+                type="text"
+                placeholder="Hãy nhập tên"
+                className="search-input"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+              <button className="search-btn" onClick={handleSearch}>
                 <i className="bi bi-search"></i>
               </button>
             </div>

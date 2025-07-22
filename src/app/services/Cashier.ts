@@ -142,6 +142,35 @@ export const SearchPrescriptionPendingPayment = async (
   }
 };
 
+//Tìm kiếm dược sĩ
+export const SearchPrescriptionByDoctor = async (
+  trangThai: string,
+  isWaiting: boolean,
+  page: number = 1,
+  fullName?: string | null,
+  phoneNumber?: string | null
+) => {
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.append("TrangThai", trangThai.toString());
+    queryParams.append("TrangThaiThanhToan", isWaiting ? "false" : "true");
+    queryParams.append("page", page.toString());
+    if (fullName) queryParams.append("HoVaTen", fullName);
+    if (phoneNumber) queryParams.append("SDT", phoneNumber);
+
+    const res = await fetch(
+      `${API_BASE_URL}/Donthuoc/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?${queryParams.toString()}`
+    );
+
+    if (!res.ok) return null;
+
+    return await res.json();
+  } catch (error) {
+    console.error("Lỗi khi fetch đơn thuốc bác sĩ:", error);
+    return null;
+  }
+};
+
 
 export const SearchParaclinicalAwaitingPayment = async (
   isActive: boolean,
@@ -154,7 +183,7 @@ export const SearchParaclinicalAwaitingPayment = async (
     const params = new URLSearchParams({
       TrangThaiHoatDong: String(isActive),
       page: String(page),
-      limit: "5",
+      limit: "7",
     });
 
     if (HoVaTen && HoVaTen.trim() !== "") {
@@ -184,3 +213,63 @@ export const SearchParaclinicalAwaitingPayment = async (
     };
   }
 };
+
+
+export const SearchParaclinicalWithStatus = async (
+  isActive: boolean,
+  page: number = 1,
+  TrangThai: boolean,
+  HoVaTen?: string,
+  SDT?: string,
+  TrangThaiThanhToan?: boolean,
+  BoQua?: boolean,
+  id_PhongThietBi?: string
+) => {
+  try {
+    const params = new URLSearchParams({
+      TrangThaiHoatDong: String(isActive),
+      page: String(page),
+      limit: "5",
+      TrangThai: String(TrangThai),
+    });
+
+    if (HoVaTen?.trim()) {
+      params.append("HoVaTen", HoVaTen.trim());
+    }
+
+    if (SDT?.trim()) {
+      params.append("SDT", SDT.trim());
+    }
+
+    if (typeof TrangThaiThanhToan === "boolean") {
+      params.append("TrangThaiThanhToan", String(TrangThaiThanhToan));
+    }
+
+    if (typeof BoQua === "boolean") {
+      params.append("BoQua", String(BoQua));
+    }
+
+    if (id_PhongThietBi?.trim()) {
+      params.append("id_PhongThietBi", id_PhongThietBi.trim());
+    }
+
+    const response = await fetch(
+      `${API_BASE_URL}/Yeu_Cau_Xet_Nghiem/TimKiemTheoSDTHoacIdPhieuKhamBenh/Pagination?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Lỗi khi gọi API");
+    }
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error("Lỗi khi fetch SearchParaclinicalWithStatus:", error);
+    return {
+      data: [],
+      totalPages: 1,
+      currentPage: 1,
+    };
+  }
+};
+

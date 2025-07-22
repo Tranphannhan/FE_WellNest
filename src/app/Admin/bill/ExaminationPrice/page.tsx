@@ -35,6 +35,7 @@ export interface BillApiResponseItem {
       Giadichvu?: number;
     };
   };
+  TongTien?: number;
 }
 
 

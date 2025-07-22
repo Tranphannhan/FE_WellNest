@@ -38,7 +38,7 @@ function HandleCreate () {
     showToast('Vui lòng nhập đầy đủ thông tin', ToastType.error);
     return;
   }else{
-      sessionStorage.setItem('thongTinTiepNhan',JSON.stringify(value));
+    sessionStorage.setItem('thongTinTiepNhan',JSON.stringify(value));
     router.push('/Receptionist/Reception/ChooseRoom');
   }
 }

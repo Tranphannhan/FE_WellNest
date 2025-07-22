@@ -15,6 +15,14 @@ import { showToast, ToastType } from "@/app/lib/Toast";
 import payment from "@/app/services/Pay";
 import NoData from "@/app/components/ui/Nodata/Nodata";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
+//import cookie
+import Cookies from "js-cookie";
+import {jwtDecode} from "jwt-decode";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+interface MyTokenType {
+  _id: string;
+  // có thể thêm các field khác nếu cần
+}
 
 export default function Prescription() {
   const router = useRouter();
@@ -82,21 +90,59 @@ export default function Prescription() {
     setShowModal(true);
   };
 
-  const paymentConfirmation = async () => {
-    try {
-      const result = await confirmPrescriptionPayment(idPrescription);
-      if (result) {
-        showToast("Xác nhận thanh toán thành công", ToastType.success);
-        setShowModal(false);
-        router.push(`/Cashier/PaymentWaitingList/${idPrescription}`);
-      } else {
-        showToast("Xác nhận thanh toán thất bại", ToastType.error);
-      }
-    } catch (error) {
-      showToast("Đã có lỗi xảy ra khi xác nhận thanh toán", ToastType.error);
-      console.error(error);
+  //Lay token
+  
+  const getThuNganIdFromToken = (): string | null => {
+  const token = Cookies.get("token"); // 👈 Đảm bảo tên cookie chính xác
+
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode<MyTokenType>(token);
+    return decoded._id;
+  } catch (error) {
+    console.error("Lỗi giải mã token:", error);
+    return null;
+  }
+};
+
+const currentPrescription = dataPrescription.find(
+  (item) => item._id === idPrescription
+);
+
+const paymentConfirmation = async () => {
+  try {
+    const result = await confirmPrescriptionPayment(idPrescription);
+    if (result) {
+      //Them 2 cai nay
+      const idThuNgan = getThuNganIdFromToken(); // ✅ Lấy ID từ token
+
+      await fetch(`${API_BASE_URL}/Hoadon/Add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Id_PhieuKhamBenh: currentPrescription?.Id_PhieuKhamBenh._id,
+          Id_Dichvu: currentPrescription?._id,
+          Id_ThuNgan: idThuNgan, // ✅ Gán vào đây
+          LoaiHoaDon: "Thuoc",
+          TenHoaDon: currentPrescription?.TenDonThuoc,
+        }),
+      });
+
+      showToast("Xác nhận thanh toán thành công", ToastType.success);
+      setShowModal(false);
+      router.push(`/Cashier/PaymentWaitingList/${idPrescription}`);
+    } else {
+      showToast("Xác nhận thanh toán thất bại", ToastType.error);
     }
-  };
+  } catch (error) {
+    showToast("Đã có lỗi xảy ra khi xác nhận thanh toán", ToastType.error);
+    console.error(error);
+  }
+};
+
 
   return (
     <>

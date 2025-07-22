@@ -53,11 +53,6 @@ export default function RootLayout({
                     conTentHeader = {
                       {
                         title : 'Bác sĩ',
-                        navItems : {
-                          name : 'Nguyễn Đình Huân',
-                          role : 'Bác sĩ',
-                          img : '/images/img-bacsi.webp'
-                        }
                       }
                     }
                 >

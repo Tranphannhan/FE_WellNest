@@ -6,6 +6,7 @@ import '../globals.css'
 import Header from "@/app/components/shared/Header/Header";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import ChatSuggestKhoa from "../components/shared/ChatSuggestKhoa/ChatSuggestKhoa";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,11 +54,6 @@ export default function RootLayout({
                     conTentHeader = {
                       {
                         title : 'Tiếp nhận ',
-                        navItems : {
-                          name : 'Nguyễn Đình Huân',
-                          role : 'Tiếp nhận',
-                          img : '/images/img-bacsi.webp'
-                        }
                       }
                     }
                 >
@@ -68,9 +64,9 @@ export default function RootLayout({
               </div>
       
 
+ <ChatSuggestKhoa />
                
               </div>
-
 
         </div>
 

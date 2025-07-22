@@ -166,7 +166,7 @@ const print =
   const completeDesignation = async () => {
     const res = await waitingForTesting(id as string);
     if (res) {
-      router.push("http://localhost:3000/Doctor/WaitClinicalExamination");
+      router.push("/Doctor/WaitClinicalExamination");
     }
   };
 
