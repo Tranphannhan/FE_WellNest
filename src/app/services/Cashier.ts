@@ -225,7 +225,7 @@ export const SearchParaclinicalWithStatus = async (
   HoVaTen?: string,
   SDT?: string,
   TrangThaiThanhToan?: boolean,
-  BoQua?: boolean,
+  BoQua?: boolean | null,
   id_PhongThietBi?: string
 ) => {
   try {

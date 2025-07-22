@@ -35,7 +35,7 @@ export default function Prescription() {
       fullName,
       phoneNumber,
       true, // TrangThaiThanhToan
-      false,
+      null,
       idBacSi
     );
 

@@ -2,6 +2,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './ParaclinicalPayment.css';
 import { paraclinicalType } from '@/app/types/patientTypes/patient';
+import { jwtDecode } from 'jwt-decode';
+import Cookies from "js-cookie";
 
 interface ParaclinicalPaymentProps {
     isOpen: boolean;
@@ -12,6 +14,19 @@ interface ParaclinicalPaymentProps {
 const ParaclinicalPayment: React.FC<ParaclinicalPaymentProps> = ({ isOpen, onClose, dataDetail = [] }) => {
     const paraclinicalPaymentRef = useRef<HTMLDivElement>(null);
     const [pdfPreviewImg, setPdfPreviewImg] = useState('');
+      const [cashierName, setCashierName] = useState<string>();
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode<{_TenTaiKhoan:string}>(token);
+        setCashierName(decoded._TenTaiKhoan);
+      } catch (err) {
+        console.error("Token không hợp lệ:", err);
+      }
+    }
+  }, []);
 
     // Dynamic data from props with fallbacks
     const patientName = dataDetail[0]?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen || 'Không có dữ liệu';
@@ -197,7 +212,7 @@ const ParaclinicalPayment: React.FC<ParaclinicalPaymentProps> = ({ isOpen, onClo
                         </div>
                         <div className="signature-block signature-collector">
                             <p className="signature-label">Người thu tiền</p>
-                            <p className="signature-name">Trần Thị Bích Thủy</p>
+                            <p className="signature-name">{cashierName}</p>
                         </div>
                     </div>
                 </div>

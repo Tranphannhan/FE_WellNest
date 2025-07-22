@@ -41,6 +41,8 @@ export default function Prescription() {
     if (!getData) return;
 
     setData(getData.data);
+    console.log(getData);
+    
     setTotalPages(getData.totalPages);
     setCurrentPage(getData.currentPage);
   };
