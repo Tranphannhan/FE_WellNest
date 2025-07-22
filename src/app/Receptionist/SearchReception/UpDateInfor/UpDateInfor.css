@@ -21,16 +21,32 @@
 
 /* Phần ảnh */
 .user-info-left {
-  width: 25%;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 180px; /* hoặc auto */
+}
+
+.avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px; /* khoảng cách giữa ảnh và nút */
 }
 
 .avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
+  width: 140px;
+  height: 140px;
   object-fit: cover;
-  margin-bottom: 10px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+}
+
+.upload-btn-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 /* Form chính giữa */
@@ -62,9 +78,16 @@
   font-weight: 500;
 }
 
-.short-input {
-  width: 320px;
+.user-info-center .form-row input {
+  max-width: 280px;
 }
+
+
+.short-input {
+  max-width: 280px;
+  width: 100%;
+}
+
 
 .form-row.vertical {
   flex-direction: column;

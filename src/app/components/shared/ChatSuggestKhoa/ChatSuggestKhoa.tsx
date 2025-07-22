@@ -15,11 +15,15 @@ import {
 } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
-import PersonIcon from "@mui/icons-material/Person";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { fetchSuggestedKhoa } from "@/app/services/ReceptionServices";
 import { SiRobotframework } from "react-icons/si";
+<<<<<<< HEAD
 import {IoMdSend } from "react-icons/io";
+=======
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+>>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
 
 // Kiểu khoa
 type Khoa = {
@@ -39,16 +43,52 @@ type Message = {
   text: string;
 };
 
+// Token
+type UserToken = {
+  _Image?: string;
+  _TenTaiKhoan?: string;
+  _TenBacSi?: string;
+};
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export default function ChatSuggestKhoa() {
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: "bot",
+<<<<<<< HEAD
       text: "Xin chào, tôi là AI của hệ thống WELLNEST.\nVui lòng nhập các triệu chứng để tôi có thể giúp bạn tìm ra khoa phù hợp nhất.",
+=======
+      text:
+        "Xin chào, tôi là AI của hệ thống WELLNEST.\n" +
+        "Vui lòng nhập các triệu chứng để tôi có thể giúp bạn tìm ra khoa phù hợp nhất.",
+>>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+<<<<<<< HEAD
+=======
+  const [user, setUser] = useState<UserToken | null>(null);
+
+  // Lấy user từ token
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode<UserToken>(token);
+        setUser(decoded);
+      } catch (err) {
+        console.error("Token không hợp lệ:", err);
+      }
+    }
+  }, []);
+
+  const avatarUrl = user?._Image
+    ? `${API_BASE_URL}/image/${user._Image}`
+    : "/default-avatar.png";
+>>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -66,7 +106,9 @@ export default function ChatSuggestKhoa() {
       const symptoms = input.split(",").map((s) => s.trim());
       const res: SuggestedKhoaResponse = await fetchSuggestedKhoa(symptoms);
 
-      const botText = `Dựa trên các triệu chứng bạn cung cấp, chúng tôi đề xuất:\n\n - Khoa ưu tiên: ${res.khoaUuTien?.TenKhoa || "Không xác định"}\n - Khoa liên quan: ${
+      const botText = `Dựa trên các triệu chứng bạn cung cấp, chúng tôi đề xuất:\n\n - Khoa ưu tiên: ${
+        res.khoaUuTien?.TenKhoa || "Không xác định"
+      }\n - Khoa liên quan: ${
         res.khoaLienQuan?.map((k) => k.TenKhoa).join(", ") || "Không có"
       }`;
 
@@ -81,7 +123,12 @@ export default function ChatSuggestKhoa() {
         ...prev,
         {
           sender: "bot",
+<<<<<<< HEAD
           text: "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này.",
+=======
+          text:
+            "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này.",
+>>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
         },
       ]);
     } finally {
@@ -130,7 +177,10 @@ export default function ChatSuggestKhoa() {
               width={150}
               height={150}
             />
+<<<<<<< HEAD
             <Typography variant="subtitle1" fontWeight="bold"></Typography>
+=======
+>>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
           </Box>
           <IconButton onClick={() => setOpen(false)}>
             <CloseIcon />
@@ -150,7 +200,11 @@ export default function ChatSuggestKhoa() {
                 alignItems="flex-end"
               >
                 {msg.sender === "bot" && (
+<<<<<<< HEAD
                   <Avatar sx={{ bgcolor: "#3497f9", mr: 1 }}>
+=======
+                  <Avatar sx={{ bgcolor: "primary.main", mr: 1 }}>
+>>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
                     <SiRobotframework fontSize="20px" />
                   </Avatar>
                 )}
@@ -174,9 +228,16 @@ export default function ChatSuggestKhoa() {
                 </Paper>
 
                 {msg.sender === "user" && (
+<<<<<<< HEAD
                   <Avatar sx={{ bgcolor: "#aaaaaaff", ml: 1 }}>
                     <PersonIcon fontSize="small" />
                   </Avatar>
+=======
+                  <Avatar
+                    src={avatarUrl}
+                    sx={{ width: 32, height: 32, ml: 1 }}
+                  />
+>>>>>>> 1a9c313bba55026dad9f458bf51201014ff81340
                 )}
               </Box>
             ))}
