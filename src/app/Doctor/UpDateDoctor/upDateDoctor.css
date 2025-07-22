@@ -25,6 +25,9 @@
   text-align: center;
 }
 
+.doctor-info-left img {
+  margin: auto;
+}
 .avatar {
   width: 120px;
   height: 120px;

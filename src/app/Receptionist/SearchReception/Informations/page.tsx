@@ -1,16 +1,49 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { UploadChangeParam } from 'antd/es/upload/interface';
 import { useRouter } from 'next/navigation';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 import './Informations.css';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+interface DecodedToken {
+  _id: string;
+  _TenTaiKhoan: string;
+  _SoDienThoai: string;
+  _SoCCCD: string;
+  _Image: string;
+  _NamSinh: string;
+  _Gioi_Tinh: string;
+  _Id_LoaiTaiKhoan: {
+    VaiTro: string;
+  };
+}
 
 const Informations = () => {
   const [imageUrl, setImageUrl] = useState<string>('');
+  const [userData, setUserData] = useState<DecodedToken | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (token) {
+      try {
+        const decoded = jwtDecode<DecodedToken>(token);
+        setUserData(decoded);
+        if (decoded._Image) {
+          setImageUrl(decoded._Image);
+        }
+      } catch (err) {
+        console.error('Failed to decode token:', err);
+      }
+    }
+  }, []);
 
   const handleImageChange = (info: UploadChangeParam) => {
     const file = info.file.originFileObj;
@@ -24,11 +57,10 @@ const Informations = () => {
   };
 
   const handleUpdateClick = () => {
-    router.push('/Receptionist/SearchReception/UpDateInfor');
-  };
-
-  const handleBackClick = () => {
-    router.back();
+    if (userData) {
+      localStorage.setItem('userInfo', JSON.stringify(userData));
+      router.push('/Receptionist/SearchReception/UpDateInfor');
+    }
   };
 
   return (
@@ -48,7 +80,7 @@ const Informations = () => {
 
           <div className="info-left">
             <img
-              src={imageUrl || '/default-avatar.png'}
+              src={imageUrl.startsWith('data:') ? imageUrl : `${API_BASE_URL}/image/${imageUrl || 'default-avatar.png'}`}
               alt="avatar"
               className="info-avatar"
             />
@@ -60,36 +92,31 @@ const Informations = () => {
           <div className="info-right">
             <div className="info-row">
               <label>Họ và Tên:</label>
-              <p>Võ Văn Quí</p>
+              <p>{userData?._TenTaiKhoan || 'Đang tải...'}</p>
             </div>
-
             <div className="info-row">
               <label>Số Điện Thoại:</label>
-              <p>+123-456-789</p>
+              <p>{userData?._SoDienThoai || 'Đang tải...'}</p>
             </div>
-
             <div className="info-row">
               <label>Số CCCD:</label>
-              <p>01234567890</p>
+              <p>{userData?._SoCCCD || 'Đang tải...'}</p>
             </div>
-
             <div className="info-row">
               <label>Vai trò:</label>
-              <p>Tiếp nhận</p>
+              <p>{userData?._Id_LoaiTaiKhoan?.VaiTro || 'Đang tải...'}</p>
             </div>
-
             <div className="info-row">
               <label>Năm sinh:</label>
-              <p>2005</p>
+              <p>{userData?._NamSinh || 'Đang tải...'}</p>
             </div>
-
             <div className="info-row">
               <label>Giới tính:</label>
-              <p>Nam</p>
+              <p>{userData?._Gioi_Tinh || 'Đang tải...'}</p>
             </div>
 
             <div className="info-footer">
-              <Button onClick={handleBackClick} disabled>Quay lại</Button>
+              <Button disabled>Quay lại</Button>
               <Button type="primary" onClick={handleUpdateClick}>Cập nhật</Button>
             </div>
           </div>

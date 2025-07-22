@@ -28,8 +28,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 0 0 240px;  
+  flex: 0 0 240px;
+  gap: 12px; /* khoảng cách giữa ảnh và nút */
 }
+
 .info-avatar {
   width: 140px;
   height: 140px;
@@ -66,6 +68,7 @@
   flex: 1;
   margin: 0;
   color: black;
+  font-weight: 400;
   font-weight: 400;
 }
 
