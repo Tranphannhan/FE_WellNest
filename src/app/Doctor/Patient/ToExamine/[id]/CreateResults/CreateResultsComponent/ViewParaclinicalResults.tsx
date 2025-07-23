@@ -92,12 +92,12 @@ useEffect(() => {
                       className="card-image-wrapper"
                       onClick={() =>
                         handleImageClick(
-                          `${API_BASE_URL}/Image/${result.Image}`
+                          `${API_BASE_URL}/image/${result.Image}`
                         )
                       }
                     >
                       <img
-                        src={`${API_BASE_URL}/Image/${result.Image}`}
+                        src={`${API_BASE_URL}/image/${result.Image}`}
                         alt={result.TenXetNghiem}
                         className="card-image"
                       />
