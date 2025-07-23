@@ -37,7 +37,7 @@ export default function UpDateDoctor() {
             setId(parsed._id || '');
             setName(parsed._TenBacSi || '');
             setPhone(parsed._SoDienThoai || '');
-            setCccd(parsed._CCCD || '');
+            setCccd(parsed._SoCCCD || '');
             setHocVi(parsed._HocVi || '');
             setVaiTro(parsed._VaiTro || '');
             setNamSinh(parsed._NamSinh?.toString() || '1990');

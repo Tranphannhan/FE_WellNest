@@ -24,7 +24,7 @@ const DoctorInfo = () => {
     _TenBacSi?: string;
     _ID_Khoa?: string | KhoaInfo;
     _SoDienThoai?: string;
-    _CCCD?: string;
+    _SoCCCD?: string;
     _HocVi?: string;
     _GioiTinh?: string;
     _VaiTro?: string;
@@ -127,7 +127,7 @@ const DoctorInfo = () => {
 
             <div className="doctor-row">
               <label>Số CCCD:</label>
-              <p>{form._CCCD || '---'}</p>
+              <p>{form._SoCCCD || '---'}</p>
             </div>
 
             <div className="doctor-row double">

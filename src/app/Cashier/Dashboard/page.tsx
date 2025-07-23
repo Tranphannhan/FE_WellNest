@@ -701,22 +701,22 @@ const RevenueDashboard: React.FC = () => {
 <TableContainer component={Paper} sx={{ border: "1px solid #E5E7EB", borderRadius: 2 }}>
   <Table sx={{ minWidth: 650 }}>
     <TableHead>
-      <TableRow sx={{ backgroundColor: "#1E3A8A" }}>
-        <TableCell sx={{ color: "#FFFFFF", fontWeight: "bold", textTransform: "uppercase" }}>
+      <TableRow sx={{ backgroundColor: "#d4ecfbff" }}>
+        <TableCell sx={{ color: "#000000ff", fontWeight: "bold", textTransform: "uppercase" }}>
           Ngày
         </TableCell>
-        <TableCell sx={{ color: "#FFFFFF", fontWeight: "bold", textTransform: "uppercase" }}>
+        <TableCell sx={{ color: "#000000ff", fontWeight: "bold", textTransform: "uppercase" }}>
           Thời gian
         </TableCell>
-        <TableCell sx={{ color: "#FFFFFF", fontWeight: "bold", textTransform: "uppercase" }}>
+        <TableCell sx={{ color: "#000000ff", fontWeight: "bold", textTransform: "uppercase" }}>
           Loại giao dịch
         </TableCell>
-        <TableCell sx={{ color: "#FFFFFF", fontWeight: "bold", textTransform: "uppercase" }}>
+        <TableCell sx={{ color: "#000000ff", fontWeight: "bold", textTransform: "uppercase" }}>
           Mô tả
         </TableCell>
         <TableCell
           align="right"
-          sx={{ color: "#FFFFFF", fontWeight: "bold", textTransform: "uppercase" }}
+          sx={{ color: "#000000ff", fontWeight: "bold", textTransform: "uppercase" }}
         >
           Số tiền
         </TableCell>
@@ -740,11 +740,11 @@ const RevenueDashboard: React.FC = () => {
               backgroundColor: (() => {
                 switch (transaction.type) {
                   case "Cận lâm sàng":
-                    return "#ECFDF5"; // xanh mint nhạt
+                    return "#f9ffffff"; // xanh mint nhạt
                   case "Khám":
-                    return "#F0F4FF"; // xanh lam nhạt
+                    return "#fffdfdff"; // xanh lam nhạt
                   case "Đơn thuốc":
-                    return "#FFFBEB"; // vàng kem
+                    return "#fffefbff"; // vàng kem
                   default:
                     return "#FFFFFF";
                 }
@@ -764,7 +764,7 @@ const RevenueDashboard: React.FC = () => {
     </TableBody>
 
     <TableFooter>
-      <TableRow sx={{ backgroundColor: "#F3F4F6" }}>
+      <TableRow sx={{ backgroundColor: "#e1f2fdff" }}>
         <TableCell colSpan={4} align="right" sx={{ fontWeight: "bold", color: "#1F2937" }}>
           Tổng cộng:
         </TableCell>

@@ -35,6 +35,18 @@ export interface BillApiResponseItem {
       Giadichvu?: number;
     };
   };
+  Id_Dichvu: {
+    _id?: string;
+    Id_LoaiXetNghiem?: {
+      _id?: string;
+      TenXetNghiem?: string;
+      Id_GiaDichVu?: {
+        _id?: string;
+        Giadichvu?: number;
+      };
+    };
+    Gio?: string;
+  };
   TongTien?: number;
 }
 
