@@ -20,7 +20,7 @@ import payment from "@/app/services/Pay";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const FE_BASE_URL = process.env.BASE_URL_FE_WELLNEST;
+
 interface MyTokenType {
   _id: string;
   // có thể thêm các field khác nếu cần
@@ -143,7 +143,6 @@ export default function ExaminationForm() {
     );
   };
 useEffect(() => {
-  console.log('biến môi trường',FE_BASE_URL);
   
   const fetchPrice = async () => {
     try {

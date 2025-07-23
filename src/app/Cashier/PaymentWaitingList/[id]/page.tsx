@@ -36,7 +36,7 @@ import StatusBadge from "@/app/components/ui/StatusBadge/StatusBadge";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const FE_BASE_URL = process.env.BASE_URL_FE_WELLNEST;
+
 type MyTokenType = {
   _id: string;
   // ... bạn thêm các field khác nếu cần
@@ -79,7 +79,7 @@ export default function PrescriptionDetails() {
     await payment(
       Number(dataPendingPayment.TongTien),
       "Đơn thuốc",
-      `${FE_BASE_URL}/Cashier/PaymentWaitingList/${id}`,
+      `https://wellnest-trannhans-projects.vercel.app/Cashier/PaymentWaitingList/${id}`,
       id as string,
       "DonThuoc"
     );
