@@ -4,6 +4,8 @@ import './MedicineFees.css';
 import { prescriptionType } from '@/app/types/patientTypes/patient';
 import { formatCurrencyVND, formatTime } from '@/app/lib/Format';
 import { PrescriptionDetail } from '@/app/Doctor/Patient/ToExamine/[id]/CreateResults/CreateResultsComponent/Prescription';
+import { jwtDecode } from 'jwt-decode';
+import Cookies from "js-cookie";
 
 interface MedicineFeesProps {
   isOpen: boolean;
@@ -17,7 +19,19 @@ export default function MedicineFees({ isOpen, onClose, data, detailedPrescripti
   const [pdfPreviewImg, setPdfPreviewImg] = useState('');
   const [isDataReady, setIsDataReady] = useState(false);
   const [loadingPreview, setLoadingPreview] = useState(true);
+  const [cashierName, setCashierName] = useState<string>();
 
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode<{_TenTaiKhoan:string}>(token);
+        setCashierName(decoded._TenTaiKhoan);
+      } catch (err) {
+        console.error("Token không hợp lệ:", err);
+      }
+    }
+  }, []);
 
   // Dynamic data from props with fallbacks
   const patientName = data?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen || 'Không có dữ liệu';
@@ -244,7 +258,7 @@ export default function MedicineFees({ isOpen, onClose, data, detailedPrescripti
             </div>
             <div className="signature-block signature-collector">
               <p className="signature-label">Người thu tiền</p>
-              <p className="signature-name">TRẦN THỊ BÍCH THỦY</p>
+              <p className="signature-name">{cashierName}</p>
               <p>(Ký, ghi rõ họ tên)</p>
             </div>
           </div>

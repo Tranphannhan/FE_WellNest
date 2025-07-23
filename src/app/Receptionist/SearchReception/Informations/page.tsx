@@ -19,7 +19,7 @@ interface DecodedToken {
   _SoCCCD: string;
   _Image: string;
   _NamSinh: string;
-  _Gioi_Tinh: string;
+  _GioiTinh: string;
   _Id_LoaiTaiKhoan: {
     VaiTro: string;
   };
@@ -112,7 +112,7 @@ const Informations = () => {
             </div>
             <div className="info-row">
               <label>Giới tính:</label>
-              <p>{userData?._Gioi_Tinh || 'Đang tải...'}</p>
+              <p>{userData?._GioiTinh || 'Đang tải...'}</p>
             </div>
 
             <div className="info-footer">
