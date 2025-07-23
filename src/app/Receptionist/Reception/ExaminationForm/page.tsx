@@ -137,12 +137,14 @@ export default function ExaminationForm() {
     await payment(
       price,
       "Phí Khám",
-      `${FE_BASE_URL}/Receptionist/Reception/ExaminationForm`,
+      `https://wellnest-trannhans-projects.vercel.app/Receptionist/Reception/ExaminationForm`,
       valueRender?.Id_PhieuKhamBenh as string,
       "PhiKham"
     );
   };
 useEffect(() => {
+  console.log('biến môi trường',FE_BASE_URL);
+  
   const fetchPrice = async () => {
     try {
       const result = await GetPriceDiscovery();
