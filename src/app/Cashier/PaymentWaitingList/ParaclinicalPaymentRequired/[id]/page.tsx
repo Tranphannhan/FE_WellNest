@@ -33,6 +33,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import payment from "@/app/services/Pay";
+const FE_BASE_URL = process.env.BASE_URL_FE_WELLNEST;
 
 export default function ParaclinicalDetails() {
   const router = useRouter();
@@ -91,7 +92,7 @@ export default function ParaclinicalDetails() {
     await payment(
       totalPrice,
       "Xét nghiệm",
-      `http://localhost:3000/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${idPhieuKhamBenh}`,
+      `${FE_BASE_URL}/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${idPhieuKhamBenh}`,
       idPhieuKhamBenh,
       "XetNghiem"
     );

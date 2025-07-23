@@ -20,6 +20,7 @@ import payment from "@/app/services/Pay";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const FE_BASE_URL = process.env.BASE_URL_FE_WELLNEST;
 interface MyTokenType {
   _id: string;
   // có thể thêm các field khác nếu cần
@@ -136,7 +137,7 @@ export default function ExaminationForm() {
     await payment(
       price,
       "Phí Khám",
-      `http://localhost:3000/Receptionist/Reception/ExaminationForm`,
+      `${FE_BASE_URL}/Receptionist/Reception/ExaminationForm`,
       valueRender?.Id_PhieuKhamBenh as string,
       "PhiKham"
     );

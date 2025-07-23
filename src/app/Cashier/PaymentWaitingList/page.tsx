@@ -19,6 +19,7 @@ import Pagination from "@/app/components/ui/Pagination/Pagination";
 import Cookies from "js-cookie";
 import {jwtDecode} from "jwt-decode";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const FE_BASE_URL = process.env.BASE_URL_FE_WELLNEST;
 interface MyTokenType {
   _id: string;
   // có thể thêm các field khác nếu cần
@@ -68,7 +69,7 @@ export default function Prescription() {
     await payment(
       100000,
       "Đơn thuốc",
-      `http://localhost:3000/Cashier/PaymentWaitingList/${idPrescription}`,
+      `${FE_BASE_URL}/Cashier/PaymentWaitingList/${idPrescription}`,
       idPrescription
     );
   };
