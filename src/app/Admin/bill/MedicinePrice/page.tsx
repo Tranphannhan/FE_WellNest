@@ -16,7 +16,6 @@ import { BillApiResponseItem } from "../ExaminationPrice/page";
 const columns: ColumnCategory[] = [
   { id: "HoVaTen", label: "Họ và tên", sortable: true, Outstanding: true },
   { id: "Ngay", label: "Ngày", sortable: true },
-  { id: "Giadichvu", label: "Giá dịch vụ", sortable: true },
   { id: "LoaiHoaDon", label: "Loại hóa đơn", sortable: true },
   { id: "TenHoaDon", label: "Tên hóa đơn", sortable: true },
 ];
@@ -44,7 +43,6 @@ export default function Page() {
           _id: item._id,
           HoVaTen: item?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ?? "-",
           Ngay: item?.Id_PhieuKhamBenh?.Ngay ?? "-",
-          TongTien: item?.TongTien ?? 0,
           LoaiHoaDon: item?.LoaiHoaDon ?? "-",
           TenHoaDon: item?.TenHoaDon ?? "-",
         }));

@@ -31,7 +31,8 @@ export default function Page() {
   const fetchData = async (currentPage: number, search: string = "") => {
     try {
       let data;
-
+      console.log(data);
+      
       if (search.trim()) {
         // 🔍 Gọi API tìm kiếm
         data = await SearchBill("XetNghiem", search.trim());
@@ -41,11 +42,12 @@ export default function Page() {
       }
 
       if (data?.data) {
+        console.log("📦 Dữ liệu hóa đơn nhận được từ API:", data.data);
         const mapped = data.data.map((item: BillApiResponseItem) => ({
           _id: item._id,
           HoVaTen: item?.Id_PhieuKhamBenh?.Id_TheKhamBenh?.HoVaTen ?? "-",
           Ngay: item?.Id_PhieuKhamBenh?.Ngay ?? "-",
-          Giadichvu: item?.Id_PhieuKhamBenh?.Id_GiaDichVu?.Giadichvu ?? 0,
+          Giadichvu: item?.Id_Dichvu?.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu ?? 0,
           LoaiHoaDon: item?.LoaiHoaDon ?? "-",
           TenHoaDon: item?.TenHoaDon ?? "-",
         }));
