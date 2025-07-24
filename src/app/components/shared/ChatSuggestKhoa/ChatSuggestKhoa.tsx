@@ -133,9 +133,10 @@ export default function ChatSuggestKhoa() {
         onClose={() => setOpen(false)}
         PaperProps={{
           sx: {
-            width: 450,
+            width: '450px !important',
             height: "100%",
             display: "flex",
+            maxWidth:'450px !important',
             flexDirection: "column",
           },
         }}
