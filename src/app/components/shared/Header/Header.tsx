@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { useRouter } from "next/navigation";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -45,6 +46,7 @@ export default function Header({
   const [user, setUser] = React.useState<UserToken | null>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const router = useRouter();
 
   React.useEffect(() => {
     const token = Cookies.get("token");
@@ -162,7 +164,7 @@ export default function Header({
           {displayName}
         </MenuItem>
         <Divider />
-        <MenuItem>
+        <MenuItem onClick={()=>{router.push("/Receptionist/Informations")}}>
           <ListItemIcon>
             <AccountCircle fontSize="small" />
           </ListItemIcon>

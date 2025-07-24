@@ -10,16 +10,16 @@
   gap: 40px;
   align-items: flex-start;
   background: #fff;
+
   padding: 32px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   position: relative;
 }
 
 .info-title {
   width: 100%;
   font-size: 18px;
-  font-weight: 600;
   margin-bottom: 8px;
   color: #333;
 }
@@ -43,7 +43,6 @@
 
 .info-right {
   flex: 1;
-  max-width: 650px; 
   width: 100%;
   padding-top: 12px;
 }

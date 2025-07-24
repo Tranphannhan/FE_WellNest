@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Input, Select, Radio, Upload, message } from 'antd';
+import { Button, Input, Radio, Upload, message } from 'antd';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import './UpDateInfor.css';
 
-const { Option } = Select;
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function UserInfo() {
@@ -31,7 +30,6 @@ export default function UserInfo() {
 
     const [phone, setPhone] = useState('');
     const [cccd, setCccd] = useState('');
-    const [birthYear, setBirthYear] = useState('');
     const [gender, setGender] = useState('');
 
     useEffect(() => {
@@ -42,7 +40,6 @@ export default function UserInfo() {
             setName(parsed._TenTaiKhoan || '');
             setPhone(parsed._SoDienThoai || '');
             setCccd(parsed._SoCCCD || '');
-            setBirthYear(parsed._NamSinh || '1990');
             setGender(parsed._Gioi_Tinh === 'Nữ' ? 'female' : 'male');
         }
     }, []);
@@ -94,8 +91,7 @@ export default function UserInfo() {
             <Tabbar
                 tabbarItems={{
                     tabbarItems: [
-                        { text: 'Thông tin bệnh nhân', link: '/Receptionist/SearchReception/Informations' },
-                        { text: 'Thông tin bác sĩ', link: '/Receptionist/SearchReception/InforDoctor' },
+                        { text: 'Thay đổi thông tin', link: '/Receptionist/Informations' },
                     ],
                 }}
             />
@@ -154,12 +150,6 @@ export default function UserInfo() {
                         <div className="form-row">
                             <label>Vai trò:</label>
                             <Input value={userData?._Id_LoaiTaiKhoan?.VaiTro || ''} disabled />
-                        </div>
-                        <div className="form-row vertical">
-                            <label>Năm sinh:</label>
-                            <Select value={birthYear} disabled style={{ width: '55%' }}>
-                                <Option value={birthYear}>{birthYear}</Option>
-                            </Select>
                         </div>
                         <div className="form-row vertical">
                             <label>Giới tính:</label>

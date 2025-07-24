@@ -9,6 +9,7 @@ import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import './Informations.css';
+import { FaEdit } from 'react-icons/fa';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -59,7 +60,7 @@ const Informations = () => {
   const handleUpdateClick = () => {
     if (userData) {
       localStorage.setItem('userInfo', JSON.stringify(userData));
-      router.push('/Receptionist/SearchReception/UpDateInfor');
+      router.push('/Receptionist/Informations/UpDateInfor');
     }
   };
 
@@ -68,8 +69,7 @@ const Informations = () => {
       <Tabbar
         tabbarItems={{
           tabbarItems: [
-            { text: 'Thông tin bệnh nhân', link: '/Receptionist/SearchReception/Informations' },
-            { text: 'Thông tin bác sĩ', link: '/Receptionist/SearchReception/InforDoctor' },
+            { text: 'Thông tin tài khoản', link: '/Receptionist/SearchReception/Informations' },
           ],
         }}
       />
@@ -107,17 +107,13 @@ const Informations = () => {
               <p>{userData?._Id_LoaiTaiKhoan?.VaiTro || 'Đang tải...'}</p>
             </div>
             <div className="info-row">
-              <label>Năm sinh:</label>
-              <p>{userData?._NamSinh || 'Đang tải...'}</p>
-            </div>
-            <div className="info-row">
               <label>Giới tính:</label>
               <p>{userData?._GioiTinh || 'Đang tải...'}</p>
             </div>
 
             <div className="info-footer">
-              <Button disabled>Quay lại</Button>
-              <Button type="primary" onClick={handleUpdateClick}>Cập nhật</Button>
+              <Button onClick={()=>{router.push('/Receptionist/Reception')}}>Quay lại</Button>
+              <Button type="primary" onClick={handleUpdateClick}><FaEdit />Sửa thông tin</Button>
             </div>
           </div>
         </div>
