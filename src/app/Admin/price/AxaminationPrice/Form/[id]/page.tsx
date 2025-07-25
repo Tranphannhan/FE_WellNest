@@ -21,6 +21,7 @@ import './AxaminationPriceForm.css';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
+import API_BASE_URL from "@/app/config";
 
 export default function ExaminationPriceFormLayout() {
   const [price, setPrice] = useState<string>('');
@@ -31,7 +32,6 @@ export default function ExaminationPriceFormLayout() {
   const [message, setMessage] = useState<string>(''); // Thêm state cho thông báo
   const router = useRouter();
   const { id } = useParams();
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Fetch dữ liệu chi tiết giá dịch vụ khi component mount
   useEffect(() => {

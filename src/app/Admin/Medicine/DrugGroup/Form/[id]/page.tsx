@@ -18,6 +18,7 @@ import './MedicineTypeFormLayout.css';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
+import API_BASE_URL from "@/app/config";
 
 interface FormData {
     TenNhomThuoc: string;
@@ -40,7 +41,6 @@ function MedicineTypeFormLayout() {
     const [message, setMessage] = useState<string>('');
     const [errors, setErrors] = useState<Errors>({});
     const [loading, setLoading] = useState<boolean>(false);
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     // Fetch existing medicine type data on mount
     useEffect(() => {

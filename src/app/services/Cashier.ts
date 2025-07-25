@@ -2,7 +2,7 @@
 import { ParaclinicalResponse } from "../types/hospitalTypes/hospitalType";
 import { prescriptionType } from "../types/patientTypes/patient";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import API_BASE_URL from "@/app/config";
 
 export async function getPrescriptionPendingPayment (Pagination:boolean = false , page:number = 1) {
   try {

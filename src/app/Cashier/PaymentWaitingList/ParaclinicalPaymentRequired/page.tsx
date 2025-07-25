@@ -17,7 +17,7 @@ import NoData from "@/app/components/ui/Nodata/Nodata";
 import Pagination from "@/app/components/ui/Pagination/Pagination";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
-
+import {localBaseUrl} from "@/app/config";
 export default function ParaclinicalPaymentRequired() {
   const router = useRouter();
 
@@ -69,7 +69,7 @@ export default function ParaclinicalPaymentRequired() {
     await payment(
       dataPendingPayment?.TongTien | 0,
       "Xét nghiệm",
-      `https://wellnest-trannhans-projects.vercel.app/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${idPhieuKhamBenh}`,
+      `${localBaseUrl}/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${idPhieuKhamBenh}`,
       idPhieuKhamBenh,
       "XetNghiem"
     );

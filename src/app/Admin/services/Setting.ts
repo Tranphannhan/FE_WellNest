@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+import API_BASE_URL from "@/app/config";
 
 export type FrontendChonPhong = "thuCong" | "itNguoiNhat" | "phongGan" | "phongXa" | "ganDay";
 export type BackendChonPhong = "ThuCong" | "ItNguoi" | "PhongGan" | "GanDay" | "PhongXa";

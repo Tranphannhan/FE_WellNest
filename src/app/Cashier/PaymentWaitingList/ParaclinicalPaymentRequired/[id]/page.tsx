@@ -33,7 +33,7 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import payment from "@/app/services/Pay";
-
+import {localBaseUrl} from "@/app/config";
 export default function ParaclinicalDetails() {
   const router = useRouter();
   const params = useParams();
@@ -91,7 +91,7 @@ export default function ParaclinicalDetails() {
     await payment(
       totalPrice,
       "Xét nghiệm",
-      `https://wellnest-trannhans-projects.vercel.app/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${idPhieuKhamBenh}`,
+      `${localBaseUrl}/Cashier/PaymentWaitingList/ParaclinicalPaymentRequired/${idPhieuKhamBenh}`,
       idPhieuKhamBenh,
       "XetNghiem"
     );

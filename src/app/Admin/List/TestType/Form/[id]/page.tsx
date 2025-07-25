@@ -25,6 +25,7 @@ import './EditTestForm.css';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
+import API_BASE_URL from "@/app/config";
 
 // Custom styled component for the file input button
 const VisuallyHiddenInput = styled('input')({
@@ -85,7 +86,6 @@ function EditTestForm() {
   const [roomOptions, setRoomOptions] = useState<RoomOption[]>([]);
   const router = useRouter();
   const { id } = useParams();
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Fetch price and room options
   useEffect(() => {

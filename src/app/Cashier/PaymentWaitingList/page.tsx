@@ -18,7 +18,8 @@ import Pagination from "@/app/components/ui/Pagination/Pagination";
 //import cookie
 import Cookies from "js-cookie";
 import {jwtDecode} from "jwt-decode";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import API_BASE_URL from "@/app/config";
+import {localBaseUrl} from '@/app/config';
 
 interface MyTokenType {
   _id: string;
@@ -69,7 +70,7 @@ export default function Prescription() {
     await payment(
       100000,
       "Đơn thuốc",
-      `https://wellnest-trannhans-projects.vercel.app/Cashier/PaymentWaitingList/${idPrescription}`,
+      `${localBaseUrl}/Cashier/PaymentWaitingList/${idPrescription}`,
       idPrescription
     );
   };

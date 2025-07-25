@@ -18,6 +18,7 @@ import './DepartmentType.css';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
+import API_BASE_URL from "@/app/config";
 
 interface DepartmentType {
   TenKhoa: string;
@@ -42,7 +43,6 @@ function AddDepartmentTypeForm() {
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
   const router = useRouter();
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Tự động xóa thông báo sau 3 giây
   useEffect(() => {
