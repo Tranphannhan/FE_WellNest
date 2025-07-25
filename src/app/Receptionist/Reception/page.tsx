@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import PatientInfoResult from './PatientInfoResult';
 import { codeScanningInformationType } from '@/app/types/patientTypes/patient';
 import ReceptionResultNotificationExample from './componentsReception/receptionResultNotification';
-import API_BASE_URL from "@/app/config";
+
 
 export default function ScanQRCode() {
   const [result, setResult] = useState ('');
@@ -16,6 +16,7 @@ export default function ScanQRCode() {
   const [isScanning, setIsScanning] = useState(false);
   const router = useRouter();
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
   function Hadlecreate  () {

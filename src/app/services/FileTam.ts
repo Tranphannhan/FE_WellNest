@@ -2,7 +2,7 @@
 
 import { MedicalRecordPaginationResponse, MedicinePaginationResponse, PrescriptionStatsPaginationResponse, TestRequestPaginationResponse } from "@/app/types/hospitalTypes/hospitalType";
 
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Hàm này đã chấp nhận limit và page
 export default async function fetchMedicines(limit: number, page: number, groupId: string = 'all'): Promise<MedicinePaginationResponse | null> {

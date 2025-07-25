@@ -21,7 +21,6 @@ import {
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 import { showToast, ToastType } from "@/app/lib/Toast";
-import API_BASE_URL from "@/app/config";
 
 export interface rowRenderType {
   _id: string;
@@ -57,6 +56,7 @@ export default function Page() {
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [totalItems, setTotalItems] = useState<number>(0);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
   const router = useRouter();
 
   const mapData = (data: DoctorType[]) => {

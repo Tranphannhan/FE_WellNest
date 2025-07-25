@@ -11,7 +11,7 @@ import { jwtDecode } from 'jwt-decode';
 import './Informations.css';
 import { FaEdit } from 'react-icons/fa';
 
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface DecodedToken {
   _id: string;

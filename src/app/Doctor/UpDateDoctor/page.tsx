@@ -6,7 +6,7 @@ import { Button, Input, Select, Radio, Upload } from 'antd';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import './upDateDoctor.css';
 
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const { Option } = Select;
 
 interface KhoaInfo {

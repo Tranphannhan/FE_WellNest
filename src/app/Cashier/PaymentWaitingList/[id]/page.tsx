@@ -20,7 +20,6 @@ import PrintIcon from "@mui/icons-material/Print";
 import PaymentIcon from "@mui/icons-material/Payment";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import {localBaseUrl} from "@/app/config";
 import {
   Box,
   Typography,
@@ -36,7 +35,8 @@ import {
 import StatusBadge from "@/app/components/ui/StatusBadge/StatusBadge";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import {localBaseUrl} from "@/app/config";
 
 type MyTokenType = {
   _id: string;

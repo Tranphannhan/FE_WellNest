@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Table, Input, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined, CheckOutlined } from "@ant-design/icons";
 import { diagnosisType } from "@/app/types/patientTypes/patient";
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface DataType {
   key: string;

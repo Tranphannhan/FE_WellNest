@@ -1,6 +1,6 @@
 import { showToast, ToastType } from "../lib/Toast";
 
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Thông tin đơn thuóc
 export async function getPrescriptionList(pagination:boolean = false, page:number = 1) {

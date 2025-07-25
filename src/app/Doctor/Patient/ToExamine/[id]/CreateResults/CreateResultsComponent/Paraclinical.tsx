@@ -18,7 +18,6 @@ import { FaDotCircle, FaEye } from "react-icons/fa";
 import { AiFillExclamationCircle } from "react-icons/ai";
 import DoNotContinue from "@/app/components/ui/DoNotContinue/DoNotContinue";
 import ModalComponent from "@/app/components/shared/Modal/Modal";
-import API_BASE_URL from "@/app/config";
 
 export interface ServiceItem {
   stt: number;
@@ -58,7 +57,7 @@ export default function ParaclinicalComponent({hiddenButton,shouldContinue,callB
   const [departmentName, setDepartmentName] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const router = useRouter();
-
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const allConfirmed =
   data.length > 0 &&

@@ -19,7 +19,7 @@ import Logout from "@mui/icons-material/Logout";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useRouter } from "next/navigation";
 
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface StaffToken {
   _TenTaiKhoan: string;

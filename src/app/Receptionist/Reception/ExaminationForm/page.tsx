@@ -19,8 +19,9 @@ import payment from "@/app/services/Pay";
 //import token
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-import API_BASE_URL from "@/app/config";
-import {localBaseUrl} from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import {localBaseUrl} from "@/app/config"
+
 interface MyTokenType {
   _id: string;
   // có thể thêm các field khác nếu cần

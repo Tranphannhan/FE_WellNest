@@ -18,7 +18,6 @@ import './DepartmentType.css';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
-import API_BASE_URL from "@/app/config";
 
 interface DepartmentType {
   _id: string;
@@ -46,6 +45,7 @@ function DepartmentTypeEdit() {
   const router = useRouter();
   const params = useParams();
   const { id } = params;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Fetch department type details
   useEffect(() => {

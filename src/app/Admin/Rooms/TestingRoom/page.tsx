@@ -20,7 +20,6 @@ import { getTestingRoom, SearchRoomName, TestConversionStatusEvaluation } from "
 import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 import { showToast, ToastType } from "@/app/lib/Toast";
-import API_BASE_URL from "@/app/config";
 
 interface TestingRoom {
   _id: string;
@@ -59,6 +58,7 @@ const columns: Column[] = [
 ];
 
 export default function Page() {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [rows, setRows] = useState<rowRenderType[]>([]);

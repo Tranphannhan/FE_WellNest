@@ -14,7 +14,7 @@ import {
 } from "react-icons/md";
 import { FaHouseMedical } from "react-icons/fa6";
 import BreadcrumbComponent from "../component/Breadcrumb";
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const initialMonitorData = [
   {
     label: "Khoa hoạt động",

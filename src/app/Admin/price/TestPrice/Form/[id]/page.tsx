@@ -21,7 +21,6 @@ import { useRouter, useParams } from 'next/navigation';
 import './TestPriceForm.css';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
-import API_BASE_URL from "@/app/config";
 
 interface ApiError {
   message?: string;
@@ -38,6 +37,7 @@ export default function TestPriceFormLayout() {
   const [fetchLoading, setFetchLoading] = useState<boolean>(true);
   const router = useRouter();
   const { id } = useParams();
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Fetch dữ liệu chi tiết giá dịch vụ khi component mount
   useEffect(() => {

@@ -19,7 +19,6 @@ import { GiClick } from "react-icons/gi";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { SystemFunctionType } from "@/app/types/hospitalTypes/hospitalType";
-import API_BASE_URL from "@/app/config";
 
 interface createExaminationCardInformationType {
   Id_TheKhamBenh?: string;
@@ -42,6 +41,7 @@ export default function ChooseRoom() {
     useState<createExaminationCardInformationType>({});
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const router = useRouter();
   const [valueChooseRom, setValueChooseRom] = useState({
     name: "",

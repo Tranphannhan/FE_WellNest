@@ -22,7 +22,6 @@ import './UpdateMedicineFormLayout.css';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
-import API_BASE_URL from "@/app/config";
 
 interface GroupType {
   _id: string;
@@ -48,6 +47,7 @@ function UpdateMedicineFormLayout() {
     TenThuoc?: string;
     Gia?: string;
   }>({});
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Lấy danh sách nhóm thuốc
   const fetchGroups = async () => {

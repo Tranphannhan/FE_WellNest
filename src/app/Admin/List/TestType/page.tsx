@@ -16,7 +16,6 @@ import { useRouter } from "next/navigation";
 import ButtonAdd from "../../component/Button/ButtonAdd";
 import { changeTestTypeStatus, Searchfortesttype } from "../../services/TestType";
 import { showToast, ToastType } from "@/app/lib/Toast";
-import API_BASE_URL from "@/app/config";
 // 👉 Thêm hàm tìm kiếm từ API
 
 
@@ -35,6 +34,7 @@ export default function Page() {
   const [rows, setRows] = useState<rowRenderType[]>([]);
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const router = useRouter();
 
   const fetchData = async (currentPage = 1) => {

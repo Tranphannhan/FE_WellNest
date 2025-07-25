@@ -46,7 +46,7 @@ type UserToken = {
   _TenBacSi?: string;
 };
 
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function ChatSuggestKhoa() {
   const [messages, setMessages] = useState<Message[]>([

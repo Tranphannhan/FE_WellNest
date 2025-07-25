@@ -21,7 +21,6 @@ import './TestPriceForm.css';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
-import API_BASE_URL from "@/app/config";
 
 export interface ApiError {
   message?: string;
@@ -36,6 +35,7 @@ export default function AddTestPriceForm() {
   const [message, setMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

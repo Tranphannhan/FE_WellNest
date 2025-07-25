@@ -15,7 +15,7 @@ import {
 import { medicalExaminationBook } from '@/app/types/patientTypes/patient';
 import { SelectChangeEvent } from '@mui/material/Select';
 
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface PatientInformationComponentProps {
   callBack: () => void;

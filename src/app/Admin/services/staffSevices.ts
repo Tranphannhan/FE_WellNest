@@ -1,6 +1,6 @@
 import { AccountType, LoaiTaiKhoan, TestingRoom } from "../HumanResources/Staff/Form/page";
 
-import API_BASE_URL from "@/app/config";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // lấy danh sách tài khoản
 export async function getstaffAdmin(page : number) {
