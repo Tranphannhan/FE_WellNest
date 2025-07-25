@@ -8,6 +8,7 @@ import { createMedicalExaminationCard } from '@/app/services/ReceptionServices';
 import { showToast, ToastType } from '@/app/lib/Toast';
 import ReceptionResultNotificationExample from './InputFormNotification';
 import { useRouter } from 'next/navigation';
+import API_BASE_URL from "@/app/config";
 
 export default function InputForm() {
   const searchParams = useSearchParams();
@@ -15,7 +16,6 @@ export default function InputForm() {
   const [idUpdateBook, setIdUpdateBook] = useState<string>('');
   const [valueUpdate, setValueUpdate] = useState<medicalExaminationBook>({});
   const router = useRouter();
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const [formData, setFormData] = useState({
     name: '',

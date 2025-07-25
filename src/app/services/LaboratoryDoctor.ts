@@ -1,7 +1,7 @@
 
 import { valueForm } from "../LaboratoryDoctor/GenerateTestResults/page";
 import { showToast, ToastType } from "../lib/Toast";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import API_BASE_URL from "@/app/config";
 
 
 // lấy danh sách chờ xét nghiệm

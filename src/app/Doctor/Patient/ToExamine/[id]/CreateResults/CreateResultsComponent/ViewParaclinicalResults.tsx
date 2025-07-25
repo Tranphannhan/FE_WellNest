@@ -6,7 +6,7 @@ import { getResultsByMedicalExaminationFormId } from "@/app/services/DoctorSevic
 import { useParams } from "next/navigation";
 import { formatTime } from "@/app/lib/Format";
 import NoData from "@/app/components/ui/Nodata/Nodata";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import API_BASE_URL from "@/app/config";
 
 export interface NormalTestResult {
   _id: string;

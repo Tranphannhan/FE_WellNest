@@ -17,6 +17,7 @@ import './MedicineTypeFormLayout.css';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
+import API_BASE_URL from "@/app/config";
 
 function MedicineTypeFormLayout() {
   const router = useRouter();
@@ -28,7 +29,6 @@ function MedicineTypeFormLayout() {
   const [errors, setErrors] = useState<{
     TenNhomThuoc?: string;
   }>({});
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

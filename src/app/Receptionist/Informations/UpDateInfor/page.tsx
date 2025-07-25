@@ -6,7 +6,7 @@ import { Button, Input, Radio, Upload, message } from 'antd';
 import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import './UpDateInfor.css';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import API_BASE_URL from "@/app/config";
 
 export default function UserInfo() {
     interface UserData {

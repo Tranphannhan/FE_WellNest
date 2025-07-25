@@ -1,5 +1,5 @@
 import { DoctorType, Khoa, ClinicType } from "@/app/types/doctorTypes/doctorTypes";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import API_BASE_URL from "@/app/config";
 
 export interface DoctorUpdatePayload {
   TenBacSi?: string;

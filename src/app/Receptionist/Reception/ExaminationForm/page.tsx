@@ -19,8 +19,8 @@ import payment from "@/app/services/Pay";
 //import token
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
+import API_BASE_URL from "@/app/config";
+import {localBaseUrl} from "@/app/config";
 interface MyTokenType {
   _id: string;
   // có thể thêm các field khác nếu cần
@@ -137,7 +137,7 @@ export default function ExaminationForm() {
     await payment(
       price,
       "Phí Khám",
-      `https://wellnest-trannhans-projects.vercel.app/Receptionist/Reception/ExaminationForm`,
+      `${localBaseUrl}/Receptionist/Reception/ExaminationForm`,
       valueRender?.Id_PhieuKhamBenh as string,
       "PhiKham"
     );

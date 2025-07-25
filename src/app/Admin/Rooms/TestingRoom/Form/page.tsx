@@ -21,6 +21,7 @@ import './FormTestingRoom.css';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
+import API_BASE_URL from "@/app/config";
 
 // Custom styled component for the file input button
 const VisuallyHiddenInput = styled('input')({
@@ -57,7 +58,6 @@ const ImageUploadBox = styled(Box, {
 
 
 function AddTestingRoomForm() {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [tenPhong, setTenPhong] = useState<string>('');

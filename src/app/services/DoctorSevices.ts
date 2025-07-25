@@ -4,7 +4,7 @@ import {  clinicalType, diagnosisType, generateTestResultsType, laboratoryType, 
 import { showToast, ToastType } from "../lib/Toast";
 import { DoctorTemporaryTypes } from "../types/doctorTypes/doctorTestTypes";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import API_BASE_URL from "@/app/config";
 
 export async function getAllPatient (Id_Bacsi : string , TrangThai : boolean , TrangThaiHoatDong : string, page:number) {
         try {

@@ -23,7 +23,7 @@ import { getkhoaOptions } from '@/app/Admin/services/DoctorSevices';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa6';
 import { FaSave } from 'react-icons/fa';
 import BreadcrumbComponent from '@/app/Admin/component/Breadcrumb';
-
+import API_BASE_URL from "@/app/config";
 
 
 // Select chuyên khoa
@@ -32,7 +32,7 @@ interface khoaOptionsType {
   TenKhoa: string;
   TrangThaiHoatDong: boolean;
 }
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 // API fetch functions
 const fetchKhoaOptions = async (callback: (data: khoaOptionsType[]) => void) => {
   try {

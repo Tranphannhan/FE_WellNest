@@ -8,7 +8,7 @@ import Tabbar from '@/app/components/shared/Tabbar/Tabbar';
 import type { UploadChangeParam } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { jwtDecode } from 'jwt-decode';
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import API_BASE_URL from "@/app/config";
 import './Informations.css';
 
 const DoctorInfo = () => {

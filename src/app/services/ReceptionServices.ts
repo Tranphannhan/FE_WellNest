@@ -1,5 +1,5 @@
 import { medicalCardData } from '@/app/types/patientTypes/patient';
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import API_BASE_URL from "@/app/config";
 export async function createMedicalExaminationCard(data:medicalCardData) {
     try {
         const result = await fetch(`${API_BASE_URL}/The_Kham_Benh/Add`, {
