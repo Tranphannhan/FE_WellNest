@@ -15,13 +15,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Well Nest",
-  description: "Hệ thống quản lý quy trình khám bệnh",
-    icons: {
-    icon: '/TitleLogo.png',
-  },
-};
+  export const metadata: Metadata = {
+    title: "Well Nest",
+    description: "Hệ thống quản lý quy trình khám bệnh",
+      icons: {
+      icon: '/favicon.png',
+    },
+  };
 
 export default function RootLayout({
   children,
