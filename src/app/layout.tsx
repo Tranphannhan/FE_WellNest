@@ -18,8 +18,15 @@ const geistMono = Geist_Mono({
   export const metadata: Metadata = {
     title: "Well Nest",
     description: "Hệ thống quản lý quy trình khám bệnh",
-      icons: {
-      icon: 'favicon2.png',
+    manifest: '/manifest.json',
+    icons: {
+      icon: [
+        { url: '/favicon2.png', type: 'image/png' },
+        { url: '/favicon2.png', sizes: '32x32', type: 'image/png' },
+        { url: '/favicon2.png', sizes: '16x16', type: 'image/png' },
+      ],
+      shortcut: '/favicon2.png',
+      apple: '/favicon2.png',
     },
   };
 
@@ -30,6 +37,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon2.png" type="image/png" />
+        <link rel="shortcut icon" href="/favicon2.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/favicon2.png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
