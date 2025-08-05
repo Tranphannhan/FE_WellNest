@@ -94,8 +94,6 @@ export default function Header({
         justifyContent: "center",
       }}
     >
-    <link rel="icon" href="/favicon.png" sizes="any" />
-    <link rel="apple-touch-icon" href="/favicon.png" />
       <Toolbar sx={{ px: 2, display: "flex", justifyContent: "space-between" }}>
         <Typography variant="h6" sx={{ color: "#374858", fontSize: 20 }}>
           {conTentHeader.title}

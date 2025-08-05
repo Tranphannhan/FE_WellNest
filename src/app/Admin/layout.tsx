@@ -54,7 +54,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <DemoProvider window={isClient ? window : undefined}>
-      <link rel="icon" href="/images/TitleLogo.png" />
+      <link rel="icon" href="/favicon2.png" />
       <ToastContainer />
       <AppProvider
         navigation={NAVIGATION}

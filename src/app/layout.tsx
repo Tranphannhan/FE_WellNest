@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
     title: "Well Nest",
     description: "Hệ thống quản lý quy trình khám bệnh",
       icons: {
-      icon: '/favicon.png',
+      icon: 'favicon2.png',
     },
   };
 
