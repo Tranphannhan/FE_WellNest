@@ -17,13 +17,20 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Well Nest",
-  description: "Hệ thống quản lý quy trình khám bệnh",
+  export const metadata: Metadata = {
+    title: "Well Nest",
+    description: "Hệ thống quản lý quy trình khám bệnh",
+    manifest: '/manifest.json',
     icons: {
-    icon: '/images/TitleLogo.png',
-  },
-};
+      icon: [
+        { url: '/favicon2.png', type: 'image/png' },
+        { url: '/favicon2.png', sizes: '32x32', type: 'image/png' },
+        { url: '/favicon2.png', sizes: '16x16', type: 'image/png' },
+      ],
+      shortcut: '/favicon2.png',
+      apple: '/favicon2.png',
+    },
+  };
 
 export default function RootLayout({
   children,
