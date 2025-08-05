@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: "Well Nest",
   description: "Hệ thống quản lý quy trình khám bệnh",
     icons: {
-    icon: '/images/TitleLogo.png',
+    icon: '/favicon2.png',
   },
 };
 
