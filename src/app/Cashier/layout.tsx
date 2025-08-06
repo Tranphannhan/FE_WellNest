@@ -65,6 +65,7 @@ export default function RootLayout({
                     conTentHeader = {
                         {
                           title : 'Thu ngân',
+                          link:'/Cashier/Informations'
                         }
                       }
                   >

@@ -1,0 +1,115 @@
+.user-info-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  margin: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  font-family: Arial, sans-serif;
+  margin-top: 25px;
+  width: 96%;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.title {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.user-info-content {
+  display: flex;
+  gap: 20px;
+}
+
+/* Phần ảnh */
+.user-info-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 180px; /* hoặc auto */
+}
+
+.avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px; /* khoảng cách giữa ảnh và nút */
+}
+
+.avatar {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+}
+
+.upload-btn-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Form chính giữa */
+.user-info-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.user-info-right {
+  width: 20%;
+  display: flex;
+  position: relative;
+  right: 25px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Dòng label + input ngang */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-row label {
+  width: 130px;
+  font-weight: 500;
+}
+
+.user-info-center .form-row input {
+  max-width: 280px;
+}
+
+
+.short-input {
+  max-width: 280px;
+  width: 100%;
+}
+
+
+.form-row.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-row.vertical label {
+  width: auto;
+  margin-bottom: 4px;
+}
+
+
+.divider {
+  margin: 24px 0;
+  border: none;
+  height: 1px;
+  background-color: #eee;
+}
+
+.user-info-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

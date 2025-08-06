@@ -64,6 +64,7 @@ export default function RootLayout({
                     conTentHeader = {
                         {
                           title : 'Xét nghiệm',
+                          link:'/LaboratoryDoctor/Informations'
                         }
                       }
                   >

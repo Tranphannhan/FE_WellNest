@@ -93,8 +93,7 @@ const DoctorInfo = () => {
       <Tabbar
         tabbarItems={{
           tabbarItems: [
-            { text: 'Thông tin bệnh nhân', link: '/Receptionist/SearchReception/Informations' },
-            { text: 'Thông tin bác sĩ', link: '/Receptionist/SearchReception/InforDoctor' },
+            { text: 'Thông tin bác sĩ', link: '/Doctor/InforDoctor' },
           ],
         }}
       />

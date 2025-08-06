@@ -41,7 +41,7 @@ type UserToken = Partial<StaffToken & DoctorToken>;
 export default function Header({
   conTentHeader,
 }: {
-  conTentHeader: { title: string };
+  conTentHeader: { title: string ,link: string};
 }) {
   const [user, setUser] = React.useState<UserToken | null>(null);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -164,7 +164,7 @@ export default function Header({
           {displayName}
         </MenuItem>
         <Divider />
-        <MenuItem onClick={()=>{router.push("/Receptionist/Informations")}}>
+        <MenuItem onClick={()=>{router.push(`${conTentHeader.link}`)}}>
           <ListItemIcon>
             <AccountCircle fontSize="small" />
           </ListItemIcon>

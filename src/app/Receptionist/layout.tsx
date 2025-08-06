@@ -67,6 +67,7 @@ export default function RootLayout({
             <Header
               conTentHeader={{
                 title: "Tiếp nhận ",
+                link:'/Receptionist/Informations'
               }}
             ></Header>
             <div className="containerClient__item">{children}</div>

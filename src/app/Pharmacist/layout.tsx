@@ -62,6 +62,7 @@ export default function RootLayout({
                     conTentHeader = {
                       {
                         title : 'Dược sĩ',
+                        link:'/Pharmacist/Informations'
                       }
                     }
                 >
