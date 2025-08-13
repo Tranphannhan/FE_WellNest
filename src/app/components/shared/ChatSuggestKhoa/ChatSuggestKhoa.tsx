@@ -48,6 +48,27 @@ type UserToken = {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+// Component gõ ba chấm
+const TypingDots = () => {
+  return (
+    <span style={{ display: "inline-flex", gap: 2 }}>
+      <span className="dot" style={{ animationDelay: "0s" }}>•</span>
+      <span className="dot" style={{ animationDelay: "0.2s" }}>•</span>
+      <span className="dot" style={{ animationDelay: "0.4s" }}>•</span>
+      <style jsx>{`
+        .dot {
+          animation: bounce 0.6s infinite ease-in-out;
+          font-size: 18px;
+        }
+        @keyframes bounce {
+          0%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-4px); }
+        }
+      `}</style>
+    </span>
+  );
+};
+
 export default function ChatSuggestKhoa() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -91,6 +112,9 @@ export default function ChatSuggestKhoa() {
     setLoading(true);
     setInput("");
 
+    // Hiện tin nhắn ba chấm
+    setMessages((prev) => [...prev, { sender: "bot", text: "__typing__" }]);
+
     try {
       const symptoms = input.split(",").map((s) => s.trim());
       const res: SuggestedKhoaResponse = await fetchSuggestedKhoa(symptoms);
@@ -101,20 +125,20 @@ export default function ChatSuggestKhoa() {
         res.khoaLienQuan?.map((k) => k.TenKhoa).join(", ") || "Không có"
       }`;
 
-      const botMessage: Message = {
-        sender: "bot",
-        text: botText,
-      };
-
-      setMessages((prev) => [...prev, botMessage]);
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { sender: "bot", text: botText };
+        return updated;
+      });
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = {
           sender: "bot",
           text: "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này.",
-        },
-      ]);
+        };
+        return updated;
+      });
     } finally {
       setLoading(false);
     }
@@ -123,8 +147,7 @@ export default function ChatSuggestKhoa() {
   return (
     <>
       {/* Floating Chat Icon */}
-<AIChatButton callBack={()=>setOpen(true)}></AIChatButton>
-
+      <AIChatButton callBack={() => setOpen(true)}></AIChatButton>
 
       {/* Chat Drawer */}
       <Drawer
@@ -133,10 +156,10 @@ export default function ChatSuggestKhoa() {
         onClose={() => setOpen(false)}
         PaperProps={{
           sx: {
-            width: '450px !important',
+            width: "450px !important",
             height: "100%",
             display: "flex",
-            maxWidth:'450px !important',
+            maxWidth: "450px !important",
             flexDirection: "column",
           },
         }}
@@ -195,7 +218,7 @@ export default function ChatSuggestKhoa() {
                   }}
                 >
                   <Typography fontSize={14} whiteSpace="pre-wrap">
-                    {msg.text}
+                    {msg.text === "__typing__" ? <TypingDots /> : msg.text}
                   </Typography>
                 </Paper>
 
@@ -226,19 +249,11 @@ export default function ChatSuggestKhoa() {
             variant="contained"
             disabled={loading}
             sx={{ minWidth: "64px" }}
-            style={{}}
           >
             {loading ? (
               <CircularProgress size={20} color="inherit" />
             ) : (
-              <>
-                <IoMdSend
-                  style={{
-                    fontSize: 26,
-                    marginLeft: 4,
-                  }}
-                />
-              </>
+              <IoMdSend style={{ fontSize: 26, marginLeft: 4 }} />
             )}
           </Button>
         </Box>

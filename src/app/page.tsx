@@ -127,7 +127,7 @@ const App = () => {
   return (
     <div className="main-app-container">
       <div className="main-angled-bg" />
-
+      <link rel="icon" href="/images/TitleLogo.png" />
       <div className="login-card">
         <div className="inner-image-section">
           <img

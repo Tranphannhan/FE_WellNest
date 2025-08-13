@@ -15,6 +15,8 @@ import NAVIGATION from './component/NavAdmin/NavAdmin';
 import './component/NavAdmin/NavAdmin.css';
 import { ToastContainer } from 'react-toastify';
 
+
+
 const demoTheme = createTheme({
   cssVariables: {
     colorSchemeSelector: 'data-toolpad-color-scheme',
@@ -52,6 +54,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <DemoProvider window={isClient ? window : undefined}>
+      <link rel="icon" href="/favicon2.png" />
       <ToastContainer />
       <AppProvider
         navigation={NAVIGATION}
