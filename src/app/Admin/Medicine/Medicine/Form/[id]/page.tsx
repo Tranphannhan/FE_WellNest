@@ -52,7 +52,7 @@ function UpdateMedicineFormLayout() {
   // Lấy danh sách nhóm thuốc
   const fetchGroups = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/Nhomthuoc/pagination`);
+      const response = await fetch(`${API_BASE_URL}/Nhomthuoc/pagination?limit=100`);
       const result = await response.json();
       if (response.ok && result.data && result.data.length > 0) {
         setGroups(result.data);

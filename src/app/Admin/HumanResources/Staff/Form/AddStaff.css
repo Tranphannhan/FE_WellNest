@@ -229,3 +229,7 @@ html[data-toolpad-color-scheme="dark"] .AdminContent-Container {
   border-color: #d32f2f; /* Giữ viền đỏ khi focus */
   box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.2); /* Hiệu ứng focus */
 }
+
+span.ant-upload-wrapper.upload-fullwidth.css-ut69n1.ant-upload-picture-card-wrapper {
+    width: 100%;
+}

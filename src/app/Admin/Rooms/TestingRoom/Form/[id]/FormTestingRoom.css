@@ -25,3 +25,7 @@
      padding: 10px 14px !important;
     margin: 2px !important;
 }
+
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation3.toolpad-demo-app-tawss {
+    box-shadow: none;
+}

@@ -29,7 +29,7 @@ export async function createMedicalExaminationCard(data:medicalCardData) {
 
 export async function getAllDepartments() {
         try {
-        const result = await fetch(`${API_BASE_URL}/Khoa/Pagination?TrangThaiHoatDong=true`);
+        const result = await fetch(`${API_BASE_URL}/Khoa/Pagination?TrangThaiHoatDong=true&limit=100`);
         return result;
     } catch (error) {
         console.error("Lỗi Khi Lấy Khoa:", error);

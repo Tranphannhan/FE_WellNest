@@ -25,6 +25,7 @@ interface DecodedToken {
     VaiTro: string;
   };
   _Id_PhongThietBi:string,
+  _TenPhongThietBi:string,
 }
 
 const Informations = () => {
@@ -113,7 +114,7 @@ const Informations = () => {
             </div>
                         <div className="info-row">
               <label>Phòng thiết bị:</label>
-              <p>{userData?._Id_PhongThietBi || 'Đang tải...'}</p>
+              <p>{userData?._TenPhongThietBi || 'Đang tải...'}</p>
             </div>
 
             <div className="info-footer">
