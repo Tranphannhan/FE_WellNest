@@ -130,18 +130,7 @@ function AddMedicineFormLayout() {
   };
 
   const handleCancel = () => {
-    setMessage('Đã hủy bỏ thêm mới.');
-    setTimeout(() => {
-      setMessage('');
-      setFormData({
-        Id_NhomThuoc: '',
-        DonVi: '',
-        TenThuoc: '',
-        Gia: '',
-        TrangThaiHoatDong: 'true',
-      });
-      router.push('/Admin/Medicine');
-    }, 3000);
+      router.push('/Admin/Medicine/Medicine');
   };
 
   if (loading) {
