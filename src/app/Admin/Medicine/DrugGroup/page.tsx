@@ -166,7 +166,7 @@ export default function Page() {
         onDelete={(row) => console.log("Xoá nhóm thuốc:", row)}
         onDisable={stateChange}
         showEdit={true}
-        showDelete={true}
+        showDelete={false}
         showDisable={true}
         page={page}
         totalItems={totalItems}

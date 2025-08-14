@@ -29,7 +29,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
 
- export default function StaffUpdate() {
+export default function StaffUpdate() {
     const [account, setAccount] = useState<AccountType>({
         _id: "",
         TenTaiKhoan: "",
@@ -277,13 +277,13 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
     return (
         <div className="AdminContent-Container">
             <BreadcrumbComponent
-                                items={[
-                                  { title: "Trang chủ", href: "/Admin" },
-                                  { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
-                                  { title: "Nhân viên", href: "/Admin/HumanResources/Staff" },
-                                  { title: "Sửa nhân viên" },
-                                ]}
-                              />
+                items={[
+                    { title: "Trang chủ", href: "/Admin" },
+                    { title: "Nhân sự", href: "/Admin/HumanResources/Staff" },
+                    { title: "Nhân viên", href: "/Admin/HumanResources/Staff" },
+                    { title: "Sửa nhân viên" },
+                ]}
+            />
             <h2 className="StaffEdit-Title">Thông tin tài khoản</h2>
 
             {isLoading && (
@@ -479,6 +479,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
                                         TrangThaiHoatDong: e.target.checked,
                                     }))
                                 }
+                                disabled={account.VaiTro === "Admin"} // ✅ Nếu là Admin thì không cho chỉnh
                             />
                             <Typography variant="body2" color="text.secondary">
                                 {getAccountStatusText(account.TrangThaiHoatDong)}
@@ -501,6 +502,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
                                 onChange={handleChange}
                                 label="Chọn vai trò"
                                 error={!!errors.VaiTro}
+                                disabled={account.VaiTro === "Admin"} // ✅ Nếu là Admin thì không cho chỉnh
                             >
                                 <MenuItem value="">Chọn vai trò</MenuItem>
                                 {accountTypes.map((type) => (
