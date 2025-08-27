@@ -138,7 +138,7 @@ function MedicineTypeFormLayout() {
     };
 
     const handleCancel = () => {
-        router.push('/Admin/MedicineType/DrugGroup');
+        router.push('/Admin/Medicine/DrugGroup');
     };
 
     return (

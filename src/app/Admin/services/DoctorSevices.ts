@@ -135,7 +135,7 @@ export async function getDoctorDetails(id: string): Promise<DoctorType | null> {
 // Fetch specialties
 export async function getSpecialties(): Promise<Khoa[] | null> {
   try {
-    const response = await fetch(`${API_BASE_URL}/Khoa/Pagination?TrangThaiHoatDong=true`);
+    const response = await fetch(`${API_BASE_URL}/Khoa/Pagination?TrangThaiHoatDong=true&limit=100`);
     if (!response.ok) {
       console.error(
         `API error: Status ${response.status}, ${response.statusText}`

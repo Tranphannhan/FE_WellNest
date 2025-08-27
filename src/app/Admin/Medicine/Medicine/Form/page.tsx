@@ -51,7 +51,7 @@ function AddMedicineFormLayout() {
   // Lấy danh sách nhóm thuốc
   const fetchGroups = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/Nhomthuoc/pagination`);
+      const response = await fetch(`${API_BASE_URL}/Nhomthuoc/pagination?limit=100`);
       const result = await response.json();
       if (response.ok && result.data && result.data.length > 0) {
         setGroups(result.data);
@@ -130,18 +130,7 @@ function AddMedicineFormLayout() {
   };
 
   const handleCancel = () => {
-    setMessage('Đã hủy bỏ thêm mới.');
-    setTimeout(() => {
-      setMessage('');
-      setFormData({
-        Id_NhomThuoc: '',
-        DonVi: '',
-        TenThuoc: '',
-        Gia: '',
-        TrangThaiHoatDong: 'true',
-      });
-      router.push('/Admin/Medicine');
-    }, 3000);
+      router.push('/Admin/Medicine/Medicine');
   };
 
   if (loading) {
@@ -163,7 +152,7 @@ function AddMedicineFormLayout() {
         ]}
       />
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Paper elevation={3} sx={{ width: '100%'}}>
+        <Paper elevation={3} sx={{ width: '100%' }}>
           <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}>
             Thêm Mới Thuốc
           </Typography>
@@ -255,32 +244,32 @@ function AddMedicineFormLayout() {
               </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 4 }}>
-                          <button
-                            type="button"
-                            className="bigButton--gray"
-                            onClick={handleCancel}
-                          >
-                            <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                            Hủy
-                          </button>
-                          <button
-                            type="submit"
-                            className="bigButton--blue"
-                            disabled={loading}
-                          >
-                            {loading ? (
-                              <>
-                                <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
-                                Đang thêm...
-                              </>
-                            ) : (
-                              <>
-                                <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                                Thêm Thuốc
-                              </>
-                            )}
-                          </button>
-                        </Box>
+              <button
+                type="button"
+                className="bigButton--gray"
+                onClick={handleCancel}
+              >
+                <FaArrowLeft style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                Hủy
+              </button>
+              <button
+                type="submit"
+                className="bigButton--blue"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <FaSpinner style={{ marginRight: '6px', verticalAlign: 'middle' }} className="spin" />
+                    Đang thêm...
+                  </>
+                ) : (
+                  <>
+                    <FaSave style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                    Thêm Thuốc
+                  </>
+                )}
+              </button>
+            </Box>
           </form>
         </Paper>
       </Box>

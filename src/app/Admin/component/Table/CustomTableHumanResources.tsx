@@ -372,7 +372,7 @@ export default function CustomTableHumanResources({
           </MenuItem>
         )}
 
-        {onDisable && selectedRow?.TrangThaiHoatDong && (
+        {onDisable && selectedRow?.TrangThaiHoatDong && selectedRow?.TenLoai !== "Người quản trị" &&(
           <MenuItem
             onClick={() => {
               if (selectedRow && onDisable) {

@@ -217,3 +217,7 @@ html[data-toolpad-color-scheme="dark"] .AdminContent-Container {
   font-size: 20px;
   margin-bottom: 10px;
 }
+
+span.ant-upload-wrapper.upload-fullwidth.css-ut69n1.ant-upload-picture-card-wrapper {
+    width: 100%;
+}
