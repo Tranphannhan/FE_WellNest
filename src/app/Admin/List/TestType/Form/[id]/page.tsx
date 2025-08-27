@@ -461,12 +461,12 @@ function EditTestForm() {
                     labelId="loai-ket-qua-label"
                     value={loaiKetQua}
                     onChange={(e) => setLoaiKetQua(e.target.value)}
-                    label="Loại Kết Quả" // 🔴 thêm dòng này
+                    label="Loại Kết Quả"
                   >
-                    <MenuItem value="SoLuong">Số lượng</MenuItem>
-                    <MenuItem value="GiaTri">Giá trị (có số & đơn vị)</MenuItem>
-                    <MenuItem value="VanBan">Văn bản</MenuItem>
+                    <MenuItem value="DinhTinh">Định tính</MenuItem>
+                    <MenuItem value="DinhLuong">Định lượng</MenuItem>
                     <MenuItem value="HinhAnh">Hình ảnh</MenuItem>
+                    <MenuItem value="MoTa">Mô tả</MenuItem>
                   </Select>
                   {errors.loaiKetQua && (
                     <FormHelperText>{errors.loaiKetQua}</FormHelperText>
