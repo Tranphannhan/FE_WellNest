@@ -104,7 +104,10 @@ export default function PrescriptionDetails() {
     Id_YeuCauXetNghiem: string,
     Id_PhieuKhamBenh: string,
     Id_NguoiXetNghiem: string,
-    TenXetNghiem: string
+    TenXetNghiem: string,
+    MaXetNghiem:string,
+    LoaiKetQua:string,
+  
   ) => {
     if (!Id_YeuCauXetNghiem || !Id_PhieuKhamBenh || !Id_NguoiXetNghiem) {
       return showToast("Thiếu id truyền vào", ToastType.warn);
@@ -115,8 +118,9 @@ export default function PrescriptionDetails() {
       Id_YeuCauXetNghiem,
       Id_PhieuKhamBenh,
       Id_NguoiXetNghiem,
+      LoaiKetQua,
+      MaXetNghiem,
     };
-
     sessionStorage.setItem(
       "idGenerateTestResult",
       JSON.stringify(saveDataLocostorage)
@@ -423,7 +427,9 @@ export default function PrescriptionDetails() {
                               item._id,
                               item.Id_PhieuKhamBenh._id,
                               idNguoiXetNghiem,
-                              item.Id_LoaiXetNghiem.TenXetNghiem
+                              item.Id_LoaiXetNghiem.TenXetNghiem,
+                              item.Id_LoaiXetNghiem.MaXetNghiem,
+                              item.Id_LoaiXetNghiem.LoaiKetQua,
                             )
                           : handleView(item._id)
                       }

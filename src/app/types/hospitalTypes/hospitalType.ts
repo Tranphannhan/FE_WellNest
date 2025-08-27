@@ -50,7 +50,9 @@ export interface Testtype {
     _id: string;
     Id_PhongThietBi: EquipmentType;
     TenXetNghiem: string;
-    Id_GiaDichVu : ServicePriceType
+    Id_GiaDichVu : ServicePriceType;
+    MaXetNghiem:string,
+    LoaiKetQua:string,
 } 
 
 export interface PrescriptionStatsType {

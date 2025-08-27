@@ -35,11 +35,18 @@ export interface valueForm {
   Id_NguoiXetNghiem?: string;
   MaXetNghiem?: string;
   TenXetNghiem?: string;
+  LoaiKetQua?: "DinhTinh" | "DinhLuong" | "HinhAnh" | "MoTa";
   KetQua?: string;
-  ChiSoBinhThuong?: string;
   DonViTinh?: string;
+  ChiSoBinhThuong?: string;
   GhiChu?: string;
+  NgayXetNghiem?: string;
+  Gio?: string;
   Image?: File;
+  LoaiChup?: string;
+  VungChup?: string;
+  NguonThamChieu?: string;
+  GioiHanCanhBao?: string;
 }
 
 export default function GenerateTestResults() {
@@ -53,6 +60,24 @@ export default function GenerateTestResults() {
   const [hasResults, setHasResults] = useState<boolean>(false);
   const [resultCount, setResultCount] = useState<number>(0);
   const [tenXetNghiem, setTenXetNghiem] = useState<string>("");
+  const [LoaiKetQua, setLoaiKetQua] = useState<string>("");
+  const [maXetNghiem, setMaXetNghiem] = useState<string>("");
+
+  const validateForm = () => {
+    if (LoaiKetQua === "DinhLuong" || LoaiKetQua === "DinhTinh") {
+      return (
+        !dataForm?.ChiSoBinhThuong?.trim() ||
+        !dataForm?.DonViTinh?.trim() ||
+        !dataForm?.KetQua?.trim() ||
+        !dataForm?.GhiChu?.trim()
+      );
+    } else if (LoaiKetQua === "HinhAnh") {
+      return !dataForm?.KetQua?.trim() || !dataForm?.GhiChu?.trim();
+    } else if (LoaiKetQua === "MoTa") {
+      return !dataForm?.KetQua?.trim() || !dataForm?.GhiChu?.trim();
+    }
+    return false;
+  };
 
   useEffect(() => {
     const loaddingtenXetNghiem = async () => {
@@ -62,6 +87,8 @@ export default function GenerateTestResults() {
       try {
         const parsed = JSON.parse(localData);
         setTenXetNghiem(parsed.TenXetNghiem || "");
+        setLoaiKetQua(parsed.LoaiKetQua || "");
+        setMaXetNghiem(parsed.MaXetNghiem || "");
         const data = await getResultsByRequestTesting(
           parsed.Id_YeuCauXetNghiem
         );
@@ -77,17 +104,8 @@ export default function GenerateTestResults() {
 
   const handleResultTest = async () => {
     setShowModal(false);
-    const { MaXetNghiem, ChiSoBinhThuong, DonViTinh, KetQua, GhiChu } =
-      dataForm || {};
-    if (
-      !MaXetNghiem?.trim() ||
-      !ChiSoBinhThuong?.trim() ||
-      !DonViTinh?.trim() ||
-      !KetQua?.trim() ||
-      !GhiChu?.trim()
-    ) {
-      return showToast("Thiếu dữ liệu Form", ToastType.error);
-    }
+    if (validateForm()) return showToast("Thiếu dữ liệu Form", ToastType.error);
+
     const localData = sessionStorage.getItem("idGenerateTestResult");
     if (!localData) return showToast("Thiếu dữ liệu id Form", ToastType.error);
     const parsed = JSON.parse(localData);
@@ -97,6 +115,7 @@ export default function GenerateTestResults() {
       Id_PhieuKhamBenh: parsed.Id_PhieuKhamBenh,
       Id_NguoiXetNghiem: parsed.Id_NguoiXetNghiem,
       TenXetNghiem: parsed.TenXetNghiem,
+      MaXetNghiem: parsed.MaXetNghiem,
     };
     const data = await generateTestResults(fullForm);
     if (data) {
@@ -332,67 +351,171 @@ export default function GenerateTestResults() {
             <TextField
               fullWidth
               label="Mã xét nghiệm"
-              value={dataForm?.MaXetNghiem || ""}
-              onChange={(e) =>
-                setDataForm((prev) => ({
-                  ...prev,
-                  MaXetNghiem: e.target.value,
-                }))
-              }
+              value={maXetNghiem}
+              InputProps={{ readOnly: true }}
               sx={{ mb: 2 }}
             />
-            <TextField
-              fullWidth
-              label="Chỉ số bình thường"
-              value={dataForm?.ChiSoBinhThuong || ""}
-              onChange={(e) =>
-                setDataForm((prev) => ({
-                  ...prev,
-                  ChiSoBinhThuong: e.target.value,
-                }))
-              }
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Đơn vị tính"
-              value={dataForm?.DonViTinh || ""}
-              onChange={(e) =>
-                setDataForm((prev) => ({
-                  ...prev,
-                  DonViTinh: e.target.value,
-                }))
-              }
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Kết quả"
-              multiline
-              rows={3}
-              value={dataForm?.KetQua || ""}
-              onChange={(e) =>
-                setDataForm((prev) => ({
-                  ...prev,
-                  KetQua: e.target.value,
-                }))
-              }
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              fullWidth
-              label="Ghi chú"
-              multiline
-              rows={3}
-              value={dataForm?.GhiChu || ""}
-              onChange={(e) =>
-                setDataForm((prev) => ({
-                  ...prev,
-                  GhiChu: e.target.value,
-                }))
-              }
-              sx={{ mb: 2 }}
-            />
+
+            {LoaiKetQua === "DinhLuong" || LoaiKetQua === "DinhTinh" ? (
+              <>
+                <TextField
+                  fullWidth
+                  label="Chỉ số bình thường"
+                  value={dataForm?.ChiSoBinhThuong || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({
+                      ...prev,
+                      ChiSoBinhThuong: e.target.value,
+                    }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Đơn vị tính"
+                  value={dataForm?.DonViTinh || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({
+                      ...prev,
+                      DonViTinh: e.target.value,
+                    }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Kết quả"
+                  multiline
+                  rows={3}
+                  value={dataForm?.KetQua || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({ ...prev, KetQua: e.target.value }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Ghi chú"
+                  multiline
+                  rows={3}
+                  value={dataForm?.GhiChu || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({ ...prev, GhiChu: e.target.value }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Giới hạn cảnh báo"
+                  value={dataForm?.GioiHanCanhBao || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({
+                      ...prev,
+                      GioiHanCanhBao: e.target.value,
+                    }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Nguồn tham chiếu"
+                  value={dataForm?.NguonThamChieu || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({
+                      ...prev,
+                      NguonThamChieu: e.target.value,
+                    }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+              </>
+            ) : LoaiKetQua === "HinhAnh" ? (
+              <>
+                <TextField
+                  fullWidth
+                  label="Mô tả"
+                  multiline
+                  rows={3}
+                  value={dataForm?.KetQua || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({ ...prev, KetQua: e.target.value }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Kết luận"
+                  multiline
+                  rows={3}
+                  value={dataForm?.GhiChu || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({ ...prev, GhiChu: e.target.value }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Loại chụp"
+                  value={dataForm?.LoaiChup || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({
+                      ...prev,
+                      LoaiChup: e.target.value,
+                    }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Vùng chụp"
+                  value={dataForm?.VungChup || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({
+                      ...prev,
+                      VungChup: e.target.value,
+                    }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+              </>
+            ) : LoaiKetQua === "MoTa" ? (
+              <>
+                <TextField
+                  fullWidth
+                  label="Mẫu bệnh phẩm"
+                  value={dataForm?.MaXetNghiem || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({
+                      ...prev,
+                      MaXetNghiem: e.target.value,
+                    }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Mô tả"
+                  multiline
+                  rows={3}
+                  value={dataForm?.KetQua || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({ ...prev, KetQua: e.target.value }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  label="Kết luận"
+                  multiline
+                  rows={3}
+                  value={dataForm?.GhiChu || ""}
+                  onChange={(e) =>
+                    setDataForm((prev) => ({ ...prev, GhiChu: e.target.value }))
+                  }
+                  sx={{ mb: 2 }}
+                />
+              </>
+            ) : null}
 
             <Box
               display="flex"
