@@ -42,30 +42,32 @@ const VisuallyHiddenInput = styled("input")({
 // Styled box for the image upload area
 const ImageUploadBox = styled(Box, {
   shouldForwardProp: (prop) => prop !== "hasError" && prop !== "hasImage",
-})<{ hasError: boolean; hasImage: boolean }>(({ theme, hasError, hasImage }) => ({
-  border: `2px dashed ${
-    hasError
-      ? theme.palette.error.main
-      : hasImage
-      ? theme.palette.primary.main
-      : theme.palette.grey[400]
-  }`,
-  borderRadius: "8px",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: 250,
-  cursor: "pointer",
-  transition: "border-color 0.3s ease-in-out",
-  "&:hover": {
-    borderColor: hasError
-      ? theme.palette.error.dark
-      : theme.palette.primary.dark,
-  },
-  position: "relative",
-  overflow: "hidden",
-}));
+})<{ hasError: boolean; hasImage: boolean }>(
+  ({ theme, hasError, hasImage }) => ({
+    border: `2px dashed ${
+      hasError
+        ? theme.palette.error.main
+        : hasImage
+          ? theme.palette.primary.main
+          : theme.palette.grey[400]
+    }`,
+    borderRadius: "8px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 250,
+    cursor: "pointer",
+    transition: "border-color 0.3s ease-in-out",
+    "&:hover": {
+      borderColor: hasError
+        ? theme.palette.error.dark
+        : theme.palette.primary.dark,
+    },
+    position: "relative",
+    overflow: "hidden",
+  })
+);
 
 interface PriceOption {
   _id: string;
@@ -223,7 +225,10 @@ function EditTestForm() {
       }
       formData.append("Id_PhongThietBi", testCategory || "");
       formData.append("Id_GiaDichVu", price);
-      formData.append("TrangThaiHoatDong", status === "Hien" ? "true" : "false");
+      formData.append(
+        "TrangThaiHoatDong",
+        status === "Hien" ? "true" : "false"
+      );
       formData.append("MaXetNghiem", maXetNghiem.trim());
       formData.append("LoaiKetQua", loaiKetQua);
 
@@ -273,24 +278,56 @@ function EditTestForm() {
           </Alert>
         </div>
       )}
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      >
         <Paper elevation={3} sx={{ width: "100%" }}>
-          <Typography variant="h5" component="h1" gutterBottom sx={{ mb: 4, fontWeight: "bold" }}>
+          <Typography
+            variant="h5"
+            component="h1"
+            gutterBottom
+            sx={{ mb: 4, fontWeight: "bold" }}
+          >
             Chỉnh Sửa Loại Xét Nghiệm
           </Typography>
           <form onSubmit={handleSubmit}>
-            <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 10, mb: 4 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                gap: 10,
+                mb: 4,
+              }}
+            >
               {/* Upload ảnh */}
-              <Box sx={{ width: { xs: "100%", sm: "48%", md: "250px" }, display: "flex", flexDirection: "column" }}>
-                <Typography variant="body1" sx={{ fontWeight: "medium", mb: 1 }}>
+              <Box
+                sx={{
+                  width: { xs: "100%", sm: "48%", md: "250px" },
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{ fontWeight: "medium", mb: 1 }}
+                >
                   Ảnh <span style={{ color: "red" }}>*</span>
                 </Typography>
                 {!imagePreview ? (
                   <label htmlFor="image-upload-input" style={{ width: "100%" }}>
-                    <ImageUploadBox as="div" hasError={!!errors.imageFile} hasImage={!!imagePreview}>
+                    <ImageUploadBox
+                      as="div"
+                      hasError={!!errors.imageFile}
+                      hasImage={!!imagePreview}
+                    >
                       <Box sx={{ textAlign: "center" }}>
-                        <CloudUploadIcon sx={{ fontSize: 48, color: "primary.main", mb: 1 }} />
-                        <Typography variant="body2" sx={{ color: "primary.main", fontWeight: "medium" }}>
+                        <CloudUploadIcon
+                          sx={{ fontSize: 48, color: "primary.main", mb: 1 }}
+                        />
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "primary.main", fontWeight: "medium" }}
+                        >
                           Chọn ảnh
                         </Typography>
                       </Box>
@@ -306,7 +343,16 @@ function EditTestForm() {
                     <img
                       src={imagePreview}
                       alt="Xem trước ảnh"
-                      style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "fill", position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "fill",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                      }}
                     />
                     <Box
                       className="delete-button"
@@ -334,13 +380,35 @@ function EditTestForm() {
                     </Box>
                   </ImageUploadBox>
                 )}
-                <VisuallyHiddenInput id="image-upload-input" type="file" accept="image/*" onChange={handleFileChange} />
-                {errors.imageFile && <FormHelperText error sx={{ mt: 1 }}>{errors.imageFile}</FormHelperText>}
+                <VisuallyHiddenInput
+                  id="image-upload-input"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                {errors.imageFile && (
+                  <FormHelperText error sx={{ mt: 1 }}>
+                    {errors.imageFile}
+                  </FormHelperText>
+                )}
               </Box>
 
               {/* Nội dung form */}
-              <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
-                <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", sm: "row" } }}>
+              <Box
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 3,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 2,
+                    flexDirection: { xs: "column", sm: "row" },
+                  }}
+                >
                   <TextField
                     sx={{ width: { sm: "60%" } }}
                     label="Tên Xét Nghiệm"
@@ -353,17 +421,28 @@ function EditTestForm() {
                     error={!!errors.testName}
                     helperText={errors.testName}
                   />
-                  <FormControl sx={{ width: { sm: "40%" } }} error={!!errors.price}>
+                  <FormControl
+                    sx={{ width: { sm: "40%" } }}
+                    error={!!errors.price}
+                  >
                     <InputLabel id="gia-label">Giá Dịch Vụ *</InputLabel>
-                    <Select labelId="gia-label" value={price} onChange={handlePriceChange} required>
+                    <Select
+                      labelId="gia-label"
+                      value={price}
+                      onChange={handlePriceChange}
+                      required
+                    >
                       <MenuItem value="">Chọn Giá</MenuItem>
                       {priceOptions.map((option) => (
                         <MenuItem key={option._id} value={option._id}>
-                          {option.Giadichvu.toLocaleString()} VND - {option.Tendichvu}
+                          {option.Giadichvu.toLocaleString()} VND -{" "}
+                          {option.Tendichvu}
                         </MenuItem>
                       ))}
                     </Select>
-                    {errors.price && <FormHelperText error>{errors.price}</FormHelperText>}
+                    {errors.price && (
+                      <FormHelperText error>{errors.price}</FormHelperText>
+                    )}
                   </FormControl>
                 </Box>
 
@@ -376,20 +455,31 @@ function EditTestForm() {
                   helperText={errors.maXetNghiem}
                 />
 
-                <FormControl required error={!!errors.loaiKetQua}>
+                <FormControl fullWidth required error={!!errors.loaiKetQua}>
                   <InputLabel id="loai-ket-qua-label">Loại Kết Quả</InputLabel>
-                  <Select labelId="loai-ket-qua-label" value={loaiKetQua} onChange={(e) => setLoaiKetQua(e.target.value)}>
+                  <Select
+                    labelId="loai-ket-qua-label"
+                    value={loaiKetQua}
+                    onChange={(e) => setLoaiKetQua(e.target.value)}
+                    label="Loại Kết Quả" // 🔴 thêm dòng này
+                  >
                     <MenuItem value="SoLuong">Số lượng</MenuItem>
                     <MenuItem value="GiaTri">Giá trị (có số & đơn vị)</MenuItem>
                     <MenuItem value="VanBan">Văn bản</MenuItem>
                     <MenuItem value="HinhAnh">Hình ảnh</MenuItem>
                   </Select>
-                  {errors.loaiKetQua && <FormHelperText>{errors.loaiKetQua}</FormHelperText>}
+                  {errors.loaiKetQua && (
+                    <FormHelperText>{errors.loaiKetQua}</FormHelperText>
+                  )}
                 </FormControl>
 
                 <FormControl>
                   <InputLabel id="phong-label">Phòng Thiết Bị</InputLabel>
-                  <Select labelId="phong-label" value={testCategory} onChange={handleTestCategoryChange}>
+                  <Select
+                    labelId="phong-label"
+                    value={testCategory}
+                    onChange={handleTestCategoryChange}
+                  >
                     <MenuItem value="">Không chọn</MenuItem>
                     {roomOptions.map((room) => (
                       <MenuItem key={room._id} value={room._id}>
@@ -409,21 +499,48 @@ function EditTestForm() {
 
                 <FormControl component="fieldset">
                   <FormLabel component="legend">Trạng Thái</FormLabel>
-                  <RadioGroup row value={status} onChange={(e) => setStatus(e.target.value)}>
-                    <FormControlLabel value="An" control={<Radio />} label="Ẩn" />
-                    <FormControlLabel value="Hien" control={<Radio />} label="Hiện" />
+                  <RadioGroup
+                    row
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
+                    <FormControlLabel
+                      value="An"
+                      control={<Radio />}
+                      label="Ẩn"
+                    />
+                    <FormControlLabel
+                      value="Hien"
+                      control={<Radio />}
+                      label="Hiện"
+                    />
                   </RadioGroup>
                 </FormControl>
               </Box>
             </Box>
 
-            <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 4 }}>
-              <button type="button" className="bigButton--gray" onClick={handleCancel}>
-                <FaArrowLeft style={{ marginRight: "6px", verticalAlign: "middle" }} />
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 2,
+                mt: 4,
+              }}
+            >
+              <button
+                type="button"
+                className="bigButton--gray"
+                onClick={handleCancel}
+              >
+                <FaArrowLeft
+                  style={{ marginRight: "6px", verticalAlign: "middle" }}
+                />
                 Hủy
               </button>
               <button type="submit" className="bigButton--blue">
-                <FaSave style={{ marginRight: "6px", verticalAlign: "middle" }} />
+                <FaSave
+                  style={{ marginRight: "6px", verticalAlign: "middle" }}
+                />
                 Cập nhật Xét Nghiệm
               </button>
             </Box>
