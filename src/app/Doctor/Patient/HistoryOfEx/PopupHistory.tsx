@@ -1,9 +1,10 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { Modal, Table, Button, Spin } from 'antd';
-import { showToast, ToastType } from '@/app/lib/Toast';
-import { medicalExamiNationHistory } from '@/app/services/DoctorSevices';
-import { MedicalExaminationCard } from '@/app/types/patientTypes/patient';
+"use client";
+import { useEffect, useState } from "react";
+import { Modal, Table, Button, Spin } from "antd";
+import { showToast, ToastType } from "@/app/lib/Toast";
+import { medicalExamiNationHistory } from "@/app/services/DoctorSevices";
+import { MedicalExaminationCard } from "@/app/types/patientTypes/patient";
+import { DownOutlined, RightOutlined } from "@ant-design/icons";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 interface ExaminationHistoryItem {
   key: string;
@@ -52,62 +53,64 @@ const PopupHistory = () => {
   const [data, setData] = useState<ExaminationHistoryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [prescriptionModalOpen, setPrescriptionModalOpen] = useState(false);
-  const [prescriptionDetails, setPrescriptionDetails] = useState<PrescriptionDetail[]>([]);
+  const [prescriptionDetails, setPrescriptionDetails] = useState<
+    PrescriptionDetail[]
+  >([]);
   const [prescriptionLoading, setPrescriptionLoading] = useState(false);
 
   const columns = [
     {
-      title: 'Ngày',
-      dataIndex: 'date',
-      key: 'date',
+      title: "Ngày",
+      dataIndex: "date",
+      key: "date",
     },
     {
-      title: 'Bác sĩ khám',
-      dataIndex: 'doctor',
-      key: 'doctor',
+      title: "Bác sĩ khám",
+      dataIndex: "doctor",
+      key: "doctor",
     },
     {
-      title: 'Số phòng khám',
-      dataIndex: 'room',
-      key: 'room',
+      title: "Số phòng khám",
+      dataIndex: "room",
+      key: "room",
     },
     {
-      title: 'Chẩn đoán',
-      dataIndex: 'result',
-      key: 'result',
+      title: "Chẩn đoán",
+      dataIndex: "result",
+      key: "result",
     },
     {
-      title: 'Chỉ định điều trị',
-      dataIndex: 'symptom',
-      key: 'symptom',
+      title: "Chỉ định điều trị",
+      dataIndex: "symptom",
+      key: "symptom",
     },
   ];
 
   const prescriptionDetailColumns = [
     {
-      title: 'Tên thuốc',
-      dataIndex: ['Id_Thuoc', 'TenThuoc'],
-      key: 'tenThuoc',
+      title: "Tên thuốc",
+      dataIndex: ["Id_Thuoc", "TenThuoc"],
+      key: "tenThuoc",
     },
     {
-      title: 'Đơn vị',
-      dataIndex: ['Id_Thuoc', 'DonVi'],
-      key: 'donVi',
+      title: "Đơn vị",
+      dataIndex: ["Id_Thuoc", "DonVi"],
+      key: "donVi",
     },
     {
-      title: 'Số lượng',
-      dataIndex: 'SoLuong',
-      key: 'soLuong',
+      title: "Số lượng",
+      dataIndex: "SoLuong",
+      key: "soLuong",
     },
     {
-      title: 'Ghi chú',
-      dataIndex: 'NhacNho',
-      key: 'nhacNho',
+      title: "Ghi chú",
+      dataIndex: "NhacNho",
+      key: "nhacNho",
     },
     {
-      title: 'Giá',
-      dataIndex: ['Id_Thuoc', 'Gia'],
-      key: 'gia',
+      title: "Giá",
+      dataIndex: ["Id_Thuoc", "Gia"],
+      key: "gia",
       render: (gia: number) => `${gia} VND`,
     },
   ];
@@ -115,12 +118,12 @@ const PopupHistory = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const local = sessionStorage.getItem('ThongTinBenhNhanDangKham');
+      const local = sessionStorage.getItem("ThongTinBenhNhanDangKham");
       const datalocal = local ? JSON.parse(local) : null;
       const id = datalocal?.Id_TheKhamBenh?._id;
 
       if (!id) {
-        showToast('Không tìm thấy thẻ khám bệnh', ToastType.error);
+        showToast("Không tìm thấy thẻ khám bệnh", ToastType.error);
         return;
       }
 
@@ -130,17 +133,19 @@ const PopupHistory = () => {
       const converted = res.map((item: diseaseHistory, index: number) => ({
         key: item._id || index,
         date: item.Id_PhieuKhamBenh?.Ngay,
-        doctor: item.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi || 'Không rõ',
-        room: item.Id_PhieuKhamBenh?.Id_Bacsi?.Id_PhongKham?.SoPhongKham || 'Không rõ',
-        result: item.KetQua || 'Không ghi',
-        symptom: item.HuongSuLy || 'Không ghi',
+        doctor: item.Id_PhieuKhamBenh?.Id_Bacsi?.TenBacSi || "Không rõ",
+        room:
+          item.Id_PhieuKhamBenh?.Id_Bacsi?.Id_PhongKham?.SoPhongKham ||
+          "Không rõ",
+        result: item.KetQua || "Không ghi",
+        symptom: item.HuongSuLy || "Không ghi",
         phieuKhamBenhId: item.Id_PhieuKhamBenh?._id,
       }));
 
       setData(converted);
     } catch (error) {
       console.error("Lỗi khi lấy lịch sử khám bệnh:", error);
-      showToast('Lỗi lấy lịch sử khám bệnh', ToastType.error);
+      showToast("Lỗi lấy lịch sử khám bệnh", ToastType.error);
     } finally {
       setLoading(false);
     }
@@ -148,12 +153,14 @@ const PopupHistory = () => {
 
   const fetchPrescriptions = async (phieuKhamBenhId: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/Donthuoc/LayTheoPhieuKhamBenh/${phieuKhamBenhId}`);
+      const response = await fetch(
+        `${API_BASE_URL}/Donthuoc/LayTheoPhieuKhamBenh/${phieuKhamBenhId}`
+      );
       const prescriptions: Prescription[] = await response.json();
       return prescriptions;
     } catch (error) {
       console.error("Lỗi khi lấy đơn thuốc:", error);
-      showToast('Lỗi lấy đơn thuốc', ToastType.error);
+      showToast("Lỗi lấy đơn thuốc", ToastType.error);
       return [];
     }
   };
@@ -161,13 +168,15 @@ const PopupHistory = () => {
   const fetchPrescriptionDetails = async (donThuocId: string) => {
     setPrescriptionLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/Donthuoc_Chitiet/LayTheoDonThuoc/${donThuocId}`);
+      const response = await fetch(
+        `${API_BASE_URL}/Donthuoc_Chitiet/LayTheoDonThuoc/${donThuocId}`
+      );
       const details: PrescriptionDetail[] = await response.json();
       setPrescriptionDetails(details);
       setPrescriptionModalOpen(true);
     } catch (error) {
       console.error("Lỗi khi lấy chi tiết đơn thuốc:", error);
-      showToast('Lỗi lấy chi tiết đơn thuốc', ToastType.error);
+      showToast("Lỗi lấy chi tiết đơn thuốc", ToastType.error);
     } finally {
       setPrescriptionLoading(false);
     }
@@ -181,7 +190,10 @@ const PopupHistory = () => {
 
   return (
     <>
-      <a onClick={() => setOpen(true)} style={{ color: "#1890ff", cursor: 'pointer' }}>
+      <a
+        onClick={() => setOpen(true)}
+        style={{ color: "#1890ff", cursor: "pointer" }}
+      >
         Xem chi tiết
       </a>
       <Modal
@@ -196,7 +208,9 @@ const PopupHistory = () => {
         width={1000}
       >
         {loading ? (
-          <div className="flex justify-center p-4 "><Spin /></div>
+          <div className="flex justify-center p-4 ">
+            <Spin />
+          </div>
         ) : (
           <Table
             columns={columns}
@@ -205,7 +219,7 @@ const PopupHistory = () => {
             bordered
             expandable={{
               expandedRowRender: (record) => (
-                <div className='bg-white border border-gray-200 shadow-sm p-4'>
+                <div className="bg-white border border-gray-200 shadow-sm p-4">
                   <PrescriptionTable
                     phieuKhamBenhId={record.phieuKhamBenhId}
                     fetchPrescriptions={fetchPrescriptions}
@@ -216,9 +230,9 @@ const PopupHistory = () => {
               expandIcon: ({ expanded, onExpand, record }) => (
                 <span
                   onClick={(e) => onExpand(record, e)}
-                  style={{ cursor: 'pointer', color: 'blue' }}
+                  style={{ cursor: "pointer", color: "#1677ff" }} // đồng bộ màu với theme AntD
                 >
-                  {expanded ? '▼' : '▶'}
+                  {expanded ? <DownOutlined /> : <RightOutlined />}
                 </span>
               ),
             }}
@@ -237,7 +251,9 @@ const PopupHistory = () => {
         width={800}
       >
         {prescriptionLoading ? (
-          <div className="flex justify-center p-4"><Spin /></div>
+          <div className="flex justify-center p-4">
+            <Spin />
+          </div>
         ) : (
           <Table
             columns={prescriptionDetailColumns}
@@ -275,23 +291,20 @@ const PrescriptionTable = ({
 
   const columns = [
     {
-      title: 'Bác sĩ kê đơn',
-      dataIndex: ['Id_PhieuKhamBenh', 'Id_Bacsi', 'TenBacSi'],
-      key: 'doctor',
+      title: "Bác sĩ kê đơn",
+      dataIndex: ["Id_PhieuKhamBenh", "Id_Bacsi", "TenBacSi"],
+      key: "doctor",
     },
     {
-      title: 'Tên đơn thuốc',
-      dataIndex: 'TenDonThuoc',
-      key: 'tenDonThuoc',
+      title: "Tên đơn thuốc",
+      dataIndex: "TenDonThuoc",
+      key: "tenDonThuoc",
     },
     {
-      title: 'Hành động',
-      key: 'action',
-      render: ( record: Prescription) => (
-        <Button
-          type="primary"
-          onClick={() => onViewDetails(record._id)}
-        >
+      title: "Hành động",
+      key: "action",
+      render: (record: Prescription) => (
+        <Button type="primary" onClick={() => onViewDetails(record._id)}>
           Xem chi tiết
         </Button>
       ),

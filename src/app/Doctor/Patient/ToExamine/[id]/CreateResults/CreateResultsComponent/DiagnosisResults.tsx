@@ -180,7 +180,11 @@ export default function DiagnosisResultsComponent({reLoad, allowsGeneratingResul
   };
 
   if (loading) {
-    return <div>Đang tải dữ liệu...</div>;
+    return <div style={{
+      paddingLeft:20,
+      paddingTop:10,
+      color:'#2196f3'
+    }}>Đang tải dữ liệu...</div>;
   }
 
   if (error) {

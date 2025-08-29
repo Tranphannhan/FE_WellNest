@@ -77,8 +77,8 @@ const ClinicalExamPage = ({ open, onClose,callback ,reload}: ClinicalExamPagePro
 
 
     //
-    const HandleCreateTestRequest = (idLoaiXetNghiem : string) => {
-        createTestRequest (id as string , idLoaiXetNghiem)
+    const HandleCreateTestRequest = async (idLoaiXetNghiem : string) => {
+        await createTestRequest (id as string , idLoaiXetNghiem)
         onClose()
         callback()
         reload()
