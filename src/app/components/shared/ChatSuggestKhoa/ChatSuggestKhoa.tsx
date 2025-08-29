@@ -135,7 +135,7 @@ export default function ChatSuggestKhoa() {
         const updated = [...prev];
         updated[updated.length - 1] = {
           sender: "bot",
-          text: "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này.",
+          text: "Các triệu chứng bạn mô tả hiện chưa đặc hiệu cho một chuyên khoa cụ thể. Bạn nên đến Khoa Tổng Hợp để được bác sĩ thăm khám, chẩn đoán ban đầu và tư vấn thêm.",
         };
         return updated;
       });
