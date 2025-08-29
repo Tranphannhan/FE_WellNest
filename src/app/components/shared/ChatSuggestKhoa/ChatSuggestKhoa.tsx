@@ -150,11 +150,19 @@ useEffect(() => {
       const symptoms = input.split(",").map((s) => s.trim());
       const res: SuggestedKhoaResponse = await fetchSuggestedKhoa(symptoms);
 
-      const botText = `Dựa trên các triệu chứng bạn cung cấp, chúng tôi đề xuất:\n\n - Khoa ưu tiên: ${
+     let botText = "";
+
+    if (res.khoaUuTien?.TenKhoa === "Khoa Tổng Hợp") {
+      botText =
+        "Các triệu chứng bạn mô tả hiện chưa đặc hiệu cho một chuyên khoa cụ thể. " +
+        "Bạn nên đến Khoa Tổng Hợp để được bác sĩ thăm khám, chẩn đoán ban đầu và tư vấn thêm.";
+    } else {
+      botText = `Dựa trên các triệu chứng bạn cung cấp, chúng tôi đề xuất:\n\n - Khoa ưu tiên: ${
         res.khoaUuTien?.TenKhoa || "Không xác định"
       }\n - Khoa liên quan: ${
         res.khoaLienQuan?.map((k) => k.TenKhoa).join(", ") || "Không có"
       }`;
+    }
 
       setMessages((prev) => {
         const updated = [...prev];
@@ -176,7 +184,7 @@ useEffect(() => {
 
       // 👇 Đọc giọng cho thông báo lỗi
       speakText(
-        "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này."
+        "Các triệu chứng bạn mô tả hiện chưa đặc hiệu cho một chuyên khoa cụ thể. Bạn nên đến Khoa Tổng Hợp để được bác sĩ thăm khám, chẩn đoán ban đầu và tư vấn thêm."
       );
     } finally {
       setLoading(false);
