@@ -30,6 +30,7 @@ export interface rowRenderType {
   LoaiHoaDon?: string;
   TenHoaDon?: string;
   TrangThaiHoatDong?: boolean;
+  TenTaiKhoan ? : string
 }
 
 export interface ColumnCategory {
