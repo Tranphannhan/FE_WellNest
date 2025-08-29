@@ -20,12 +20,17 @@ const columns: ColumnCategory[] = [
   { id: "Giadichvu", label: "Giá dịch vụ", sortable: true },
   { id: "LoaiHoaDon", label: "Loại hóa đơn", sortable: true },
   { id: "TenHoaDon", label: "Tên hóa đơn", sortable: true },
+  { id: "TenTaiKhoan", label: "Người lập hóa đơn", sortable: true },
 ];
 
 export interface BillApiResponseItem {
   _id: string;
   LoaiHoaDon: "Kham" | "Thuoc" | "XetNghiem";
   TenHoaDon: string;
+  Id_ThuNgan ? : {
+    TenTaiKhoan ? : string,
+    _id ? : string
+  },
   Id_PhieuKhamBenh?: {
     Ngay?: string;
     Id_TheKhamBenh?: {
@@ -97,6 +102,7 @@ export default function Page() {
           Giadichvu: item?.Id_PhieuKhamBenh?.Id_GiaDichVu?.Giadichvu ?? 0,
           LoaiHoaDon: item?.LoaiHoaDon ?? "-",
           TenHoaDon: item?.TenHoaDon ?? "-",
+          TenTaiKhoan  : item?.Id_ThuNgan?.TenTaiKhoan ?? "-"
         }));
 
         setRows(mapped);

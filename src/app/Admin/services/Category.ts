@@ -279,6 +279,9 @@ export async function getBill(page: number , category  : string) {
 
     if (result.ok) {
       const data = await result.json();
+      console.log('data');
+      console.log(data);
+      
       return data;
     } else {
       const errorText = await result.text();

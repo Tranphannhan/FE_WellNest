@@ -19,6 +19,7 @@ const columns: ColumnCategory[] = [
   { id: "Giadichvu", label: "Giá dịch vụ", sortable: true },
   { id: "LoaiHoaDon", label: "Loại hóa đơn", sortable: true },
   { id: "TenHoaDon", label: "Tên hóa đơn", sortable: true },
+  { id: "TenTaiKhoan", label: "Người lập hóa đơn", sortable: true },
 ];
 
 export default function Page() {
@@ -50,6 +51,7 @@ export default function Page() {
           Giadichvu: item?.Id_Dichvu?.Id_LoaiXetNghiem?.Id_GiaDichVu?.Giadichvu ?? 0,
           LoaiHoaDon: item?.LoaiHoaDon ?? "-",
           TenHoaDon: item?.TenHoaDon ?? "-",
+          TenTaiKhoan  : item?.Id_ThuNgan?.TenTaiKhoan ?? "-"
         }));
 
         setRows(mapped);
