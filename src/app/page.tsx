@@ -311,8 +311,8 @@ const App = () => {
               )}
             </FormControl>
 
-            <p className="helper-text">
-              <a href="#">Quên mật khẩu</a>
+            <p className="helper-text" style={{height:35}}>
+              <a href="#"></a>
             </p>
             <button className="login-button" onClick={handleLogin}>
               Đăng nhập
