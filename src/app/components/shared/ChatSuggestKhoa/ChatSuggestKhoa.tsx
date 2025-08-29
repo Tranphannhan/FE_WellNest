@@ -15,7 +15,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import { fetchSuggestedKhoa } from "@/app/services/ReceptionServices";
-import { SiRobotframework } from "react-icons/si";
+import { RiRobot2Fill } from "react-icons/ri";
 import { IoMdSend } from "react-icons/io";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
@@ -52,17 +52,29 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TypingDots = () => {
   return (
     <span style={{ display: "inline-flex", gap: 2 }}>
-      <span className="dot" style={{ animationDelay: "0s" }}>•</span>
-      <span className="dot" style={{ animationDelay: "0.2s" }}>•</span>
-      <span className="dot" style={{ animationDelay: "0.4s" }}>•</span>
+      <span className="dot" style={{ animationDelay: "0s" }}>
+        •
+      </span>
+      <span className="dot" style={{ animationDelay: "0.2s" }}>
+        •
+      </span>
+      <span className="dot" style={{ animationDelay: "0.4s" }}>
+        •
+      </span>
       <style jsx>{`
         .dot {
           animation: bounce 0.6s infinite ease-in-out;
           font-size: 18px;
         }
         @keyframes bounce {
-          0%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-4px); }
+          0%,
+          80%,
+          100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateY(-4px);
+          }
         }
       `}</style>
     </span>
@@ -75,13 +87,32 @@ export default function ChatSuggestKhoa() {
       sender: "bot",
       text:
         "Xin chào, tôi là AI của hệ thống WELLNEST.\n" +
-        "Vui lòng nhập các triệu chứng để tôi có thể giúp bạn tìm ra khoa phù hợp nhất.",
+        "Vui lòng nhập các triệu chứng để tôi có thể gợi ý bạn tìm ra khoa phù hợp.",
     },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<UserToken | null>(null);
+
+  // Hàm đọc văn bản bằng giọng nói
+  const speakText = (text: string) => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "vi-VN"; // giọng đọc tiếng Việt
+      utterance.rate = 1; // tốc độ đọc
+      utterance.pitch = 1; // độ cao giọng
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.warn("Trình duyệt không hỗ trợ speechSynthesis");
+    }
+  };
+
+useEffect(() => {
+  if (open && messages.length === 1 && messages[0].sender === "bot") {
+    speakText(messages[0].text);
+  }
+}, [open]);
 
   // Lấy user từ token
   useEffect(() => {
@@ -130,6 +161,9 @@ export default function ChatSuggestKhoa() {
         updated[updated.length - 1] = { sender: "bot", text: botText };
         return updated;
       });
+
+      // 👇 Thêm dòng này để đọc giọng
+      speakText(botText);
     } catch {
       setMessages((prev) => {
         const updated = [...prev];
@@ -139,6 +173,11 @@ export default function ChatSuggestKhoa() {
         };
         return updated;
       });
+
+      // 👇 Đọc giọng cho thông báo lỗi
+      speakText(
+        "Hiện tại, bệnh viện chúng tôi chưa có khoa phù hợp với triệu chứng này."
+      );
     } finally {
       setLoading(false);
     }
@@ -147,7 +186,7 @@ export default function ChatSuggestKhoa() {
   return (
     <>
       {/* Floating Chat Icon */}
-      <AIChatButton callBack={() => setOpen(true)}></AIChatButton>
+      <AIChatButton  callBack={() => setOpen(true)}></AIChatButton>
 
       {/* Chat Drawer */}
       <Drawer
@@ -200,7 +239,8 @@ export default function ChatSuggestKhoa() {
               >
                 {msg.sender === "bot" && (
                   <Avatar sx={{ bgcolor: "#3497f9", mr: 1 }}>
-                    <SiRobotframework fontSize="20px" />
+                    <RiRobot2Fill fontSize="20px"/>
+
                   </Avatar>
                 )}
 

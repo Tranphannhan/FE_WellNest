@@ -1,7 +1,7 @@
 "use client";
 
 import { Fab } from "@mui/material";
-import { SiRobotframework } from "react-icons/si";
+import { RiRobot2Fill } from "react-icons/ri";
 import { styled, keyframes } from "@mui/system";
 import {
   motion,
@@ -78,7 +78,7 @@ export default function AIChatButton({ callBack }: { callBack: () => void }) {
 
     const distance = Math.sqrt(
       Math.pow(endPosition.x - (startPosition.current?.x ?? 0), 2) +
-      Math.pow(endPosition.y - (startPosition.current?.y ?? 0), 2)
+        Math.pow(endPosition.y - (startPosition.current?.y ?? 0), 2)
     );
 
     const isClick = timeDiff < 200 && distance < 5;
@@ -107,8 +107,12 @@ export default function AIChatButton({ callBack }: { callBack: () => void }) {
       const isLeft = offsetX < width / 2;
       const isTop = offsetY < height / 2;
 
-      const targetX = isLeft ? constraints?.left ?? 0 : constraints?.right ?? 0;
-      const targetY = isTop ? constraints?.top ?? 0 : constraints?.bottom ?? 0;
+      const targetX = isLeft
+        ? (constraints?.left ?? 0)
+        : (constraints?.right ?? 0);
+      const targetY = isTop
+        ? (constraints?.top ?? 0)
+        : (constraints?.bottom ?? 0);
 
       controls.start({ x: targetX, y: targetY });
     }
@@ -124,17 +128,17 @@ export default function AIChatButton({ callBack }: { callBack: () => void }) {
       onMouseUp={handleMouseUp}
       onDragEnd={handleDragEnd}
       style={{
-        position: "fixed",
-        bottom: 0,
-        right: 0,
-        cursor: "grab",
+  position: "fixed",
+  bottom: 25,   // cách mép dưới 20px
+  right: 25,    // cách mép phải 20px
+  cursor: "grab",
         x,
         y,
       }}
       animate={controls}
     >
       <AnimatedFab color="primary" aria-label="chat">
-        <SiRobotframework fontSize="25px" />
+        <RiRobot2Fill fontSize="25px" />
       </AnimatedFab>
     </motion.div>
   );
